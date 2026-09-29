@@ -22,7 +22,7 @@ async function confirmAttack(target,mode,btn){
     if(battleId){
       try{await openBattleReport(battleId,true);}catch(e){}
     }
-  }catch(e){if(!silent)toast(humanError(e),"error"); throw e;}
+  }catch(e){toast(humanError(e),"error");}
 }
 
 function openImmediateBattleResult(target,mode,res){
@@ -99,5 +99,5 @@ async function openBattleReport(id,silent=false){
     const chronicle=battleNarrative(b,d.units||[],d.events||[]);
     $("#modal-content").innerHTML=`<span class="section-kicker">INFORME COMPLETO</span><h3>${b.mode==="SIEGE"?"Asedio":"Ataque regular"} · ${b.attacker_victory?"Victoria atacante":"Defensa exitosa"}</h3><div class="battle-chronicle"><div class="battle-chronicle-head"><span>✦</span><div><small>CRÓNICA DEL COMBATE</small><strong>${b.attacker_victory?"El campo cedió ante la ofensiva":"La línea defensiva no se quebró"}</strong></div></div><p>${esc(chronicle.opening)}</p><p>${esc(chronicle.middle)}</p><p>${esc(chronicle.ending)}</p><div class="battle-verdict"><small>CLAVES DEL DESENLACE</small><ul>${chronicle.keys.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div></div><div class="grid-3"><div class="stat-card"><small>Pérdidas atacante</small><strong>${(Number(b.attacker_loss_bp)/100).toFixed(2)}%</strong></div><div class="stat-card"><small>Pérdidas defensor</small><strong>${(Number(b.defender_loss_bp)/100).toFixed(2)}%</strong></div><div class="stat-card"><small>Tierra conquistada</small><strong>${n(b.land_gained)}</strong></div></div><h3>Formaciones</h3><div class="table-wrap"><table><thead><tr><th>Bando</th><th>Unidad</th><th>Inicio</th><th>Final</th><th>Recuperadas</th></tr></thead><tbody>${unitRows}</tbody></table></div><h3>Secuencia</h3><div>${events||'<div class="empty">Sin eventos.</div>'}</div>`;
     show($("#modal"));
-  }catch(e){toast(humanError(e),"error");}
+  }catch(e){if(!silent)toast(humanError(e),"error"); throw e;}
 }
