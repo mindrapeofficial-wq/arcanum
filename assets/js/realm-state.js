@@ -32,6 +32,7 @@ function showCreateRealm(){ hide($("#boot")); hide($("#auth-view")); hide($("#ga
 function showGame(){
   hide($("#boot")); hide($("#auth-view")); hide($("#create-view")); show($("#game-view"));
   renderChrome(); navigate("realm");
+  if(typeof refreshOwnProfileBadge==="function")refreshOwnProfileBadge(true);
   clearInterval(periodicTimer); periodicTimer=setInterval(()=>refreshState(true),45000);
   clearInterval(countdownTimer); countdownTimer=setInterval(updateTurnCountdown,1000); updateTurnCountdown();
 }
@@ -43,7 +44,9 @@ function renderSchools(){
 }
 function renderChrome(){
   const r=realmState.realm; const school=catalogs.schools.find(s=>s.code===r.school_code);
-  $("#mage-title").textContent=r.mage_name; $("#mage-school").textContent=school?.name_es||r.school_code; $("#mage-sigil").textContent=symbols[r.school_code]||"✦";
+  $("#mage-title").textContent=r.mage_name; $("#mage-school").textContent=school?.name_es||r.school_code;
+  $("#mage-card-button").dataset.profile=r.mage_name;
+  if(typeof renderOwnProfileBadge==="function")renderOwnProfileBadge(); else $("#mage-sigil").textContent=symbols[r.school_code]||"✦";
   $("#season-badge").innerHTML=`<strong>${esc(realmState.season.name)}</strong><br>${esc(realmState.season.status)} · ${esc(realmState.season.ruleset_version)}<br><span style="opacity:.62">BETA ${BUILD_VERSION}</span>`;
   renderResourceStrip();
 }
