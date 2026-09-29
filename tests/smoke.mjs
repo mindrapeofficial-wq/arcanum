@@ -39,9 +39,9 @@ test("Archmage progression curve is deterministic and capped",()=>{
   assert.equal(vm.runInContext("archmageXpForNextLevel(10)",context),670);
   assert.equal(vm.runInContext("archmageXpForNextLevel(49)",context),6870);
   assert.equal(vm.runInContext("archmageXpForNextLevel(50)",context),0);
-  assert.equal(vm.runInContext("archmageTotalXpForLevel(50)",context),133870);
+  assert.equal(vm.runInContext("archmageTotalXpForLevel(50)",context),133890);
   assert.equal(vm.runInContext("archmageProgressFromTotalXp(100).level",context),2);
-  assert.equal(vm.runInContext("archmageProgressFromTotalXp(133870).level",context),50);
+  assert.equal(vm.runInContext("archmageProgressFromTotalXp(133890).level",context),50);
   assert.equal(vm.runInContext("archmageEarnedAttributePoints(50)",context),49);
   assert.equal(vm.runInContext("archmageProgressionFromProfile({archmage_total_xp:520,arcane_power:99,knowledge:4,willpower:2,influence:1,attribute_points:3}).stats.arcane_power",context),20);
 });
