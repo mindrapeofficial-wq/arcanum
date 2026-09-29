@@ -3,6 +3,10 @@
   "private": true,
   "version": "0.2.0",
   "scripts": {
-    "test": "node --test tests/smoke.mjs"
+    "test": "node --test tests/smoke.mjs",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.55.0"
   }
 }
