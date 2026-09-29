@@ -79,7 +79,7 @@ async function installMocks(page){
       return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({
         mage_name:target,school_code:self?state.realm.school_code:"abyssal",status:"alive",
         land:self?state.realm.land:480,net_power:self?state.realm.net_power:14200,spell_level:self?state.realm.spell_level:2,
-        archmage_level:self?4:3,archmage_xp:self?180:90,archmage_xp_next:self?300:200,arcane_power:self?3:2,knowledge:self?4:2,willpower:self?2:3,influence:self?1:2,attribute_points:self?1:0,
+        archmage_total_xp:self?520:220,arcane_power:self?3:2,knowledge:self?4:2,willpower:self?2:3,influence:self?1:2,attribute_points:self?1:0,
         bio:self?"Archimago de pruebas.":"Rival de pruebas.",avatar_path:null,is_self:self,is_npc:false,
         friendship:self?null:{status:"none"},alliance:null,my_alliance:null,can_invite_to_alliance:false
       })});
@@ -274,7 +274,7 @@ test("la ficha de personaje se abre desde el nombre y permite editar la bio", as
   await expect(page.getByText("FICHA DE ARCHIMAGO")).toBeVisible();
   await expect(page.locator("#profile-bio-input")).toBeVisible();
   await expect(page.getByText("PROGRESIÓN DEL ARCHIMAGO")).toBeVisible();
-  await expect(page.getByText("Poder Arcano")).toBeVisible();
+  await expect(page.getByText("Poder Arcano")).toBeVisible();\n  await expect(page.locator(".archmage-level-row > div:first-child strong")).toHaveText("4");
   await page.locator("#profile-bio-input").fill("Nueva bio de pruebas.");
   await page.locator("#profile-save-bio").click();
   await expect(page.locator(".toast").last()).toContainText("Ficha de personaje actualizada");
