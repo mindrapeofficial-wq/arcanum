@@ -14,7 +14,7 @@ La experiencia debe premiar logros significativos, no clics repetibles. No se co
 - Nivel máximo de beta: 50
 - XP para pasar del nivel L al siguiente:
   `round10(100 + 45 × (L - 1) + 2 × (L - 1)^2)`
-- XP total aproximada para alcanzar nivel 50: 133.870
+- XP total aproximada para alcanzar nivel 50: 133.890
 - En nivel 50 la barra se considera completa y no existe un siguiente nivel.
 
 Referencias de ritmo:
