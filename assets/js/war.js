@@ -11,13 +11,31 @@ async function confirmAttack(target,mode,btn){
   if(!confirm(`${mode==="SIEGE"?"Asediar":"Atacar"} a ${target}? Las bajas y el gasto de guerra serán permanentes.`))return;
   try{
     const res=await actionCall(btn,()=>rpc("attack_mage",{p_target_mage_name:target,p_mode:mode}),null,res=>res.attacker_victory?`Victoria. Has conquistado ${n(res.land_gained)} acres.`:`El ataque no ha logrado la victoria. Pérdidas: ${(Number(res.attacker_loss_bp)/100).toFixed(2)}%.`);
+    openImmediateBattleResult(target,mode,res);
     let battleId=res?.battle_id;
     if(!battleId){
-      const reports=await rpc("my_battle_reports",{p_limit:5});
-      battleId=(reports||[]).find(r=>String(r.opponent_mage_name).toLowerCase()===String(target).toLowerCase())?.battle_id||(reports||[])[0]?.battle_id;
+      try{
+        const reports=await rpc("my_battle_reports",{p_limit:5});
+        battleId=(reports||[]).find(r=>String(r.opponent_mage_name).toLowerCase()===String(target).toLowerCase())?.battle_id||(reports||[])[0]?.battle_id;
+      }catch(e){}
     }
-    if(battleId)await openBattleReport(battleId);
-  }catch(e){}
+    if(battleId){
+      try{await openBattleReport(battleId,true);}catch(e){}
+    }
+  }catch(e){if(!silent)toast(humanError(e),"error"); throw e;}
+}
+
+function openImmediateBattleResult(target,mode,res){
+  const b={
+    mode,
+    attacker_victory:!!res?.attacker_victory,
+    attacker_loss_bp:Number(res?.attacker_loss_bp||0),
+    defender_loss_bp:Number(res?.defender_loss_bp||0),
+    land_gained:Number(res?.land_gained||0)
+  };
+  const chronicle=battleNarrative(b,[],[]);
+  $("#modal-content").innerHTML=`<span class="section-kicker">CRÓNICA INMEDIATA</span><h3>${mode==="SIEGE"?"Asedio":"Ataque regular"} contra ${esc(target)} · ${b.attacker_victory?"Victoria":"Derrota"}</h3><div class="battle-chronicle"><div class="battle-chronicle-head"><span>✦</span><div><small>RELATO DEL CAMPO</small><strong>${b.attacker_victory?"La ofensiva quebró la resistencia":"La defensa sostuvo la línea"}</strong></div></div><p>${esc(chronicle.opening)}</p><p>${esc(chronicle.middle)}</p><p>${esc(chronicle.ending)}</p><div class="battle-verdict"><small>CLAVES DEL DESENLACE</small><ul>${chronicle.keys.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div></div><div class="grid-3"><div class="stat-card"><small>Pérdidas atacante</small><strong>${(Number(b.attacker_loss_bp)/100).toFixed(2)}%</strong></div><div class="stat-card"><small>Pérdidas defensor</small><strong>${(Number(b.defender_loss_bp)/100).toFixed(2)}%</strong></div><div class="stat-card"><small>Tierra conquistada</small><strong>${n(b.land_gained)}</strong></div></div><p class="battle-detail-note">El informe técnico completo se añadirá aquí si el registro detallado de la batalla está disponible.</p>`;
+  show($("#modal"));
 }
 
 function battleNarrative(b,units,events){
@@ -73,7 +91,7 @@ async function renderBattles(){
   $("#view-host").innerHTML=`${viewHeader("CRÓNICAS","Informes de batalla","Cada choque queda registrado golpe a golpe.")}<div class="panel"><div class="battle-list">${rows}</div></div>`;
   $$(".report-btn").forEach(b=>b.addEventListener("click",()=>openBattleReport(b.dataset.battle)));
 }
-async function openBattleReport(id){
+async function openBattleReport(id,silent=false){
   try{
     const d=await rpc("battle_report_detail",{p_battle_id:id}); const b=d.battle;
     const unitRows=(d.units||[]).map(u=>`<tr><td>${esc(u.side==="attacker"?"Atacante":"Defensor")}</td><td>${esc(u.name_es)}</td><td>${n(u.initial_quantity)}</td><td>${n(u.final_quantity)}</td><td>${n(u.recovered)}</td></tr>`).join("");
