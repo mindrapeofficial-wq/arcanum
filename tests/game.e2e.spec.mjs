@@ -265,3 +265,19 @@ test("la ficha de personaje se abre desde el nombre y permite editar la bio", as
   await page.locator("#profile-save-bio").click();
   await expect(page.locator(".toast").last()).toContainText("Ficha de personaje actualizada");
 });
+
+
+test("los iconos artísticos de navegación y recursos cargan", async ({page})=>{
+  await installMocks(page);
+  await page.goto("/");
+  await page.locator("#username").fill("E2E_TESTER");
+  await page.locator("#password").fill("prueba-segura");
+  await page.locator("#submit-button").click();
+  await expect(page.getByRole("heading",{name:"Tu Reino"})).toBeVisible();
+  const navIcon=page.locator('#main-nav button[data-view="realm"] img.nav-icon');
+  await expect(navIcon).toBeVisible();
+  await expect.poll(()=>navIcon.evaluate(img=>img.naturalWidth)).toBeGreaterThan(0);
+  const goldIcon=page.locator('#resource-strip img[src*="resources/oro.png"]');
+  await expect(goldIcon).toBeVisible();
+  await expect.poll(()=>goldIcon.evaluate(img=>img.naturalWidth)).toBeGreaterThan(0);
+});
