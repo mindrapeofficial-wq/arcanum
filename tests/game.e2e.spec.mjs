@@ -103,6 +103,9 @@ async function installMocks(page){
     if(rpc==="attack_targets") return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify([
       {mage_name:"RIVAL_TEST",school_code:"abyssal",land:480,net_power:14200,can_attack:true}
     ])});
+    if(rpc==="npc_directory") return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify([
+      {mage_name:"RIVAL_TEST",school_code:"abyssal",archetype:"guardian"}
+    ])});
     if(rpc==="leaderboard") return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:"[]"});
     if(rpc==="my_battle_reports") return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:"[]"});
 
@@ -205,6 +208,7 @@ test("flujo crítico completo: login, reino, explorar, construir, investigar, re
     "/rest/v1/rpc/research",
     "/rest/v1/rpc/recruit_units",
     "/rest/v1/rpc/attack_targets",
+    "/rest/v1/rpc/npc_directory",
     "community/messages",
     "community/posts"
   ]) expect(paths.some(p=>p.startsWith(required)),`No se ejecutó ${required}`).toBeTruthy();
