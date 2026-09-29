@@ -117,12 +117,88 @@ function renderPlayersShell(){
   $("#player-search-button").addEventListener("click",filterPlayerDirectory);
 }
 let communityDirectory=[];
-async function loadPlayerDirectory(){
-  const host=$("#player-search-results"); if(!host)return;
-  try{
+let communityDirectoryPromise=null;
+
+async function ensurePlayerDirectory(){
+  if(communityDirectory.length)return communityDirectory;
+  if(communityDirectoryPromise)return communityDirectoryPromise;
+  communityDirectoryPromise=(async()=>{
     const [rows,npcs]=await Promise.all([rpc("leaderboard",{p_limit:100}),rpc("npc_directory")]);
     const npcNames=new Set((npcs||[]).map(x=>String(x.mage_name).toLowerCase()));
     communityDirectory=(rows||[]).filter(x=>!npcNames.has(String(x.mage_name).toLowerCase()));
+    return communityDirectory;
+  })();
+  try{return await communityDirectoryPromise;}
+  finally{communityDirectoryPromise=null;}
+}
+
+function topPlayerSearchRows(q){
+  const needle=String(q||"").trim().toLowerCase();
+  if(!needle)return [];
+  return communityDirectory
+    .filter(x=>String(x.mage_name).toLowerCase().includes(needle))
+    .sort((a,b)=>{
+      const an=String(a.mage_name).toLowerCase(),bn=String(b.mage_name).toLowerCase();
+      const ae=an===needle,be=bn===needle;
+      if(ae!==be)return ae?-1:1;
+      const as=an.startsWith(needle),bs=bn.startsWith(needle);
+      if(as!==bs)return as?-1:1;
+      return Number(b.net_power||0)-Number(a.net_power||0);
+    })
+    .slice(0,6);
+}
+
+function renderTopPlayerSearch(){
+  const input=$("#top-player-search-input"),host=$("#top-player-search-results");
+  if(!input||!host)return;
+  const q=input.value.trim();
+  if(!q){host.classList.add("hidden");host.innerHTML="";return;}
+  const rows=topPlayerSearchRows(q);
+  host.innerHTML=rows.length?rows.map(x=>`
+    <button class="top-player-search-row" type="button" data-profile="${esc(x.mage_name)}">
+      <span class="school-dot ${esc(x.school_code)}"></span>
+      <span><strong>${esc(x.mage_name)}</strong><small>${esc(profileSchoolName(x.school_code))}</small></span>
+      <span><small>PODER</small><strong>${n(x.net_power)}</strong></span>
+    </button>`).join(""):'<div class="top-player-search-empty">No se encontró ningún Archimago.</div>';
+  host.classList.remove("hidden");
+}
+
+async function runTopPlayerSearch(){
+  const input=$("#top-player-search-input"),host=$("#top-player-search-results");
+  if(!input||!host)return;
+  const q=input.value.trim();
+  if(!q){renderTopPlayerSearch();return;}
+  host.classList.remove("hidden");
+  host.innerHTML='<div class="top-player-search-empty">Consultando el grimorio…</div>';
+  try{await ensurePlayerDirectory();renderTopPlayerSearch();}
+  catch(e){host.innerHTML=`<div class="top-player-search-empty">${esc(humanError(e))}</div>`;}
+}
+
+function wireTopPlayerSearch(){
+  const shell=$("#top-player-search"),input=$("#top-player-search-input"),host=$("#top-player-search-results");
+  if(!shell||!input||!host)return;
+  let timer=null;
+  input.addEventListener("input",()=>{
+    clearTimeout(timer);
+    timer=setTimeout(runTopPlayerSearch,120);
+  });
+  input.addEventListener("keydown",e=>{
+    if(e.key==="Escape"){host.classList.add("hidden");input.blur();}
+    if(e.key==="Enter"){
+      e.preventDefault();
+      const first=host.querySelector("[data-profile]");
+      if(first){host.classList.add("hidden");openPlayerProfile(first.dataset.profile);}
+    }
+  });
+  input.addEventListener("focus",()=>{if(input.value.trim())runTopPlayerSearch();});
+  host.addEventListener("click",()=>host.classList.add("hidden"));
+  document.addEventListener("click",e=>{if(!shell.contains(e.target))host.classList.add("hidden");});
+}
+
+async function loadPlayerDirectory(){
+  const host=$("#player-search-results"); if(!host)return;
+  try{
+    await ensurePlayerDirectory();
     filterPlayerDirectory();
   }catch(e){host.innerHTML=`<div class="empty">${esc(humanError(e))}</div>`;}
 }
