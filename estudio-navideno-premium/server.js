@@ -75,5 +75,5 @@ app.post('/api/generate', upload.fields([{ name: 'subject', maxCount: 1 }, { nam
   }
 });
 
-app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
+app.use((req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 app.listen(port, () => console.log(`Estudio Navideño Premium en ${port}`));
