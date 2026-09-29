@@ -66,9 +66,10 @@ function passiveSnapshot(state=realmState){
 function syncPassiveResourceFlow(state=realmState){
   if(!state?.realm)return;
   const now=Date.now(), current=passiveSnapshot(state), previous=passiveResourceFlow?.snapshot||null;
-  let yieldPerTurn=passiveServerYield(state)||passiveReadCache(state)||passiveResourceFlow?.yieldPerTurn||{};
+  const sameSignature=!!previous&&previous.buildingSignature===current.buildingSignature;
+  let yieldPerTurn=passiveServerYield(state)||passiveReadCache(state)||(sameSignature?passiveResourceFlow?.yieldPerTurn:null)||{};
 
-  if(previous && previous.buildingSignature===current.buildingSignature){
+  if(previous && sameSignature){
     const turnsGained=current.turns-previous.turns;
     const scheduleAdvanced=current.nextTurnAt>previous.nextTurnAt+PASSIVE_TURN_MS*0.45;
     if(turnsGained>0 && scheduleAdvanced){
