@@ -41,9 +41,12 @@ function communityCategoryLabel(code){
 }
 async function renderCommunity(){
   communitySignature="";
-  $("#view-host").innerHTML=`${viewHeader("PLAZA ARCANA","Comunidad","Habla con otros Archimagos y publica anuncios para todo el mundo.")}
+  const school=profileSchoolName(realmState?.realm?.school_code);
+  $("#view-host").innerHTML=`${viewHeader("PLAZA ARCANA","Comunidad","Encuentra Archimagos, descubre quién está conectado y entra en la estancia común de tu Escuela.")}
     <div class="community-tabs">
       <button class="community-tab ${communityMode==="chat"?"active":""}" data-community-tab="chat">CHAT GLOBAL</button>
+      <button class="community-tab ${communityMode==="school"?"active":""}" data-community-tab="school">MI ESCUELA</button>
+      <button class="community-tab ${communityMode==="players"?"active":""}" data-community-tab="players">ARCHIMAGOS</button>
       <button class="community-tab ${communityMode==="board"?"active":""}" data-community-tab="board">TABLÓN</button>
     </div>
     <div id="community-content"></div>`;
@@ -52,39 +55,110 @@ async function renderCommunity(){
     stopCommunityPolling();
     await renderCommunity();
   }));
-  if(communityMode==="chat"){
-    renderChatShell();
-    await loadChatMessages(false);
+  if(communityMode==="chat" || communityMode==="school"){
+    renderChatShell(communityMode==="school",school);
+    await Promise.all([loadChatMessages(false),loadPresence()]);
     startCommunityPolling();
+  }else if(communityMode==="players"){
+    stopCommunityPolling();
+    renderPlayersShell();
+    await Promise.all([loadPresence(),loadPlayerDirectory()]);
   }else{
     stopCommunityPolling();
     renderBoardShell();
     await loadBoardPosts();
   }
 }
-function renderChatShell(){
+function renderChatShell(isSchool=false,school=""){
+  const title=isSchool?`ESTANCIA DE ${school.toUpperCase()}`:"CANAL MUNDIAL";
+  const note=isSchool
+    ?`Zona común exclusiva de ${school}. Una pequeña sala de casa: conversación, identidad y camaradería de Escuela.`
+    :"Chat público de la temporada. Máximo 300 caracteres por mensaje.";
   $("#community-content").innerHTML=`
-    <div class="panel">
-      <p class="community-note">Chat público de la temporada. Máximo 300 caracteres por mensaje.</p>
-      <div class="chat-shell">
-        <div id="chat-messages" class="chat-messages"><div class="empty">Abriendo el canal arcano…</div></div>
-        <form id="chat-form">
-          <div class="chat-compose">
-            <input id="chat-input" maxlength="300" autocomplete="off" placeholder="Escribe un mensaje al mundo…" />
-            <button class="primary-action" id="chat-send" type="submit">ENVIAR</button>
-          </div>
-          <div class="chat-status"><span id="chat-count">0 / 300</span> · Los mensajes antiguos se eliminan automáticamente.</div>
-        </form>
+    <div class="community-social-grid">
+      <div class="panel">
+        <div class="community-room-head"><div><span class="section-kicker">${title}</span><p class="community-note">${esc(note)}</p></div><span class="school-room-sigil ${esc(realmState?.realm?.school_code||"")}">${symbols[realmState?.realm?.school_code]||"✦"}</span></div>
+        <div class="chat-shell">
+          <div id="chat-messages" class="chat-messages"><div class="empty">Abriendo el canal arcano…</div></div>
+          <form id="chat-form">
+            <div class="chat-compose">
+              <input id="chat-input" maxlength="300" autocomplete="off" placeholder="${isSchool?"Habla con tu Escuela…":"Escribe un mensaje al mundo…"}" />
+              <button class="primary-action" id="chat-send" type="submit">ENVIAR</button>
+            </div>
+            <div class="chat-status"><span id="chat-count">0 / 300</span> · Los mensajes antiguos se eliminan automáticamente.</div>
+          </form>
+        </div>
       </div>
+      <aside class="panel online-panel">
+        <div class="online-head"><div><span class="section-kicker">PRESENCIA</span><h3>Conectados ahora</h3></div><strong id="online-count">0</strong></div>
+        <div id="online-list" class="online-list"><div class="empty">Consultando presencias…</div></div>
+      </aside>
     </div>`;
   $("#chat-input").addEventListener("input",e=>$("#chat-count").textContent=`${e.target.value.length} / 300`);
   $("#chat-form").addEventListener("submit",sendChatMessage);
+}
+function renderPlayersShell(){
+  $("#community-content").innerHTML=`
+    <div class="community-social-grid">
+      <div class="panel">
+        <span class="section-kicker">DIRECTORIO DEL MUNDO</span>
+        <h3>Buscar Archimago</h3>
+        <p class="community-note">Busca por nombre. Desde la ficha puedes agregar amistad, enviar mensaje o invitar a una alianza.</p>
+        <div class="player-search"><input id="player-search-input" maxlength="40" autocomplete="off" placeholder="Nombre del Archimago…" /><button class="primary-action" id="player-search-button" type="button">BUSCAR</button></div>
+        <div id="player-search-results" class="player-directory"><div class="empty">Escribe un nombre para buscar entre los Archimagos de la temporada.</div></div>
+      </div>
+      <aside class="panel online-panel">
+        <div class="online-head"><div><span class="section-kicker">PRESENCIA</span><h3>Conectados ahora</h3></div><strong id="online-count">0</strong></div>
+        <div id="online-list" class="online-list"><div class="empty">Consultando presencias…</div></div>
+      </aside>
+    </div>`;
+  $("#player-search-input").addEventListener("input",()=>filterPlayerDirectory());
+  $("#player-search-input").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();filterPlayerDirectory();}});
+  $("#player-search-button").addEventListener("click",filterPlayerDirectory);
+}
+let communityDirectory=[];
+async function loadPlayerDirectory(){
+  const host=$("#player-search-results"); if(!host)return;
+  try{
+    const [rows,npcs]=await Promise.all([rpc("leaderboard",{p_limit:100}),rpc("npc_directory")]);
+    const npcNames=new Set((npcs||[]).map(x=>String(x.mage_name).toLowerCase()));
+    communityDirectory=(rows||[]).filter(x=>!npcNames.has(String(x.mage_name).toLowerCase()));
+    filterPlayerDirectory();
+  }catch(e){host.innerHTML=`<div class="empty">${esc(humanError(e))}</div>`;}
+}
+function filterPlayerDirectory(){
+  const host=$("#player-search-results"); if(!host)return;
+  const q=String($("#player-search-input")?.value||"").trim().toLowerCase();
+  if(!q){host.innerHTML='<div class="empty">Escribe un nombre para buscar entre los Archimagos de la temporada.</div>';return;}
+  const rows=communityDirectory.filter(x=>String(x.mage_name).toLowerCase().includes(q)).slice(0,30);
+  host.innerHTML=rows.length?rows.map(x=>`
+    <button class="player-directory-row" data-profile="${esc(x.mage_name)}">
+      <span class="school-dot ${esc(x.school_code)}"></span>
+      <span><strong>${esc(x.mage_name)}</strong><small>${esc(profileSchoolName(x.school_code))}</small></span>
+      <span><small>PODER</small><strong>${n(x.net_power)}</strong></span>
+      <span>VER FICHA ›</span>
+    </button>`).join(""):'<div class="empty">No hay ningún Archimago con ese nombre.</div>';
+}
+async function loadPresence(){
+  const host=$("#online-list"); if(!host)return;
+  try{
+    const data=await communityApi("/presence",{method:"POST"});
+    let online=data.online||[];
+    if(communityMode==="school")online=online.filter(x=>x.school_code===realmState?.realm?.school_code);
+    $("#online-count").textContent=String(online.length);
+    host.innerHTML=online.length?online.map(x=>`
+      <button class="online-player" data-profile="${esc(x.username)}">
+        <span class="presence-dot"></span><span class="school-dot ${esc(x.school_code)}"></span>
+        <span><strong>${esc(x.username)}</strong><small>${esc(profileSchoolName(x.school_code))}</small></span>
+      </button>`).join(""):'<div class="empty">No hay otros Archimagos visibles ahora.</div>';
+  }catch(e){host.innerHTML=`<div class="empty">${esc(humanError(e))}</div>`;}
 }
 async function loadChatMessages(quiet=false){
   if(communityBusy || currentView!=="community" || communityMode!=="chat")return;
   communityBusy=true;
   try{
-    const data=await communityApi("/messages");
+    const channel=communityMode==="school"?"school":"global";
+    const data=await communityApi(`/messages?channel=${channel}`);
     const messages=data.messages||[];
     const sig=messages.map(m=>m.id).join("|");
     if(sig===communitySignature && quiet)return;
@@ -112,7 +186,7 @@ async function sendChatMessage(e){
   if(!message)return;
   const old=btn.textContent; btn.disabled=true; btn.textContent="ENVIANDO…";
   try{
-    await communityApi("/messages",{method:"POST",body:{message}});
+    await communityApi("/messages",{method:"POST",body:{message,channel:communityMode==="school"?"school":"global"}});
     input.value=""; $("#chat-count").textContent="0 / 300";
     communitySignature="";
     await loadChatMessages(false);
