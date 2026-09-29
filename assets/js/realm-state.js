@@ -55,9 +55,9 @@ function renderResourceStrip(){
   $("#resource-strip").innerHTML=`
     <div class="resource-item turns"><small>Turnos</small><strong><span id="turn-count">${n(r.turns)}</span> / ${n(r.max_turns)}</strong></div>
     <div class="resource-item"><small>Próximo</small><strong id="next-turn">${r.turns>=r.max_turns?"MÁXIMO":"--:--"}</strong></div>
-    <div class="resource-item"><small>Oro</small><strong>${n(r.gold)}</strong></div>
-    <div class="resource-item"><small>Maná</small><strong>${n(r.mana)}</strong></div>
-    <div class="resource-item"><small>Población</small><strong>${n(r.population)}</strong></div>
+    <div class="resource-item has-icon"><img class="resource-icon" src="assets/ui/resources/oro.png?v=0.2.7" alt="" aria-hidden="true" decoding="async" /><span class="resource-copy"><small>Oro</small><strong>${n(r.gold)}</strong></span></div>
+    <div class="resource-item has-icon"><img class="resource-icon" src="assets/ui/resources/mana.png?v=0.2.7" alt="" aria-hidden="true" decoding="async" /><span class="resource-copy"><small>Maná</small><strong>${n(r.mana)}</strong></span></div>
+    <div class="resource-item has-icon"><img class="resource-icon" src="assets/ui/resources/poblacion.png?v=0.2.7" alt="" aria-hidden="true" decoding="async" /><span class="resource-copy"><small>Población</small><strong>${n(r.population)}</strong></span></div>
     <div class="resource-item"><small>Tierras</small><strong>${n(r.land)}</strong></div>
     <div class="resource-item"><small>Poder Neto</small><strong>${n(r.net_power)}</strong></div>`;
 }
