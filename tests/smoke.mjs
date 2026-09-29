@@ -36,7 +36,7 @@ test("no single-element selector is iterated with forEach",()=>{
 test("critical game flows remain wired",()=>{
   for(const token of [
     "signInAccount","my_realm_state","rpc(\"explore\"","rpc(\"build\"","rpc(\"research\"",
-    "rpc(\"recruit_units\"","attack_targets","renderCommunity","COMMUNITY_API","startTutorial","tutorialSteps","npc_directory","openPlayerProfile","player_profile","send_direct_message","create_alliance"
+    "rpc(\"recruit_units\"","attack_targets","renderCommunity","COMMUNITY_API","startTutorial","tutorialSteps","npc_directory","openPlayerProfile","player_profile","send_direct_message","create_alliance","loadPresence","loadPlayerDirectory","communityMode===\"school\""
   ]) assert.ok(js.includes(token),`Missing critical flow: ${token}`);
 });
 
