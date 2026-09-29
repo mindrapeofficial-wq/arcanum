@@ -374,7 +374,7 @@ async function communityApi(path,{method="GET",body}={}){
   const res=await fetch(COMMUNITY_API+path,{
     method,
     headers:{
-      Authorization:\`Bearer \${session.access_token}\`,
+      Authorization:`Bearer ${session.access_token}`,
       ...(body?{"Content-Type":"application/json"}:{})
     },
     body:body?JSON.stringify(body):undefined,
@@ -399,9 +399,9 @@ async function communityApi(path,{method="GET",body}={}){
 function communityTime(value){
   const d=new Date(value), diff=Math.max(0,Date.now()-d.getTime()), min=Math.floor(diff/60000);
   if(min<1)return "ahora";
-  if(min<60)return \`hace \${min} min\`;
-  const h=Math.floor(min/60); if(h<24)return \`hace \${h} h\`;
-  const days=Math.floor(h/24); if(days<7)return \`hace \${days} d\`;
+  if(min<60)return `hace ${min} min`;
+  const h=Math.floor(min/60); if(h<24)return `hace ${h} h`;
+  const days=Math.floor(h/24); if(days<7)return `hace ${days} d`;
   return d.toLocaleDateString("es-ES",{day:"2-digit",month:"short"});
 }
 function communityCategoryLabel(code){
@@ -409,13 +409,13 @@ function communityCategoryLabel(code){
 }
 async function renderCommunity(){
   communitySignature="";
-  $("#view-host").innerHTML=\`\${viewHeader("PLAZA ARCANA","Comunidad","Habla con otros Archimagos y publica anuncios para todo el mundo.")}
+  $("#view-host").innerHTML=`${viewHeader("PLAZA ARCANA","Comunidad","Habla con otros Archimagos y publica anuncios para todo el mundo.")}
     <div class="community-tabs">
-      <button class="community-tab \${communityMode==="chat"?"active":""}" data-community-tab="chat">CHAT GLOBAL</button>
-      <button class="community-tab \${communityMode==="board"?"active":""}" data-community-tab="board">TABLÓN</button>
+      <button class="community-tab ${communityMode==="chat"?"active":""}" data-community-tab="chat">CHAT GLOBAL</button>
+      <button class="community-tab ${communityMode==="board"?"active":""}" data-community-tab="board">TABLÓN</button>
     </div>
-    <div id="community-content"></div>\`;
-  $("[data-community-tab]").forEach(btn=>btn.addEventListener("click",async()=>{
+    <div id="community-content"></div>`;
+  document.querySelectorAll("[data-community-tab]").forEach(btn=>btn.addEventListener("click",async()=>{
     communityMode=btn.dataset.communityTab;
     stopCommunityPolling();
     await renderCommunity();
@@ -431,7 +431,7 @@ async function renderCommunity(){
   }
 }
 function renderChatShell(){
-  $("#community-content").innerHTML=\`
+  $("#community-content").innerHTML=`
     <div class="panel">
       <p class="community-note">Chat público de la temporada. Máximo 300 caracteres por mensaje.</p>
       <div class="chat-shell">
@@ -444,8 +444,8 @@ function renderChatShell(){
           <div class="chat-status"><span id="chat-count">0 / 300</span> · Los mensajes antiguos se eliminan automáticamente.</div>
         </form>
       </div>
-    </div>\`;
-  $("#chat-input").addEventListener("input",e=>$("#chat-count").textContent=\`\${e.target.value.length} / 300\`);
+    </div>`;
+  $("#chat-input").addEventListener("input",e=>$("#chat-count").textContent=`${e.target.value.length} / 300`);
   $("#chat-form").addEventListener("submit",sendChatMessage);
 }
 async function loadChatMessages(quiet=false){
@@ -459,16 +459,20 @@ async function loadChatMessages(quiet=false){
     communitySignature=sig;
     const host=$("#chat-messages"); if(!host)return;
     const nearBottom=host.scrollHeight-host.scrollTop-host.clientHeight<90 || !quiet;
-    host.innerHTML=messages.length?messages.map(m=>\`
+    host.innerHTML=messages.length?messages.map(m=>`
       <article class="chat-message">
-        <header><strong>\${esc(m.username)}</strong><time title="\${esc(new Date(m.created_at).toLocaleString("es-ES"))}">\${communityTime(m.created_at)}</time></header>
-        <p>\${esc(m.message)}</p>
-        \${m.user_id===data.me?\`<button class="community-delete" data-delete-chat="\${esc(m.id)}" title="Borrar mensaje">×</button>\`:""}
-      </article>\`).join(""):\`<div class="empty">Todavía no hay mensajes. Sé el primero en abrir el canal.</div>\`;
-    $("[data-delete-chat]",host).forEach(b=>b.addEventListener("click",()=>deleteChatMessage(b.dataset.deleteChat)));
+        <header><strong>${esc(m.username)}</strong><time title="${esc(new Date(m.created_at).toLocaleString("es-ES"))}">${communityTime(m.created_at)}</time></header>
+        <p>${esc(m.message)}</p>
+        ${m.user_id===data.me?`<button class="community-delete" data-delete-chat="${esc(m.id)}" title="Borrar mensaje">×</button>`:""}
+      </article>`).join(""):`<div class="empty">Todavía no hay mensajes. Sé el primero en abrir el canal.</div>`;
+    document.querySelectorAll("[data-delete-chat]").forEach(b=>b.addEventListener("click",()=>deleteChatMessage(b.dataset.deleteChat)));
     if(nearBottom)host.scrollTop=host.scrollHeight;
-  }catch(e){ if(!quiet){const host=$("#chat-messages");if(host)host.innerHTML=\`<div class="empty">\${esc(humanError(e))}</div>\`;} }
-  finally{communityBusy=false;}
+  }catch(e){
+    if(!quiet){
+      const host=$("#chat-messages");
+      if(host)host.innerHTML=`<div class="empty">${esc(humanError(e))}</div>`;
+    }
+  }finally{communityBusy=false;}
 }
 async function sendChatMessage(e){
   e.preventDefault();
@@ -478,6 +482,7 @@ async function sendChatMessage(e){
   try{
     await communityApi("/messages",{method:"POST",body:{message}});
     input.value=""; $("#chat-count").textContent="0 / 300";
+    communitySignature="";
     await loadChatMessages(false);
     input.focus();
   }catch(err){toast(humanError(err),"error");}
@@ -485,11 +490,14 @@ async function sendChatMessage(e){
 }
 async function deleteChatMessage(id){
   if(!confirm("¿Borrar este mensaje?"))return;
-  try{await communityApi(\`/messages/\${encodeURIComponent(id)}\`,{method:"DELETE"});communitySignature="";await loadChatMessages(false);}
-  catch(e){toast(humanError(e),"error");}
+  try{
+    await communityApi(`/messages/${encodeURIComponent(id)}`,{method:"DELETE"});
+    communitySignature="";
+    await loadChatMessages(false);
+  }catch(e){toast(humanError(e),"error");}
 }
 function renderBoardShell(){
-  $("#community-content").innerHTML=\`
+  $("#community-content").innerHTML=`
     <div class="board-layout">
       <div class="panel">
         <h3>Publicar anuncio</h3>
@@ -523,7 +531,7 @@ function renderBoardShell(){
         </div>
         <div id="board-posts" class="board-posts"><div class="empty">Consultando el tablón…</div></div>
       </div>
-    </div>\`;
+    </div>`;
   $("#board-form").addEventListener("submit",publishBoardPost);
   $("#board-filter").addEventListener("change",loadBoardPosts);
   $("#board-refresh").addEventListener("click",loadBoardPosts);
@@ -532,17 +540,17 @@ async function loadBoardPosts(){
   const host=$("#board-posts"); if(!host)return;
   try{
     const filter=$("#board-filter")?.value||"";
-    const data=await communityApi(\`/posts\${filter?\`?category=\${encodeURIComponent(filter)}\`:""}\`);
+    const data=await communityApi(`/posts${filter?`?category=${encodeURIComponent(filter)}`:""}`);
     const posts=data.posts||[];
-    host.innerHTML=posts.length?posts.map(p=>\`
+    host.innerHTML=posts.length?posts.map(p=>`
       <article class="board-post">
-        <div class="board-post-head"><span class="board-category">\${esc(communityCategoryLabel(p.category))}</span><strong>\${esc(p.username)}</strong></div>
-        <h4>\${esc(p.title)}</h4>
-        <p>\${esc(p.body)}</p>
-        <div class="board-meta"><span>\${communityTime(p.created_at)} · caduca \${new Date(p.expires_at).toLocaleDateString("es-ES")}</span>\${p.user_id===data.me?\`<button class="community-delete" data-delete-post="\${esc(p.id)}">BORRAR</button>\`:""}</div>
-      </article>\`).join(""):\`<div class="empty">No hay anuncios activos en esta categoría.</div>\`;
-    $("[data-delete-post]",host).forEach(b=>b.addEventListener("click",()=>deleteBoardPost(b.dataset.deletePost)));
-  }catch(e){host.innerHTML=\`<div class="empty">\${esc(humanError(e))}</div>\`;}
+        <div class="board-post-head"><span class="board-category">${esc(communityCategoryLabel(p.category))}</span><strong>${esc(p.username)}</strong></div>
+        <h4>${esc(p.title)}</h4>
+        <p>${esc(p.body)}</p>
+        <div class="board-meta"><span>${communityTime(p.created_at)} · caduca ${new Date(p.expires_at).toLocaleDateString("es-ES")}</span>${p.user_id===data.me?`<button class="community-delete" data-delete-post="${esc(p.id)}">BORRAR</button>`:""}</div>
+      </article>`).join(""):`<div class="empty">No hay anuncios activos en esta categoría.</div>`;
+    document.querySelectorAll("[data-delete-post]").forEach(b=>b.addEventListener("click",()=>deleteBoardPost(b.dataset.deletePost)));
+  }catch(e){host.innerHTML=`<div class="empty">${esc(humanError(e))}</div>`;}
 }
 async function publishBoardPost(e){
   e.preventDefault();
@@ -560,10 +568,12 @@ async function publishBoardPost(e){
 }
 async function deleteBoardPost(id){
   if(!confirm("¿Retirar este anuncio del tablón?"))return;
-  try{await communityApi(\`/posts/\${encodeURIComponent(id)}\`,{method:"DELETE"});toast("Anuncio retirado.");await loadBoardPosts();}
-  catch(e){toast(humanError(e),"error");}
+  try{
+    await communityApi(`/posts/${encodeURIComponent(id)}`,{method:"DELETE"});
+    toast("Anuncio retirado.");
+    await loadBoardPosts();
+  }catch(e){toast(humanError(e),"error");}
 }
-
 
 function renderRealm(){
   const r=realmState.realm,b=realmState.buildings,c=realmState.capacities; const school=catalogs.schools.find(s=>s.code===r.school_code);
