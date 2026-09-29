@@ -3,7 +3,7 @@
 const SUPABASE_URL = "https://mrmvmoyysxuopqexbxfk.supabase.co";
 const SUPABASE_KEY = "sb_publishable_tZEPJi2v7Tp-xDuVa0qWRw_geizIGoD";
 const SESSION_KEY = "arcanum_session_v2";
-const BUILD_VERSION = "0.2.0";
+const BUILD_VERSION = "0.2.1";
 const VERSION_CHECK_INTERVAL_MS = 60000;
 const COMMUNITY_API = "https://smynvbrkgffpepbhrpxt.supabase.co/functions/v1/arcanum-community";
 const COMMUNITY_POLL_MS = 2500;
@@ -62,7 +62,7 @@ function humanError(error){
   ];
   for(const [k,v] of map) if(m.includes(k)) return v;
   if(m.includes("duplicate key") || m.includes("unique")) return "Ese nombre ya está ocupado.";
-  if(m.includes("Invalid login credentials")) return "Correo o contraseña incorrectos.";
+  if(m.includes("Invalid login credentials")) return "Usuario o contraseña incorrectos.";
   if(m.includes("JWT") || m.includes("token")) return "Tu sesión ha caducado. Vuelve a entrar.";
   return m.replace(/^.*?message[:=]\s*/i,"").slice(0,260);
 }
