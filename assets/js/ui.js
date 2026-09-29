@@ -28,7 +28,9 @@ function openManual(){
       <details class="manual-section"><summary>Guerra</summary><p>Los ataques consumen turnos y pueden causar bajas y cambios territoriales. Antes de combatir, asegúrate de poder mantener el gasto de guerra y de no dejar tu reino indefenso.</p></details>
       <details class="manual-section"><summary>Comunidad</summary><p>El <b>Chat global</b> conecta a los Archimagos casi en tiempo real. El <b>Tablón</b> sirve para anuncios de diplomacia, reclutamiento, comercio, guerra y asuntos generales. Puedes borrar tus propios mensajes y anuncios.</p></details>
     </div>
-    <div class="manual-steps"><b>Primeros pasos:</b> explora algunas tierras → construye una economía básica → levanta Gremios → investiga magia → crea Cuarteles y ejército → empieza a competir con otros reinos.</div>`;
+    <div class="manual-steps"><b>Primeros pasos:</b> explora algunas tierras → construye una economía básica → levanta Gremios → investiga magia → crea Cuarteles y ejército → empieza a competir con otros reinos.</div>
+    <div class="manual-tutorial-cta"><div><small>TUTORIAL INTERACTIVO</small><strong>Recorre el juego paso a paso</strong><p>ARCANUM cambiará de sección y señalará cada sistema directamente sobre la interfaz.</p></div><button class="primary-action" id="manual-start-tutorial" type="button">✦ INICIAR TUTORIAL</button></div>`;
+  $("#manual-start-tutorial")?.addEventListener("click",()=>startTutorial(true));
   show($("#modal"));
 }
 
@@ -61,11 +63,11 @@ function wireStaticEvents(){
   });
   $("#create-form").addEventListener("submit",async e=>{
     e.preventDefault(); clearNotice($("#create-notice")); const username=String(getSession()?.user?.user_metadata?.username||"").trim(); if(!username){setNotice($("#create-notice"),"No se ha podido recuperar tu nombre de usuario. Vuelve a iniciar sesión.");return;} if(!selectedSchool){setNotice($("#create-notice"),"Elige una de las Cinco Escuelas.");return;} const btn=$("#create-button"); btn.disabled=true;
-    try{await rpc("create_archmage",{p_display_name:username,p_mage_name:username,p_school_code:selectedSchool}); toast("Tu reino ha sido fundado."); realmState=await rpc("my_realm_state"); showGame();}
+    try{await rpc("create_archmage",{p_display_name:username,p_mage_name:username,p_school_code:selectedSchool}); toast("Tu reino ha sido fundado."); realmState=await rpc("my_realm_state"); showGame(); setTimeout(()=>startTutorial(false),450);}
     catch(err){setNotice($("#create-notice"),humanError(err));} finally{btn.disabled=false;}
   });
   $("#creation-logout").addEventListener("click",signOut); $("#logout-button").addEventListener("click",signOut); $("#refresh-button").addEventListener("click",()=>refreshState(false));
-  $("#manual-top-button").addEventListener("click",openManual); $("#manual-side-button").addEventListener("click",openManual);
+  $("#manual-top-button").addEventListener("click",openManual); $("#manual-side-button").addEventListener("click",openManual); $("#tutorial-side-button")?.addEventListener("click",()=>startTutorial(true));
   $("#main-nav").addEventListener("click",e=>{const b=e.target.closest("button[data-view]");if(b)navigate(b.dataset.view);}); $("#mobile-nav").addEventListener("click",e=>{const b=e.target.closest("button[data-view]");if(b)navigate(b.dataset.view);});
   $("#modal-close").addEventListener("click",()=>hide($("#modal"))); $("#modal").addEventListener("click",e=>{if(e.target.id==="modal")hide($("#modal"));});
 }
