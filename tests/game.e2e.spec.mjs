@@ -3,6 +3,14 @@ import { test, expect } from "@playwright/test";
 const SUPABASE_HOST = "mrmvmoyysxuopqexbxfk.supabase.co";
 const COMMUNITY_HOST = "smynvbrkgffpepbhrpxt.supabase.co";
 
+function corsHeaders(){
+  return {
+    "access-control-allow-origin":"*",
+    "access-control-allow-headers":"authorization, apikey, content-type",
+    "access-control-allow-methods":"GET, POST, DELETE, OPTIONS"
+  };
+}
+
 function freshState(){
   return {
     season:{name:"Temporada de Pruebas",status:"active",ruleset_version:"test"},
@@ -48,29 +56,30 @@ async function installMocks(page){
     const path=url.pathname;
     const body=()=>{ try{return req.postDataJSON()||{};}catch{return {};} };
     calls.push({method:req.method(),path,body:body()});
+    if(req.method()==="OPTIONS") return route.fulfill({status:204,headers:corsHeaders(),body:""});
 
     if(path==="/auth/v1/token"){
-      return route.fulfill({status:200,contentType:"application/json",body:JSON.stringify({
+      return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({
         access_token:"e2e-access",refresh_token:"e2e-refresh",expires_in:3600,
         user:{id:"e2e-user",user_metadata:{username:"E2E_TESTER"}}
       })});
     }
     if(path==="/auth/v1/logout") return route.fulfill({status:204,body:""});
 
-    if(path==="/rest/v1/schools") return route.fulfill({status:200,contentType:"application/json",body:JSON.stringify(schools)});
-    if(path==="/rest/v1/spell_catalog") return route.fulfill({status:200,contentType:"application/json",body:JSON.stringify(spells)});
-    if(path==="/rest/v1/unit_catalog") return route.fulfill({status:200,contentType:"application/json",body:JSON.stringify(units)});
-    if(path==="/rest/v1/summon_profiles") return route.fulfill({status:200,contentType:"application/json",body:"[]"});
+    if(path==="/rest/v1/schools") return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify(schools)});
+    if(path==="/rest/v1/spell_catalog") return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify(spells)});
+    if(path==="/rest/v1/unit_catalog") return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify(units)});
+    if(path==="/rest/v1/summon_profiles") return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:"[]"});
 
     const rpc=path.match(/^\/rest\/v1\/rpc\/(.+)$/)?.[1];
-    if(rpc==="my_realm_state") return route.fulfill({status:200,contentType:"application/json",body:JSON.stringify(state)});
+    if(rpc==="my_realm_state") return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify(state)});
     if(rpc==="explore"){
       const turns=Number(body().p_turns||1);
       state.realm.turns-=turns;
       state.realm.land+=12;
       state.realm.wilderness+=12;
       state.realm.net_power+=120;
-      return route.fulfill({status:200,contentType:"application/json",body:JSON.stringify({land_gained:12})});
+      return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({land_gained:12})});
     }
     if(rpc==="build"){
       const plan=body().p_plan||{};
@@ -79,25 +88,25 @@ async function installMocks(page){
         state.realm.wilderness=Math.max(0,state.realm.wilderness-Number(value||0));
       }
       state.realm.turns-=1;
-      return route.fulfill({status:200,contentType:"application/json",body:JSON.stringify({turns_spent:1})});
+      return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({turns_spent:1})});
     }
     if(rpc==="research"){
       state.realm.turns-=1;
-      return route.fulfill({status:200,contentType:"application/json",body:JSON.stringify({completed:[],total_points_generated:14})});
+      return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({completed:[],total_points_generated:14})});
     }
-    if(rpc==="my_army") return route.fulfill({status:200,contentType:"application/json",body:JSON.stringify(army)});
+    if(rpc==="my_army") return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify(army)});
     if(rpc==="recruit_units"){
       army=[{unit_id:"militia",name_es:"Milicia",quantity:5,stack_np:50}];
       state.realm.turns-=1;
-      return route.fulfill({status:200,contentType:"application/json",body:JSON.stringify({recruited:5})});
+      return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({recruited:5})});
     }
-    if(rpc==="attack_targets") return route.fulfill({status:200,contentType:"application/json",body:JSON.stringify([
+    if(rpc==="attack_targets") return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify([
       {mage_name:"RIVAL_TEST",school_code:"abyssal",land:480,net_power:14200,can_attack:true}
     ])});
-    if(rpc==="leaderboard") return route.fulfill({status:200,contentType:"application/json",body:"[]"});
-    if(rpc==="my_battle_reports") return route.fulfill({status:200,contentType:"application/json",body:"[]"});
+    if(rpc==="leaderboard") return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:"[]"});
+    if(rpc==="my_battle_reports") return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:"[]"});
 
-    return route.fulfill({status:404,contentType:"application/json",body:JSON.stringify({error:`Unhandled mock route: ${path}`})});
+    return route.fulfill({status:404,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({error:`Unhandled mock route: ${path}`})});
   });
 
   await page.route(`https://${COMMUNITY_HOST}/functions/v1/arcanum-community**`, async route=>{
@@ -106,26 +115,27 @@ async function installMocks(page){
     const tail=url.pathname.split("/arcanum-community")[1]||"/";
     const now=new Date().toISOString();
     calls.push({method:req.method(),path:"community"+tail});
+    if(req.method()==="OPTIONS") return route.fulfill({status:204,headers:corsHeaders(),body:""});
 
     if(tail.startsWith("/messages")){
       if(req.method()==="POST"){
         const payload=req.postDataJSON();
         chatMessages.push({id:"msg-"+(chatMessages.length+1),user_id:"e2e-user",username:"E2E_TESTER",message:payload.message,created_at:now});
-        return route.fulfill({status:201,contentType:"application/json",body:JSON.stringify({message:chatMessages.at(-1),me:"e2e-user"})});
+        return route.fulfill({status:201,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({message:chatMessages.at(-1),me:"e2e-user"})});
       }
-      return route.fulfill({status:200,contentType:"application/json",body:JSON.stringify({messages:chatMessages,me:"e2e-user"})});
+      return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({messages:chatMessages,me:"e2e-user"})});
     }
 
     if(tail.startsWith("/posts")){
       if(req.method()==="POST"){
         const payload=req.postDataJSON();
         boardPosts.unshift({id:"post-"+(boardPosts.length+1),user_id:"e2e-user",username:"E2E_TESTER",category:payload.category,title:payload.title,body:payload.body,created_at:now,expires_at:new Date(Date.now()+14*86400000).toISOString()});
-        return route.fulfill({status:201,contentType:"application/json",body:JSON.stringify({post:boardPosts[0],me:"e2e-user"})});
+        return route.fulfill({status:201,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({post:boardPosts[0],me:"e2e-user"})});
       }
-      return route.fulfill({status:200,contentType:"application/json",body:JSON.stringify({posts:boardPosts,me:"e2e-user"})});
+      return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({posts:boardPosts,me:"e2e-user"})});
     }
 
-    return route.fulfill({status:404,contentType:"application/json",body:'{"error":"NOT_FOUND"}'});
+    return route.fulfill({status:404,contentType:"application/json",headers:corsHeaders(),body:'{"error":"NOT_FOUND"}'});
   });
 
   return {state,calls};
