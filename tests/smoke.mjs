@@ -12,6 +12,11 @@ const jsFiles=[
   "assets/js/magic.js","assets/js/army.js","assets/js/war.js","assets/js/tutorial.js","assets/js/ui.js"
 ];
 const js=jsFiles.map(read).join("\n");
+const uiAssets=[
+  "assets/ui/nav/reino.png","assets/ui/nav/economia.png","assets/ui/nav/construccion.png","assets/ui/nav/investigacion.png",
+  "assets/ui/nav/ejercito.png","assets/ui/nav/guerra.png","assets/ui/nav/clasificacion.png","assets/ui/nav/informes.png","assets/ui/nav/comunidad.png",
+  "assets/ui/resources/oro.png","assets/ui/resources/mana.png","assets/ui/resources/poblacion.png"
+];
 
 test("HTML is shell-only and references external assets",()=>{
   assert.match(html,/assets\/css\/arcanum\.css/);
@@ -39,4 +44,11 @@ test("build version matches version manifest",()=>{
   const m=js.match(/const BUILD_VERSION = "([^"]+)"/);
   assert.ok(m,"BUILD_VERSION missing");
   assert.equal(m[1],version.version);
+});
+
+
+test("art project UI icons are present and wired",()=>{
+  for(const file of uiAssets) assert.ok(fs.existsSync(new URL("../"+file,import.meta.url)),`Missing art asset: ${file}`);
+  assert.match(html,/assets\/ui\/nav\/reino\.png/);
+  assert.match(read("assets/js/realm-state.js"),/assets\/ui\/resources\/oro\.png/);
 });
