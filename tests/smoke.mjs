@@ -50,5 +50,5 @@ test("build version matches version manifest",()=>{
 test("art project UI icons are present and wired",()=>{
   for(const file of uiAssets) assert.ok(fs.existsSync(new URL("../"+file,import.meta.url)),`Missing art asset: ${file}`);
   assert.match(html,/assets\/ui\/nav\/reino\.png/);
-  assert.match(read("assets/js/realm-state.js"),/assets\/ui\/resources\/oro\.png/);
+  assert.match(read("assets/js/realm-state.js"),/assets\/ui\/resources\/oro\.png/);\n  assert.ok(fs.existsSync(new URL("../assets/art/characters/verdante/verdante-level-1.png",import.meta.url)),"Missing Verdante level 1 portrait");\n  assert.match(read("assets/js/profile.js"),/verdante-level-1\.png/);
 });
