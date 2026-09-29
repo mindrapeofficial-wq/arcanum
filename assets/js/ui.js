@@ -42,6 +42,7 @@ async function actionCall(btn,fn,successMessage=null,messageFn=null){
 }
 
 function wireStaticEvents(){
+  wireTopPlayerSearch();
   $("#login-tab").addEventListener("click",()=>switchAuthMode("login")); $("#register-tab").addEventListener("click",()=>switchAuthMode("register"));
   $("#auth-form").addEventListener("submit",async e=>{
     e.preventDefault();
