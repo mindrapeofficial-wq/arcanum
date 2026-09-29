@@ -1,7 +1,7 @@
 {
   "name": "arcanum-las-cinco-escuelas",
   "private": true,
-  "version": "0.2.18",
+  "version": "0.2.19",
   "scripts": {
     "test": "node --test tests/smoke.mjs",
     "test:e2e": "playwright test"
