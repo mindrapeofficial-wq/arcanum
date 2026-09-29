@@ -59,6 +59,8 @@ function renderRealm(){
   $("#view-host").innerHTML=`${viewHeader("DOMINIO","Tu Reino","Estado, capacidad y rumbo estratégico de tu Archimago.")}
   <div class="realm-dashboard">
     <section class="realm-banner realm-banner-2">
+      <img class="realm-kingdom-image" src="assets/art/kingdom-level-00.svg?v=0.2.2" alt="" aria-hidden="true" />
+      <div class="realm-banner-shade" aria-hidden="true"></div>
       <div class="realm-banner-content">
         <span class="section-kicker">${esc(school?.name_es||r.school_code)}</span>
         <h2>${esc(r.mage_name)}</h2>
@@ -74,11 +76,7 @@ function renderRealm(){
           <button class="small-action" data-quick="war">GUERRA</button>
         </div>
       </div>
-      <div class="realm-art-stage" aria-hidden="true">
-        <div class="realm-art-orbit"></div>
-        <div class="realm-art-citadel"><span>♜</span></div>
-        <small>EVOLUCIÓN DEL REINO · NIVEL ${progression.level}</small>
-      </div>
+      <small class="realm-art-label">REINO · NIVEL 0 · ARTE DE BETA</small>
     </section>
 
     <section class="realm-command panel">
