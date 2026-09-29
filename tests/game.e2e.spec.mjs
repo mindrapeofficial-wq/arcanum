@@ -73,6 +73,21 @@ async function installMocks(page){
 
     const rpc=path.match(/^\/rest\/v1\/rpc\/(.+)$/)?.[1];
     if(rpc==="my_realm_state") return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify(state)});
+    if(rpc==="player_profile"){
+      const target=String(body().p_mage_name||state.realm.mage_name);
+      const self=target.toLowerCase()===state.realm.mage_name.toLowerCase();
+      return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({
+        mage_name:target,school_code:self?state.realm.school_code:"abyssal",status:"alive",
+        land:self?state.realm.land:480,net_power:self?state.realm.net_power:14200,spell_level:self?state.realm.spell_level:2,
+        bio:self?"Archimago de pruebas.":"Rival de pruebas.",avatar_path:null,is_self:self,is_npc:false,
+        friendship:self?null:{status:"none"},alliance:null,my_alliance:null,can_invite_to_alliance:false
+      })});
+    }
+    if(rpc==="social_inbox") return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({friend_requests:[],alliance_invites:[],friends:[]})});
+    if(rpc==="update_my_profile") return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({bio:body().p_bio||"",avatar_path:body().p_avatar_path||null})});
+    if(rpc==="friend_request") return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({status:"pending",direction:"outgoing"})});
+    if(rpc==="conversation_with") return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({messages:[]})});
+    if(rpc==="send_direct_message") return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({sent:true,id:1})});
     if(rpc==="explore"){
       const turns=Number(body().p_turns||1);
       state.realm.turns-=turns;
@@ -233,4 +248,20 @@ test("la navegación móvil abre Comunidad sin errores", async ({page})=>{
   await community.click();
   await expect(page.getByRole("heading",{name:"Comunidad"})).toBeVisible();
   expect(errors).toEqual([]);
+});
+
+
+test("la ficha de personaje se abre desde el nombre y permite editar la bio", async ({page})=>{
+  await installMocks(page);
+  await page.goto("/");
+  await page.locator("#username").fill("E2E_TESTER");
+  await page.locator("#password").fill("prueba-segura");
+  await page.locator("#submit-button").click();
+  await expect(page.getByRole("heading",{name:"Tu Reino"})).toBeVisible();
+  await page.locator("#mage-card-button").click();
+  await expect(page.getByText("FICHA DE ARCHIMAGO")).toBeVisible();
+  await expect(page.locator("#profile-bio-input")).toBeVisible();
+  await page.locator("#profile-bio-input").fill("Nueva bio de pruebas.");
+  await page.locator("#profile-save-bio").click();
+  await expect(page.locator(".toast").last()).toContainText("Ficha de personaje actualizada");
 });
