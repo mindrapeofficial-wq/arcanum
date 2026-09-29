@@ -11,8 +11,7 @@ const jsFiles=[
   "assets/js/community.js","assets/js/realm.js","assets/js/economy.js","assets/js/construction.js",
   "assets/js/magic.js","assets/js/army.js","assets/js/war.js","assets/js/tutorial.js","assets/js/ui.js"
 ];
-const js=jsFiles.map(read).join("
-");
+const js=jsFiles.map(read).join("\n");
 const uiAssets=[
   "assets/ui/nav/reino.png","assets/ui/nav/economia.png","assets/ui/nav/construccion.png","assets/ui/nav/investigacion.png",
   "assets/ui/nav/ejercito.png","assets/ui/nav/guerra.png","assets/ui/nav/clasificacion.png","assets/ui/nav/informes.png","assets/ui/nav/comunidad.png",
@@ -63,7 +62,6 @@ test("build version matches version manifest",()=>{
   assert.ok(m,"BUILD_VERSION missing");
   assert.equal(m[1],version.version);
 });
-
 
 test("art project UI icons are present and wired",()=>{
   for(const file of uiAssets) assert.ok(fs.existsSync(new URL("../"+file,import.meta.url)),`Missing art asset: ${file}`);
