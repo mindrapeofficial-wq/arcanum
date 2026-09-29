@@ -39,7 +39,7 @@ function showGame(){
 
 function renderSchools(){
   const descriptions={ascendant:"Luz, protección y resurrección.",verdant:"Naturaleza, crecimiento y regeneración.",eradication:"Fuego, destrucción y poder directo.",abyssal:"Muerte, demonios y corrupción.",phantasm:"Ilusión, conocimiento y manipulación."};
-  $("#school-grid").innerHTML=catalogs.schools.map(s=>`<button type="button" class="school-card" data-school="${esc(s.code)}">${s.code==="ascendant"?`<img class="school-symbol-image" src="assets/art/sigils/ascendente.webp?v=0.2.8" alt="" aria-hidden="true" />`:`<span class="school-symbol">${symbols[s.code]||"✦"}</span>`}<strong>${esc(s.name_es)}</strong><small>${esc(descriptions[s.code]||s.description_es||"")}</small></button>`).join("");
+  $("#school-grid").innerHTML=catalogs.schools.map(s=>`<button type="button" class="school-card" data-school="${esc(s.code)}">${s.code==="ascendant"?`<img class="school-symbol-image" src="assets/art/sigils/ascendente.webp?v=0.2.9" alt="" aria-hidden="true" />`:`<span class="school-symbol">${symbols[s.code]||"✦"}</span>`}<strong>${esc(s.name_es)}</strong><small>${esc(descriptions[s.code]||s.description_es||"")}</small></button>`).join("");
   $$(".school-card").forEach(btn=>btn.addEventListener("click",()=>{selectedSchool=btn.dataset.school; $$(".school-card").forEach(x=>x.classList.toggle("selected",x===btn));}));
 }
 function renderChrome(){
@@ -55,9 +55,9 @@ function renderResourceStrip(){
   $("#resource-strip").innerHTML=`
     <div class="resource-item turns"><small>Turnos</small><strong><span id="turn-count">${n(r.turns)}</span> / ${n(r.max_turns)}</strong></div>
     <div class="resource-item"><small>Próximo</small><strong id="next-turn">${r.turns>=r.max_turns?"MÁXIMO":"--:--"}</strong></div>
-    <div class="resource-item has-icon"><img class="resource-icon" src="assets/ui/resources/oro.png?v=0.2.7" alt="" aria-hidden="true" decoding="async" /><span class="resource-copy"><small>Oro</small><strong>${n(r.gold)}</strong></span></div>
-    <div class="resource-item has-icon"><img class="resource-icon" src="assets/ui/resources/mana.png?v=0.2.7" alt="" aria-hidden="true" decoding="async" /><span class="resource-copy"><small>Maná</small><strong>${n(r.mana)}</strong></span></div>
-    <div class="resource-item has-icon"><img class="resource-icon" src="assets/ui/resources/poblacion.png?v=0.2.7" alt="" aria-hidden="true" decoding="async" /><span class="resource-copy"><small>Población</small><strong>${n(r.population)}</strong></span></div>
+    <div class="resource-item has-icon"><img class="resource-icon" src="assets/ui/resources/oro.png?v=0.2.9" alt="" aria-hidden="true" decoding="async" /><span class="resource-copy"><small>Oro</small><strong>${n(r.gold)}</strong></span></div>
+    <div class="resource-item has-icon"><img class="resource-icon" src="assets/ui/resources/mana.png?v=0.2.9" alt="" aria-hidden="true" decoding="async" /><span class="resource-copy"><small>Maná</small><strong>${n(r.mana)}</strong></span></div>
+    <div class="resource-item has-icon"><img class="resource-icon" src="assets/ui/resources/poblacion.png?v=0.2.9" alt="" aria-hidden="true" decoding="async" /><span class="resource-copy"><small>Población</small><strong>${n(r.population)}</strong></span></div>
     <div class="resource-item"><small>Tierras</small><strong>${n(r.land)}</strong></div>
     <div class="resource-item"><small>Poder Neto</small><strong>${n(r.net_power)}</strong></div>`;
 }
