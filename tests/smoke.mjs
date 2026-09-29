@@ -9,7 +9,7 @@ const version=JSON.parse(read("version.json"));
 const jsFiles=[
   "assets/js/state.js","assets/js/auth.js","assets/js/realm-state.js","assets/js/router.js",
   "assets/js/community.js","assets/js/realm.js","assets/js/economy.js","assets/js/construction.js",
-  "assets/js/magic.js","assets/js/army.js","assets/js/war.js","assets/js/ui.js"
+  "assets/js/magic.js","assets/js/army.js","assets/js/war.js","assets/js/tutorial.js","assets/js/ui.js"
 ];
 const js=jsFiles.map(read).join("\n");
 
@@ -31,7 +31,7 @@ test("no single-element selector is iterated with forEach",()=>{
 test("critical game flows remain wired",()=>{
   for(const token of [
     "signInAccount","my_realm_state","rpc(\"explore\"","rpc(\"build\"","rpc(\"research\"",
-    "rpc(\"recruit_units\"","attack_targets","renderCommunity","COMMUNITY_API"
+    "rpc(\"recruit_units\"","attack_targets","renderCommunity","COMMUNITY_API","startTutorial","tutorialSteps"
   ]) assert.ok(js.includes(token),`Missing critical flow: ${token}`);
 });
 
