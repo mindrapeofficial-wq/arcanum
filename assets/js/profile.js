@@ -65,6 +65,19 @@ function friendshipActions(profile){
   if(f.status==="pending")return '<button class="profile-action secondary" data-profile-friend-remove="'+esc(profile.mage_name)+'">SOLICITUD ENVIADA</button>';
   return '<button class="profile-action" data-profile-friend-add="'+esc(profile.mage_name)+'">＋ AGREGAR AMIGO</button>';
 }
+function renderArchmageProgression(profile){
+  const progression=archmageProgressionFromProfile(profile);
+  if(!progression)return "";
+  const stats=ARCHMAGE_STAT_KEYS.map(key=>{
+    const meta=ARCHMAGE_STAT_META[key];
+    return '<div class="archmage-attribute"><small>'+esc(meta.label)+'</small><strong>'+n(progression.stats[key])+'</strong><span>'+esc(meta.description)+'</span></div>';
+  }).join("");
+  const pct=Math.round(progression.xpRatio*100);
+  return '<section class="archmage-progression"><div class="profile-section-title"><span>PROGRESIÓN DEL ARCHIMAGO</span><small>'+n(progression.attributePoints)+' puntos disponibles</small></div>'+
+    '<div class="archmage-level-row"><div><small>NIVEL</small><strong>'+n(progression.level)+'</strong></div><div class="archmage-xp"><div><span>EXPERIENCIA</span><b>'+n(progression.xp)+' / '+n(progression.xpNext)+'</b></div><div class="archmage-xp-track"><i style="width:'+pct+'%"></i></div></div></div>'+
+    '<div class="archmage-attributes">'+stats+'</div></section>';
+}
+
 function renderPlayerProfile(profile,inbox=null){
   const alliance=profile.alliance;
   const allianceBadge=alliance?'<span class="profile-alliance-badge">['+esc(alliance.tag)+'] '+esc(alliance.name)+'</span>':"";
@@ -87,6 +100,7 @@ function renderPlayerProfile(profile,inbox=null){
     '<section class="character-sheet">'+
       '<div class="profile-hero">'+profileAvatarMarkup(profile,true)+'<div class="profile-identity"><span class="section-kicker">'+(profile.is_npc?"ARCHIMAGO NPC":"FICHA DE ARCHIMAGO")+'</span><h3>'+esc(profile.mage_name)+'</h3><div class="profile-subline">'+esc(profileSchoolName(profile.school_code))+' '+(profile.is_npc?'<span class="tag npc-tag">NPC</span>':"")+' '+allianceBadge+'</div></div></div>'+
       '<div class="profile-stats"><div><small>PODER NETO</small><strong>'+n(profile.net_power)+'</strong></div><div><small>TIERRAS</small><strong>'+n(profile.land)+'</strong></div><div><small>NIVEL MÁGICO</small><strong>'+n(profile.spell_level)+'</strong></div><div><small>ESTADO</small><strong>'+esc(profile.status)+'</strong></div></div>'+
+      renderArchmageProgression(profile)+
       '<div class="profile-bio-block"><div class="profile-section-title"><span>BIOGRAFÍA</span>'+(profile.is_self?'<small>máx. 500 caracteres</small>':"")+'</div>'+bioBlock+'</div>'+
       actions+
       (profile.is_npc?'<div class="profile-system-note">Este reino está controlado por ARCANUM. Las acciones sociales están desactivadas para NPC.</div>':"")+
