@@ -1,6 +1,6 @@
 # ARCANUM · Progresión del Archimago
 
-Estado: diseño base aprobado para Beta 0.2.x.
+Estado: persistencia y gasto de atributos implementados en Beta 0.2.21; las fuentes de XP siguen desactivadas.
 
 ## Principios
 
@@ -68,17 +68,22 @@ Las fuentes de XP deberán representar hitos o resultados verificables por el se
 
 No se conectará ninguna fuente de XP hasta que exista una regla anti-farming específica para ella.
 
-## Integración futura
+## Estado de integración
 
-Orden previsto:
+Completado:
 
-1. Persistencia de XP y atributos en backend.
-2. RPC segura para consultar progresión.
-3. RPC transaccional para gastar puntos.
-4. Pruebas de permisos y concurrencia.
-5. Primer atributo con efecto real.
-6. Simulación de balance.
-7. PvE y recompensas.
-8. Integración controlada con PvP.
+1. Persistencia de XP y atributos por reino/temporada.
+2. Lectura de progresión integrada en la ficha del Archimago.
+3. RPC transaccional para gastar exactamente un punto.
+4. Restricción de acceso directo a la tabla y validación del presupuesto de atributos.
+5. Pruebas de la curva y del flujo de interfaz.
+
+Pendiente, deliberadamente:
+
+1. Fuentes de XP con reglas anti-farming.
+2. Primer atributo con efecto real.
+3. Simulación de balance.
+4. PvE y recompensas.
+5. Integración controlada con PvP.
 
 La prioridad es mantener separadas las capas Archimago, Reino y Ejército.
