@@ -274,7 +274,8 @@ test("la ficha de personaje se abre desde el nombre y permite editar la bio", as
   await expect(page.getByText("FICHA DE ARCHIMAGO")).toBeVisible();
   await expect(page.locator("#profile-bio-input")).toBeVisible();
   await expect(page.getByText("PROGRESIÓN DEL ARCHIMAGO")).toBeVisible();
-  await expect(page.getByText("Poder Arcano")).toBeVisible();\n  await expect(page.locator(".archmage-level-row > div:first-child strong")).toHaveText("4");
+  await expect(page.getByText("Poder Arcano")).toBeVisible();
+  await expect(page.locator(".archmage-level-row > div:first-child strong")).toHaveText("4");
   await page.locator("#profile-bio-input").fill("Nueva bio de pruebas.");
   await page.locator("#profile-save-bio").click();
   await expect(page.locator(".toast").last()).toContainText("Ficha de personaje actualizada");
