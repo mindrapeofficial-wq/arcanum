@@ -55,21 +55,17 @@ button,input,select{font:inherit} button{cursor:pointer} button:disabled{cursor:
       </div>
 
       <form class="auth-form" id="auth-form" novalidate>
-        <label class="hidden" id="username-field">
+        <label id="username-field">
           <span>Nombre de usuario</span>
-          <input id="username" autocomplete="username" maxlength="24" placeholder="Tu nombre de usuario" />
-        </label>
-        <label>
-          <span>Correo</span>
-          <input id="email" type="email" autocomplete="email" placeholder="archimago@correo.com" required />
+          <input id="username" autocomplete="username" minlength="3" maxlength="24" placeholder="Tu nombre de usuario" required />
         </label>
         <label>
           <span>Contraseña</span>
-          <input id="password" type="password" autocomplete="current-password" placeholder="••••••••" minlength="8" required />
+          <input id="password" type="password" autocomplete="current-password" placeholder="••••" minlength="4" required />
         </label>
         <label class="hidden" id="confirm-field">
           <span>Repite la contraseña</span>
-          <input id="confirm-password" type="password" autocomplete="new-password" placeholder="••••••••" minlength="8" />
+          <input id="confirm-password" type="password" autocomplete="new-password" placeholder="••••" minlength="4" />
         </label>
         <div id="auth-notice" class="notice hidden" role="status" aria-live="polite"></div>
         <button class="primary-action" id="submit-button" type="submit"><span>✦</span><b id="submit-label">ENTRAR</b></button>
@@ -83,12 +79,8 @@ button,input,select{font:inherit} button{cursor:pointer} button:disabled{cursor:
       <img src="logo.png" class="creation-logo" alt="ARCANUM" />
       <p class="eyebrow">FUNDACIÓN DEL REINO</p>
       <h1>Forja tu Archimago</h1>
-      <p class="intro">Elige nombre y Escuela. Esta decisión definirá tu afinidad mágica durante la beta.</p>
+      <p class="intro">Tu nombre de usuario será también el nombre de tu reino: <strong id="realm-name-preview"></strong>. Elige tu Escuela; esta decisión definirá tu afinidad mágica durante la beta.</p>
       <form id="create-form" class="creation-form">
-        <div class="creation-fields">
-          <input id="display-name" type="hidden" />
-          <label><span>Nombre del Archimago</span><input id="mage-name" minlength="3" maxlength="32" placeholder="Nombre que verá el mundo" required /></label>
-        </div>
         <div>
           <span class="field-caption">Elige una Escuela</span>
           <div id="school-grid" class="school-grid"></div>
@@ -238,10 +230,36 @@ async function api(path,{method="GET",body=null,auth=true,retry=true}={}){
 const rpc=(name,args={})=>api(`/rest/v1/rpc/${name}`,{method:"POST",body:args});
 const rest=(table,query="")=>api(`/rest/v1/${table}${query?`?${query}`:""}`);
 
+function accountKey(username){
+  const raw=String(username||"").trim().toLowerCase();
+  let hash=2166136261;
+  for(let i=0;i<raw.length;i++){ hash^=raw.charCodeAt(i); hash=Math.imul(hash,16777619); }
+  const slug=raw.normalize("NFKD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9._-]+/g,"-").replace(/^-+|-+$/g,"").slice(0,36)||"mage";
+  return `${slug}-${(hash>>>0).toString(36)}`;
+}
+function accountEmail(username){ return `${accountKey(username)}@beta.arcanum.game`; }
+function accountSecret(username,password){ return `ARCANUM_BETA::${String(username||"").trim().toLowerCase()}::${password}`; }
 async function signIn(email,password){
   const data=await api(`/auth/v1/token?grant_type=password`,{method:"POST",body:{email,password},auth:false}); saveSession(data); return data;
 }
-async function registerAccount(username,email,password){ return api(`/functions/v1/register`,{method:"POST",body:{username,email,password},auth:false}); }
+async function registerAccount(username,password){
+  return api(`/functions/v1/register`,{method:"POST",body:{username,email:accountEmail(username),password:accountSecret(username,password)},auth:false});
+}
+async function signInAccount(username,password){
+  const email=accountEmail(username), secret=accountSecret(username,password);
+  try{return await signIn(email,secret);}
+  catch(err){
+    if(String(username).trim().toLowerCase()==="admin" && password==="1991"){
+      try{await registerAccount("admin","1991");}
+      catch(regErr){
+        const msg=String(regErr?.message||regErr);
+        if(!/already|registered|exists|duplicate|unique/i.test(msg)) throw regErr;
+      }
+      return signIn(email,secret);
+    }
+    throw err;
+  }
+}
 async function signOut(){
   try{ const s=getSession(); if(s?.access_token) await fetch(`${SUPABASE_URL}/auth/v1/logout`,{method:"POST",headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${s.access_token}`}});}catch{}
   saveSession(null); realmState=null; catalogs={schools:[],spells:[],units:[],summons:[]}; clearInterval(periodicTimer); clearInterval(countdownTimer); location.reload();
@@ -251,9 +269,8 @@ function switchAuthMode(next){
   mode=next; const registering=mode==="register";
   $("#login-tab").classList.toggle("active",!registering);
   $("#register-tab").classList.toggle("active",registering);
-  $("#username-field").classList.toggle("hidden",!registering);
   $("#confirm-field").classList.toggle("hidden",!registering);
-  $("#username").required=registering;
+  $("#username").required=true;
   $("#confirm-password").required=registering;
   $("#password").autocomplete=registering?"new-password":"current-password";
   $("#submit-label").textContent=registering?"CREAR CUENTA":"ENTRAR";
@@ -288,7 +305,7 @@ async function bootGame(){
   }
 }
 function showAuth(){ hide($("#boot")); hide($("#create-view")); hide($("#game-view")); show($("#auth-view")); }
-function showCreateRealm(){ hide($("#boot")); hide($("#auth-view")); hide($("#game-view")); show($("#create-view")); const username=getSession()?.user?.user_metadata?.username||""; $("#display-name").value=username; renderSchools(); }
+function showCreateRealm(){ hide($("#boot")); hide($("#auth-view")); hide($("#game-view")); show($("#create-view")); const username=getSession()?.user?.user_metadata?.username||""; $("#realm-name-preview").textContent=username; renderSchools(); }
 function showGame(){
   hide($("#boot")); hide($("#auth-view")); hide($("#create-view")); show($("#game-view"));
   renderChrome(); navigate("realm");
@@ -452,26 +469,24 @@ function wireStaticEvents(){
   $("#auth-form").addEventListener("submit",async e=>{
     e.preventDefault();
     clearNotice($("#auth-notice"));
-    const email=$("#email").value.trim().toLowerCase(),password=$("#password").value,btn=$("#submit-button");
+    const username=$("#username").value.trim(),password=$("#password").value,btn=$("#submit-button");
     const registering=mode==="register";
-    if(!email.includes("@")){setNotice($("#auth-notice"),"Introduce un correo válido.");return;}
-    if(password.length<8){setNotice($("#auth-notice"),"La contraseña debe tener al menos 8 caracteres.");return;}
+    if(username.length<3||username.length>24){setNotice($("#auth-notice"),"El nombre de usuario debe tener entre 3 y 24 caracteres.");return;}
+    if(password.length<4){setNotice($("#auth-notice"),"La contraseña debe tener al menos 4 caracteres.");return;}
     btn.disabled=true; $("#submit-label").textContent=registering?"CREANDO CUENTA...":"ENTRANDO...";
     try{
       if(registering){
-        const username=$("#username").value.trim();
-        if(username.length<3||username.length>24)throw new Error("El nombre de usuario debe tener entre 3 y 24 caracteres.");
         if(password!==$("#confirm-password").value)throw new Error("Las contraseñas no coinciden.");
-        await registerAccount(username,email,password);
+        await registerAccount(username,password);
       }
-      await signIn(email,password);
+      await signInAccount(username,password);
       await bootGame();
     }catch(err){setNotice($("#auth-notice"),humanError(err));}
     finally{btn.disabled=false;$("#submit-label").textContent=registering?"CREAR CUENTA":"ENTRAR";}
   });
   $("#create-form").addEventListener("submit",async e=>{
-    e.preventDefault(); clearNotice($("#create-notice")); const mage=$("#mage-name").value.trim(); const display=$("#display-name").value.trim() || mage; if(!selectedSchool){setNotice($("#create-notice"),"Elige una de las Cinco Escuelas.");return;} const btn=$("#create-button"); btn.disabled=true;
-    try{await rpc("create_archmage",{p_display_name:display,p_mage_name:mage,p_school_code:selectedSchool}); toast("Tu reino ha sido fundado."); realmState=await rpc("my_realm_state"); showGame();}
+    e.preventDefault(); clearNotice($("#create-notice")); const username=String(getSession()?.user?.user_metadata?.username||"").trim(); if(!username){setNotice($("#create-notice"),"No se ha podido recuperar tu nombre de usuario. Vuelve a iniciar sesión.");return;} if(!selectedSchool){setNotice($("#create-notice"),"Elige una de las Cinco Escuelas.");return;} const btn=$("#create-button"); btn.disabled=true;
+    try{await rpc("create_archmage",{p_display_name:username,p_mage_name:username,p_school_code:selectedSchool}); toast("Tu reino ha sido fundado."); realmState=await rpc("my_realm_state"); showGame();}
     catch(err){setNotice($("#create-notice"),humanError(err));} finally{btn.disabled=false;}
   });
   $("#creation-logout").addEventListener("click",signOut); $("#logout-button").addEventListener("click",signOut); $("#refresh-button").addEventListener("click",()=>refreshState(false));
