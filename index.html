@@ -147,6 +147,9 @@ button,input,select{font:inherit} button{cursor:pointer} button:disabled{cursor:
 const SUPABASE_URL = "https://mrmvmoyysxuopqexbxfk.supabase.co";
 const SUPABASE_KEY = "sb_publishable_tZEPJi2v7Tp-xDuVa0qWRw_geizIGoD";
 const SESSION_KEY = "arcanum_session_v2";
+const BUILD_VERSION = "0.1.1";
+const VERSION_CHECK_INTERVAL_MS = 60000;
+
 
 const $ = (s, root=document) => root.querySelector(s);
 const $$ = (s, root=document) => [...root.querySelectorAll(s)];
@@ -309,7 +312,7 @@ function renderSchools(){
 function renderChrome(){
   const r=realmState.realm; const school=catalogs.schools.find(s=>s.code===r.school_code);
   $("#mage-title").textContent=r.mage_name; $("#mage-school").textContent=school?.name_es||r.school_code; $("#mage-sigil").textContent=symbols[r.school_code]||"✦";
-  $("#season-badge").innerHTML=`<strong>${esc(realmState.season.name)}</strong><br>${esc(realmState.season.status)} · ${esc(realmState.season.ruleset_version)}`;
+  $("#season-badge").innerHTML=`<strong>${esc(realmState.season.name)}</strong><br>${esc(realmState.season.status)} · ${esc(realmState.season.ruleset_version)}<br><span style="opacity:.62">BETA ${BUILD_VERSION}</span>`;
   renderResourceStrip();
 }
 function renderResourceStrip(){
@@ -482,8 +485,29 @@ function wireStaticEvents(){
   $("#modal-close").addEventListener("click",()=>hide($("#modal"))); $("#modal").addEventListener("click",e=>{if(e.target.id==="modal")hide($("#modal"));});
 }
 
+async function checkForUpdate(){
+  try{
+    const res=await fetch(`/version.json?ts=${Date.now()}`,{cache:"no-store",headers:{"Cache-Control":"no-cache"}});
+    if(!res.ok)return false;
+    const remote=await res.json();
+    const version=String(remote?.version||"").trim();
+    if(!version || version===BUILD_VERSION)return false;
+    const url=new URL(location.href);
+    if(url.searchParams.get("v")===version)return false;
+    url.searchParams.set("v",version);
+    url.searchParams.set("refresh",Date.now().toString());
+    try{toast(`Nueva versión ${version} disponible. Actualizando ARCANUM...`,"success",1200);}catch{}
+    setTimeout(()=>location.replace(url.toString()),350);
+    return true;
+  }catch{return false;}
+}
+
 async function init(){
-  wireStaticEvents(); const session=await validSession(); if(session)await bootGame(); else showAuth();
+  if(await checkForUpdate())return;
+  wireStaticEvents();
+  setInterval(checkForUpdate,VERSION_CHECK_INTERVAL_MS);
+  document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")checkForUpdate();});
+  const session=await validSession(); if(session)await bootGame(); else showAuth();
 }
 window.addEventListener("DOMContentLoaded",init);
 
