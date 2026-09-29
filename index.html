@@ -470,7 +470,7 @@ function wireStaticEvents(){
     finally{btn.disabled=false;$("#submit-label").textContent=registering?"CREAR CUENTA":"ENTRAR";}
   });
   $("#create-form").addEventListener("submit",async e=>{
-    e.preventDefault(); clearNotice($("#create-notice")); const display=$("#display-name").value.trim(),mage=$("#mage-name").value.trim(); if(!selectedSchool){setNotice($("#create-notice"),"Elige una de las Cinco Escuelas.");return;} const btn=$("#create-button"); btn.disabled=true;
+    e.preventDefault(); clearNotice($("#create-notice")); const mage=$("#mage-name").value.trim(); const display=$("#display-name").value.trim() || mage; if(!selectedSchool){setNotice($("#create-notice"),"Elige una de las Cinco Escuelas.");return;} const btn=$("#create-button"); btn.disabled=true;
     try{await rpc("create_archmage",{p_display_name:display,p_mage_name:mage,p_school_code:selectedSchool}); toast("Tu reino ha sido fundado."); realmState=await rpc("my_realm_state"); showGame();}
     catch(err){setNotice($("#create-notice"),humanError(err));} finally{btn.disabled=false;}
   });
