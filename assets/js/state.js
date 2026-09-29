@@ -58,6 +58,7 @@ function humanError(error){
     ["TARGET_NOT_FOUND","No se ha encontrado al Archimago objetivo."],["TARGET_NOT_ALIVE","Ese Archimago ya ha caído."],
     ["UNRESOLVED_TERRITORY_DAMAGE","Tu reino tiene daño territorial pendiente de resolver."],["INVALID_BUILD_PLAN","El plan de construcción no es válido."],
     ["UNIT_UNDISBANDABLE","Esta unidad no puede ser disuelta."],["SPELL_NOT_KNOWN","Aún no conoces ese hechizo."],
+    ["NO_ATTRIBUTE_POINTS","No tienes puntos de atributo disponibles."],["ATTRIBUTE_AT_CAP","Ese atributo ya ha alcanzado el máximo de esta beta."],["INVALID_ATTRIBUTE","Ese atributo no es válido."],
     ["REALM_NOT_FOUND","Aún no has fundado un reino."]
   ];
   for(const [k,v] of map) if(m.includes(k)) return v;
