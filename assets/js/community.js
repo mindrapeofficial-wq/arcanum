@@ -93,7 +93,7 @@ async function loadChatMessages(quiet=false){
     const nearBottom=host.scrollHeight-host.scrollTop-host.clientHeight<90 || !quiet;
     host.innerHTML=messages.length?messages.map(m=>`
       <article class="chat-message">
-        <header><strong>${esc(m.username)}</strong><time title="${esc(new Date(m.created_at).toLocaleString("es-ES"))}">${communityTime(m.created_at)}</time></header>
+        <header><strong><button class="player-link" data-profile="${esc(m.username)}">${esc(m.username)}</button></strong><time title="${esc(new Date(m.created_at).toLocaleString("es-ES"))}">${communityTime(m.created_at)}</time></header>
         <p>${esc(m.message)}</p>
         ${m.user_id===data.me?`<button class="community-delete" data-delete-chat="${esc(m.id)}" title="Borrar mensaje">×</button>`:""}
       </article>`).join(""):`<div class="empty">Todavía no hay mensajes. Sé el primero en abrir el canal.</div>`;
@@ -176,7 +176,7 @@ async function loadBoardPosts(){
     const posts=data.posts||[];
     host.innerHTML=posts.length?posts.map(p=>`
       <article class="board-post">
-        <div class="board-post-head"><span class="board-category">${esc(communityCategoryLabel(p.category))}</span><strong>${esc(p.username)}</strong></div>
+        <div class="board-post-head"><span class="board-category">${esc(communityCategoryLabel(p.category))}</span><strong><button class="player-link" data-profile="${esc(p.username)}">${esc(p.username)}</button></strong></div>
         <h4>${esc(p.title)}</h4>
         <p>${esc(p.body)}</p>
         <div class="board-meta"><span>${communityTime(p.created_at)} · caduca ${new Date(p.expires_at).toLocaleDateString("es-ES")}</span>${p.user_id===data.me?`<button class="community-delete" data-delete-post="${esc(p.id)}">BORRAR</button>`:""}</div>
