@@ -3,8 +3,8 @@
 function stopCommunityPolling(){ clearInterval(communityPollTimer); communityPollTimer=null; communityBusy=false; }
 function startCommunityPolling(){
   stopCommunityPolling();
-  if(currentView!=="community" || communityMode!=="chat")return;
-  communityPollTimer=setInterval(()=>{ if(currentView==="community" && communityMode==="chat") loadChatMessages(true); },COMMUNITY_POLL_MS);
+  if(currentView!=="community" || !["chat","school"].includes(communityMode))return;
+  communityPollTimer=setInterval(()=>{ if(currentView==="community" && ["chat","school"].includes(communityMode)){ loadChatMessages(true); loadPresence(); } },COMMUNITY_POLL_MS);
 }
 async function navigate(view){
   currentView=view;
