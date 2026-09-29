@@ -138,3 +138,19 @@ button,input,select{font:inherit} button{cursor:pointer} button:disabled{cursor:
 .player-directory-row strong,.player-directory-row small{display:block}.player-directory-row strong{color:#d1bc98;font:700 11px Arial,sans-serif}.player-directory-row small{margin-top:3px;color:#6d6254;font:8px Arial,sans-serif}.player-directory-row>span:last-child{color:#a67c45;font:800 8px Arial,sans-serif;letter-spacing:.07em}
 @media(max-width:900px){.community-social-grid{grid-template-columns:1fr}.online-panel{order:-1}.online-list{max-height:190px}.player-directory-row{grid-template-columns:12px minmax(0,1fr) auto}.player-directory-row>span:nth-child(3){display:none}}
 @media(max-width:560px){.community-tabs{overflow:auto;justify-content:flex-start}.community-tab{white-space:nowrap}.player-search{grid-template-columns:1fr}.player-directory-row>span:last-child{display:none}}
+
+
+/* Crónica narrativa de batalla */
+.battle-chronicle{position:relative;margin:14px 0 18px;padding:18px;border:1px solid rgba(218,151,57,.22);background:radial-gradient(circle at 15% 0%,rgba(151,91,26,.14),transparent 36%),linear-gradient(180deg,rgba(18,11,5,.96),rgba(5,4,3,.96));box-shadow:inset 0 0 40px rgba(0,0,0,.35)}
+.battle-chronicle:before{content:"";position:absolute;inset:5px;border:1px solid rgba(218,151,57,.06);pointer-events:none}
+.battle-chronicle-head{display:flex;gap:11px;align-items:center;margin-bottom:13px;padding-bottom:11px;border-bottom:1px solid rgba(218,151,57,.12)}
+.battle-chronicle-head>span{display:grid;place-items:center;width:34px;height:34px;border:1px solid rgba(218,151,57,.24);color:#d1a35f;background:rgba(117,67,20,.14);transform:rotate(45deg)}
+.battle-chronicle-head>span::first-letter{transform:rotate(-45deg)}
+.battle-chronicle-head small{display:block;color:#9c7139;font:800 8px Arial,sans-serif;letter-spacing:.15em}
+.battle-chronicle-head strong{display:block;margin-top:4px;color:#e0c79e;font-size:16px}
+.battle-chronicle p{position:relative;margin:10px 0;color:#b9a78b;font:11px/1.72 Georgia,serif}
+.battle-verdict{position:relative;margin-top:15px;padding:12px 13px;border-left:2px solid #a06b2b;background:rgba(109,66,20,.09)}
+.battle-verdict>small{display:block;color:#b08145;font:800 8px Arial,sans-serif;letter-spacing:.13em}
+.battle-verdict ul{margin:9px 0 0;padding-left:17px;color:#9c8c74;font:10px/1.55 Arial,sans-serif}
+.battle-verdict li+li{margin-top:5px}
+@media(max-width:600px){.battle-chronicle{padding:15px}.battle-chronicle-head strong{font-size:14px}.battle-chronicle p{font-size:10.5px}}
