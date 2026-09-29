@@ -139,7 +139,7 @@ function renderOwnSocial(profile,inbox){
   return '<div class="profile-own-grid"><section class="profile-panel"><div class="profile-section-title"><span>AMISTADES</span><small>'+friends.length+'</small></div>'+requestHtml+'<div class="profile-friend-list">'+friendHtml+'</div></section><section class="profile-panel"><div class="profile-section-title"><span>ALIANZA</span></div>'+allianceHtml+'</section></div>';
 }
 function wireProfileSheet(profile){
-  $("[data-archmage-attribute]").forEach(b=>b.addEventListener("click",()=>spendArchmageAttribute(b.dataset.archmageAttribute,profile)));
+  document.querySelectorAll("[data-archmage-attribute]").forEach(b=>b.addEventListener("click",()=>spendArchmageAttribute(b.dataset.archmageAttribute,profile)));
   $("#profile-save-bio")?.addEventListener("click",()=>saveOwnProfile(profile));
   $("#profile-avatar-file")?.addEventListener("change",e=>uploadProfileAvatar(e.target.files?.[0],profile));
   $$("[data-profile-friend-add]").forEach(b=>b.addEventListener("click",()=>profileFriendRequest(b.dataset.profileFriendAdd)));
@@ -156,7 +156,7 @@ async function spendArchmageAttribute(key,profile){
   const meta=ARCHMAGE_STAT_META[key];
   if(!profile?.is_self||!meta)return;
   if(!confirm("¿Invertir 1 punto en "+meta.label+"?"))return;
-  const buttons=$("[data-archmage-attribute]");
+  const buttons=[...document.querySelectorAll("[data-archmage-attribute]")];
   buttons.forEach(b=>b.disabled=true);
   try{
     const result=await rpc("spend_archmage_attribute",{p_attribute:key});
