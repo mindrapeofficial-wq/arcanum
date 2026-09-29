@@ -122,7 +122,18 @@ async function installMocks(page){
       {mage_name:"RIVAL_TEST",school_code:"abyssal",archetype:"guardian"}
     ])});
     if(rpc==="leaderboard") return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:"[]"});
-    if(rpc==="my_battle_reports") return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:"[]"});
+    if(rpc==="attack_mage"){
+      state.realm.turns-=2;
+      return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({
+        attacker_victory:true,attacker_loss_bp:425,defender_loss_bp:1180,land_gained:37,battle_id:"battle-e2e-1"
+      })});
+    }
+    if(rpc==="battle_report_detail") return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({
+      battle:{mode:"REGULAR",attacker_victory:true,attacker_loss_bp:425,defender_loss_bp:1180,land_gained:37},
+      units:[{side:"attacker",name_es:"Milicia",initial_quantity:100,final_quantity:94,recovered:2},{side:"defender",name_es:"Guardia",initial_quantity:90,final_quantity:78,recovered:1}],
+      events:[{sequence:1,type:"PRIMARY",actor_unit_id:"militia",target_unit_id:"guard",kills:8}]
+    })});
+    if(rpc==="my_battle_reports") return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify([{battle_id:"battle-e2e-1",opponent_mage_name:"RIVAL_TEST",result:"VICTORY",created_at:new Date().toISOString(),mode:"REGULAR",my_loss_bp:425,land_change:37}])});
 
     return route.fulfill({status:404,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({error:`Unhandled mock route: ${path}`})});
   });
@@ -280,4 +291,19 @@ test("los iconos artísticos de navegación y recursos cargan", async ({page})=>
   const goldIcon=page.locator('#resource-strip img[src*="resources/oro.png"]');
   await expect(goldIcon).toBeVisible();
   await expect.poll(()=>goldIcon.evaluate(img=>img.naturalWidth)).toBeGreaterThan(0);
+});
+
+
+test("atacar abre siempre la crónica de batalla", async ({page})=>{
+  await installMocks(page);
+  page.on("dialog",dialog=>dialog.accept());
+  await page.goto("/");
+  await page.locator("#username").fill("E2E_TESTER");
+  await page.locator("#password").fill("prueba-segura");
+  await page.locator("#submit-button").click();
+  await page.locator('#main-nav button[data-view="war"]').click();
+  await page.locator('.attack-btn[data-mode="REGULAR"]').click();
+  await expect(page.locator("#modal")).toBeVisible();
+  await expect(page.locator("#modal-content")).toContainText("CRÓNICA DEL COMBATE");
+  await expect(page.locator("#modal-content")).toContainText("37");
 });
