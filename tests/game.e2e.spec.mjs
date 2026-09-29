@@ -220,7 +220,7 @@ async function installMocks(page){
     return route.fulfill({status:404,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({error:`Unhandled mock route: ${path}`})});
   });
 
-), async route=>{
+  await page.route(/^https:\/\/smynvbrkgffpepbhrpxt\.supabase\.co\/functions\/v1\/arcanum-community(?:\/.*)?(?:\?.*)?$/, async route=>{
     const req=route.request();
     const url=new URL(req.url());
     const tail=url.pathname.split("/arcanum-community")[1]||"/";
