@@ -56,8 +56,7 @@ function renderRealm(){
   const progressionPct=progression.level>=4?100:realmPercent(r.land,progression.next);
   const alerts=realmAlerts();
 
-  $("#view-host").innerHTML=`${viewHeader("DOMINIO","Tu Reino","Estado, capacidad y rumbo estratégico de tu Archimago.")}
-  <div class="realm-dashboard">
+  $("#view-host").innerHTML=`<div class="realm-dashboard">
     <section class="realm-banner realm-banner-2">
       <img class="realm-kingdom-image" src="assets/art/kingdom-level-00.svg?v=0.2.9" alt="" aria-hidden="true" />
       <div class="realm-banner-shade" aria-hidden="true"></div>
