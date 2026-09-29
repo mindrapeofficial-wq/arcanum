@@ -183,7 +183,8 @@ test("flujo crítico completo: login, reino, explorar, construir, investigar, re
   await page.locator("#password").fill("prueba-segura");
   await page.locator("#submit-button").click();
 
-  await expect(page.locator("#game-view")).toBeVisible();\n  await expect(page.locator("#mage-title")).toHaveText("E2E_TESTER");
+  await expect(page.locator("#game-view")).toBeVisible();
+  await expect(page.locator("#mage-title")).toHaveText("E2E_TESTER");
   await expect(page.locator("#mage-title")).toHaveText("E2E_TESTER");
 
   await page.locator("#realm-explore-turns").fill("2");
@@ -253,7 +254,8 @@ test("la navegación móvil abre Comunidad sin errores", async ({page})=>{
   await page.locator("#username").fill("E2E_TESTER");
   await page.locator("#password").fill("prueba-segura");
   await page.locator("#submit-button").click();
-  await expect(page.locator("#game-view")).toBeVisible();\n  await expect(page.locator("#mage-title")).toHaveText("E2E_TESTER");
+  await expect(page.locator("#game-view")).toBeVisible();
+  await expect(page.locator("#mage-title")).toHaveText("E2E_TESTER");
 
   const community=page.locator('#mobile-nav button[data-view="community"]');
   await community.scrollIntoViewIfNeeded();
@@ -269,7 +271,8 @@ test("la ficha de personaje se abre desde el nombre y permite editar la bio", as
   await page.locator("#username").fill("E2E_TESTER");
   await page.locator("#password").fill("prueba-segura");
   await page.locator("#submit-button").click();
-  await expect(page.locator("#game-view")).toBeVisible();\n  await expect(page.locator("#mage-title")).toHaveText("E2E_TESTER");
+  await expect(page.locator("#game-view")).toBeVisible();
+  await expect(page.locator("#mage-title")).toHaveText("E2E_TESTER");
   await page.locator("#mage-card-button").click();
   await expect(page.getByText("FICHA DE ARCHIMAGO")).toBeVisible();
   await expect(page.locator("#profile-bio-input")).toBeVisible();
@@ -288,7 +291,8 @@ test("los iconos artísticos de navegación y recursos cargan", async ({page})=>
   await page.locator("#username").fill("E2E_TESTER");
   await page.locator("#password").fill("prueba-segura");
   await page.locator("#submit-button").click();
-  await expect(page.locator("#game-view")).toBeVisible();\n  await expect(page.locator("#mage-title")).toHaveText("E2E_TESTER");
+  await expect(page.locator("#game-view")).toBeVisible();
+  await expect(page.locator("#mage-title")).toHaveText("E2E_TESTER");
   const navIcon=page.locator('#main-nav button[data-view="realm"] img.nav-icon');
   await expect(navIcon).toBeVisible();
   await expect.poll(()=>navIcon.evaluate(img=>img.naturalWidth)).toBeGreaterThan(0);
