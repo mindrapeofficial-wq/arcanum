@@ -10,18 +10,24 @@ function profileAvatarUrl(path){
 function profileSchoolName(code){
   return catalogs.schools.find(s=>s.code===code)?.name_es||code||"Escuela";
 }
+function profileDefaultPortraitUrl(profile){
+  if(profile?.school_code==="verdant")return "assets/art/characters/verdante/verdante-level-1.png?v=0.2.11";
+  return "";
+}
 function profileAvatarMarkup(profile,large=false){
   const cls=large?"profile-avatar profile-avatar-large":"profile-avatar";
-  if(profile&&profile.avatar_path){
-    return '<span class="'+cls+'"><img src="'+esc(profileAvatarUrl(profile.avatar_path))+'" alt="Avatar de '+esc(profile.mage_name||"Archimago")+'" /></span>';
+  const src=profile?.avatar_path?profileAvatarUrl(profile.avatar_path):profileDefaultPortraitUrl(profile);
+  if(src){
+    return '<span class="'+cls+'"><img src="'+esc(src)+'" alt="Avatar de '+esc(profile?.mage_name||"Archimago")+'" /></span>';
   }
   return '<span class="'+cls+' profile-avatar-fallback '+esc(profile?.school_code||"")+'">'+(symbols[profile?.school_code]||"✦")+'</span>';
 }
 function renderOwnProfileBadge(){
   const sigil=$("#mage-sigil");
   if(!sigil||!realmState?.realm)return;
-  if(ownProfileBadge?.avatar_path){
-    sigil.innerHTML='<img src="'+esc(profileAvatarUrl(ownProfileBadge.avatar_path))+'" alt="" />';
+  const src=ownProfileBadge?.avatar_path?profileAvatarUrl(ownProfileBadge.avatar_path):profileDefaultPortraitUrl({school_code:realmState.realm.school_code});
+  if(src){
+    sigil.innerHTML='<img src="'+esc(src)+'" alt="" />';
     sigil.classList.add("has-avatar");
   }else{
     sigil.textContent=symbols[realmState.realm.school_code]||"✦";
