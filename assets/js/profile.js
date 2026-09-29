@@ -68,13 +68,18 @@ function friendshipActions(profile){
 function renderArchmageProgression(profile){
   const progression=archmageProgressionFromProfile(profile);
   if(!progression)return "";
+  const canSpend=Boolean(profile.is_self)&&progression.attributePoints>0;
   const stats=ARCHMAGE_STAT_KEYS.map(key=>{
     const meta=ARCHMAGE_STAT_META[key];
-    return '<div class="archmage-attribute"><small>'+esc(meta.label)+'</small><strong>'+n(progression.stats[key])+'</strong><span>'+esc(meta.description)+'</span></div>';
+    const canUpgrade=canSpend&&progression.stats[key]<ARCHMAGE_ATTRIBUTE_CAP;
+    const upgrade=canUpgrade?'<button class="archmage-attribute-upgrade" type="button" data-archmage-attribute="'+key+'" aria-label="Subir '+esc(meta.label)+'" title="Invertir 1 punto en '+esc(meta.label)+'">＋</button>':"";
+    return '<div class="archmage-attribute" data-archmage-stat="'+key+'"><small>'+esc(meta.label)+'</small><div class="archmage-attribute-value"><strong>'+n(progression.stats[key])+'</strong>'+upgrade+'</div><span>'+esc(meta.description)+'</span></div>';
   }).join("");
   const pct=Math.round(progression.xpRatio*100);
-  return '<section class="archmage-progression"><div class="profile-section-title"><span>PROGRESIÓN DEL ARCHIMAGO</span><small>'+n(progression.attributePoints)+' puntos disponibles</small></div>'+
-    '<div class="archmage-level-row"><div><small>NIVEL</small><strong>'+n(progression.level)+'</strong></div><div class="archmage-xp"><div><span>EXPERIENCIA</span><b>'+n(progression.xp)+' / '+n(progression.xpNext)+'</b></div><div class="archmage-xp-track"><i style="width:'+pct+'%"></i></div></div></div>'+
+  const pointsLabel=progression.attributePoints===1?"1 punto disponible":n(progression.attributePoints)+" puntos disponibles";
+  const xpText=progression.level>=ARCHMAGE_LEVEL_CAP?"NIVEL MÁXIMO":n(progression.xp)+" / "+n(progression.xpNext);
+  return '<section class="archmage-progression"><div class="profile-section-title"><span>PROGRESIÓN DEL ARCHIMAGO</span><small>'+pointsLabel+'</small></div>'+
+    '<div class="archmage-level-row"><div><small>NIVEL</small><strong>'+n(progression.level)+'</strong></div><div class="archmage-xp"><div><span>EXPERIENCIA</span><b>'+xpText+'</b></div><div class="archmage-xp-track"><i style="width:'+pct+'%"></i></div></div></div>'+
     '<div class="archmage-attributes">'+stats+'</div></section>';
 }
 
@@ -134,6 +139,7 @@ function renderOwnSocial(profile,inbox){
   return '<div class="profile-own-grid"><section class="profile-panel"><div class="profile-section-title"><span>AMISTADES</span><small>'+friends.length+'</small></div>'+requestHtml+'<div class="profile-friend-list">'+friendHtml+'</div></section><section class="profile-panel"><div class="profile-section-title"><span>ALIANZA</span></div>'+allianceHtml+'</section></div>';
 }
 function wireProfileSheet(profile){
+  $("[data-archmage-attribute]").forEach(b=>b.addEventListener("click",()=>spendArchmageAttribute(b.dataset.archmageAttribute,profile)));
   $("#profile-save-bio")?.addEventListener("click",()=>saveOwnProfile(profile));
   $("#profile-avatar-file")?.addEventListener("change",e=>uploadProfileAvatar(e.target.files?.[0],profile));
   $$("[data-profile-friend-add]").forEach(b=>b.addEventListener("click",()=>profileFriendRequest(b.dataset.profileFriendAdd)));
@@ -146,6 +152,22 @@ function wireProfileSheet(profile){
   $$("[data-alliance-reject]").forEach(b=>b.addEventListener("click",()=>profileAllianceRespond(b.dataset.allianceReject,false)));
   $("#profile-alliance-create")?.addEventListener("submit",createProfileAlliance);
 }
+async function spendArchmageAttribute(key,profile){
+  const meta=ARCHMAGE_STAT_META[key];
+  if(!profile?.is_self||!meta)return;
+  if(!confirm("¿Invertir 1 punto en "+meta.label+"?"))return;
+  const buttons=$("[data-archmage-attribute]");
+  buttons.forEach(b=>b.disabled=true);
+  try{
+    const result=await rpc("spend_archmage_attribute",{p_attribute:key});
+    toast(meta.label+" ha aumentado a "+n(result[key])+".","success");
+    await openPlayerProfile(profile.mage_name);
+  }catch(e){
+    toast(humanError(e),"error");
+    buttons.forEach(b=>b.disabled=false);
+  }
+}
+
 async function saveOwnProfile(profile){
   const bio=$("#profile-bio-input")?.value||"";
   const btn=$("#profile-save-bio"),old=btn?.textContent;
