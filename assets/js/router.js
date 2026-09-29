@@ -6,11 +6,11 @@ function startCommunityPolling(){
   if(currentView!=="community" || communityMode!=="chat")return;
   communityPollTimer=setInterval(()=>{ if(currentView==="community" && communityMode==="chat") loadChatMessages(true); },COMMUNITY_POLL_MS);
 }
-function navigate(view){
+async function navigate(view){
   currentView=view;
   document.querySelectorAll("[data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===view));
   if(view!=="community")stopCommunityPolling();
-  renderView(view);
+  return renderView(view);
 }
 async function renderView(view){
   const host=$("#view-host"); host.innerHTML=`<div class="skeleton" style="width:180px;height:9px;margin-bottom:10px"></div><div class="skeleton" style="width:55%;height:34px;margin-bottom:22px"></div><div class="panel"><div class="skeleton"></div></div>`;
