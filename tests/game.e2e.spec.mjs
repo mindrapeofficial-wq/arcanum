@@ -157,7 +157,7 @@ test("flujo crítico completo: login, reino, explorar, construir, investigar, re
   await expect(page.locator(".toast").last()).toContainText("Construcción completada");
 
   await page.locator('#main-nav button[data-view="research"]').click();
-  await expect(page.getByRole("heading",{name:"Investigación"})).toBeVisible();
+  await expect(page.getByRole("heading",{name:"Investigación",exact:true})).toBeVisible();
   await page.locator("#research-turns").fill("1");
   await page.locator("#research-button").click();
   await expect(page.locator(".toast").last()).toContainText("Investigación avanzada");
