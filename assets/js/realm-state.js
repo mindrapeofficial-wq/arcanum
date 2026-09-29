@@ -39,7 +39,7 @@ function showGame(){
 
 function renderSchools(){
   const descriptions={ascendant:"Luz, protección y resurrección.",verdant:"Naturaleza, crecimiento y regeneración.",eradication:"Fuego, destrucción y poder directo.",abyssal:"Muerte, demonios y corrupción.",phantasm:"Ilusión, conocimiento y manipulación."};
-  $("#school-grid").innerHTML=catalogs.schools.map(s=>`<button type="button" class="school-card" data-school="${esc(s.code)}"><span class="school-symbol">${symbols[s.code]||"✦"}</span><strong>${esc(s.name_es)}</strong><small>${esc(descriptions[s.code]||s.description_es||"")}</small></button>`).join("");
+  $("#school-grid").innerHTML=catalogs.schools.map(s=>`<button type="button" class="school-card" data-school="${esc(s.code)}">${s.code==="ascendant"?`<img class="school-symbol-image" src="assets/art/sigils/ascendente.webp?v=0.2.8" alt="" aria-hidden="true" />`:`<span class="school-symbol">${symbols[s.code]||"✦"}</span>`}<strong>${esc(s.name_es)}</strong><small>${esc(descriptions[s.code]||s.description_es||"")}</small></button>`).join("");
   $$(".school-card").forEach(btn=>btn.addEventListener("click",()=>{selectedSchool=btn.dataset.school; $$(".school-card").forEach(x=>x.classList.toggle("selected",x===btn));}));
 }
 function renderChrome(){
