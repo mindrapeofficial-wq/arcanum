@@ -148,7 +148,7 @@ button,input,select{font:inherit} button{cursor:pointer} button:disabled{cursor:
 const SUPABASE_URL = "https://mrmvmoyysxuopqexbxfk.supabase.co";
 const SUPABASE_KEY = "sb_publishable_tZEPJi2v7Tp-xDuVa0qWRw_geizIGoD";
 const SESSION_KEY = "arcanum_session_v2";
-const BUILD_VERSION = "0.1.5";
+const BUILD_VERSION = "0.1.6";
 const VERSION_CHECK_INTERVAL_MS = 60000;
 
 
@@ -355,7 +355,7 @@ function renderRealm(){
   <div class="realm-side"><div class="stat-card"><small>Poder Neto</small><strong>${n(r.net_power)}</strong><em>Medida total de tu reino y ejército</em></div><div class="stat-card"><small>Terreno salvaje</small><strong>${n(r.wilderness)}</strong><em>Disponible para construir</em></div><div class="stat-card"><small>Fortalezas</small><strong>${n(b.fortresses)}</strong><em>Con 0, el Archimago muere</em></div></div></div>
   <div class="grid-4"><div class="stat-card"><small>Cap. residencial</small><strong>${n(c.residential)}</strong></div><div class="stat-card"><small>Cap. alimentos</small><strong>${n(c.food)}</strong></div><div class="stat-card"><small>Cap. maná</small><strong>${n(c.mana)}</strong></div><div class="stat-card"><small>Hechizos</small><strong>${n(realmState.known_spells.length)}</strong></div></div>
   <div class="panel" style="margin-top:14px"><h3>Explorar nuevas tierras</h3><p class="intro" style="margin:0 0 12px;text-align:left">Envía expediciones para ampliar tu reino. La exploración consume turnos y su rendimiento disminuye a medida que te acercas a 3.500 acres.</p><div class="action-panel"><label>Turnos<input id="realm-explore-turns" type="number" min="1" max="50" value="1"></label><button id="realm-explore-button" class="primary-action">✦ EXPLORAR</button></div></div>`;
-  $('[data-quick]').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.quick)));
+  document.querySelectorAll('[data-quick]').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.quick)));
   $("#realm-explore-button").addEventListener("click",()=>doExplore($("#realm-explore-button"),"realm-explore-turns"));
 }
 
