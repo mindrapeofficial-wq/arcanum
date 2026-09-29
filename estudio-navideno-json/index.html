@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Estudio Navideño JSON</title>
+<style>
+:root{--bg:#f4efe7;--paper:#fffdf8;--ink:#223028;--muted:#70786f;--line:#ded6ca;--green:#194536;--red:#9c3b3b}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 0 0,#fff 0,transparent 35%),var(--bg);font-family:Inter,system-ui,sans-serif;color:var(--ink)}
+main{max-width:1320px;margin:auto;padding:28px 18px 40px}.hero{display:flex;justify-content:space-between;gap:20px;align-items:end;margin-bottom:22px}.hero h1{font:500 clamp(38px,5vw,65px)/.98 Georgia,serif;margin:6px 0 12px;max-width:850px}.hero p{color:var(--muted);max-width:760px;margin:0}.tag{border:1px solid var(--line);border-radius:999px;padding:10px 14px;background:#ffffffa8;font-size:12px;font-weight:800}
+.grid{display:grid;grid-template-columns:1.05fr .95fr;gap:18px}.panel{background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:20px;box-shadow:0 18px 55px #342c2214}.step{display:flex;gap:10px;align-items:center;margin:5px 0 14px}.n{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:var(--green);color:#fff;font-size:11px;font-weight:900}.step h2{font:500 27px Georgia,serif;margin:0}.upload{border:1px dashed #b7afa3;border-radius:16px;background:#f7f2ea;min-height:190px;display:grid;place-items:center;text-align:center;overflow:hidden;cursor:pointer}.upload img{width:100%;height:190px;object-fit:cover;display:none}.upload.filled img{display:block}.upload.filled .uempty{display:none}.uempty{padding:18px;color:var(--muted)}.uempty strong{display:block;color:var(--ink);margin-bottom:6px}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label span{display:block;font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#6a716c;margin-bottom:6px}select,textarea,input[type=text]{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:white;color:var(--ink);font:inherit}.fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.scenes{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}.scenes button,.mini{border:1px solid var(--line);background:#faf7f1;border-radius:999px;padding:9px 11px;font-size:11px;font-weight:800}.scenes button.active{background:var(--green);color:white;border-color:var(--green)}.locks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.lock{border:1px solid var(--line);border-radius:12px;padding:10px;background:#faf7f1;display:flex;gap:8px;align-items:center;font-size:12px;font-weight:700}.lock input{accent-color:var(--green)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.actions button{border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px 12px;font-weight:900}.actions .primary{background:var(--green);color:white;border-color:var(--green)}
+pre{white-space:pre-wrap;word-break:break-word;background:#17231d;color:#e6efe8;border-radius:14px;padding:14px;max-height:560px;overflow:auto;font-size:11px;line-height:1.48}.summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}.summary div{background:#f6f1e8;border:1px solid var(--line);border-radius:12px;padding:10px}.summary small{display:block;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-size:8px}.summary strong{font-size:12px}.note{font-size:11px;color:var(--muted);line-height:1.5;margin-top:12px}
+footer{text-align:center;color:var(--muted);font-size:11px;margin-top:22px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}.hero{display:block}.tag{display:inline-block;margin-top:14px}}@media(max-width:620px){.two,.fields,.locks,.summary{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+<header class="hero">
+<div><div style="font-size:10px;font-weight:900;letter-spacing:.18em;color:#285e4b">ESTUDIO NAVIDEÑO · JSON</div><h1>Retratos navideños con una receta que puedes repetir.</h1><p>Sube la foto, elige qué quieres cambiar y bloquea lo que debe conservarse. La página genera un JSON maestro listo para usar en tu flujo de edición.</p></div>
+<div class="tag">Página compartible</div>
+</header>
+<div class="grid">
+<section class="panel">
+<div class="step"><div class="n">01</div><h2>Referencias</h2></div>
+<div class="two">
+<label class="upload" id="subjectBox"><input id="subject" type="file" accept="image/*" hidden><img id="subjectPreview"><div class="uempty"><strong>Foto del modelo</strong>Rostro visible, preferiblemente frontal</div></label>
+<label class="upload" id="backgroundBox"><input id="background" type="file" accept="image/*" hidden><img id="backgroundPreview"><div class="uempty"><strong>Fondo de referencia</strong>Opcional, para reproducir un escenario concreto</div></label>
+</div>
+<div class="step" style="margin-top:24px"><div class="n">02</div><h2>Diseño de la escena</h2></div>
+<div class="scenes" id="scenes"></div>
+<div class="fields">
+<label><span>Vestimenta</span><select id="clothes"><option value="verde">Verde esmeralda elegante</option><option value="rojo">Rojo navideño clásico</option><option value="claro">Tonos claros, crema y dorado</option><option value="elfo">Pequeño elfo</option></select></label>
+<label><span>Pose</span><select id="pose"><option value="sentado">Sentado en el suelo</option><option value="baul">Sentado en un baúl</option><option value="pie">De pie</option><option value="bebe">Pose natural de bebé</option></select></label>
+<label><span>Objeto en manos</span><select id="object"><option value="regalo">Regalo navideño</option><option value="tren">Tren de madera</option><option value="baston">Bastón de caramelo</option><option value="ninguno">Ninguno</option></select></label>
+<label><span>Cabeza / cabello</span><select id="hair"><option value="ninguno">Sin accesorio</option><option value="diadema">Diadema elegante</option><option value="gorro">Gorro navideño</option><option value="elfo">Gorro de elfo</option></select></label>
+<label><span>Edad</span><select id="age"><option value="auto">Respetar edad aparente</option><option value="bebe">6–11 meses</option><option value="toddler">1–2 años</option><option value="infantil">3–5 años</option><option value="mayor">6+ años</option></select></label>
+<label><span>Formato</span><select id="output"><option value="vertical">Vertical 2:3</option><option value="cuadrado">Cuadrado 1:1</option><option value="horizontal">Horizontal 3:2</option></select></label>
+</div>
+<label style="display:block;margin-top:12px"><span>Instrucción adicional</span><textarea id="notes" rows="4" placeholder="Ej.: cambia solamente los zapatos. No tocar nada más."></textarea></label>
+<div class="step" style="margin-top:24px"><div class="n">03</div><h2>Bloqueos de identidad</h2></div>
+<div class="locks">
+<label class="lock"><input id="lockFace" type="checkbox" checked> Rostro y rasgos faciales</label>
+<label class="lock"><input id="lockHair" type="checkbox" checked> Cabello</label>
+<label class="lock"><input id="lockBody" type="checkbox" checked> Proporciones corporales</label>
+<label class="lock"><input id="lockExpression" type="checkbox" checked> Expresión</label>
+<label class="lock"><input id="lockHands" type="checkbox" checked> Manos y dedos</label>
+</div>
+</section>
+<section class="panel">
+<div class="step"><div class="n">04</div><h2>Receta JSON</h2></div>
+<div class="summary"><div><small>Escenario</small><strong id="sScene"></strong></div><div><small>Formato</small><strong id="sOutput"></strong></div><div><small>Bloqueos</small><strong id="sLocks"></strong></div></div>
+<pre id="json"></pre>
+<div class="actions"><button class="primary" id="copy">Copiar JSON</button><button id="download">Descargar JSON</button><button id="copyPrompt">Copiar prompt</button></div>
+<p class="note">Las fotografías se procesan únicamente en tu navegador en esta versión. El JSON se genera localmente y no se envía a ningún servidor.</p>
+</section>
+</div>
+<footer>Estudio Navideño JSON · flujo de trabajo para retratos infantiles navideños</footer>
+</main>
+<script>
+const scenes={taller:{name:"Taller de Papá Noel",emoji:"🧸",desc:"taller navideño artesanal, madera cálida, juguetes, luces ámbar y ambiente acogedor",palette:["rojo Navidad","verde abeto","madera","dorado cálido"]},dorado:{name:"Navidad dorada",emoji:"✨",desc:"escenario elegante en blanco marfil, crema, champán y dorado con luces bokeh",palette:["marfil","crema","champán","dorado"]},nieve:{name:"Bosque nevado",emoji:"❄️",desc:"bosque navideño nevado, luz suave, blancos fríos y puntos cálidos de luz",palette:["blanco","plata","verde abeto","ámbar"]},cabana:{name:"Cabaña navideña",emoji:"🎄",desc:"interior de cabaña navideña cálida con madera, árbol, mantas y luz de chimenea",palette:["madera","verde","rojo","crema"]}};
+const clothes={verde:"vestimenta navideña elegante en verde esmeralda con detalles crema o blancos",rojo:"vestimenta navideña clásica en rojo con detalles claros",claro:"vestimenta navideña elegante en marfil, crema, champán y dorado",elfo:"atuendo de pequeño elfo navideño, proporcionado y elegante"};
+const poses={sentado:"sentado en el suelo, piernas cruzadas sólo si la edad y anatomía lo permiten",baul:"sentado de forma natural sobre un pequeño baúl o banco proporcionado",pie:"de pie, postura infantil natural y relajada",bebe:"pose natural de bebé, sin forzar una postura que no corresponda a su edad"};
+const objects={regalo:"un pequeño regalo navideño proporcionado a sus manos",tren:"un pequeño tren de madera navideño",baston:"un bastón de caramelo rojo y blanco",ninguno:"sin objeto adicional en las manos"};
+const hairs={ninguno:"sin accesorio adicional",diadema:"diadema elegante que combine con el escenario",gorro:"gorro navideño de lana proporcionado a la cabeza",elfo:"gorro de elfo de lana largo y proporcionado"};
+const ages={auto:"respetar estrictamente la edad aparente de la fotografía",bebe:"bebé de aproximadamente 6 a 11 meses",toddler:"niño o niña de aproximadamente 1 a 2 años",infantil:"niño o niña de aproximadamente 3 a 5 años",mayor:"niño o niña de 6 años o más"};
+let scene="taller",hasBg=false;
+const $=id=>document.getElementById(id);
+for(const [k,v] of Object.entries(scenes)){const b=document.createElement("button");b.textContent=v.emoji+" "+v.name;b.onclick=()=>{scene=k;renderScenes();update()};b.dataset.k=k;$("scenes").appendChild(b)}
+function renderScenes(){[...$("scenes").children].forEach(b=>b.classList.toggle("active",b.dataset.k===scene))}renderScenes();
+function upload(id,box,preview,bg=false){$(id).addEventListener("change",e=>{const f=e.target.files[0];if(f){$(preview).src=URL.createObjectURL(f);$(box).classList.add("filled");if(bg)hasBg=true}else{$(box).classList.remove("filled");if(bg)hasBg=false}update()})}
+upload("subject","subjectBox","subjectPreview");upload("background","backgroundBox","backgroundPreview",true);
+["clothes","pose","object","hair","age","output","notes","lockFace","lockHair","lockBody","lockExpression","lockHands"].forEach(id=>$(id).addEventListener($(id).tagName==="TEXTAREA"?"input":"change",update));
+function locks(){return{rostro:$("lockFace").checked,cabello:$("lockHair").checked,proporciones_corporales:$("lockBody").checked,expresion:$("lockExpression").checked,manos_y_dedos:$("lockHands").checked}}
+function recipe(){return{version:"1.0",tipo:"fotografia_navideña_infantil_fotorrealista",objetivo:"crear un retrato navideño profesional preservando la identidad visual del modelo",modelo:{edad:ages[$("age").value],conservar:locks(),restricciones:["no embellecer ni reinterpretar el rostro","no rejuvenecer ni envejecer","no alterar la relación entre cabeza y cuerpo","mantener anatomía coherente con la edad aparente","evitar deformaciones en ojos, manos y dedos"]},escenario:{preset:scenes[scene].name,referencia_visual_aportada:hasBg,descripcion:scenes[scene].desc,paleta:scenes[scene].palette},vestimenta:clothes[$("clothes").value],pose:poses[$("pose").value],accesorio_manos:objects[$("object").value],accesorio_cabello:hairs[$("hair").value],fotografia:{estilo:"fotografía profesional de estudio, fotorrealista, acabado cinematográfico",iluminacion:"profesional, natural y coherente con el fondo",integracion:"igualar perspectiva, escala, temperatura de color, saturación, sombras y profundidad de campo",salida:$("output").options[$("output").selectedIndex].text},prioridad:"la identidad del modelo tiene prioridad sobre cualquier reinterpretación estética",notas_adicionales:$("notes").value.trim()||null}}
+function prompt(){const l=locks();const keep=Object.entries(l).filter(x=>x[1]).map(x=>x[0].replaceAll("_"," ")).join(", ");return "La primera imagen es la referencia exclusiva de identidad del modelo.\n\nConservar estrictamente: "+keep+".\n\nNo embellecer, no estilizar, no rejuvenecer y no inventar una expresión distinta.\n\nEdad: "+ages[$("age").value]+".\n\nEscenario: "+(hasBg?"usar la segunda imagen como referencia visual principal, respetando composición y perspectiva. ":"")+scenes[scene].desc+".\n\nVestimenta: "+clothes[$("clothes").value]+".\n\nPose: "+poses[$("pose").value]+".\n\nObjeto: "+objects[$("object").value]+".\n\nCabeza/cabello: "+hairs[$("hair").value]+".\n\nIntegrar con iluminación, sombras, perspectiva y profundidad de campo naturales. Resultado fotorrealista de fotografía profesional."+( $("notes").value.trim()?"\n\nInstrucción adicional: "+$("notes").value.trim():"")}
+function update(){const r=recipe();$("json").textContent=JSON.stringify(r,null,2);$("sScene").textContent=scenes[scene].name;$("sOutput").textContent=$("output").options[$("output").selectedIndex].text;$("sLocks").textContent=Object.values(locks()).filter(Boolean).length+"/5"}
+update();
+$("copy").onclick=async()=>{await navigator.clipboard.writeText($("json").textContent);$("copy").textContent="Copiado ✓";setTimeout(()=>$("copy").textContent="Copiar JSON",1200)};
+$("copyPrompt").onclick=async()=>{await navigator.clipboard.writeText(prompt());$("copyPrompt").textContent="Prompt copiado ✓";setTimeout(()=>$("copyPrompt").textContent="Copiar prompt",1200)};
+$("download").onclick=()=>{const b=new Blob([$("json").textContent],{type:"application/json"}),u=URL.createObjectURL(b),a=document.createElement("a");a.href=u;a.download="receta-navidad-"+scene+".json";a.click();URL.revokeObjectURL(u)};
+</script>
+</body>
+</html>
