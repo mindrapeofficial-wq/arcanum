@@ -42,7 +42,15 @@ function buildPrompt(body) {
   return parts.join('\n\n');
 }
 
-app.use(express.static(path.join(__dirname, 'public'), { etag: true, maxAge: '1h' }));
+app.use((req, res, next) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  next();
+});
+
+app.use(express.static(path.join(__dirname, 'public'), { etag: false, maxAge: 0 }));
+
 app.get('/health', (req, res) => res.json({ ok: true, engine: Boolean(process.env.OPENAI_API_KEY) }));
 
 app.post('/api/generate', upload.fields([{ name: 'subject', maxCount: 1 }, { name: 'background', maxCount: 1 }]), async (req, res) => {
@@ -75,7 +83,11 @@ app.post('/api/generate', upload.fields([{ name: 'subject', maxCount: 1 }, { nam
   }
 });
 
-app.use((req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
+app.use((req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 app.listen(port, () => {
   console.log(`Estudio Navideño Premium en ${port}`);
   console.log(`Motor OpenAI: ${process.env.OPENAI_API_KEY ? 'ACTIVO' : 'INACTIVO'}`);
