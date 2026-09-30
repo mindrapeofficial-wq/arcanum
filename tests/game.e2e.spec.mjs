@@ -325,7 +325,7 @@ test("la ficha de personaje se abre, permite gastar un punto y editar la bio", a
   await expect(page.getByText("FICHA DE ARCHIMAGO")).toBeVisible();
   await expect(page.locator("#profile-bio-input")).toBeVisible();
   await expect(page.getByText("PROGRESIÓN DEL ARCHIMAGO")).toBeVisible();
-  await expect(page.getByText("Poder Arcano")).toBeVisible();
+  await expect(page.getByText("Poder Arcano",{exact:true}).first()).toBeVisible();
   await expect(page.getByText("FUENTES DE EXPERIENCIA")).toBeVisible();
   await expect(page.getByText("Investigación",{exact:true})).toBeVisible();
   await expect(page.getByText("Jefes PvE",{exact:true})).toBeVisible();
