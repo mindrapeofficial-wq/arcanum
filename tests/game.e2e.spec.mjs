@@ -326,6 +326,9 @@ test("la ficha de personaje se abre, permite gastar un punto y editar la bio", a
   await expect(page.locator("#profile-bio-input")).toBeVisible();
   await expect(page.getByText("PROGRESIÓN DEL ARCHIMAGO")).toBeVisible();
   await expect(page.getByText("Poder Arcano")).toBeVisible();
+  await expect(page.getByText("FUENTES DE EXPERIENCIA")).toBeVisible();
+  await expect(page.getByText("Investigación",{exact:true})).toBeVisible();
+  await expect(page.getByText("Jefes PvE",{exact:true})).toBeVisible();
   await expect(page.getByText("Sendero Híbrido")).toBeVisible();
   await expect(page.locator(".archmage-level-row > div:first-child strong")).toHaveText("4");
   await expect(page.locator('[data-archmage-stat="knowledge"] strong')).toHaveText("2");
