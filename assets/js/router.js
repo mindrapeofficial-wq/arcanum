@@ -3,7 +3,7 @@
 const VIEW_RENDERERS={
   market:{name:"renderMarket",src:"assets/js/market.js?v=0.2.60"},
   artifacts:{name:"renderArtifactLibrary",src:"assets/js/artifacts.js?v=0.2.60"},
-  arena:{name:"renderArena",src:"assets/js/arena.js?v=0.3.1"}
+  arena:{name:"renderArena",src:"assets/js/arena.js?v=0.3.3"}
 };
 
 async function ensureViewRenderer(view){
