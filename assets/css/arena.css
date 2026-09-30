@@ -17,3 +17,63 @@
 .arena-duelist small{color:var(--muted)}
 @media(max-width:720px){.arena-sprite--hero{width:72px;height:120px}.arena-hero-avatar{min-height:122px}.arena-row{grid-template-columns:44px minmax(0,1fr)}.arena-row>div:last-child{grid-column:1/-1;display:flex;gap:8px}.arena-sprite--mini{width:39px;height:65px}}
 @media(prefers-reduced-motion:reduce){.arena-sprite{animation:none}}
+
+/* PvP duel choreography */
+.arena-hero>aside .arena-hero-avatar>i{width:32px;height:32px;transform:none;border-radius:50%}
+.arena-fighter-shell{display:grid;place-items:end center;min-width:96px;min-height:154px;transform-origin:50% 92%;will-change:transform,filter}
+.arena-duelist.enemy .arena-sprite{transform:scaleX(-1)}
+.arena-duelist.is-attacking .arena-fighter-shell{animation:arenaLungeRight .58s cubic-bezier(.2,.72,.18,1)}
+.arena-duelist.enemy.is-attacking .arena-fighter-shell{animation-name:arenaLungeLeft}
+.arena-duelist.is-attacking .arena-sprite{animation:arenaSpriteAttack .58s steps(1,end) 1}
+.arena-duelist.is-hit .arena-fighter-shell{animation:arenaHitLeft .34s ease-out}
+.arena-duelist.enemy.is-hit .arena-fighter-shell{animation-name:arenaHitRight}
+.arena-duelist.is-hit .arena-sprite{filter:brightness(1.7) contrast(1.12) drop-shadow(0 8px 10px rgba(0,0,0,.45))}
+.arena-duelist.is-ko .arena-fighter-shell{animation:arenaKnockout .72s cubic-bezier(.35,.02,.7,1) forwards}
+.arena-duelist.enemy.is-ko .arena-fighter-shell{animation-name:arenaKnockoutEnemy}
+.arena-duel-stage.is-finished{box-shadow:inset 0 0 0 1px rgba(213,190,136,.08)}
+#arena-result-panel,#arena-log-panel{opacity:0;transform:translateY(8px);pointer-events:none;transition:opacity .35s ease,transform .35s ease}
+#arena-result-panel.is-visible,#arena-log-panel.is-visible{opacity:1;transform:none;pointer-events:auto}
+@keyframes arenaLungeRight{
+  0%{transform:translateX(0)}
+  35%{transform:translateX(34px) translateY(-2px)}
+  62%{transform:translateX(46px)}
+  100%{transform:translateX(0)}
+}
+@keyframes arenaLungeLeft{
+  0%{transform:translateX(0)}
+  35%{transform:translateX(-34px) translateY(-2px)}
+  62%{transform:translateX(-46px)}
+  100%{transform:translateX(0)}
+}
+@keyframes arenaHitLeft{
+  0%{transform:translateX(0)}
+  32%{transform:translateX(-13px) rotate(-2deg)}
+  64%{transform:translateX(5px) rotate(1deg)}
+  100%{transform:translateX(0)}
+}
+@keyframes arenaHitRight{
+  0%{transform:translateX(0)}
+  32%{transform:translateX(13px) rotate(2deg)}
+  64%{transform:translateX(-5px) rotate(-1deg)}
+  100%{transform:translateX(0)}
+}
+@keyframes arenaKnockout{
+  0%{transform:translate(0,0) rotate(0);opacity:1}
+  45%{transform:translate(-16px,4px) rotate(-10deg);opacity:1}
+  100%{transform:translate(-24px,28px) rotate(-68deg);opacity:.48}
+}
+@keyframes arenaKnockoutEnemy{
+  0%{transform:translate(0,0) rotate(0);opacity:1}
+  45%{transform:translate(16px,4px) rotate(10deg);opacity:1}
+  100%{transform:translate(24px,28px) rotate(68deg);opacity:.48}
+}
+@media(max-width:560px){
+  .arena-fighter-shell{min-width:72px;min-height:124px}
+  .arena-sprite--duel{width:72px;height:120px}
+  @keyframes arenaLungeRight{0%{transform:translateX(0)}50%{transform:translateX(20px)}100%{transform:translateX(0)}}
+  @keyframes arenaLungeLeft{0%{transform:translateX(0)}50%{transform:translateX(-20px)}100%{transform:translateX(0)}}
+}
+@media(prefers-reduced-motion:reduce){
+  .arena-duelist.is-attacking .arena-fighter-shell,.arena-duelist.is-hit .arena-fighter-shell,.arena-duelist.is-ko .arena-fighter-shell{animation:none}
+  #arena-result-panel,#arena-log-panel{opacity:1;transform:none;pointer-events:auto}
+}
