@@ -1,7 +1,7 @@
 "use strict";
 
 const TAVERN_WORLD = { width: 1024, height: 768 };
-const TAVERN_SPAWN = { x: 560, y: 587 };
+const TAVERN_SPAWN = { x: 560, y: 619 };
 const TAVERN_SPEED = 180;
 const TAVERN_RADIUS = 13;
 const TAVERN_BROADCAST_MS = 110;
@@ -172,11 +172,18 @@ function tavernMove(rt,dt){
   rt.player.moving=true;
   rt.player.moving=true;
   const len=Math.hypot(dx,dy)||1;dx/=len;dy/=len;
-  const nx=rt.player.x+dx*TAVERN_SPEED*dt, ny=rt.player.y+dy*TAVERN_SPEED*dt;
-  if(tavernCanMove(nx,rt.player.y))rt.player.x=nx;
-  if(tavernCanMove(rt.player.x,ny))rt.player.y=ny;
+  const mx=dx*TAVERN_SPEED*dt,my=dy*TAVERN_SPEED*dt;
+  const steps=Math.max(1,Math.ceil(Math.max(Math.abs(mx),Math.abs(my))/4));
+  const sx=mx/steps,sy=my/steps;
+  let moved=false;
+  for(let i=0;i<steps;i++){
+    const nx=rt.player.x+sx;
+    if(tavernCanMove(nx,rt.player.y)){rt.player.x=nx;moved=true;}
+    const ny=rt.player.y+sy;
+    if(tavernCanMove(rt.player.x,ny)){rt.player.y=ny;moved=true;}
+  }
   rt.player.dir=Math.abs(dx)>Math.abs(dy)?(dx<0?"left":"right"):(dy<0?"up":"down");
-  return true;
+  return moved;
 }
 
 function tavernBroadcastPosition(rt,force=false){
