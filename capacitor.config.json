@@ -1,0 +1,16 @@
+{
+  "appId": "com.arcanum",
+  "appName": "ARCANUM",
+  "webDir": "www",
+  "appendUserAgent": " ArcanumNative/1.0",
+  "backgroundColor": "#020202",
+  "android": {
+    "backgroundColor": "#020202"
+  },
+  "plugins": {
+    "SystemBars": {
+      "insetsHandling": "css",
+      "hidden": true
+    }
+  }
+}
