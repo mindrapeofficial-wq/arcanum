@@ -24,7 +24,7 @@ function foodResourceInfo(state=realmState){
   const supply=Math.max(0,Number(c.food||0));
   const population=Math.max(0,Number(r.population||0));
   const margin=Math.max(0,supply-population);
-  return {stored:false,value:supply,label:"Alimento",text:n(supply),title:`Provisión alimentaria: ${n(supply)} de capacidad · población ${n(population)} · margen ${n(margin)}. Actualmente el servidor usa el alimento como capacidad de población.`};
+  return {stored:false,value:supply,label:"Alimento",text:n(supply),title:`Capacidad de sustento: ${n(supply)} · población ${n(population)} · margen ${n(margin)}. El Alimento es capacidad, no un stock consumible.`};
 }
 function researchResourceInfo(state=realmState){
   const r=state?.realm||{};
@@ -39,18 +39,88 @@ function researchResourceInfo(state=realmState){
     ?Math.max(0,Number(current.effective_cost)-Number(current.remaining_points))
     :null;
   const progressText=progress===null?"":` · progreso actual ${n(progress)} RP`;
-  return {stored:false,value:ppt,label:"Conocimiento Arcano",text:`${n(ppt)} RP/t`,title:`Producción de conocimiento arcano: ${n(ppt)} RP por turno${progressText}. Los RP se aplican directamente al hechizo investigado.`};
+  return {stored:false,value:ppt,label:"Investigación",text:`${n(ppt)} RP/t`,title:`Ritmo de investigación: ${n(ppt)} RP por turno dedicado a investigar${progressText}. Los RP no se acumulan pasivamente: se aplican directamente al hechizo en curso.`};
 }
 
-function passivePowerYield(state=realmState){
-  const power=Math.max(1,Number(state?.realm?.net_power||0));
-  const scale=Math.pow(power,0.55);
+function passiveFallbackYield(){
+  // Never invent economic production in the browser.
+  // Until the server exposes a yield or we observe a completed turn delta,
+  // the visual interpolation remains at zero.
+  return {gold:0,mana:0,population:0,land:0,net_power:0};
+}
+
+function economyContract(state=realmState){
+  const r=state?.realm||{}, b=state?.buildings||{}, cap=state?.capacities||{};
+  const population=Math.max(0,Number(r.population||0));
+  const foodCapacity=Math.max(0,Number(cap.food||0));
+  const residentialCapacity=Math.max(0,Number(cap.residential||0));
+  const populationCapacity=Math.max(0,Math.min(foodCapacity,residentialCapacity));
+  const foodMargin=Math.max(0,foodCapacity-population);
+  const housingMargin=Math.max(0,residentialCapacity-population);
+  const manaCapacity=Math.max(0,Number(cap.mana||0));
+  const mana=Math.max(0,Number(r.mana||0));
+  const researchPerTurn=researchPointsPerTurn(state);
+  const wilderness=Math.max(0,Number(r.wilderness||0));
+  const land=Math.max(0,Number(r.land||0));
   return {
-    gold:Math.max(1,Math.round(scale*0.02)),
-    mana:Math.max(1,Math.round(scale*0.005)),
-    population:Math.max(1,Math.round(scale*0.0015)),
-    land:0,
-    net_power:0
+    turns:{
+      value:Math.max(0,Number(r.turns||0)),
+      cap:Math.max(0,Number(r.max_turns||0)),
+      role:"Presupuesto de acciones. Se regenera con el tiempo y se consume al actuar."
+    },
+    gold:{
+      value:Math.max(0,Number(r.gold||0)),
+      role:"Liquidez del reino. Comercio, reclutamiento y costes económicos/militares."
+    },
+    mana:{
+      value:mana,
+      cap:manaCapacity,
+      headroom:Math.max(0,manaCapacity-mana),
+      role:"Reserva arcana. Invocaciones, unidades mágicas, comercio y otros costes arcanos."
+    },
+    population:{
+      value:population,
+      cap:populationCapacity,
+      headroom:Math.max(0,populationCapacity-population),
+      role:"Habitantes disponibles. Su techo es el menor entre vivienda y sustento."
+    },
+    food:{
+      value:foodCapacity,
+      margin:foodMargin,
+      stored:false,
+      role:"Capacidad de sustento, no stock. Si la población alcanza este límite, deja de poder crecer por alimento."
+    },
+    housing:{
+      value:residentialCapacity,
+      margin:housingMargin,
+      role:"Capacidad residencial aportada principalmente por Pueblos."
+    },
+    research:{
+      value:researchPerTurn,
+      unit:"RP/turno de investigación",
+      stored:false,
+      role:"Flujo de conocimiento aplicado al gastar turnos investigando. No se acumula pasivamente."
+    },
+    land:{
+      value:land,
+      wilderness,
+      developed:Math.max(0,land-wilderness),
+      role:"Capacidad física del reino. Construir transforma tierra salvaje en infraestructura."
+    },
+    ascendancy:{
+      value:Math.max(0,Number(r.net_power||0)),
+      role:"Indicador derivado de fuerza global. No se almacena ni se gasta."
+    },
+    buildings:{
+      farms:{count:Number(b.farms||0),role:"Aumentan la capacidad de Alimento y sostienen el crecimiento poblacional."},
+      towns:{count:Number(b.towns||0),role:"Aumentan la capacidad residencial y apoyan la economía de Oro."},
+      nodes:{count:Number(b.nodes||0),role:"Aumentan la capacidad y la economía de Maná."},
+      workshops:{count:Number(b.workshops||0),role:"Reducen el coste efectivo en turnos de futuras construcciones."},
+      guilds:{count:Number(b.guilds||0),role:"Generan RP cuando dedicas turnos a Investigación."},
+      barracks:{count:Number(b.barracks||0),role:"Desbloquean el reclutamiento de unidades."},
+      fortresses:{count:Number(b.fortresses||0),role:"Sostienen la supervivencia y defensa estratégica del dominio."},
+      barriers:{count:Number(b.barriers||0),role:"Defensa arcana especializada."}
+    }
   };
 }
 
@@ -111,9 +181,9 @@ function syncPassiveResourceFlow(state=realmState){
   if(!state?.realm)return;
   const now=Date.now(), current=passiveSnapshot(state), previous=passiveResourceFlow?.snapshot||null;
   const sameSignature=!!previous&&previous.buildingSignature===current.buildingSignature;
-  const powerYield=passivePowerYield(state);
-  let yieldPerTurn=passiveServerYield(state)||passiveReadCache(state)||(sameSignature?passiveResourceFlow?.yieldPerTurn:null)||powerYield;
-  yieldPerTurn={...powerYield,...yieldPerTurn};
+  const fallbackYield=passiveFallbackYield();
+  let yieldPerTurn=passiveServerYield(state)||passiveReadCache(state)||(sameSignature?passiveResourceFlow?.yieldPerTurn:null)||fallbackYield;
+  yieldPerTurn={...fallbackYield,...yieldPerTurn};
 
   if(previous && sameSignature){
     const turnsGained=current.turns-previous.turns;
@@ -260,3 +330,6 @@ async function refreshState(quiet=false){
   try{ realmState=await rpc("my_realm_state"); renderChrome(); if(["realm","economy","build","research","army"].includes(currentView)) await renderView(currentView); if(!quiet)toast("Dominio actualizado."); }
   catch(e){ if(!quiet)toast(humanError(e),"error"); }
 }
+
+
+globalThis.economyContract=economyContract;
