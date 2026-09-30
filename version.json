@@ -1,6 +1,6 @@
 {
-  "version": "0.3.1",
+  "version": "0.3.2",
   "channel": "beta",
-  "updated_at": "2026-09-30T20:58:00+02:00",
-  "note": "Consolidation point 1: combat evolution, inventory, Arena seals, rating, equipment and duel outcomes are server-authoritative"
+  "updated_at": "2026-09-30T21:15:00+02:00",
+  "note": "Consolidation point 2: definitive economy contract, resource roles, bottleneck ledger and no invented passive production"
 }
