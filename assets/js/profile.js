@@ -19,7 +19,7 @@ function profileAvatarMarkup(profile,large=false){
   const cls=large?"profile-avatar profile-avatar-large":"profile-avatar";
   const src=profile?.avatar_path?profileAvatarUrl(profile.avatar_path):profileDefaultPortraitUrl(profile);
   if(src){
-    return '<span class="'+cls+'"><img src="'+esc(src)+'" alt="Avatar de '+esc(profile?.mage_name||"Archimago")+'" /></span>';
+    return '<span class="'+cls+'"><img src="'+esc(src)+'" alt="Avatar de '+esc(profile?.mage_name||"Arconte")+'" /></span>';
   }
   return '<span class="'+cls+' profile-avatar-fallback '+esc(profile?.school_code||"")+'">'+(symbols[profile?.school_code]||"✦")+'</span>';
 }
@@ -81,7 +81,7 @@ function renderArchmageXpGuide(){
   return '<div class="archmage-xp-guide">'+
     '<div class="profile-section-title"><span>FUENTES DE EXPERIENCIA</span><small>progresión protegida contra farmeo</small></div>'+
     '<div class="archmage-xp-sources">'+
-      '<div><strong>Investigación</strong><span>'+n(researchMin)+'–'+n(researchMax)+' XP</span><small>Solo al aprender un hechizo nuevo.</small></div>'+
+      '<div><strong>Conocimiento Arcano</strong><span>'+n(researchMin)+'–'+n(researchMax)+' XP</span><small>Solo al aprender un hechizo nuevo.</small></div>'+
       '<div><strong>Descubrimiento PvE</strong><span>'+n(ARCHMAGE_XP_RULES.pve_first_clear.xp)+' XP</span><small>Primera victoria de una expedición.</small></div>'+
       '<div><strong>Jefes PvE</strong><span>'+n(ARCHMAGE_XP_RULES.pve_boss.xp)+' XP</span><small>Primera derrota de cada jefe.</small></div>'+
       '<div><strong>PvP cualificado</strong><span>'+n(ARCHMAGE_XP_RULES.pvp_qualified.xp)+' + '+n(ARCHMAGE_XP_RULES.pvp_qualified.victoryBonus)+' XP</span><small>Combate válido + bonus por victoria.</small></div>'+
@@ -127,30 +127,30 @@ function renderPlayerProfile(profile,inbox=null){
   }
   let bioBlock="";
   if(profile.is_self){
-    bioBlock='<textarea id="profile-bio-input" maxlength="500" placeholder="Escribe la historia, carácter o ambiciones de tu Archimago…">'+esc(profile.bio||"")+'</textarea>'+
+    bioBlock='<textarea id="profile-bio-input" maxlength="500" placeholder="Escribe la historia, carácter o ambiciones de tu Arconte…">'+esc(profile.bio||"")+'</textarea>'+
       '<div class="profile-edit-row"><label class="profile-action secondary profile-file-label">CAMBIAR IMAGEN<input id="profile-avatar-file" type="file" accept="image/png,image/jpeg,image/webp" hidden /></label><button class="profile-action" id="profile-save-bio">GUARDAR FICHA</button></div>'+
       '<small class="profile-upload-note">Avatar: JPG, PNG o WebP · máximo 2 MB.</small>';
   }else{
-    bioBlock='<p>'+(profile.bio?esc(profile.bio):'<span class="muted">Este Archimago aún no ha escrito su biografía.</span>')+'</p>';
+    bioBlock='<p>'+(profile.bio?esc(profile.bio):'<span class="muted">Este Arconte aún no ha escrito su biografía.</span>')+'</p>';
   }
   const playerLevel=(typeof combatCurrentLevel==="function"?combatCurrentLevel(profile):(profile.archmage_level||1));
   const combat=(typeof renderCombatIdentity==="function"?renderCombatIdentity(profile):"");
   const inventory=(profile.is_self&&typeof renderArchmageInventory==="function"?renderArchmageInventory(profile):"");
   $("#modal-content").innerHTML=
     '<section class="character-sheet player-character-sheet">'+
-      '<div class="profile-hero player-sheet-hero">'+profileAvatarMarkup(profile,true)+'<div class="profile-identity"><span class="section-kicker">'+(profile.is_npc?"ARCHIMAGO NPC":"FICHA DEL JUGADOR")+'</span><h3>'+esc(profile.mage_name)+'</h3><div class="profile-subline">'+esc(profileSchoolName(profile.school_code))+' · Nivel '+n(playerLevel)+' '+(profile.is_npc?'<span class="tag npc-tag">NPC</span>':"")+' '+allianceBadge+'</div><p class="player-sheet-purpose">Tu Archimago como combatiente: atributos, habilidades, equipo e inventario en una sola ficha.</p></div></div>'+
+      '<div class="profile-hero player-sheet-hero">'+profileAvatarMarkup(profile,true)+'<div class="profile-identity"><span class="section-kicker">'+(profile.is_npc?"ARCHIMAGO NPC":"FICHA DEL JUGADOR")+'</span><h3>'+esc(profile.mage_name)+'</h3><div class="profile-subline">'+esc(profileSchoolName(profile.school_code))+' · Nivel '+n(playerLevel)+' '+(profile.is_npc?'<span class="tag npc-tag">NPC</span>':"")+' '+allianceBadge+'</div><p class="player-sheet-purpose">Tu Arconte como combatiente: atributos, habilidades, equipo e inventario en una sola ficha.</p></div></div>'+
       '<div class="profile-stats player-sheet-kingdom-stats"><div><small>PODER DEL REINO</small><strong>'+n(profile.net_power)+'</strong></div><div><small>TIERRAS</small><strong>'+n(profile.land)+'</strong></div><div><small>NIVEL MÁGICO</small><strong>'+n(profile.spell_level)+'</strong></div><div><small>ESTADO</small><strong>'+esc(profile.status)+'</strong></div></div>'+
       '<nav class="player-sheet-nav" aria-label="Secciones de la ficha"><span>PERSONAJE</span><span>HABILIDADES</span><span>EQUIPO</span><span>INVENTARIO</span></nav>'+
       '<div class="player-sheet-layout">'+
         '<div class="player-sheet-main"><div class="player-sheet-block-title"><b>COMBATE Y HABILIDADES</b><small>Identidad permanente al estilo El Bruto</small></div>'+combat+'</div>'+
         '<div class="player-sheet-side">'+
-          (inventory?'<div class="player-sheet-block-title"><b>EQUIPO E INVENTARIO</b><small>Objetos equipados y Cámara del Archimago</small></div>'+inventory:'<div class="player-sheet-remote-note"><b>EQUIPO DEL JUGADOR</b><span>La sincronización pública del inventario se activará cuando el equipo pase del almacenamiento local al perfil persistente.</span></div>')+
+          (inventory?'<div class="player-sheet-block-title"><b>EQUIPO E INVENTARIO</b><small>Objetos equipados y Cámara del Arconte</small></div>'+inventory:'<div class="player-sheet-remote-note"><b>EQUIPO DEL JUGADOR</b><span>La sincronización pública del inventario se activará cuando el equipo pase del almacenamiento local al perfil persistente.</span></div>')+
         '</div>'+
       '</div>'+
-      '<div class="player-sheet-development"><div class="player-sheet-block-title"><b>PROGRESIÓN</b><small>Nivel, experiencia y atributos del Archimago</small></div>'+renderArchmageProgression(profile)+'</div>'+
+      '<div class="player-sheet-development"><div class="player-sheet-block-title"><b>PROGRESIÓN</b><small>Nivel, experiencia y atributos del Arconte</small></div>'+renderArchmageProgression(profile)+'</div>'+
       '<div class="profile-bio-block"><div class="profile-section-title"><span>BIOGRAFÍA</span>'+(profile.is_self?'<small>máx. 500 caracteres</small>':"")+'</div>'+bioBlock+'</div>'+
       actions+
-      (profile.is_npc?'<div class="profile-system-note">Este reino está controlado por ARCANUM. Las acciones sociales están desactivadas para NPC.</div>':"")+
+      (profile.is_npc?'<div class="profile-system-note">Este dominio está controlado por ARCANUM. Las acciones sociales están desactivadas para NPC.</div>':"")+
       (profile.is_self?renderOwnSocial(profile,inbox):"")+
       '<div id="profile-social-detail"></div>'+
     '</section>';
