@@ -8,6 +8,7 @@ const VERSION_CHECK_INTERVAL_MS = 60000;
 const COMMUNITY_API = "https://smynvbrkgffpepbhrpxt.supabase.co/functions/v1/arcanum-community";
 const ORACLE_API = "https://smynvbrkgffpepbhrpxt.supabase.co/functions/v1/arcanum-oracle";
 const BOSS_API = "https://smynvbrkgffpepbhrpxt.supabase.co/functions/v1/arcanum-boss";
+const STATE_API = "https://smynvbrkgffpepbhrpxt.supabase.co/functions/v1/arcanum-state";
 const COMMUNITY_POLL_MS = 2500;
 
 
@@ -46,6 +47,20 @@ function toast(message,type="success",ms=4200){
   const host=$("#toast-host"); const item=document.createElement("div"); item.className=`toast ${type}`; item.textContent=message; host.appendChild(item);
   setTimeout(()=>item.remove(),ms);
 }
+async function stateApi(path,{method="GET",body}={}){
+  const session=getSession();
+  if(!session?.access_token)throw new Error("UNAUTHORIZED");
+  const res=await fetch(STATE_API+path,{
+    method,
+    headers:{Authorization:`Bearer ${session.access_token}`,...(body?{"Content-Type":"application/json"}:{})},
+    body:body?JSON.stringify(body):undefined,
+    cache:"no-store"
+  });
+  const data=await res.json().catch(()=>({}));
+  if(!res.ok)throw new Error(String(data?.error||"STATE_API_ERROR"));
+  return data;
+}
+
 function humanError(error){
   const m=String(error?.message || error || "Error desconocido");
   const map=[
@@ -66,7 +81,7 @@ function humanError(error){
     ["UNRESOLVED_TERRITORY_DAMAGE","Tu reino tiene daño territorial pendiente de resolver."],["INVALID_BUILD_PLAN","El plan de construcción no es válido."],
     ["UNIT_UNDISBANDABLE","Esta unidad no puede ser disuelta."],["SPELL_NOT_KNOWN","Aún no conoces ese hechizo."],
     ["NO_ATTRIBUTE_POINTS","No tienes puntos de atributo disponibles."],["ATTRIBUTE_AT_CAP","Ese atributo ya ha alcanzado el máximo de esta beta."],["INVALID_ATTRIBUTE","Ese atributo no es válido."],
-    ["REALM_NOT_FOUND","Aún no has fundado un reino."]
+    ["REALM_NOT_FOUND","Aún no has fundado un reino."],["ARENA_NO_SEALS","Has gastado los 6 Sellos de Arena de hoy."],["CANNOT_FIGHT_SELF","No puedes combatir contra tu propio Archimago."],["EVOLUTION_LEVEL_LOCKED","Ese nivel todavía no está disponible."],["EVOLUTION_ALREADY_CHOSEN","Ese destino ya fue elegido."],["EVOLUTION_ORDER_REQUIRED","Debes resolver primero la evolución pendiente anterior."],["EVOLUTION_OPTION_INVALID","La opción de evolución ya no es válida."]
   ];
   for(const [k,v] of map) if(m.includes(k)) return v;
   if(m.includes("duplicate key") || m.includes("unique")) return "Ese nombre ya está ocupado.";
