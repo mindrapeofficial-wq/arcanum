@@ -7,7 +7,7 @@ const ARCANUM_ARTIFACT_CATALOG=Object.freeze([
   {id:"war_drum",name:"Tambor de Guerra Rúnico",category:"minor",effect:"+4% moral del ejército.",lore:"Su piel vibra incluso antes de que comience una batalla."},
   {id:"mana_crystal",name:"Cristal de Maná Denso",category:"minor",effect:"+60 capacidad de maná.",lore:"Una veta de magia solidificada en azul profundo."},
   {id:"oracle_dice",name:"Dados del Oráculo",category:"minor",effect:"+3% fortuna en hallazgos.",lore:"Nunca muestran dos veces la misma combinación."},
-  {id:"black_candle",name:"Vela Negra de Vigilia",category:"minor",effect:"+5% resistencia a magia Abisal.",lore:"Su llama oscura ilumina aquello que desea permanecer oculto."},
+  {id:"black_candle",name:"Vela Negra de Vigilia",category:"minor",effect:"+5% resistencia a magia Nadir.",lore:"Su llama oscura ilumina aquello que desea permanecer oculto."},
   {id:"pilgrim_map",name:"Mapa del Peregrino Perdido",category:"minor",effect:"+4% rendimiento de exploración.",lore:"Añade caminos que no estaban dibujados la noche anterior."},
   {id:"griffin_feather",name:"Pluma de Grifo",category:"minor",effect:"+3% velocidad de tropas.",lore:"Aún conserva el impulso de una criatura nacida sobre las nubes."},
   {id:"sealed_letter",name:"Carta del Rey Sin Nombre",category:"minor",effect:"+5 Influencia.",lore:"El sello no pertenece a ningún dominio conocido."},
@@ -33,7 +33,7 @@ const ARCANUM_ARTIFACT_CATALOG=Object.freeze([
   {id:"echo_flute",name:"Flauta del Eco",category:"minor",effect:"+3% poder de invocación.",lore:"Repite notas que aún no han sido tocadas."},
 
   {id:"verdant_crown",name:"Corona del Bosque Primigenio",category:"school",school:"verdant",effect:"+12% regeneración y +8% producción de alimentos.",lore:"Las ramas que la forman siguen creciendo alrededor de su portador."},
-  {id:"verdant_codex",name:"Códice de las Mil Raíces",category:"school",school:"verdant",effect:"+10% conocimiento arcano Verdante.",lore:"Cada página contiene el mapa de un bosque distinto."},
+  {id:"verdant_codex",name:"Códice de las Mil Raíces",category:"school",school:"verdant",effect:"+10% conocimiento arcano Viridia.",lore:"Cada página contiene el mapa de un bosque distinto."},
   {id:"verdant_seedheart",name:"Corazón Semilla",category:"school",school:"verdant",effect:"+10% vida del Arconte y +6% defensa.",lore:"Late lentamente bajo una corteza de oro verde."},
 
   {id:"eradication_brand",name:"Marca del Sol Quebrado",category:"school",school:"eradication",effect:"+12% daño de Escuela.",lore:"El metal permanece rojo aunque repose sobre hielo."},
@@ -44,7 +44,7 @@ const ARCANUM_ARTIFACT_CATALOG=Object.freeze([
   {id:"ascendant_chalice",name:"Cáliz de Alba",category:"school",school:"ascendant",effect:"+10% maná y +6 Voluntad.",lore:"Siempre contiene una gota de luz líquida."},
   {id:"ascendant_sunstone",name:"Piedra del Sol Quieto",category:"school",school:"ascendant",effect:"+9% defensa mágica.",lore:"Proyecta sombra incluso dentro de la oscuridad absoluta."},
 
-  {id:"abyssal_eye",name:"Ojo del Fondo",category:"school",school:"abyssal",effect:"+12% daño Abisal.",lore:"Algo al otro lado mira de vuelta."},
+  {id:"abyssal_eye",name:"Ojo del Fondo",category:"school",school:"abyssal",effect:"+12% daño Nadir.",lore:"Algo al otro lado mira de vuelta."},
   {id:"abyssal_chain",name:"Cadena del Vacío",category:"school",school:"abyssal",effect:"+9% control de invocaciones.",lore:"Uno de sus extremos no existe en este mundo."},
   {id:"abyssal_whisper",name:"Susurro Encapsulado",category:"school",school:"abyssal",effect:"+8 Conocimiento y +6% rituales.",lore:"El cristal habla únicamente cuando la habitación queda vacía."},
 
@@ -73,7 +73,7 @@ const ARCANUM_ARTIFACT_CATALOG=Object.freeze([
 let artifactFilter="all";
 function artifactDef(id){return ARCANUM_ARTIFACT_CATALOG.find(x=>x.id===id);}
 function artifactCategoryLabel(c){return ({minor:"Artefacto menor",school:"Reliquia de Escuela",cursed:"Artefacto maldito",unique:"Único mundial"})[c]||c;}
-function artifactSchoolLabel(s){return ({verdant:"Verdante",eradication:"Erradicación",ascendant:"Ascendente",abyssal:"Abisal",phantasm:"Fantasma"})[s]||"";}
+function artifactSchoolLabel(s){return ({verdant:"Viridia",eradication:"Cineria",ascendant:"Aurea",abyssal:"Nadir",phantasm:"Oneiria"})[s]||"";}
 function artifactOwnedMap(rows){const m=new Map();(rows||[]).forEach(x=>{if(!m.has(x.artifact_id))m.set(x.artifact_id,[]);m.get(x.artifact_id).push(x);});return m;}
 
 async function renderArtifactLibrary(){
