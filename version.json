@@ -1,6 +1,6 @@
 {
-  "version": "0.2.68",
+  "version": "0.2.69",
   "channel": "beta",
-  "updated_at": "2026-09-30T20:24:00+02:00",
-  "note": "Collapsed online players panel is now a compact corner pill that stays out of the game UI"
+  "updated_at": "2026-09-30T20:30:00+02:00",
+  "note": "Unified top HUD: compact search, aligned resources, inbox and controls with responsive spacing"
 }
