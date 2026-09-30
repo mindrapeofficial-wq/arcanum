@@ -148,7 +148,7 @@ function lootGenerate(profile,forcedRarity=null){
   };
 }
 function lootSchoolLabel(code){
-  return ({ascendant:"Ascendente",verdant:"Verdante",eradication:"Erradicación",abyssal:"Abisal",phantasm:"Fantasma",plain:"Neutral"})[code]||code;
+  return ({ascendant:"Aurea",verdant:"Viridia",eradication:"Cineria",abyssal:"Nadir",phantasm:"Oneiria",plain:"Neutral"})[code]||code;
 }
 function lootSlotLabel(slot){
   return ({weapon:"Arma",robe:"Túnica",amulet:"Amuleto",ring:"Anillo",artifact:"Artefacto"})[slot]||slot;
