@@ -16,15 +16,15 @@ async function renderMarket(){
       <section class="market-hero">
         <span class="section-kicker">BAZAR DE LOS CINCO REINOS</span>
         <h2>Mercado Arcano</h2>
-        <p>Publica contratos de intercambio y encuentra Archimagos con los recursos que necesitas. Las ofertas duran 3 días y pueden retirarse en cualquier momento.</p>
+        <p>Publica contratos de intercambio y encuentra Arcontes con los recursos que necesitas. Las ofertas duran 3 días y pueden retirarse en cualquier momento.</p>
       </section>
       <aside class="market-status">
         <small>FASE DE MERCADO</small>
         <strong>Contratos entre jugadores</strong>
-        <p>Las ofertas se liquidan automáticamente en el núcleo del reino. La operación es atómica: si cualquiera de los dos Archimagos no puede entregar su parte, no se mueve ningún recurso.</p>
+        <p>Las ofertas se liquidan automáticamente en el núcleo del dominio. La operación es atómica: si cualquiera de los dos Arcontes no puede entregar su parte, no se mueve ningún recurso.</p>
       </aside>
     </div>
-    <section class="market-artifact-link"><div><span class="section-kicker">MERCADO DE RELIQUIAS</span><strong>Artefactos entre Archimagos</strong><p>Intercambia reliquias de forma atómica, incluidos los Únicos Mundiales.</p></div><button id="market-artifact-gateway" class="profile-action" type="button">ABRIR RELICARIO</button></section>
+    <section class="market-artifact-link"><div><span class="section-kicker">MERCADO DE RELIQUIAS</span><strong>Artefactos entre Arcontes</strong><p>Intercambia reliquias de forma atómica, incluidos los Únicos Mundiales.</p></div><button id="market-artifact-gateway" class="profile-action" type="button">ABRIR RELICARIO</button></section>
     <div class="market-layout">
       <section class="panel">
         <span class="section-kicker">NUEVO CONTRATO</span>
@@ -140,7 +140,7 @@ async function publishMarketOffer(e){
   }finally{btn.disabled=false;btn.innerHTML=old;}
 }
 async function acceptMarketOffer(id,username,btn){
-  if(!confirm(`¿Aceptar el contrato de ${username||"este Archimago"}? El intercambio se ejecutará inmediatamente y no puede deshacerse.`))return;
+  if(!confirm(`¿Aceptar el contrato de ${username||"este Arconte"}? El intercambio se ejecutará inmediatamente y no puede deshacerse.`))return;
   const old=btn?.innerHTML;
   if(btn){btn.disabled=true;btn.textContent="ACEPTANDO…";}
   try{
