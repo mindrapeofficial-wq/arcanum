@@ -21,7 +21,7 @@ async function renderMarket(){
       <aside class="market-status">
         <small>FASE DE MERCADO</small>
         <strong>Contratos entre jugadores</strong>
-        <p>Las ofertas son reales y compartidas. Por seguridad económica, esta fase negocia el acuerdo y abre el contacto entre jugadores; la transferencia automática de inventario se activará cuando pueda cerrarse atómicamente en el núcleo del reino.</p>
+        <p>Las ofertas se liquidan automáticamente en el núcleo del reino. La operación es atómica: si cualquiera de los dos Archimagos no puede entregar su parte, no se mueve ningún recurso.</p>
       </aside>
     </div>
     <section class="market-artifact-link"><div><span class="section-kicker">MERCADO DE RELIQUIAS</span><strong>Artefactos entre Archimagos</strong><p>Intercambia reliquias de forma atómica, incluidos los Únicos Mundiales.</p></div><button id="market-artifact-gateway" class="profile-action" type="button">ABRIR RELICARIO</button></section>
@@ -54,7 +54,7 @@ async function renderMarket(){
           <label>Nota opcional<textarea id="market-note" maxlength="180" placeholder="Ej.: Busco intercambio rápido antes de una campaña."></textarea></label>
           <button id="market-publish" class="primary-action" type="submit">✦ PUBLICAR CONTRATO</button>
         </form>
-        <div class="market-warning">El Mercado no descuenta recursos al publicar. Evita comprometer más de lo que posees mientras la liquidación automática permanece desactivada.</div>
+        <div class="market-warning">Los recursos no quedan reservados al publicar. Al aceptar un contrato, el Mercado vuelve a comprobar los saldos de ambos jugadores antes de ejecutar el intercambio.</div>
       </section>
       <section class="panel">
         <div class="market-book-head">
@@ -109,10 +109,11 @@ async function loadMarketOffers(){
         <div class="market-actions">
           ${o.user_id===data.me
             ?`<button class="ghost-button" data-market-delete="${esc(o.id)}" type="button">RETIRAR</button>`
-            :`<button class="small-action" data-profile="${esc(o.username)}" type="button">NEGOCIAR</button>`}
+            :`<button class="small-action" data-market-accept="${esc(o.id)}" data-market-user="${esc(o.username)}" type="button">ACEPTAR</button>`}
         </div>
       </article>`).join(""):'<div class="empty">No hay contratos activos con este filtro.</div>';
     host.querySelectorAll("[data-market-delete]").forEach(btn=>btn.addEventListener("click",()=>deleteMarketOffer(btn.dataset.marketDelete)));
+    host.querySelectorAll("[data-market-accept]").forEach(btn=>btn.addEventListener("click",()=>acceptMarketOffer(btn.dataset.marketAccept,btn.dataset.marketUser,btn)));
   }catch(e){host.innerHTML=`<div class="empty">${esc(humanError(e))}</div>`;}
 }
 async function publishMarketOffer(e){
@@ -138,6 +139,27 @@ async function publishMarketOffer(e){
     toast(msg.includes("MARKET_OFFER_LIMIT")?"Ya tienes 8 contratos activos. Retira uno antes de publicar otro.":humanError(err),"error");
   }finally{btn.disabled=false;btn.innerHTML=old;}
 }
+async function acceptMarketOffer(id,username,btn){
+  if(!confirm(`¿Aceptar el contrato de ${username||"este Archimago"}? El intercambio se ejecutará inmediatamente y no puede deshacerse.`))return;
+  const old=btn?.innerHTML;
+  if(btn){btn.disabled=true;btn.textContent="ACEPTANDO…";}
+  try{
+    const data=await communityApi(`/market/${encodeURIComponent(id)}/accept`,{method:"POST"});
+    const trade=data?.trade||{};
+    const received=trade.received_amount&&trade.received_resource
+      ?` Has recibido ${marketAmount(trade.received_amount)} ${marketResourceLabel(trade.received_resource)}.`
+      :"";
+    toast(`Contrato completado.${received}`);
+    realmState=await rpc("my_realm_state");
+    renderChrome();
+    await loadMarketOffers();
+  }catch(e){
+    toast(humanError(e),"error");
+  }finally{
+    if(btn&&document.body.contains(btn)){btn.disabled=false;if(old)btn.innerHTML=old;}
+  }
+}
+
 async function deleteMarketOffer(id){
   if(!confirm("¿Retirar este contrato del mercado?"))return;
   try{
