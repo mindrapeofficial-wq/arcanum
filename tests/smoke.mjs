@@ -196,7 +196,7 @@ test("verified Gear comes from gameplay instead of debug drops",()=>{
   assert.match(arena,/loot_reward/);
   assert.match(arena,/announceCanonicalLootReward/);
   assert.match(event,/claimWorldBossGear/);
-  assert.match(event,/bossGearClaimedEvents/);
+  assert.match(event,/bossGearRewardCache/);
 });
 
 test("Gear provenance is visible to the player",()=>{
