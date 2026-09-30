@@ -55,6 +55,9 @@ async function openPlayerProfile(mageName){
   try{
     const profile=await rpc("player_profile",{p_mage_name:activeProfileName});
     const inbox=profile.is_self?await rpc("social_inbox"):null;
+    if(typeof combatHydrateProfile==="function"){
+      try{await combatHydrateProfile(profile)}catch(e){console.warn("Combat state sync failed",e)}
+    }
     if(profile.is_self)ownProfileBadge=profile;
     renderPlayerProfile(profile,inbox);
   }catch(e){
