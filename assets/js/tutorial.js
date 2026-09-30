@@ -6,15 +6,15 @@ let tutorialIndex = 0;
 let tutorialTarget = null;
 
 const tutorialSteps = [
-  {view:"realm",target:".realm-banner-2",kicker:"PASO 1 · TU DOMINIO",title:"Este es tu reino",text:"El panel Reino resume el estado de tu Archimago: tierras, poder, nivel mágico y situación general. Si alguna vez te pierdes, vuelve aquí."},
-  {view:"realm",target:"#resource-strip",kicker:"PASO 2 · RECURSOS",title:"Mira esta franja antes de actuar",text:"Turnos, oro, maná, población y tierras son el combustible del reino. Los turnos se regeneran y casi todas las decisiones importantes los consumen."},
+  {view:"realm",target:".realm-banner-2",kicker:"PASO 1 · TU DOMINIO",title:"Este es tu dominio",text:"El panel Dominio resume el estado de tu Arconte: tierras, poder, nivel mágico y situación general. Si alguna vez te pierdes, vuelve aquí."},
+  {view:"realm",target:"#resource-strip",kicker:"PASO 2 · RECURSOS",title:"Mira esta franja antes de actuar",text:"Turnos, oro, maná, población y tierras son el combustible del dominio. Los turnos se regeneran y casi todas las decisiones importantes los consumen."},
   {view:"realm",target:".realm-command",kicker:"PASO 3 · CONSEJO ARCANO",title:"El juego ya te sugiere un siguiente paso",text:"Consejo Arcano analiza tu situación y te propone una prioridad. No es una orden: úsalo como brújula mientras aprendes."},
   {view:"economy",target:".action-panel",kicker:"PASO 4 · ECONOMÍA",title:"Convierte turnos en recursos",text:"En Economía puedes procesar turnos de forma normal, recaudar impuestos para obtener más oro o cargar maná. También puedes explorar nuevas tierras."},
-  {view:"build",target:".building-list",kicker:"PASO 5 · CONSTRUCCIÓN",title:"La tierra salvaje no produce nada por sí sola",text:"Construye Granjas, Pueblos y Nodos para sostener el reino. Después añade Gremios, Cuarteles, Fortalezas y Barreras según tu estrategia."},
-  {view:"research",target:"#research-button",kicker:"PASO 6 · MAGIA",title:"Los Gremios alimentan tu grimorio",text:"Los Gremios generan puntos de investigación. Investiga hechizos para ampliar tus opciones y aumentar tu Nivel Mágico. Tu Escuela determina tus afinidades."},
+  {view:"build",target:".building-list",kicker:"PASO 5 · CONSTRUCCIÓN",title:"La tierra salvaje no produce nada por sí sola",text:"Construye Granjas, Pueblos y Nodos para sostener el dominio. Después añade Gremios, Cuarteles, Fortalezas y Barreras según tu estrategia."},
+  {view:"research",target:"#research-button",kicker:"PASO 6 · MAGIA",title:"Los Gremios alimentan tu grimorio",text:"Los Gremios generan puntos de conocimiento arcano. Investiga hechizos para ampliar tus opciones y aumentar tu Nivel Mágico. Tu Escuela determina tus afinidades."},
   {view:"army",target:"#view-host .grid-2",kicker:"PASO 7 · EJÉRCITO",title:"Primero Cuarteles, después tropas",text:"Recluta unidades compatibles con tu Escuela e invoca criaturas cuando conozcas los hechizos adecuados. Un ejército grande también exige una economía capaz de mantenerlo."},
   {view:"war",target:"#view-host .panel",kicker:"PASO 8 · GUERRA",title:"Atacar tiene consecuencias",text:"Los ataques gastan turnos, recursos y tropas. Revisa siempre tu ejército y tu economía antes de combatir. Las victorias pueden darte territorio."},
-  {view:"community",target:".community-tabs",kicker:"PASO 9 · COMUNIDAD",title:"No estás solo en ARCANUM",text:"El Chat Global sirve para hablar con otros Archimagos. El Tablón permite publicar anuncios de diplomacia, comercio, reclutamiento o guerra."},
+  {view:"community",target:".community-tabs",kicker:"PASO 9 · COMUNIDAD",title:"No estás solo en ARCANUM",text:"El Chat Global sirve para hablar con otros Arcontes. El Tablón permite publicar anuncios de diplomacia, comercio, reclutamiento o guerra."},
   {view:"realm",target:"#manual-top-button",kicker:"PASO 10 · LISTO",title:"Tu grimorio queda abierto",text:"Puedes consultar el Manual Básico con el botón ? y repetir este tutorial cuando quieras desde el propio Manual o desde el menú lateral."}
 ];
 
@@ -108,5 +108,5 @@ function tutorialEnd(completed=true){
   window.removeEventListener("resize",tutorialPosition);
   window.removeEventListener("scroll",tutorialPosition,true);
   navigate("realm");
-  if(completed)toast("Tutorial completado. El reino ya es tuyo.","success");
+  if(completed)toast("Tutorial completado. El dominio ya es tuyo.","success");
 }
