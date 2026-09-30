@@ -3,7 +3,7 @@
 const SUPABASE_URL = "https://mrmvmoyysxuopqexbxfk.supabase.co";
 const SUPABASE_KEY = "sb_publishable_tZEPJi2v7Tp-xDuVa0qWRw_geizIGoD";
 const SESSION_KEY = "arcanum_session_v2";
-const BUILD_VERSION = "0.3.0";
+const BUILD_VERSION = "0.3.1";
 const VERSION_CHECK_INTERVAL_MS = 60000;
 const COMMUNITY_API = "https://smynvbrkgffpepbhrpxt.supabase.co/functions/v1/arcanum-community";
 const ORACLE_API = "https://smynvbrkgffpepbhrpxt.supabase.co/functions/v1/arcanum-oracle";
@@ -81,7 +81,7 @@ function humanError(error){
     ["UNRESOLVED_TERRITORY_DAMAGE","Tu dominio tiene daño territorial pendiente de resolver."],["INVALID_BUILD_PLAN","El plan de construcción no es válido."],
     ["UNIT_UNDISBANDABLE","Esta unidad no puede ser disuelta."],["SPELL_NOT_KNOWN","Aún no conoces ese hechizo."],
     ["NO_ATTRIBUTE_POINTS","No tienes puntos de atributo disponibles."],["ATTRIBUTE_AT_CAP","Ese atributo ya ha alcanzado el máximo de esta beta."],["INVALID_ATTRIBUTE","Ese atributo no es válido."],
-    ["REALM_NOT_FOUND","Aún no has fundado un dominio."],["ARENA_NO_SEALS","Has gastado los 6 Sellos de Arena de hoy."],["CANNOT_FIGHT_SELF","No puedes combatir contra tu propio Arconte."],["EVOLUTION_LEVEL_LOCKED","Ese nivel todavía no está disponible."],["EVOLUTION_ALREADY_CHOSEN","Ese destino ya fue elegido."],["EVOLUTION_ORDER_REQUIRED","Debes resolver primero la evolución pendiente anterior."],["EVOLUTION_OPTION_INVALID","La opción de evolución ya no es válida."]
+    ["REALM_NOT_FOUND","Aún no has fundado un dominio."],["ARENA_NO_SEALS","Has gastado los 6 Sellos de Arena de hoy."],["CANNOT_FIGHT_SELF","No puedes combatir contra tu propio Arconte."],["EVOLUTION_LEVEL_LOCKED","Ese nivel todavía no está disponible."],["EVOLUTION_ALREADY_CHOSEN","Ese destino ya fue elegido."],["EVOLUTION_ORDER_REQUIRED","Debes resolver primero la evolución pendiente anterior."],["EVOLUTION_OPTION_INVALID","La opción de evolución ya no es válida."],["INVENTORY_FULL","Tu inventario está lleno."],["ITEM_NOT_FOUND","Ese objeto ya no existe."],["INVALID_EQUIP_SLOT","Ese objeto no puede equiparse en ese hueco."]
   ];
   for(const [k,v] of map) if(m.includes(k)) return v;
   if(m.includes("duplicate key") || m.includes("unique")) return "Ese nombre ya está ocupado.";
