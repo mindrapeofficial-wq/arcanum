@@ -172,3 +172,6 @@ async function showArtifactHistory(artifactId){
     show($("#modal"));
   }catch(e){toast(humanError(e),"error");}
 }
+
+// Explicit global export for router/runtime recovery.
+globalThis.renderArtifactLibrary=renderArtifactLibrary;
