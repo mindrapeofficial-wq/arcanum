@@ -14,9 +14,9 @@ function passivePowerYield(state=realmState){
   const power=Math.max(1,Number(state?.realm?.net_power||0));
   const scale=Math.pow(power,0.55);
   return {
-    gold:Math.max(1,Math.round(scale*0.4)),
-    mana:Math.max(1,Math.round(scale*0.1)),
-    population:Math.max(1,Math.round(scale*0.03)),
+    gold:Math.max(1,Math.round(scale*0.02)),
+    mana:Math.max(1,Math.round(scale*0.005)),
+    population:Math.max(1,Math.round(scale*0.0015)),
     land:0,
     net_power:0
   };
@@ -28,7 +28,7 @@ function passiveBuildingSignature(state=realmState){
 }
 function passiveCacheKey(state=realmState){
   const mage=String(state?.realm?.mage_name||"anon").toLowerCase().replace(/[^a-z0-9_-]+/g,"_");
-  return `arcanum_passive_yield_v2_${mage}_${passiveBuildingSignature(state)}`;
+  return `arcanum_passive_yield_v3_${mage}_${passiveBuildingSignature(state)}`;
 }
 function passiveReadCache(state=realmState){
   try{
@@ -134,14 +134,17 @@ function passiveRateTitle(field){
 function updatePassiveResourceDisplay(){
   if(!realmState?.realm)return;
   for(const field of Object.keys(PASSIVE_RESOURCE_FIELDS)){
-    const el=document.querySelector(`[data-live-resource="${field}"]`);
-    if(!el)continue;
-    el.textContent=n(passiveDisplayedValue(field));
-    const item=el.closest(".resource-item");
-    if(item){
-      const title=passiveRateTitle(field);
-      if(title)item.title=title; else item.removeAttribute("title");
-    }
+    const els=document.querySelectorAll(`[data-live-resource="${field}"]`);
+    if(!els.length)continue;
+    const value=n(passiveDisplayedValue(field));
+    const title=passiveRateTitle(field);
+    els.forEach(el=>{
+      el.textContent=value;
+      const item=el.closest(".resource-item,.economy-resource-card");
+      if(item){
+        if(title)item.title=title; else item.removeAttribute("title");
+      }
+    });
   }
 }
 
