@@ -43,7 +43,7 @@ const ArcanumAudio=(()=>{
   };
   function buildMusic(){
     if(music)return music;
-    music=new Audio("assets/audio/dungeon-lobby.mp3");
+    music=new Audio("assets/audio/Dungeon%20Lobby.mp3");
     music.loop=true; music.preload="auto"; music.crossOrigin="anonymous";
     music.addEventListener("error",()=>document.documentElement.classList.add("audio-music-missing"));
     return music;
