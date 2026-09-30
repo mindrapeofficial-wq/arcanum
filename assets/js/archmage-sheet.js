@@ -13,6 +13,9 @@ function applyArchmageSnapshot(snapshot){
   if(snapshot.inventory&&typeof lootCacheState==="function"){
     lootCacheState(profile,snapshot.inventory);
   }
+  if(snapshot.items&&typeof cacheCanonicalItems==="function"){
+    cacheCanonicalItems(snapshot.items);
+  }
   archmageSnapshotCache.set(archmageSnapshotKey(profile.mage_name),snapshot);
   return snapshot;
 }
