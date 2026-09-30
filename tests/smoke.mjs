@@ -44,6 +44,9 @@ test("Archmage progression curve is deterministic and capped",()=>{
   assert.equal(vm.runInContext("archmageProgressFromTotalXp(133890).level",context),50);
   assert.equal(vm.runInContext("archmageEarnedAttributePoints(50)",context),49);
   assert.equal(vm.runInContext("archmageProgressionFromProfile({archmage_total_xp:520,arcane_power:99,knowledge:4,willpower:2,influence:1,attribute_points:3}).stats.arcane_power",context),20);
+  assert.equal(vm.runInContext("archmageIdentityFromProgression({stats:{arcane_power:2,knowledge:2,willpower:1,influence:1}}).key",context),"hybrid");
+  assert.equal(vm.runInContext("archmageIdentityFromProgression({stats:{arcane_power:2,knowledge:3,willpower:1,influence:1}}).title",context),"Mente Erudita");
+  assert.equal(vm.runInContext("archmageIdentityFromProgression({stats:{arcane_power:2,knowledge:2,willpower:2,influence:2}}).key",context),"balanced");
 });
 
 test("no single-element selector is iterated with forEach",()=>{
