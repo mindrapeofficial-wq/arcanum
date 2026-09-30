@@ -3,7 +3,7 @@
 const SUPABASE_URL = "https://mrmvmoyysxuopqexbxfk.supabase.co";
 const SUPABASE_KEY = "sb_publishable_tZEPJi2v7Tp-xDuVa0qWRw_geizIGoD";
 const SESSION_KEY = "arcanum_session_v2";
-const BUILD_VERSION = "0.2.65";
+const BUILD_VERSION = "0.2.66";
 const VERSION_CHECK_INTERVAL_MS = 60000;
 const COMMUNITY_API = "https://smynvbrkgffpepbhrpxt.supabase.co/functions/v1/arcanum-community";
 const ORACLE_API = "https://smynvbrkgffpepbhrpxt.supabase.co/functions/v1/arcanum-oracle";
@@ -49,6 +49,11 @@ function toast(message,type="success",ms=4200){
 function humanError(error){
   const m=String(error?.message || error || "Error desconocido");
   const map=[
+    ["BUYER_NOT_ENOUGH_GOLD","No tienes oro suficiente para aceptar este contrato."],["BUYER_NOT_ENOUGH_MANA","No tienes maná suficiente para aceptar este contrato."],["BUYER_NOT_ENOUGH_POPULATION","No tienes población suficiente para aceptar este contrato."],
+    ["SELLER_NOT_ENOUGH_GOLD","El vendedor ya no dispone del oro comprometido."],["SELLER_NOT_ENOUGH_MANA","El vendedor ya no dispone del maná comprometido."],["SELLER_NOT_ENOUGH_POPULATION","El vendedor ya no dispone de la población comprometida."],
+    ["MARKET_OFFER_EXPIRED","Este contrato ya ha caducado."],["MARKET_OFFER_NOT_OPEN","Este contrato ya no está disponible."],["MARKET_OFFER_NOT_FOUND","No se ha encontrado este contrato."],
+    ["CANNOT_ACCEPT_OWN_OFFER","No puedes aceptar tu propio contrato."],["MARKET_SEASON_MISMATCH","El contrato pertenece a otra temporada."],["MARKET_SELLER_NOT_ALIVE","El reino vendedor ya no puede comerciar."],
+    ["MARKET_OFFER_LIMIT","Ya tienes 8 contratos activos."],["MARKET_OPERATION_FAILED","No se pudo completar la operación del mercado."],
     ["NOT_ENOUGH_TURNS","No tienes turnos suficientes."],["NOT_ENOUGH_WILDERNESS","No tienes terreno salvaje suficiente."],
     ["NOT_ENOUGH_GOLD","No tienes oro suficiente."],["NOT_ENOUGH_MANA","No tienes maná suficiente."],["NOT_ENOUGH_POPULATION","No tienes población suficiente."],
     ["NO_RESEARCH_PRODUCTION","Necesitas al menos un Gremio para investigar."],["SPELL_NOT_RESEARCHABLE","Ese hechizo no puede investigarse con tu Escuela."],
