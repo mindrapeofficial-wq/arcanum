@@ -1,6 +1,6 @@
 {
-  "version": "0.2.48",
+  "version": "0.2.49",
   "channel": "beta",
-  "updated_at": "2026-09-30T10:39:00+02:00",
-  "note": "Ascendant animated tavern sprite"
+  "updated_at": "2026-09-30T10:40:00+02:00",
+  "note": "World Boss shared HP, server attacks and global damage ranking"
 }
