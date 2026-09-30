@@ -1,6 +1,6 @@
 {
-  "version": "0.2.64",
+  "version": "0.2.65",
   "channel": "beta",
-  "updated_at": "2026-09-30T19:20:00+02:00",
-  "note": "Food and research are now visible in the main resource bar and Economy, with backend-compatible stored-resource fallbacks"
+  "updated_at": "2026-09-30T19:34:00+02:00",
+  "note": "Two-choice permanent Archmage evolution per level, including stats, skills, traits and weapons used directly by Arena combat"
 }
