@@ -199,7 +199,7 @@ function renderPlayerProfile(profile,inbox=null,snapshot=null){
     bioBlock='<p>'+(profile.bio?esc(profile.bio):'<span class="muted">Este Archimago aún no ha escrito su biografía.</span>')+'</p>';
   }
   const playerLevel=Number(snapshot?.identity?.level||(typeof combatCurrentLevel==="function"?combatCurrentLevel(profile):(profile.archmage_level||1)));
-  const combat=(typeof renderCombatIdentity==="function"?renderCombatIdentity(profile):"");
+  const combat=(typeof renderCombatIdentity==="function"?renderCombatIdentity(profile,snapshot?.combat?.derived||null):"");
   const equipment=renderCanonicalEquipment(snapshot,profile);
   const arena=snapshot?.arena||{};
   const relicCount=Number(snapshot?.artifacts?.count||0);
