@@ -66,5 +66,12 @@ async function doEconomy(action,btn){
 
 async function doExplore(btn,inputId="explore-turns"){
   const turns=Math.max(1,Math.min(50,Number($("#"+inputId).value)||1));
-  await actionCall(btn,()=>rpc("explore",{p_turns:turns}),null,(res)=>`Exploración completada: +${n(res.land_gained)} acres.`);
+  const artifactClaim=typeof artifactStartExplorationClaim==="function"
+    ?await artifactStartExplorationClaim(turns)
+    :null;
+  const res=await actionCall(btn,()=>rpc("explore",{p_turns:turns}),null,(result)=>`Exploración completada: +${n(result.land_gained)} acres.`);
+  if(artifactClaim&&typeof artifactCompleteExplorationClaim==="function"){
+    await artifactCompleteExplorationClaim(artifactClaim);
+  }
+  return res;
 }
