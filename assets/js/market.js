@@ -24,7 +24,8 @@ async function renderMarket(){
         <p>Las ofertas son reales y compartidas. Por seguridad económica, esta fase negocia el acuerdo y abre el contacto entre jugadores; la transferencia automática de inventario se activará cuando pueda cerrarse atómicamente en el núcleo del reino.</p>
       </aside>
     </div>
-    <section class="market-artifact-link"><div><span class="section-kicker">MERCADO DE RELIQUIAS</span><strong>Artefactos entre Archimagos</strong><p>Intercambia reliquias de forma atómica, incluidos los Únicos Mundiales.</p></div><button id="market-artifact-gateway" class="profile-action" type="button">ABRIR RELICARIO</button></section>\n    <div class="market-layout">
+    <section class="market-artifact-link"><div><span class="section-kicker">MERCADO DE RELIQUIAS</span><strong>Artefactos entre Archimagos</strong><p>Intercambia reliquias de forma atómica, incluidos los Únicos Mundiales.</p></div><button id="market-artifact-gateway" class="profile-action" type="button">ABRIR RELICARIO</button></section>
+    <div class="market-layout">
       <section class="panel">
         <span class="section-kicker">NUEVO CONTRATO</span>
         <h3>Publicar una oferta</h3>
@@ -71,7 +72,8 @@ async function renderMarket(){
         <div id="market-list" class="market-list"><div class="empty">Consultando el mercado…</div></div>
       </section>
     </div>`;
-  $("#market-form").addEventListener("submit",publishMarketOffer);\n  $("#market-artifact-gateway")?.addEventListener("click",()=>navigate("artifacts"));
+  $("#market-form").addEventListener("submit",publishMarketOffer);
+  $("#market-artifact-gateway")?.addEventListener("click",()=>navigate("artifacts"));
   $("#market-filter").addEventListener("change",e=>{marketFilter=e.target.value;loadMarketOffers();});
   $("#market-refresh").addEventListener("click",loadMarketOffers);
   $("#market-offer-resource").addEventListener("change",keepMarketResourcesDifferent);
