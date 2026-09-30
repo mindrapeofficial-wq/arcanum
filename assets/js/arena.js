@@ -79,7 +79,7 @@ async function renderArena(){
     '<div class="arena-grid"><section class="panel"><div class="arena-title"><span class="section-kicker">RIVALES</span><h3>Contrincantes cercanos</h3></div>'+
       '<div class="arena-list">'+(targets.length?targets.map(function(t){
         const tr=arenaTrait(t.school_code);
-        return '<article class="arena-row"><i>'+tr.mark+'</i><div><strong><button class="player-link" data-profile="'+esc(t.mage_name)+'">'+esc(t.mage_name)+'</button></strong>'+
+        return '<article class="arena-row">'+arenaSpriteHtml(f.school,"arena-sprite--mini")+'<div><strong><button class="player-link" data-profile="'+esc(t.mage_name)+'">'+esc(t.mage_name)+'</button></strong>'+
           '<small>'+esc(tr.name)+' · Poder '+n(t.net_power)+'</small></div><div>'+
           '<button class="small-action arena-fight" data-target="'+esc(t.mage_name)+'" data-mode="ranked" '+(Number(data.seals_remaining)<=0?"disabled":"")+'>DUELO</button>'+
           '<button class="small-action arena-fight alt" data-target="'+esc(t.mage_name)+'" data-mode="friendly">AMISTOSO</button></div></article>';
