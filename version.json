@@ -1,6 +1,6 @@
 {
-  "version": "0.2.50",
+  "version": "0.2.52",
   "channel": "beta",
-  "updated_at": "2026-09-30T10:54:00+02:00",
-  "note": "Artifact system: 60 named relics, school relics, cursed artifacts and 10 world uniques"
-}\n
+  "updated_at": "2026-09-30T11:06:00+02:00",
+  "note": "Fix literal newline escape text and guard against regression"
+}
