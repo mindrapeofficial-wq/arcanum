@@ -348,8 +348,9 @@ function renderCombatEvolution(profile){
   }).join("")+'</div>':"";
   return choice+historyHtml;
 }
-function renderCombatIdentity(profile){
-  const c=getCombatProfile(profile),d=combatDerived(profile);
+function renderCombatIdentity(profile,serverDerived=null){
+  const c=getCombatProfile(profile),localDerived=combatDerived(profile);
+  const d=serverDerived&&Number.isFinite(Number(serverDerived.maxHp))?serverDerived:localDerived;
   const stats=Object.entries(c.stats).map(function(entry){return '<div class="combat-stat"><small>'+esc(COMBAT_STAT_META[entry[0]])+'</small><strong>'+n(entry[1])+'</strong></div>'}).join("");
   const abilities=c.abilities.map(function(a){return '<div class="combat-ability"><strong>'+esc(a.name)+'</strong><span>'+esc(a.desc)+'</span></div>'}).join("");
   const traits=[c.trait].concat(c.bonusTraits||[]).filter(Boolean);
