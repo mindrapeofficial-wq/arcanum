@@ -1,6 +1,6 @@
 {
-  "version": "0.2.53",
+  "version": "0.2.54",
   "channel": "beta",
-  "updated_at": "2026-09-30T11:40:00+02:00",
-  "note": "Playable pixel-art Tavern map with furniture and wall collisions"
+  "updated_at": "2026-09-30T12:05:00+02:00",
+  "note": "Tavern map loading hotfix with pako decoder and safe fallback"
 }
