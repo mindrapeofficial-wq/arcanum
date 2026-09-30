@@ -7,9 +7,9 @@ const read=p=>fs.readFileSync(new URL("../"+p, import.meta.url),"utf8");
 const html=read("index.html");
 const version=JSON.parse(read("version.json"));
 const jsFiles=[
-  "assets/js/state.js","assets/js/auth.js","assets/js/archmage.js","assets/js/profile.js","assets/js/realm-state.js","assets/js/router.js",
+  "assets/js/state.js","assets/js/auth.js","assets/js/archmage.js","assets/js/combat-profile.js","assets/js/inventory.js","assets/js/profile.js","assets/js/realm-state.js","assets/js/router.js",
   "assets/js/community.js","assets/js/realm.js","assets/js/economy.js","assets/js/construction.js",
-  "assets/js/magic.js","assets/js/army.js","assets/js/war.js","assets/js/tutorial.js","assets/js/ui.js"
+  "assets/js/magic.js","assets/js/army.js","assets/js/war.js","assets/js/arena.js","assets/js/tutorial.js","assets/js/ui.js"
 ];
 const js=jsFiles.map(read).join("\n");
 const uiAssets=[
@@ -81,4 +81,17 @@ test("art project UI icons are present and wired",()=>{
   assert.match(read("assets/js/realm-state.js"),/assets\/ui\/resources\/oro\.png/);
   assert.ok(fs.existsSync(new URL("../assets/art/characters/verdante/verdante-level-1.png",import.meta.url)),"Missing Verdante level 1 portrait");
   assert.match(read("assets/js/profile.js"),/verdante-level-1\.png/);
+});
+
+
+test("competitive state is not written to localStorage",()=>{
+  const arena=read("assets/js/arena.js");
+  const combat=read("assets/js/combat-profile.js");
+  const inventory=read("assets/js/inventory.js");
+  assert.doesNotMatch(arena,/localStorage\.setItem/,"Arena must be server-authoritative");
+  assert.doesNotMatch(combat,/localStorage\.setItem/,"Combat progression must be server-authoritative");
+  assert.doesNotMatch(inventory,/localStorage\.setItem/,"Inventory must be server-authoritative");
+  assert.match(combat,/stateApi\("\/combat\/evolve"/);
+  assert.match(inventory,/stateApi\("\/inventory\/equip"/);
+  assert.match(arena,/stateApi\("\/arena\/fight"/);
 });
