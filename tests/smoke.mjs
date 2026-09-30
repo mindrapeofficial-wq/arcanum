@@ -7,7 +7,7 @@ const read=p=>fs.readFileSync(new URL("../"+p, import.meta.url),"utf8");
 const html=read("index.html");
 const version=JSON.parse(read("version.json"));
 const jsFiles=[
-  "assets/js/state.js","assets/js/auth.js","assets/js/archmage.js","assets/js/combat-profile.js","assets/js/inventory.js","assets/js/archmage-sheet.js","assets/js/profile.js","assets/js/realm-state.js","assets/js/router.js",
+  "assets/js/state.js","assets/js/auth.js","assets/js/archmage.js","assets/js/combat-profile.js","assets/js/items.js","assets/js/inventory.js","assets/js/archmage-sheet.js","assets/js/profile.js","assets/js/realm-state.js","assets/js/router.js",
   "assets/js/community.js","assets/js/realm.js","assets/js/economy.js","assets/js/construction.js",
   "assets/js/magic.js","assets/js/army.js","assets/js/war.js","assets/js/arena.js","assets/js/tutorial.js","assets/js/ui.js"
 ];
@@ -135,4 +135,26 @@ test("Tavern and PvE consume canonical Archmage identity",()=>{
   assert.match(tavern,/level:rt\.player\.level,renown:rt\.player\.renown/);
   assert.match(event,/loadArchmageSnapshot\(realmState\?\.realm\?\.mage_name/);
   assert.match(event,/bossArchmageSnapshot\?\.identity\?\.level/);
+});
+
+
+test("canonical item model separates Focus, Relic and Duel Weapon",()=>{
+  const items=read("assets/js/items.js");
+  const inventory=read("assets/js/inventory.js");
+  const profile=read("assets/js/profile.js");
+  const combat=read("assets/js/combat-profile.js");
+  assert.match(items,/key:"focus",label:"Foco Arcano"/);
+  assert.match(items,/key:"relic",label:"Reliquia"/);
+  assert.match(items,/stateApi\("\/items\/equip"/);
+  assert.match(inventory,/ARCANUM_INVENTORY_VERSION=2/);
+  assert.match(inventory,/key:"focus",label:"Foco Arcano"/);
+  assert.doesNotMatch(inventory,/key:"artifact",label:"Artefacto"/);
+  assert.match(profile,/focus:"FOCO ARCANO",relic:"RELIQUIA"/);
+  assert.match(combat,/ARMA DE DUELO/);
+});
+
+test("relic equipment uses canonical item lifecycle",()=>{
+  const artifacts=read("assets/js/artifacts.js");
+  assert.match(artifacts,/equipCanonicalItem\("relic",id\)/);
+  assert.match(artifacts,/unequipCanonicalSlot\("relic"\)/);
 });
