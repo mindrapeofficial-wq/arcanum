@@ -2,18 +2,6 @@ name: Build Android APK
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths:
-      - "index.html"
-      - "manifest.webmanifest"
-      - "version.json"
-      - "assets/**"
-      - "package.json"
-      - "capacitor.config.json"
-      - "scripts/**"
-      - ".github/workflows/android-apk.yml"
 
 permissions:
   contents: read
