@@ -13,7 +13,7 @@ function sidebarOnlineRow(player,friends){
   const username=String(player?.username||"").trim();
   const school=String(player?.school_code||"");
   const isFriend=friends.has(username.toLowerCase());
-  return '<div class="sidebar-online-row">'+
+  return '<div class="sidebar-online-row'+(isFriend?' has-dm':'')+'">'+
     '<button class="sidebar-online-player" type="button" data-profile="'+esc(username)+'" title="Ver ficha de '+esc(username)+'">'+
       '<span class="presence-dot" aria-hidden="true"></span>'+
       '<span class="school-dot '+esc(school)+'" aria-hidden="true"></span>'+
