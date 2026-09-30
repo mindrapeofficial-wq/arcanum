@@ -58,6 +58,9 @@ async function openPlayerProfile(mageName){
     if(typeof combatHydrateProfile==="function"){
       try{await combatHydrateProfile(profile)}catch(e){console.warn("Combat state sync failed",e)}
     }
+    if(profile.is_self&&typeof lootHydrateProfile==="function"){
+      try{await lootHydrateProfile(profile)}catch(e){console.warn("Inventory state sync failed",e)}
+    }
     if(profile.is_self)ownProfileBadge=profile;
     renderPlayerProfile(profile,inbox);
   }catch(e){
