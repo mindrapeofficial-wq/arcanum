@@ -25,6 +25,10 @@ function profileAvatarMarkup(profile,large=false){
 function renderOwnProfileBadge(){
   const sigil=$("#mage-sigil");
   if(!sigil||!realmState?.realm)return;
+  const schoolName=profileSchoolName(realmState.realm.school_code);
+  const progression=archmageProgressionFromProfile(ownProfileBadge);
+  const schoolLabel=$("#mage-school");
+  if(schoolLabel)schoolLabel.textContent=progression?schoolName+" · Nivel "+progression.level:schoolName;
   const src=ownProfileBadge?.avatar_path?profileAvatarUrl(ownProfileBadge.avatar_path):profileDefaultPortraitUrl({school_code:realmState.realm.school_code});
   if(src){
     sigil.innerHTML='<img src="'+esc(src)+'" alt="" />';
