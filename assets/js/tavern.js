@@ -6,7 +6,9 @@ const TAVERN_SPEED = 185;
 const TAVERN_RADIUS = 14;
 const TAVERN_BROADCAST_MS = 110;
 
-let tavernRuntime = null;\nconst TAVERN_ASCENDANT_SPRITE = new Image();\nTAVERN_ASCENDANT_SPRITE.src = "assets/art/characters/ascendant/walk.svg?v=0.2.48";
+let tavernRuntime = null;
+const TAVERN_ASCENDANT_SPRITE = new Image();
+TAVERN_ASCENDANT_SPRITE.src = "assets/art/characters/ascendant/walk.svg?v=0.2.48";
 
 function tavernSchoolColor(code){
   return ({
