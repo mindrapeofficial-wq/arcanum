@@ -45,7 +45,7 @@ async function bossApi(path="",{method="GET",body}={}){
       BOSS_NOT_ACTIVE:"El Devorador ya no puede ser atacado.",
       BOSS_NOT_STARTED:"La Brecha todavía no se ha abierto.",
       BOSS_EVENT_ENDED:"La Brecha del Umbral ya se ha cerrado.",
-      REALM_REQUIRED:"Necesitas un reino activo para participar.",
+      REALM_REQUIRED:"Necesitas un dominio activo para participar.",
       UNAUTHORIZED:"Tu sesión ha caducado. Vuelve a entrar.",
       INVALID_REQUEST_ID:"No se pudo identificar la incursión. Inténtalo de nuevo.",
       REQUEST_ID_CONFLICT:"La incursión no pudo validarse. Inténtalo de nuevo."
@@ -126,7 +126,7 @@ function drawBoss(data){
       <div class="boss-copy">
         <span class="boss-live ${defeated?"boss-live-defeated":""}">${bossStatusLabel(boss.status)}</span>
         <h3>${esc(boss.boss_name||"El Devorador del Umbral")}</h3>
-        <p>Una criatura nacida entre escuelas consume maná, memoria y territorio. La única forma de cerrarle el paso es que los reinos golpeen la misma brecha.</p>
+        <p>Una criatura nacida entre escuelas consume maná, memoria y territorio. La única forma de cerrarle el paso es que los dominios golpeen la misma brecha.</p>
         <div class="boss-meta"><span>${bossPhase(pct,boss.status)}</span><span>TERMINA EN <b id="boss-clock">${bossTimeText(boss.ends_at)}</b></span><span>VIDA MUNDIAL SINCRONIZADA</span></div>
       </div>
       <div class="boss-sigil-art boss-portrait" aria-hidden="true"><img id="boss-art-image" alt="" decoding="async" /><span class="boss-portrait-vignette"></span></div>
@@ -142,13 +142,13 @@ function drawBoss(data){
       </div>
       <div class="boss-reward-strip"><span>RECOMPENSA DE EVENTO</span><strong>${bossRewardText(me,boss,artifactReward)}</strong></div>
       <div class="boss-action-row">
-        <div><small>COSTE DE INCURSIÓN</small><strong>${turnCost} turnos</strong><p>El servidor valida tu reino, descuenta los turnos y calcula el golpe a partir de tu Poder Neto. El navegador no decide el daño.</p></div>
+        <div><small>COSTE DE INCURSIÓN</small><strong>${turnCost} turnos</strong><p>El servidor valida tu dominio, descuenta los turnos y calcula el golpe a partir de tu Ascendencia. El navegador no decide el daño.</p></div>
         <button class="primary-action boss-attack" id="boss-attack" ${ended||defeated?"disabled":""}>⚔ ${defeated?"BOSS DERROTADO":ended?"EVENTO CERRADO":"ATACAR AL BOSS"}</button>
       </div>
     </section>
     <section class="panel boss-ranking-panel">
       <div class="boss-ranking-head"><div><span class="section-kicker">CONTRIBUCIÓN MUNDIAL</span><h3>Ranking del Devorador</h3><p>Clasificación por daño acumulado. Se actualiza automáticamente mientras mantengas abierto el evento.</p></div><span class="boss-sync-dot">● EN VIVO</span></div>
-      <div class="table-wrap"><table><thead><tr><th>#</th><th>Archimago</th><th>Escuela</th><th>Daño</th><th>Incursiones</th></tr></thead><tbody>${rankRows}</tbody></table></div>
+      <div class="table-wrap"><table><thead><tr><th>#</th><th>Arconte</th><th>Escuela</th><th>Daño</th><th>Incursiones</th></tr></thead><tbody>${rankRows}</tbody></table></div>
     </section>
     <section class="boss-lore-grid">
       <article><span>01</span><h4>Hambre</h4><p>Por encima del 66%, su caparazón sigue entero y la brecha absorbe la energía de las Cinco Escuelas.</p></article>
