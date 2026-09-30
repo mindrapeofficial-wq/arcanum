@@ -225,6 +225,7 @@ function tavernMove(rt,dt){
   if(rt.keys.has("ArrowUp")||rt.keys.has("w"))dy--;
   if(rt.keys.has("ArrowDown")||rt.keys.has("s"))dy++;
   if(!dx&&!dy){rt.player.moving=false;return false;}
+  rt.player.moving=true;
   const len=Math.hypot(dx,dy)||1;dx/=len;dy/=len;
   const nx=rt.player.x+dx*TAVERN_SPEED*dt, ny=rt.player.y+dy*TAVERN_SPEED*dt;
   if(tavernCanMove(nx,rt.player.y))rt.player.x=nx;
@@ -283,7 +284,7 @@ async function tavernConnect(rt){
   channel.on("broadcast",{event:"tavern_chat"},({payload})=>{
     if(!payload?.id||!payload?.text)return;
     if(payload.id===rt.id)return;
-    const p=rt.remotes.get(payload.id)||{id:payload.id,name:payload.name||"Archimago",school:payload.school||"" ,x:640,y:404};
+    const p=rt.remotes.get(payload.id)||{id:payload.id,name:payload.name||"Archimago",school:payload.school||"" ,x:512,y:384};
     p.bubble=String(payload.text).slice(0,120);p.bubbleUntil=Date.now()+6500;
     rt.remotes.set(payload.id,p);
     tavernAppendChat(rt,p.name,p.bubble,false);
