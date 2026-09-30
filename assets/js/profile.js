@@ -216,7 +216,7 @@ function startProfileAvatarCrop(file,profile){
   overlay.innerHTML=
     '<div class="avatar-crop-dialog" role="dialog" aria-modal="true" aria-label="Ajustar imagen de perfil">'+
       '<div class="avatar-crop-head"><div><span class="section-kicker">IMAGEN DE PERFIL</span><h3>Ajusta el encuadre</h3></div><button class="avatar-crop-close" type="button" aria-label="Cerrar">×</button></div>'+
-      '<div class="avatar-crop-stage"><div class="avatar-crop-frame"><img alt="Vista previa del avatar" draggable="false"></div><div class="avatar-crop-hint">Arrastra la imagen para centrarla</div></div>'+
+      '<div class="avatar-crop-stage"><div class="avatar-crop-frame"><img alt="Vista previa del avatar" draggable="false"></div><div class="avatar-crop-hint">El rombo muestra exactamente el encuadre final · arrastra para centrar</div></div>'+
       '<div class="avatar-crop-controls"><label><span>ZOOM</span><input class="avatar-crop-zoom" type="range" min="1" max="3" step="0.01" value="1"></label></div>'+
       '<div class="avatar-crop-actions"><button class="profile-action secondary avatar-crop-cancel" type="button">CANCELAR</button><button class="profile-action avatar-crop-save" type="button">USAR ESTA IMAGEN</button></div>'+
     '</div>';
