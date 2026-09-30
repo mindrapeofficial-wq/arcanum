@@ -1,6 +1,6 @@
 {
-  "version": "0.3.4",
+  "version": "0.3.5",
   "channel": "beta",
-  "updated_at": "2026-09-30T21:50:00+02:00",
-  "note": "Astrael live autonomy + canonical Archmage identity across progression, combat, equipment, Arena, relics, Renown, Tavern and PvE"
+  "updated_at": "2026-09-30T22:05:00+02:00",
+  "note": "Canonical item model: Gear + Focus + Relic unified, preserving Astrael autonomy and Archmage identity"
 }
