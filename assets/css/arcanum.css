@@ -389,3 +389,9 @@ table .school-dot{width:17px;height:17px;min-width:17px;margin-right:6px}
   .top-actions{grid-column:3;grid-row:1}
   .top-inbox-panel{position:fixed;left:10px;right:10px;top:54px;width:auto;max-height:calc(100dvh - 128px)}
 }
+
+.archmage-identity-card{display:grid;gap:4px;margin:14px 0 0;padding:12px 13px;border:1px solid rgba(218,151,57,.16);background:linear-gradient(90deg,rgba(126,77,27,.12),rgba(0,0,0,.12))}
+.archmage-identity-card small{color:#8d7555;font:800 7px Arial,sans-serif;letter-spacing:.14em}
+.archmage-identity-card strong{color:#e6c58f;font-size:16px;font-weight:500}
+.archmage-identity-card span{color:#847765;font:9px/1.5 Arial,sans-serif}
+.archmage-identity-card em{color:#5f5548;font:italic 8px/1.4 Arial,sans-serif}
