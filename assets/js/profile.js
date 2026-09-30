@@ -50,19 +50,28 @@ async function refreshOwnProfileBadge(force=false){
 async function openPlayerProfile(mageName){
   activeProfileName=String(mageName||"").trim();
   if(!activeProfileName)return;
-  $("#modal-content").innerHTML='<div class="profile-loading">Abriendo ficha de '+esc(activeProfileName)+'…</div>';
+  $("#modal-content").innerHTML='<div class="profile-loading">Abriendo identidad canónica de '+esc(activeProfileName)+'…</div>';
   show($("#modal"));
   try{
-    const profile=await rpc("player_profile",{p_mage_name:activeProfileName});
+    let snapshot=typeof loadArchmageSnapshot==="function"
+      ?await loadArchmageSnapshot(activeProfileName,{force:true})
+      :{profile:await rpc("player_profile",{p_mage_name:activeProfileName})};
+    let profile=snapshot.profile;
+    if(profile.is_self){
+      // Compatibility bridge for beta-era local choices. After importing, the unified
+      // snapshot is fetched again and remains the only data rendered by the sheet.
+      try{
+        if(typeof combatHydrateProfile==="function")await combatHydrateProfile(profile);
+        if(typeof lootHydrateProfile==="function")await lootHydrateProfile(profile);
+        if(typeof loadArchmageSnapshot==="function"){
+          snapshot=await loadArchmageSnapshot(activeProfileName,{force:true});
+          profile=snapshot.profile;
+        }
+      }catch(e){console.warn("Legacy character migration check failed",e)}
+    }
     const inbox=profile.is_self?await rpc("social_inbox"):null;
-    if(typeof combatHydrateProfile==="function"){
-      try{await combatHydrateProfile(profile)}catch(e){console.warn("Combat state sync failed",e)}
-    }
-    if(profile.is_self&&typeof lootHydrateProfile==="function"){
-      try{await lootHydrateProfile(profile)}catch(e){console.warn("Inventory state sync failed",e)}
-    }
     if(profile.is_self)ownProfileBadge=profile;
-    renderPlayerProfile(profile,inbox);
+    renderPlayerProfile(profile,inbox,snapshot);
   }catch(e){
     $("#modal-content").innerHTML='<div class="empty">'+esc(humanError(e))+'</div>';
   }
@@ -107,12 +116,65 @@ function renderArchmageProgression(profile){
   return '<section class="archmage-progression"><div class="profile-section-title"><span>PROGRESIÓN DEL ARCHIMAGO</span><small>'+pointsLabel+'</small></div>'+
     '<div class="archmage-level-row"><div><small>NIVEL</small><strong>'+n(progression.level)+'</strong></div><div class="archmage-xp"><div><span>EXPERIENCIA</span><b>'+xpText+'</b></div><div class="archmage-xp-track"><i style="width:'+pct+'%"></i></div></div></div>'+
     (identity?'<div class="archmage-identity-card" data-archmage-identity="'+esc(identity.key)+'"><small>PERFIL ARCANO</small><strong>'+esc(identity.title)+'</strong><span>'+esc(identity.description)+'</span><em>Identidad narrativa · sin bonificación mecánica por ahora.</em></div>':"")+
-    '<div class="archmage-attributes">'+stats+'</div>'+
+    '<div class="archmage-aptitude-label"><b>APTITUDES DEL ARCHIMAGO</b><span>Definen cómo se desarrolla en el mundo; no son las estadísticas de duelo.</span></div><div class="archmage-attributes">'+stats+'</div>'+
     renderArchmageXpGuide()+
     '</section>';
 }
 
-function renderPlayerProfile(profile,inbox=null){
+function archmageArtifactDisplayName(id){
+  if(typeof artifactDef==="function"){
+    const def=artifactDef(id);if(def?.name)return def.name;
+  }
+  return String(id||"Reliquia").split("_").map(x=>x?x[0].toUpperCase()+x.slice(1):"").join(" ");
+}
+function archmageArtifactCategoryLabel(code){
+  if(typeof artifactCategoryLabel==="function")return artifactCategoryLabel(code);
+  return ({minor:"Artefacto menor",school:"Reliquia de Escuela",cursed:"Artefacto maldito",unique:"Único mundial"})[code]||String(code||"Reliquia");
+}
+function renderCanonicalEquipment(snapshot,profile){
+  const inv=snapshot?.inventory;
+  if(!inv)return '<div class="player-sheet-remote-note"><b>EQUIPO</b><span>No hay datos de equipo disponibles.</span></div>';
+  if(profile.is_self&&typeof renderArchmageInventory==="function")return renderArchmageInventory(profile);
+  const labels={weapon:"ARMA",robe:"TÚNICA",amulet:"AMULETO",ring1:"ANILLO I",ring2:"ANILLO II",artifact:"RELICARIO"};
+  const items=new Map((inv.items||[]).map(x=>[String(x.id),x]));
+  const rows=Object.entries(labels).map(([slot,label])=>{
+    const id=inv.equipment?.[slot],item=id?items.get(String(id)):null;
+    return '<div class="canonical-equipment-slot '+(item?'equipped':'empty')+'"><small>'+label+'</small>'+
+      (item?'<strong>'+esc(item.name||item.baseName||"Objeto equipado")+'</strong><span>'+esc(item.rarityLabel||item.rarity||"")+' · iP '+n(item.power||0)+'</span>':'<strong>Vacío</strong><span>Sin objeto equipado</span>')+
+      '</div>';
+  }).join("");
+  return '<section class="canonical-equipment-public"><div class="canonical-equipment-grid">'+rows+'</div><p>La ficha pública muestra el equipo activo. El contenido de la mochila permanece privado.</p></section>';
+}
+function renderCanonicalArtifacts(snapshot){
+  const data=snapshot?.artifacts||{},items=data.items||[];
+  const equipped=new Set((data.equipped||[]).map(x=>String(x.id)));
+  if(!items.length)return '<section class="canonical-relics"><div class="profile-section-title"><span>RELIQUIAS</span><small>0 vinculadas</small></div><div class="empty">Este Archimago todavía no custodia reliquias.</div></section>';
+  return '<section class="canonical-relics"><div class="profile-section-title"><span>RELIQUIAS</span><small>'+n(data.count||items.length)+' vinculadas</small></div><div class="canonical-relic-grid">'+items.slice(0,12).map(x=>
+    '<article class="canonical-relic '+(equipped.has(String(x.id))?'equipped':'')+'"><small>'+esc(archmageArtifactCategoryLabel(x.category))+'</small><strong>'+esc(archmageArtifactDisplayName(x.artifact_id))+'</strong><span>'+esc(x.source||"origen desconocido")+(equipped.has(String(x.id))?' · VINCULADA':'')+'</span></article>'
+  ).join("")+'</div></section>';
+}
+function renderCanonicalTrajectory(snapshot){
+  const t=snapshot?.trajectory||{},a=snapshot?.arena||{};
+  return '<section class="canonical-trajectory"><div class="profile-section-title"><span>TRAYECTORIA</span><small>historial del mismo Archimago</small></div>'+
+    '<div class="canonical-trajectory-grid">'+
+      '<div><small>RATING ARENA</small><strong>'+n(a.rating||1000)+'</strong></div>'+
+      '<div><small>ARENA</small><strong>'+n(a.wins||0)+'V · '+n(a.losses||0)+'D</strong></div>'+
+      '<div><small>RELIQUIAS</small><strong>'+n(t.artifact_count||0)+'</strong></div>'+
+      '<div><small>EQUIPO</small><strong>'+n(snapshot?.inventory?.equipment_power||0)+' iP</strong></div>'+
+      '<div><small>NIVEL MÁGICO</small><strong>'+n(t.spell_level||0)+'</strong></div>'+
+      '<div><small>BATALLAS REG.</small><strong>'+(t.recorded_battles===null||t.recorded_battles===undefined?'—':n(t.recorded_battles))+'</strong></div>'+
+    '</div></section>';
+}
+function renderCanonicalHistory(snapshot){
+  const rows=snapshot?.history||[];
+  const typeLabel={arena:"ARENA",artifact:"RELIQUIA",war:"GUERRA"};
+  if(!rows.length)return '<section class="canonical-history"><div class="profile-section-title"><span>CRÓNICA PERSONAL</span><small>0 eventos</small></div><div class="empty">Aún no hay hechos registrados para esta ficha.</div></section>';
+  return '<section class="canonical-history"><div class="profile-section-title"><span>CRÓNICA PERSONAL</span><small>'+n(rows.length)+' eventos recientes</small></div><div class="canonical-history-list">'+rows.map(x=>
+    '<article class="canonical-history-row '+esc(x.outcome||"info")+'"><span>'+esc(typeLabel[x.type]||"EVENTO")+'</span><div><strong>'+esc(x.title||"Acontecimiento")+'</strong><p>'+esc(x.detail||"")+'</p></div><time>'+new Date(x.created_at).toLocaleString("es-ES")+'</time></article>'
+  ).join("")+'</div></section>';
+}
+
+function renderPlayerProfile(profile,inbox=null,snapshot=null){
   const alliance=profile.alliance;
   const allianceBadge=alliance?'<span class="profile-alliance-badge">['+esc(alliance.tag)+'] '+esc(alliance.name)+'</span>':"";
   let actions="";
@@ -127,27 +189,39 @@ function renderPlayerProfile(profile,inbox=null){
   }
   let bioBlock="";
   if(profile.is_self){
-    bioBlock='<textarea id="profile-bio-input" maxlength="500" placeholder="Escribe la historia, carácter o ambiciones de tu Arconte…">'+esc(profile.bio||"")+'</textarea>'+
+    bioBlock='<textarea id="profile-bio-input" maxlength="500" placeholder="Escribe la historia, carácter o ambiciones de tu Archimago…">'+esc(profile.bio||"")+'</textarea>'+
       '<div class="profile-edit-row"><label class="profile-action secondary profile-file-label">CAMBIAR IMAGEN<input id="profile-avatar-file" type="file" accept="image/png,image/jpeg,image/webp" hidden /></label><button class="profile-action" id="profile-save-bio">GUARDAR FICHA</button></div>'+
       '<small class="profile-upload-note">Avatar: JPG, PNG o WebP · máximo 2 MB.</small>';
   }else{
-    bioBlock='<p>'+(profile.bio?esc(profile.bio):'<span class="muted">Este Arconte aún no ha escrito su biografía.</span>')+'</p>';
+    bioBlock='<p>'+(profile.bio?esc(profile.bio):'<span class="muted">Este Archimago aún no ha escrito su biografía.</span>')+'</p>';
   }
-  const playerLevel=(typeof combatCurrentLevel==="function"?combatCurrentLevel(profile):(profile.archmage_level||1));
+  const playerLevel=Number(snapshot?.identity?.level||(typeof combatCurrentLevel==="function"?combatCurrentLevel(profile):(profile.archmage_level||1)));
   const combat=(typeof renderCombatIdentity==="function"?renderCombatIdentity(profile):"");
-  const inventory=(profile.is_self&&typeof renderArchmageInventory==="function"?renderArchmageInventory(profile):"");
+  const equipment=renderCanonicalEquipment(snapshot,profile);
+  const arena=snapshot?.arena||{};
+  const relicCount=Number(snapshot?.artifacts?.count||0);
+  const equipmentPower=Number(snapshot?.inventory?.equipment_power||0);
+
   $("#modal-content").innerHTML=
-    '<section class="character-sheet player-character-sheet">'+
-      '<div class="profile-hero player-sheet-hero">'+profileAvatarMarkup(profile,true)+'<div class="profile-identity"><span class="section-kicker">'+(profile.is_npc?"ARCHIMAGO NPC":"FICHA DEL JUGADOR")+'</span><h3>'+esc(profile.mage_name)+'</h3><div class="profile-subline">'+esc(profileSchoolName(profile.school_code))+' · Nivel '+n(playerLevel)+' '+(profile.is_npc?'<span class="tag npc-tag">NPC</span>':"")+' '+allianceBadge+'</div><p class="player-sheet-purpose">Tu Arconte como combatiente: atributos, habilidades, equipo e inventario en una sola ficha.</p></div></div>'+
-      '<div class="profile-stats player-sheet-kingdom-stats"><div><small>PODER DEL REINO</small><strong>'+n(profile.net_power)+'</strong></div><div><small>TIERRAS</small><strong>'+n(profile.land)+'</strong></div><div><small>NIVEL MÁGICO</small><strong>'+n(profile.spell_level)+'</strong></div><div><small>ESTADO</small><strong>'+esc(profile.status)+'</strong></div></div>'+
-      '<nav class="player-sheet-nav" aria-label="Secciones de la ficha"><span>PERSONAJE</span><span>HABILIDADES</span><span>EQUIPO</span><span>INVENTARIO</span></nav>'+
-      '<div class="player-sheet-layout">'+
-        '<div class="player-sheet-main"><div class="player-sheet-block-title"><b>COMBATE Y HABILIDADES</b><small>Identidad permanente al estilo El Bruto</small></div>'+combat+'</div>'+
-        '<div class="player-sheet-side">'+
-          (inventory?'<div class="player-sheet-block-title"><b>EQUIPO E INVENTARIO</b><small>Objetos equipados y Cámara del Arconte</small></div>'+inventory:'<div class="player-sheet-remote-note"><b>EQUIPO DEL JUGADOR</b><span>La sincronización pública del inventario se activará cuando el equipo pase del almacenamiento local al perfil persistente.</span></div>')+
-        '</div>'+
+    '<section class="character-sheet player-character-sheet canonical-archmage-sheet">'+
+      '<div class="profile-hero player-sheet-hero">'+profileAvatarMarkup(profile,true)+'<div class="profile-identity"><span class="section-kicker">'+(profile.is_npc?"ARCHIMAGO NPC":"IDENTIDAD CANÓNICA")+'</span><h3>'+esc(profile.mage_name)+'</h3><div class="profile-subline">'+esc(profileSchoolName(profile.school_code))+' · Nivel '+n(playerLevel)+' '+(profile.is_npc?'<span class="tag npc-tag">NPC</span>':"")+' '+allianceBadge+'</div><p class="player-sheet-purpose">Una sola persona detrás del reino: progresión, combate, equipo, reliquias, Arena y crónica comparten esta identidad persistente.</p></div><div class="canonical-authority"><small>FUENTE</small><strong>SERVIDOR</strong></div></div>'+
+      '<div class="profile-stats player-sheet-kingdom-stats canonical-summary-stats">'+
+        '<div><small>ASCENDENCIA DEL REINO</small><strong>'+n(profile.net_power)+'</strong></div>'+
+        '<div><small>TIERRAS</small><strong>'+n(profile.land)+'</strong></div>'+
+        '<div><small>RATING ARENA</small><strong>'+n(arena.rating||1000)+'</strong></div>'+
+        '<div><small>RELIQUIAS</small><strong>'+n(relicCount)+'</strong></div>'+
+        '<div><small>EQUIPO</small><strong>'+n(equipmentPower)+' iP</strong></div>'+
+        '<div><small>ESTADO</small><strong>'+esc(profile.status)+'</strong></div>'+
       '</div>'+
-      '<div class="player-sheet-development"><div class="player-sheet-block-title"><b>PROGRESIÓN</b><small>Nivel, experiencia y atributos del Arconte</small></div>'+renderArchmageProgression(profile)+'</div>'+
+      '<nav class="player-sheet-nav canonical-sheet-nav" aria-label="Secciones de la ficha"><span>IDENTIDAD</span><span>APTITUDES</span><span>COMBATE</span><span>EQUIPO</span><span>RELIQUIAS</span><span>CRÓNICA</span></nav>'+
+      '<div class="player-sheet-development"><div class="player-sheet-block-title"><b>PROGRESIÓN Y APTITUDES</b><small>Nivel, experiencia y desarrollo personal del Archimago</small></div>'+renderArchmageProgression(profile)+'</div>'+
+      '<div class="player-sheet-layout">'+
+        '<div class="player-sheet-main"><div class="player-sheet-block-title"><b>CARACTERÍSTICAS DE COMBATE</b><small>La forma en que este mismo Archimago pelea</small></div>'+combat+'</div>'+
+        '<div class="player-sheet-side"><div class="player-sheet-block-title"><b>EQUIPO'+(profile.is_self?' E INVENTARIO':' ACTIVO')+'</b><small>'+(profile.is_self?'Cámara privada y objetos equipados':'Sólo equipamiento público')+'</small></div>'+equipment+'</div>'+
+      '</div>'+
+      renderCanonicalArtifacts(snapshot)+
+      renderCanonicalTrajectory(snapshot)+
+      renderCanonicalHistory(snapshot)+
       '<div class="profile-bio-block"><div class="profile-section-title"><span>BIOGRAFÍA</span>'+(profile.is_self?'<small>máx. 500 caracteres</small>':"")+'</div>'+bioBlock+'</div>'+
       actions+
       (profile.is_npc?'<div class="profile-system-note">Este dominio está controlado por ARCANUM. Las acciones sociales están desactivadas para NPC.</div>':"")+
