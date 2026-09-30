@@ -9,7 +9,7 @@ let directChatName="";
 let directChatSignature="";
 let directChatMode="player";
 const ORACLE_NAME="Astrael";
-const ORACLE_TITLE="Archimago IA · Consejero";
+const ORACLE_TITLE="Arconte IA · Consejero";
 const ONLINE_PANEL_COLLAPSED_KEY="arcanum_online_panel_collapsed_v1";
 let oracleHistory=[];
 
@@ -286,10 +286,10 @@ async function refreshSidebarPresence(force=false){
     count.textContent=String(online.length+1);
     host.innerHTML=sidebarOracleRow()+(online.length
       ?online.map(x=>sidebarOnlineRow(x,friends)).join("")
-      :'<div class="sidebar-online-empty">No hay otros Archimagos conectados ahora.</div>');
+      :'<div class="sidebar-online-empty">No hay otros Arcontes conectados ahora.</div>');
   }catch(e){
     count.textContent="1";
-    host.innerHTML=sidebarOracleRow()+'<div class="sidebar-online-empty">No se pudo consultar la presencia de otros Archimagos.</div>';
+    host.innerHTML=sidebarOracleRow()+'<div class="sidebar-online-empty">No se pudo consultar la presencia de otros Arcontes.</div>';
     if(!arcaneInboxState.requests.length&&!arcaneInboxState.conversations.length)refreshArcaneInbox();
   }finally{sidebarPresenceBusy=false;}
 }
@@ -333,7 +333,7 @@ function ensureDirectChatWindow(){
   shell.setAttribute("aria-live","polite");
   shell.innerHTML=
     '<header class="direct-chat-head">'+
-      '<button id="direct-chat-profile" class="direct-chat-profile" type="button"><span class="presence-dot"></span><span><strong id="direct-chat-name">Chat privado</strong><small id="direct-chat-school">Archimago</small></span></button>'+
+      '<button id="direct-chat-profile" class="direct-chat-profile" type="button"><span class="presence-dot"></span><span><strong id="direct-chat-name">Chat privado</strong><small id="direct-chat-school">Arconte</small></span></button>'+
       '<button id="direct-chat-close" class="direct-chat-close" type="button" aria-label="Cerrar chat privado">×</button>'+
     '</header>'+
     '<div id="direct-chat-messages" class="direct-chat-messages"><div class="empty">Abriendo canal privado…</div></div>'+
@@ -356,7 +356,7 @@ function renderDirectChatMessages(messages){
   host.scrollTop=host.scrollHeight;
 }
 function oracleGreeting(){
-  return {mine:false,oracle:true,body:"Soy Astrael, un Archimago controlado por IA dentro de ARCANUM. Puedo conversar contigo con profundidad sobre tu reino, economía, construcción, investigación, ejército, guerra, artefactos y estrategia. Mi siguiente evolución es actuar de forma autónoma como un jugador persistente dentro del mismo mundo.",created_at:new Date().toISOString()};
+  return {mine:false,oracle:true,body:"Soy Astrael, un Arconte controlado por IA dentro de ARCANUM. Puedo conversar contigo con profundidad sobre tu dominio, economía, construcción, conocimiento arcano, ejército, guerra, artefactos y estrategia. Mi siguiente evolución es actuar de forma autónoma como un jugador persistente dentro del mismo mundo.",created_at:new Date().toISOString()};
 }
 function renderOracleChat(){
   if(!oracleHistory.length)oracleHistory=[oracleGreeting()];
