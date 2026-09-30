@@ -80,12 +80,7 @@ function renderBuild(){
   const totalBuilt=Object.values(b).reduce((sum,value)=>sum+Math.max(0,Number(value)||0),0);
   const progression=typeof realmProgressLabel==="function"?realmProgressLabel(r.land):{name:"Dominio arcano",level:0};
 
-  $("#view-host").innerHTML=`${viewHeader(
-    "ARQUITECTURA",
-    "Construcción",
-    `Transforma tus ${n(r.wilderness)} acres salvajes en infraestructura para tu reino.`
-  )}
-  <section class="construction-hero">
+  $("#view-host").innerHTML=`<section class="construction-hero">
     <div class="construction-hero-copy">
       <span class="section-kicker">MAESTRÍA DEL REINO</span>
       <h3>Diseña el crecimiento de tu dominio</h3>
