@@ -60,20 +60,19 @@ async function renderArena(){
   const history=(arenaData?.history||[]).map(arenaHistoryRecord);
   const targets=arenaTargets(rows);
   const combat=typeof getCombatProfile==="function"?getCombatProfile(selfProfile):null;
-  const derived=typeof combatDerived==="function"?combatDerived(selfProfile):null;
   const trait=arenaTrait(selfProfile.school_code);
   const level=typeof combatCurrentLevel==="function"?combatCurrentLevel(selfProfile):Math.max(1,Number(selfProfile.archmage_level||1));
 
   $("#view-host").innerHTML=
     viewHeader("DUELISTAS","Arena Arcana","PvP individual automático. El resultado, los Sellos y el rating se resuelven en el servidor.")+
     '<section class="arena-hero"><div><span class="section-kicker">CÍRCULO DE DUELO</span><h3>'+esc(selfProfile.mage_name)+'</h3>'+
-      '<p>Seis combates clasificatorios al día según reloj del servidor. Los amistosos son ilimitados y no modifican tu rating.</p>'+
+      '<p>Seis combates clasificatorios al día según reloj del servidor. Los amistosos son ilimitados. Durante la migración 0.3, el equipo procedural local todavía no interviene en Arena.</p>'+
       '<div class="arena-meta">'+
         '<span><small>SELLOS</small><b>'+n(data.seals_remaining)+' / '+ARENA_DAILY_SEALS+'</b></span>'+
         '<span><small>RATING</small><b>'+n(data.rating)+'</b></span>'+
         '<span><small>DIVISIÓN</small><b>'+esc(arenaDivision(Number(data.rating)))+'</b></span>'+
         '<span><small>RÉCORD</small><b>'+n(data.wins)+'V · '+n(data.losses)+'D</b></span>'+
-        '<span><small>ATAQUE</small><b>'+n(derived?.attack||0)+'</b></span>'+
+        '<span><small>ESTADO</small><b>SERVIDOR</b></span>'+
       '</div></div>'+
       '<aside><i>'+trait.mark+'</i><strong>Nivel de Arena '+n(level)+'</strong><small>'+esc(trait.name)+' · '+esc(trait.skill)+'</small></aside>'+
     '</section>'+
