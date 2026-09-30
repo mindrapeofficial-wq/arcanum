@@ -161,6 +161,75 @@ async function installMocks(page){
     return route.fulfill({status:404,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({error:`Unhandled mock route: ${path}`})});
   });
 
+  await page.route(/^https:\/\/smynvbrkgffpepbhrpxt\.supabase\.co\/functions\/v1\/arcanum-state(?:\/.*)?(?:\?.*)?$/, async route=>{
+    const req=route.request();
+    const url=new URL(req.url());
+    const tail=url.pathname.split("/arcanum-state")[1]||"/";
+    calls.push({method:req.method(),path:"state"+tail});
+    if(req.method()==="OPTIONS")return route.fulfill({status:204,headers:corsHeaders(),body:""});
+
+    const emptyInventory={
+      version:2,items:[],
+      equipment:{weapon:null,robe:null,amulet:null,ring1:null,ring2:null,focus:null},
+      found:0,legacy_imported:true
+    };
+    const emptyItems={
+      version:1,
+      slots:["weapon","robe","amulet","ring1","ring2","focus","relic"],
+      inventory_version:2,items:[],
+      equipment:{weapon:null,robe:null,amulet:null,ring1:null,ring2:null,focus:null,relic:null},
+      bag_count:0,bag_capacity:20,equipment_power:0
+    };
+    const profileFor=name=>{
+      const target=String(name||state.realm.mage_name);
+      const self=target.toLowerCase()===state.realm.mage_name.toLowerCase();
+      return {
+        mage_name:target,school_code:self?state.realm.school_code:(target==="FRIEND_TEST"?"phantasm":"abyssal"),status:"alive",
+        land:self?state.realm.land:480,net_power:self?state.realm.net_power:14200,spell_level:self?state.realm.spell_level:2,
+        ...(self?archmageProgress:{archmage_total_xp:220,arcane_power:1,knowledge:1,willpower:2,influence:1,attribute_points:0}),
+        bio:self?"Archimago de pruebas.":"Rival de pruebas.",avatar_path:null,is_self:self,is_npc:false,
+        friendship:self?null:(target==="FRIEND_TEST"?{status:"accepted"}:{status:"none"}),
+        alliance:null,my_alliance:null,can_invite_to_alliance:false
+      };
+    };
+    const snapshotFor=name=>{
+      const profile=profileFor(name);
+      const self=profile.is_self;
+      return {
+        version:1,generated_at:new Date().toISOString(),profile,
+        identity:{mage_name:profile.mage_name,school_code:profile.school_code,status:"alive",level:self?4:2,spell_level:profile.spell_level,alliance:null,is_self:self,is_npc:false},
+        progression:{
+          level:self?4:2,total_xp:Number(profile.archmage_total_xp||220),xp:20,xp_next:300,attribute_points:Number(profile.attribute_points||0),
+          aptitudes:{arcane_power:Number(profile.arcane_power||1),knowledge:Number(profile.knowledge||1),willpower:Number(profile.willpower||1),influence:Number(profile.influence||1)}
+        },
+        combat:{raw:null,stats:{},weapon:null,trait:null,bonusTraits:[],abilities:[],evolution:[],derived:{}},
+        inventory:emptyInventory,items:emptyItems,
+        artifacts:{items:[],equipped:[],count:0},
+        arena:{username:profile.mage_name,rating:1000,wins:0,losses:0,seals_remaining:6},
+        trajectory:{renown:{score:self?80:40,title:"Desconocido",mechanical_effect:false,breakdown:{}},arena_wins:0,arena_losses:0,arena_rating:1000,artifact_count:0,equipped_relics:0,recorded_battles:self?0:null,spell_level:profile.spell_level,realm_power:profile.net_power,land:profile.land},
+        history:[],
+        authority:{profile:"core-supabase",progression:"core-supabase",combat:"arcanum-state",inventory:"arcanum-state",items:"arcanum-state",arena:"arcanum-state",artifacts:"arcanum-community/nexo",history:"aggregated-server"}
+      };
+    };
+
+    if(req.method()==="GET"&&tail.startsWith("/archmage/")){
+      return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify(snapshotFor(decodeURIComponent(tail.slice("/archmage/".length))))});
+    }
+    if(req.method()==="GET"&&tail==="/snapshot"){
+      return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({combat:null,arena:{rating:1000,wins:0,losses:0,seals_remaining:6},history:[],server_day:"2026-09-30"})});
+    }
+    if(req.method()==="GET"&&tail==="/inventory"){
+      return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({inventory:emptyInventory,bonuses:{equipmentPower:0}})});
+    }
+    if(req.method()==="GET"&&tail==="/items"){
+      return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({items:emptyItems,inventory:emptyInventory,relics:[]})});
+    }
+    if(req.method()==="GET"&&tail.startsWith("/combat/")){
+      return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({combat:null,level:2})});
+    }
+    return route.fulfill({status:404,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({error:"UNHANDLED_STATE_MOCK",tail})});
+  });
+
   await page.route(/^https:\/\/smynvbrkgffpepbhrpxt\.supabase\.co\/functions\/v1\/arcanum-community(?:\/.*)?(?:\?.*)?$/, async route=>{
     const req=route.request();
     const url=new URL(req.url());
@@ -245,10 +314,10 @@ test("flujo crítico completo: login, reino, explorar, construir, investigar, re
   await expect(page.locator(".toast").last()).toContainText("Construcción completada");
 
   await page.locator('#main-nav button[data-view="research"]').click();
-  await expect(page.getByRole("heading",{name:"Investigación",exact:true})).toBeVisible();
+  await expect(page.getByRole("heading",{name:"Conocimiento Arcano",exact:true})).toBeVisible();
   await page.locator("#research-turns").fill("1");
   await page.locator("#research-button").click();
-  await expect(page.locator(".toast").last()).toContainText("Investigación avanzada");
+  await expect(page.locator(".toast").last()).toContainText("Conocimiento Arcano avanzado");
 
   await page.locator('#main-nav button[data-view="army"]').click();
   await expect(page.getByRole("heading",{name:"Formaciones"})).toBeVisible();
@@ -322,12 +391,12 @@ test("la ficha de personaje se abre, permite gastar un punto y editar la bio", a
   await expect(page.locator("#game-view")).toBeVisible();
   await expect(page.locator("#mage-title")).toHaveText("E2E_TESTER");
   await page.locator("#mage-card-button").click();
-  await expect(page.getByText("FICHA DEL JUGADOR")).toBeVisible();
+  await expect(page.getByText("IDENTIDAD CANÓNICA")).toBeVisible();
   await expect(page.locator("#profile-bio-input")).toBeVisible();
   await expect(page.getByText("PROGRESIÓN DEL ARCHIMAGO")).toBeVisible();
   await expect(page.getByText("Poder Arcano",{exact:true}).first()).toBeVisible();
   await expect(page.getByText("FUENTES DE EXPERIENCIA")).toBeVisible();
-  await expect(page.locator("#modal-content").getByText("Investigación",{exact:true})).toBeVisible();
+  await expect(page.locator("#modal-content").getByText("Conocimiento Arcano",{exact:true}).first()).toBeVisible();
   await expect(page.getByText("Jefes PvE",{exact:true})).toBeVisible();
   await expect(page.getByText("Sendero Híbrido")).toBeVisible();
   await expect(page.locator(".archmage-level-row > div:first-child strong")).toHaveText("4");
