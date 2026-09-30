@@ -3,7 +3,7 @@
 let bossPollTimer=null;
 let bossRenderBusy=false;
 let bossArchmageSnapshot=null;
-const bossGearClaimedEvents=new Set();
+const bossGearRewardCache=new Map();
 
 function bossPhase(hpPct,status){
   if(status==="defeated")return "BOSS DERROTADO";
@@ -170,11 +170,11 @@ async function claimBossGearForPayload(data,{announce=true}={}){
   const eventId=String(boss.event_id||"");
   const defeated=boss.status==="defeated"||Number(boss.current_hp||0)<=0;
   if(!eventId||!defeated||Number(me?.damage||0)<=0||typeof claimWorldBossGear!=="function")return null;
-  if(bossGearClaimedEvents.has(eventId)&&data?.gear_reward)return data.gear_reward;
+  if(bossGearRewardCache.has(eventId)){data.gear_reward=bossGearRewardCache.get(eventId);return data.gear_reward;}
   try{
     const reward=await claimWorldBossGear(eventId);
     data.gear_reward=reward;
-    if(["completed","no_drop","pending_inventory","ineligible"].includes(String(reward?.status||"")))bossGearClaimedEvents.add(eventId);
+    if(["completed","no_drop","pending_inventory","ineligible"].includes(String(reward?.status||"")))bossGearRewardCache.set(eventId,reward);
     if(announce&&reward&&typeof announceCanonicalLootReward==="function")announceCanonicalLootReward(reward,"Botín del Boss");
     return reward;
   }catch(error){
