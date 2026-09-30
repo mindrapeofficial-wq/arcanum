@@ -64,3 +64,18 @@ Required next steps:
 6. Remove all inventory writes to localStorage.
 
 After inventory, audit any remaining gameplay-changing local state and enforce a CI test that fails when new gameplay code introduces localStorage as an authority.
+
+
+## 0.3.3 canonical Archmage identity
+
+The character sheet and Arena now consume a unified server read model, `Archmage Snapshot`.
+
+This does not replace the individual authorities. Instead it composes them without creating a new client-side truth:
+- progression remains Core authority,
+- combat remains arcanum-state authority,
+- inventory remains arcanum-state authority,
+- Arena remains arcanum-state authority,
+- named relics remain Nexo/community authority,
+- the chronicle is a derived server aggregation.
+
+Remote profiles expose equipped procedural items, not the owner's full inventory.
