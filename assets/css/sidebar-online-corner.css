@@ -1,0 +1,26 @@
+/* Conectados: anclado a la esquina inferior derecha en escritorio */
+@media (min-width: 761px) {
+  .sidebar-online-panel {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 72;
+    width: 224px;
+    margin: 0;
+    padding: 10px 8px 8px;
+    border: 1px solid rgba(218,151,57,.18);
+    background: linear-gradient(180deg, rgba(10,7,4,.98), rgba(3,2,1,.98));
+    box-shadow: 0 18px 52px rgba(0,0,0,.58), inset 0 1px rgba(255,255,255,.018);
+    backdrop-filter: blur(8px);
+  }
+
+  .sidebar-online-list {
+    max-height: min(220px, calc(100dvh - 140px));
+  }
+}
+
+@media (max-width: 760px) {
+  .sidebar-online-panel {
+    display: none;
+  }
+}
