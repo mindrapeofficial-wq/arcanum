@@ -20,9 +20,14 @@ const SCHOOL_NAMES = { verdant:"Viridia", ascendant:"Aurea", eradication:"Cineri
 function schoolName(code){ return SCHOOL_NAMES[code] || code || "Escuela"; }
 const rankNames = { simple:"Simple", average:"Medio", complex:"Complejo", ultimate:"Supremo", ancient:"Antiguo" };
 const buildMeta = {
-  farms:["Granjas","Alimentos + población","5"], towns:["Pueblos","Población + oro","30"], nodes:["Nodos","Producción y capacidad de maná","30"],
-  workshops:["Talleres","Aceleran la construcción futura","10"], guilds:["Gremios","Generan conocimiento arcano","20"], barracks:["Cuarteles","Permiten reclutar tropas","5"],
-  fortresses:["Fortalezas","Defensa y supervivencia del Arconte","300"], barriers:["Barreras","Defensa arcana · 1 por turno","1 turno"]
+  farms:["Granjas","Aumentan la capacidad de sustento que limita tu población","5"],
+  towns:["Pueblos","Aumentan la capacidad residencial y apoyan la economía de Oro","30"],
+  nodes:["Nodos","Aumentan la capacidad y la economía de Maná","30"],
+  workshops:["Talleres","Reducen el coste efectivo en turnos de futuras construcciones","10"],
+  guilds:["Gremios","Generan RP cuando dedicas turnos a investigar","20"],
+  barracks:["Cuarteles","Desbloquean el reclutamiento de unidades","5"],
+  fortresses:["Fortalezas","Sostienen la supervivencia y la defensa estratégica del dominio","300"],
+  barriers:["Barreras","Defensa arcana especializada · 1 por turno","1 turno"]
 };
 
 let mode = "login";
