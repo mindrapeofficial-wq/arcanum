@@ -81,7 +81,7 @@ async function renderArtifactLibrary(){
   host.innerHTML=`
     <section class="artifact-hero">
       <div><span class="section-kicker">BIBLIOTECA DEL CÓNCLAVE</span><h2>Artefactos de ARCANUM</h2><p>60 reliquias con identidad propia. Los Únicos Mundiales sólo pueden tener un poseedor activo en todo el servidor.</p></div>
-      <button id="artifact-discover" class="primary-action" type="button">✦ HALLAZGO DE PRUEBA</button>
+      <button id="artifact-refresh" class="primary-action" type="button">↻ ACTUALIZAR RELICARIO</button>
     </section>
     <section class="artifact-world-panel"><div><small>ÚNICOS MUNDIALES</small><strong id="artifact-world-count">—</strong></div><p id="artifact-world-note">Consultando custodios del servidor…</p></section>
     <div class="artifact-toolbar">
@@ -92,13 +92,13 @@ async function renderArtifactLibrary(){
       <button data-artifact-filter="unique">ÚNICOS</button>
       <span id="artifact-owned-count"></span>
     </div>
-    <div id="artifact-grid" class="artifact-grid"><div class="empty">Abriendo el relicario…</div></div>`;
+    <div id="artifact-grid" class="artifact-grid"><div class="empty">Abriendo el relicario…</div></div><div id="artifact-market-root" class="artifact-market-root"></div>`;
   document.querySelectorAll("[data-artifact-filter]").forEach(b=>b.addEventListener("click",()=>{
     artifactFilter=b.dataset.artifactFilter;
     document.querySelectorAll("[data-artifact-filter]").forEach(x=>x.classList.toggle("active",x===b));
     loadArtifactLibrary();
   }));
-  $("#artifact-discover")?.addEventListener("click",discoverNamedArtifact);
+  $("#artifact-refresh")?.addEventListener("click",loadArtifactLibrary);
   await loadArtifactLibrary();
 }
 
@@ -134,7 +134,7 @@ async function loadArtifactLibrary(){
         '<div class="artifact-actions">'+equipButton+historyButton+'</div></article>';
     }).join("");
     grid.querySelectorAll("[data-artifact-equip]").forEach(b=>b.addEventListener("click",()=>equipNamedArtifact(b.dataset.artifactEquip)));
-    grid.querySelectorAll("[data-artifact-history]").forEach(b=>b.addEventListener("click",()=>showArtifactHistory(b.dataset.artifactHistory)));
+    grid.querySelectorAll("[data-artifact-history]").forEach(b=>b.addEventListener("click",()=>showArtifactHistory(b.dataset.artifactHistory)));\n    if(typeof renderArtifactMarketPanel==="function")await renderArtifactMarketPanel(data);
   }catch(e){grid.innerHTML='<div class="empty">'+esc(humanError(e))+'</div>';}
 }
 
