@@ -7,7 +7,7 @@ const read=p=>fs.readFileSync(new URL("../"+p, import.meta.url),"utf8");
 const html=read("index.html");
 const version=JSON.parse(read("version.json"));
 const jsFiles=[
-  "assets/js/state.js","assets/js/auth.js","assets/js/archmage.js","assets/js/combat-profile.js","assets/js/inventory.js","assets/js/profile.js","assets/js/realm-state.js","assets/js/router.js",
+  "assets/js/state.js","assets/js/auth.js","assets/js/archmage.js","assets/js/combat-profile.js","assets/js/inventory.js","assets/js/archmage-sheet.js","assets/js/profile.js","assets/js/realm-state.js","assets/js/router.js",
   "assets/js/community.js","assets/js/realm.js","assets/js/economy.js","assets/js/construction.js",
   "assets/js/magic.js","assets/js/army.js","assets/js/war.js","assets/js/arena.js","assets/js/tutorial.js","assets/js/ui.js"
 ];
@@ -109,4 +109,19 @@ test("economy semantics stay canonical",()=>{
   assert.match(economyJs,/ALIMENTO · CAPACIDAD/);
   assert.match(economyJs,/INVESTIGACIÓN · FLUJO/);
   assert.match(economyJs,/ASCENDENCIA[\s\S]*indicador, no recurso gastable/);
+});
+
+
+test("canonical Archmage identity uses one snapshot",()=>{
+  const sheet=read("assets/js/archmage-sheet.js");
+  const profile=read("assets/js/profile.js");
+  const arena=read("assets/js/arena.js");
+  assert.match(sheet,/stateApi\("\/archmage\/"\+encodeURIComponent/);
+  assert.match(profile,/loadArchmageSnapshot\(activeProfileName/);
+  assert.match(profile,/IDENTIDAD CANÓNICA/);
+  assert.match(profile,/APTITUDES DEL ARCHIMAGO/);
+  assert.match(profile,/CRÓNICA PERSONAL/);
+  assert.doesNotMatch(profile,/La sincronización pública del inventario se activará/);
+  assert.match(arena,/loadArchmageSnapshot\(realmState\.realm\.mage_name/);
+  assert.match(arena,/const selfProfile=snapshot\.profile/);
 });
