@@ -3,6 +3,7 @@
 let bossPollTimer=null;
 let bossRenderBusy=false;
 let bossArchmageSnapshot=null;
+const bossGearClaimedEvents=new Set();
 
 function bossPhase(hpPct,status){
   if(status==="defeated")return "BOSS DERROTADO";
@@ -55,9 +56,12 @@ async function bossApi(path="",{method="GET",body}={}){
   }
   return data;
 }
-function bossRewardText(me,boss,artifactReward=null){
+function bossRewardText(me,boss,artifactReward=null,gearReward=null){
   if(boss.status==="defeated"){
-    if(me?.reward_granted_at){const relic=artifactReward?` · Reliquia: ${esc(typeof artifactGameplayName==="function"?artifactGameplayName(artifactReward.artifact_id):artifactReward.artifact_id)}`:"";return `${n(me.reward_fragments)} Fragmentos del Umbral · ${esc(me.reward_tier||"PARTICIPACIÓN")}${relic}`;}
+    const relic=artifactReward?` · Reliquia: ${esc(typeof artifactGameplayName==="function"?artifactGameplayName(artifactReward.artifact_id):artifactReward.artifact_id)}`:"";
+    const gear=gearReward?.item?` · Gear: ${esc(gearReward.item.name)}${gearReward.pending?" (reservado)":""}`:"";
+    if(me?.reward_granted_at)return `${n(me.reward_fragments)} Fragmentos del Umbral · ${esc(me.reward_tier||"PARTICIPACIÓN")}${relic}${gear}`;
+    if(gear)return `Recompensa de Gear verificada${gear}`;
     return "Sin recompensa: era necesario participar antes de la derrota.";
   }
   const damage=Number(me?.damage||0);
@@ -105,6 +109,7 @@ function drawBoss(data){
   const boss=data?.boss||{};
   const me=data?.me||null;
   const artifactReward=data?.artifact_reward||null;
+  const gearReward=data?.gear_reward||null;
   const top=Array.isArray(data?.top)?data.top:[];
   const maxHp=Math.max(1,Number(boss.max_hp||1));
   const hp=Math.max(0,Number(boss.current_hp||0));
@@ -142,7 +147,7 @@ function drawBoss(data){
         <div><small>POSICIÓN</small><strong>${me?.rank?"#"+n(me.rank):"—"}</strong></div>
         <div><small>DAÑO ESTIMADO</small><strong>~${n(bossDamageEstimate())}</strong></div>
       </div>
-      <div class="boss-reward-strip"><span>RECOMPENSA DE EVENTO</span><strong>${bossRewardText(me,boss,artifactReward)}</strong></div>
+      <div class="boss-reward-strip"><span>RECOMPENSA DE EVENTO</span><strong>${bossRewardText(me,boss,artifactReward,gearReward)}</strong></div>
       <div class="boss-action-row">
         <div><small>COSTE DE INCURSIÓN</small><strong>${turnCost} turnos</strong><p>El servidor valida tu dominio, descuenta los turnos y calcula el golpe a partir de tu Ascendencia. El navegador no decide el daño.</p></div>
         <button class="primary-action boss-attack" id="boss-attack" ${ended||defeated?"disabled":""}>⚔ ${defeated?"BOSS DERROTADO":ended?"EVENTO CERRADO":"ATACAR AL BOSS"}</button>
@@ -160,11 +165,29 @@ function drawBoss(data){
   hydrateBossArt();
   $("#boss-attack")?.addEventListener("click",attackWorldBoss);
 }
+async function claimBossGearForPayload(data,{announce=true}={}){
+  const boss=data?.boss||{},me=data?.me||null;
+  const eventId=String(boss.event_id||"");
+  const defeated=boss.status==="defeated"||Number(boss.current_hp||0)<=0;
+  if(!eventId||!defeated||Number(me?.damage||0)<=0||typeof claimWorldBossGear!=="function")return null;
+  if(bossGearClaimedEvents.has(eventId)&&data?.gear_reward)return data.gear_reward;
+  try{
+    const reward=await claimWorldBossGear(eventId);
+    data.gear_reward=reward;
+    if(["completed","no_drop","pending_inventory","ineligible"].includes(String(reward?.status||"")))bossGearClaimedEvents.add(eventId);
+    if(announce&&reward&&typeof announceCanonicalLootReward==="function")announceCanonicalLootReward(reward,"Botín del Boss");
+    return reward;
+  }catch(error){
+    console.warn("Boss Gear claim failed",error);
+    return null;
+  }
+}
 async function refreshBossView(silent=false){
   if(bossRenderBusy)return;
   bossRenderBusy=true;
   try{
     const data=await bossApi("");
+    await claimBossGearForPayload(data,{announce:!silent});
     drawBoss(data);
     startBossPolling();
   }catch(e){
@@ -194,8 +217,11 @@ async function attackWorldBoss(){
     realmState=await rpc("my_realm_state");
     renderChrome();
     const hit=Number(data?.attack?.damage||0);
-    if(data?.boss?.status==="defeated"){toast(`¡El Devorador ha caído! Tu último golpe infligió ${n(hit)} de daño.`,"success",6500);if(typeof artifactGameplayDrop==="function")artifactGameplayDrop(data,"recompensa del Boss mundial");}
-    else toast(`Has infligido ${n(hit)} de daño al Devorador mundial.`,"success");
+    if(data?.boss?.status==="defeated"){
+      toast(`¡El Devorador ha caído! Tu último golpe infligió ${n(hit)} de daño.`,"success",6500);
+      if(typeof artifactGameplayDrop==="function")artifactGameplayDrop(data,"recompensa del Boss mundial");
+      await claimBossGearForPayload(data,{announce:true});
+    }else toast(`Has infligido ${n(hit)} de daño al Devorador mundial.`,"success");
     drawBoss(data);
     startBossPolling();
   }catch(e){
