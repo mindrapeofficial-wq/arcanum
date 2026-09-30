@@ -69,24 +69,45 @@ function lootWeighted(items){
   for(const item of items){roll-=item.weight;if(roll<=0)return item;}
   return items[items.length-1];
 }
+const lootServerCache=new Map();
 function lootMageKey(profile){
   return "arcanum_inventory_v"+ARCANUM_INVENTORY_VERSION+"_"+String(profile?.mage_name||realmState?.realm?.mage_name||"unknown").toLowerCase();
 }
+function lootNameKey(profile){return String(profile?.mage_name||realmState?.realm?.mage_name||"unknown").trim().toLowerCase()}
 function lootEmptyState(){
-  return {version:ARCANUM_INVENTORY_VERSION,items:[],equipment:{weapon:null,robe:null,amulet:null,ring1:null,ring2:null,artifact:null},found:0};
+  return {version:ARCANUM_INVENTORY_VERSION,items:[],equipment:{weapon:null,robe:null,amulet:null,ring1:null,ring2:null,artifact:null},found:0,legacy_imported:false};
 }
-function lootLoad(profile){
+function lootLegacyLoad(profile){
   try{
     const raw=localStorage.getItem(lootMageKey(profile));
-    const parsed=raw?JSON.parse(raw):lootEmptyState();
-    if(!parsed||parsed.version!==ARCANUM_INVENTORY_VERSION)return lootEmptyState();
-    parsed.items=Array.isArray(parsed.items)?parsed.items.slice(0,ARCANUM_INVENTORY_CAP):[];
-    parsed.equipment={...lootEmptyState().equipment,...(parsed.equipment||{})};
-    return parsed;
-  }catch{return lootEmptyState();}
+    const parsed=raw?JSON.parse(raw):null;
+    return parsed&&parsed.version===ARCANUM_INVENTORY_VERSION?parsed:null;
+  }catch{return null;}
+}
+function lootLoad(profile){
+  const parsed=lootServerCache.get(lootNameKey(profile));
+  if(!parsed)return lootEmptyState();
+  const state=JSON.parse(JSON.stringify(parsed));
+  state.items=Array.isArray(state.items)?state.items.slice(0,ARCANUM_INVENTORY_CAP):[];
+  state.equipment={...lootEmptyState().equipment,...(state.equipment||{})};
+  return state;
 }
 function lootSave(profile,state){
-  localStorage.setItem(lootMageKey(profile),JSON.stringify(state));
+  lootServerCache.set(lootNameKey(profile),JSON.parse(JSON.stringify(state)));
+  return state;
+}
+async function lootHydrateProfile(profile){
+  if(!profile?.is_self)return lootLoad(profile);
+  let data=await stateApi("/inventory");
+  let state=data?.inventory||lootEmptyState();
+  lootSave(profile,state);
+  const legacy=lootLegacyLoad(profile);
+  if(!state.legacy_imported&&legacy?.items?.length){
+    const migrated=await stateApi("/inventory/import-legacy",{method:"POST",body:{state:legacy}});
+    state=migrated?.inventory||state;
+    lootSave(profile,state);
+  }
+  return state;
 }
 function lootTierForLevel(level){
   if(level>=40)return 5;if(level>=28)return 4;if(level>=16)return 3;if(level>=7)return 2;return 1;
@@ -182,11 +203,7 @@ function lootEquipmentCard(slot,state){
 }
 function renderArchmageInventory(profile){
   if(!profile?.is_self)return "";
-  let state=lootLoad(profile);
-  if(!state.items.length){
-    state.items=[lootGenerate(profile,"common"),lootGenerate(profile,"uncommon"),lootGenerate(profile,"rare")];
-    lootSave(profile,state);
-  }
+  const state=lootLoad(profile);
   const total=lootEffectiveStats(state);
   return '<section class="archmage-inventory" data-loot-root>'+
     '<div class="profile-section-title"><span>INVENTARIO DEL ARCHIMAGO</span><small>'+state.items.length+' / '+ARCANUM_INVENTORY_CAP+' huecos</small></div>'+
@@ -218,29 +235,44 @@ function lootRefreshProfile(profile){
 }
 function wireInventoryPanel(profile){
   const root=document.querySelector("[data-loot-root]");if(!root||!profile?.is_self)return;
-  root.querySelector("[data-loot-test-drop]")?.addEventListener("click",()=>{
-    const state=lootLoad(profile);
-    if(state.items.length>=ARCANUM_INVENTORY_CAP){toast("Tu inventario está lleno.","error");return;}
-    const item=lootGenerate(profile);
-    state.items.push(item);state.found=(state.found||0)+1;lootSave(profile,state);
-    toast("Has encontrado: "+item.name+" · "+item.rarityLabel);
-    lootRefreshProfile(profile);
+
+  root.querySelector("[data-loot-test-drop]")?.addEventListener("click",async()=>{
+    const btn=root.querySelector("[data-loot-test-drop]");if(btn)btn.disabled=true;
+    try{
+      const data=await stateApi("/inventory/test-drop",{method:"POST",body:{}});
+      lootSave(profile,data.inventory);
+      toast("Has encontrado: "+data.item.name+" · "+data.item.rarityLabel);
+      lootRefreshProfile(profile);
+    }catch(e){toast(humanError(e),"error");if(btn)btn.disabled=false}
   });
-  root.querySelectorAll("[data-loot-equip]").forEach(btn=>btn.addEventListener("click",()=>{
-    const state=lootLoad(profile),item=state.items.find(x=>x.id===btn.dataset.lootEquip);if(!item)return;
-    const slot=lootPreferredSlot(item,state);if(!lootCanEquipInSlot(item,slot))return;
-    state.equipment[slot]=item.id;lootSave(profile,state);lootRefreshProfile(profile);toast(item.name+" equipado.");
+
+  root.querySelectorAll("[data-loot-equip]").forEach(btn=>btn.addEventListener("click",async()=>{
+    btn.disabled=true;
+    try{
+      const data=await stateApi("/inventory/equip",{method:"POST",body:{item_id:btn.dataset.lootEquip}});
+      lootSave(profile,data.inventory);lootRefreshProfile(profile);toast(data.item.name+" equipado.");
+    }catch(e){toast(humanError(e),"error");btn.disabled=false}
   }));
-  root.querySelectorAll("[data-loot-unequip]").forEach(btn=>btn.addEventListener("click",()=>{
-    const state=lootLoad(profile);state.equipment[btn.dataset.lootUnequip]=null;lootSave(profile,state);lootRefreshProfile(profile);
+
+  root.querySelectorAll("[data-loot-unequip]").forEach(btn=>btn.addEventListener("click",async()=>{
+    btn.disabled=true;
+    try{
+      const data=await stateApi("/inventory/unequip",{method:"POST",body:{slot:btn.dataset.lootUnequip}});
+      lootSave(profile,data.inventory);lootRefreshProfile(profile);
+    }catch(e){toast(humanError(e),"error");btn.disabled=false}
   }));
-  root.querySelectorAll("[data-loot-destroy]").forEach(btn=>btn.addEventListener("click",()=>{
+
+  root.querySelectorAll("[data-loot-destroy]").forEach(btn=>btn.addEventListener("click",async()=>{
     const state=lootLoad(profile),id=btn.dataset.lootDestroy,item=state.items.find(x=>x.id===id);if(!item)return;
     if(!confirm("¿Destruir "+item.name+"?"))return;
-    Object.keys(state.equipment).forEach(k=>{if(state.equipment[k]===id)state.equipment[k]=null;});
-    state.items=state.items.filter(x=>x.id!==id);lootSave(profile,state);lootRefreshProfile(profile);toast("Objeto destruido.");
+    btn.disabled=true;
+    try{
+      const data=await stateApi("/inventory/destroy",{method:"POST",body:{item_id:id}});
+      lootSave(profile,data.inventory);lootRefreshProfile(profile);toast("Objeto destruido.");
+    }catch(e){toast(humanError(e),"error");btn.disabled=false}
   }));
 }
 
 
 globalThis.lootCombatBonuses=lootCombatBonuses;
+globalThis.lootHydrateProfile=lootHydrateProfile;
