@@ -144,3 +144,6 @@ async function deleteMarketOffer(id){
     await loadMarketOffers();
   }catch(e){toast(humanError(e),"error");}
 }
+
+// Explicit global export for router/runtime recovery.
+globalThis.renderMarket=renderMarket;
