@@ -1,6 +1,6 @@
 {
-  "version": "0.2.67",
+  "version": "0.2.68",
   "channel": "beta",
-  "updated_at": "2026-09-30T20:14:00+02:00",
-  "note": "Resource HUD alignment: equalized resource cells and desktop responsive layout"
+  "updated_at": "2026-09-30T20:24:00+02:00",
+  "note": "Collapsed online players panel is now a compact corner pill that stays out of the game UI"
 }
