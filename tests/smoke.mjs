@@ -166,3 +166,13 @@ test("inventory v1 migration remains supported",()=>{
   assert.match(inventory,/item\.slot==="artifact"\?"focus":item\.slot/);
   assert.match(inventory,/old\.artifact&&!state\.equipment\.focus/);
 });
+
+
+test("inventory surfaces owned Relics through canonical lifecycle",()=>{
+  const inventory=read("assets/js/inventory.js");
+  assert.match(inventory,/Reliquias custodiadas/);
+  assert.match(inventory,/data-relic-equip/);
+  assert.match(inventory,/equipCanonicalItem\("relic",btn\.dataset\.relicEquip\)/);
+  assert.match(inventory,/data-relic-unequip-card/);
+  assert.match(inventory,/unequipCanonicalSlot\("relic"\)/);
+});
