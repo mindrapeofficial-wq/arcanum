@@ -80,6 +80,27 @@
         <div><strong>ARCANUM</strong><small>LAS CINCO ESCUELAS</small></div>
       </div>
       <div class="resource-strip" id="resource-strip"></div>
+      <div class="top-inbox-shell" id="top-inbox-shell">
+        <button class="top-inbox-button" id="top-inbox-button" type="button" aria-expanded="false" aria-controls="top-inbox-panel" title="Bandeja Arcana">
+          <span class="top-inbox-icon" aria-hidden="true">✉</span>
+          <span class="top-inbox-label">BANDEJA</span>
+          <strong class="top-inbox-badge hidden" id="top-inbox-badge">0</strong>
+        </button>
+        <section class="top-inbox-panel hidden" id="top-inbox-panel" aria-label="Bandeja Arcana">
+          <header class="top-inbox-head">
+            <div><span class="section-kicker">CORRESPONDENCIA</span><strong>Bandeja Arcana</strong></div>
+            <button class="top-inbox-refresh" id="top-inbox-refresh" type="button" title="Actualizar bandeja" aria-label="Actualizar bandeja">↻</button>
+          </header>
+          <div class="top-inbox-section">
+            <div class="top-inbox-section-head"><span>SOLICITUDES DE AMISTAD</span><b id="top-inbox-request-count">0</b></div>
+            <div id="top-inbox-requests" class="top-inbox-list"><div class="top-inbox-empty">No hay solicitudes pendientes.</div></div>
+          </div>
+          <div class="top-inbox-section">
+            <div class="top-inbox-section-head"><span>MENSAJES PRIVADOS</span><b id="top-inbox-unread-count">0</b></div>
+            <div id="top-inbox-messages" class="top-inbox-list"><div class="top-inbox-empty">No hay conversaciones todavía.</div></div>
+          </div>
+        </section>
+      </div>
       <div class="top-player-search" id="top-player-search">
         <span class="top-player-search-icon" aria-hidden="true">⌕</span>
         <input id="top-player-search-input" type="search" maxlength="40" autocomplete="off" placeholder="Buscar Archimago…" aria-label="Buscar Archimago" />
