@@ -1,6 +1,6 @@
 "use strict";
 
-const ARCANUM_INVENTORY_VERSION=1;
+const ARCANUM_INVENTORY_VERSION=2;
 const ARCANUM_INVENTORY_CAP=20;
 const ARCANUM_EQUIP_SLOTS=Object.freeze([
   {key:"weapon",label:"Arma"},
@@ -8,7 +8,7 @@ const ARCANUM_EQUIP_SLOTS=Object.freeze([
   {key:"amulet",label:"Amuleto"},
   {key:"ring1",label:"Anillo I"},
   {key:"ring2",label:"Anillo II"},
-  {key:"artifact",label:"Artefacto"}
+  {key:"focus",label:"Foco Arcano"}
 ]);
 
 const LOOT_RARITIES=Object.freeze([
@@ -34,25 +34,25 @@ const LOOT_BASES=Object.freeze([
   {id:"iron_ring",slot:"ring",name:"Anillo de Hierro Negro",minLevel:1,implicit:{willpower:[1,3]}},
   {id:"obsidian_ring",slot:"ring",name:"Anillo de Obsidiana",minLevel:4,implicit:{arcane_power:[1,4]}},
   {id:"sigil_ring",slot:"ring",name:"Sello del Cónclave",minLevel:9,implicit:{influence:[2,5]}},
-  {id:"root_heart",slot:"artifact",name:"Corazón de Raíz",minLevel:1,implicit:{willpower:[2,4]}},
-  {id:"glass_orb",slot:"artifact",name:"Orbe de Vidrio Estelar",minLevel:6,implicit:{knowledge:[2,5]}},
-  {id:"sealed_reliquary",slot:"artifact",name:"Relicario Sellado",minLevel:12,implicit:{arcane_power:[3,6]}}
+  {id:"root_heart",slot:"focus",name:"Corazón de Raíz",minLevel:1,implicit:{willpower:[2,4]}},
+  {id:"glass_orb",slot:"focus",name:"Orbe de Vidrio Estelar",minLevel:6,implicit:{knowledge:[2,5]}},
+  {id:"sealed_reliquary",slot:"focus",name:"Relicario Sellado",minLevel:12,implicit:{arcane_power:[3,6]}}
 ]);
 
 const LOOT_AFFIXES=Object.freeze([
-  {id:"arcane",kind:"prefix",name:"Arcano",stat:"arcane_power",slots:["weapon","robe","amulet","ring","artifact"],tiers:[[1,2],[2,4],[4,7],[7,11],[11,16]],schools:null},
-  {id:"learned",kind:"prefix",name:"Erudito",stat:"knowledge",slots:["weapon","robe","amulet","ring","artifact"],tiers:[[1,2],[2,4],[4,7],[7,11],[11,16]],schools:null},
-  {id:"unyielding",kind:"prefix",name:"Inquebrantable",stat:"willpower",slots:["robe","amulet","ring","artifact"],tiers:[[1,2],[2,4],[4,7],[7,11],[11,16]],schools:null},
-  {id:"sovereign",kind:"prefix",name:"Soberano",stat:"influence",slots:["amulet","ring","artifact"],tiers:[[1,2],[2,4],[4,7],[7,11],[11,16]],schools:null},
-  {id:"vital",kind:"suffix",name:"de la Vitalidad",stat:"life",slots:["robe","amulet","ring","artifact"],tiers:[[4,8],[8,15],[15,24],[24,36],[36,52]],schools:null},
-  {id:"mana",kind:"suffix",name:"del Manantial",stat:"mana",slots:["weapon","robe","amulet","ring","artifact"],tiers:[[5,10],[10,18],[18,30],[30,45],[45,65]],schools:null},
+  {id:"arcane",kind:"prefix",name:"Arcano",stat:"arcane_power",slots:["weapon","robe","amulet","ring","focus"],tiers:[[1,2],[2,4],[4,7],[7,11],[11,16]],schools:null},
+  {id:"learned",kind:"prefix",name:"Erudito",stat:"knowledge",slots:["weapon","robe","amulet","ring","focus"],tiers:[[1,2],[2,4],[4,7],[7,11],[11,16]],schools:null},
+  {id:"unyielding",kind:"prefix",name:"Inquebrantable",stat:"willpower",slots:["robe","amulet","ring","focus"],tiers:[[1,2],[2,4],[4,7],[7,11],[11,16]],schools:null},
+  {id:"sovereign",kind:"prefix",name:"Soberano",stat:"influence",slots:["amulet","ring","focus"],tiers:[[1,2],[2,4],[4,7],[7,11],[11,16]],schools:null},
+  {id:"vital",kind:"suffix",name:"de la Vitalidad",stat:"life",slots:["robe","amulet","ring","focus"],tiers:[[4,8],[8,15],[15,24],[24,36],[36,52]],schools:null},
+  {id:"mana",kind:"suffix",name:"del Manantial",stat:"mana",slots:["weapon","robe","amulet","ring","focus"],tiers:[[5,10],[10,18],[18,30],[30,45],[45,65]],schools:null},
   {id:"critical",kind:"suffix",name:"del Ojo Certero",stat:"critical",slots:["weapon","amulet","ring"],tiers:[[1,2],[2,3],[3,5],[5,7],[7,9]],schools:null},
-  {id:"ward",kind:"suffix",name:"de la Barrera",stat:"ward",slots:["robe","amulet","artifact"],tiers:[[2,4],[4,7],[7,11],[11,16],[16,23]],schools:["ascendant","phantasm"]},
-  {id:"growth",kind:"suffix",name:"del Brote Eterno",stat:"regen",slots:["weapon","robe","amulet","ring","artifact"],tiers:[[1,2],[2,4],[4,6],[6,9],[9,13]],schools:["verdant"]},
-  {id:"cinders",kind:"suffix",name:"de las Cenizas",stat:"school_damage",slots:["weapon","amulet","ring","artifact"],tiers:[[2,4],[4,7],[7,11],[11,16],[16,23]],schools:["eradication"]},
-  {id:"abyss",kind:"suffix",name:"del Abismo Susurrante",stat:"school_damage",slots:["weapon","amulet","ring","artifact"],tiers:[[2,4],[4,7],[7,11],[11,16],[16,23]],schools:["abyssal"]},
-  {id:"mirage",kind:"suffix",name:"del Espejismo",stat:"evasion",slots:["robe","amulet","ring","artifact"],tiers:[[1,2],[2,4],[4,6],[6,9],[9,13]],schools:["phantasm"]},
-  {id:"radiance",kind:"suffix",name:"de la Radiancia",stat:"ward",slots:["robe","amulet","artifact"],tiers:[[2,4],[4,7],[7,11],[11,16],[16,23]],schools:["ascendant"]}
+  {id:"ward",kind:"suffix",name:"de la Barrera",stat:"ward",slots:["robe","amulet","focus"],tiers:[[2,4],[4,7],[7,11],[11,16],[16,23]],schools:["ascendant","phantasm"]},
+  {id:"growth",kind:"suffix",name:"del Brote Eterno",stat:"regen",slots:["weapon","robe","amulet","ring","focus"],tiers:[[1,2],[2,4],[4,6],[6,9],[9,13]],schools:["verdant"]},
+  {id:"cinders",kind:"suffix",name:"de las Cenizas",stat:"school_damage",slots:["weapon","amulet","ring","focus"],tiers:[[2,4],[4,7],[7,11],[11,16],[16,23]],schools:["eradication"]},
+  {id:"abyss",kind:"suffix",name:"del Abismo Susurrante",stat:"school_damage",slots:["weapon","amulet","ring","focus"],tiers:[[2,4],[4,7],[7,11],[11,16],[16,23]],schools:["abyssal"]},
+  {id:"mirage",kind:"suffix",name:"del Espejismo",stat:"evasion",slots:["robe","amulet","ring","focus"],tiers:[[1,2],[2,4],[4,6],[6,9],[9,13]],schools:["phantasm"]},
+  {id:"radiance",kind:"suffix",name:"de la Radiancia",stat:"ward",slots:["robe","amulet","focus"],tiers:[[2,4],[4,7],[7,11],[11,16],[16,23]],schools:["ascendant"]}
 ]);
 
 const LOOT_STAT_LABELS=Object.freeze({
@@ -75,19 +75,29 @@ function lootMageKey(profile){
 }
 function lootNameKey(profile){return String(profile?.mage_name||realmState?.realm?.mage_name||"unknown").trim().toLowerCase()}
 function lootEmptyState(){
-  return {version:ARCANUM_INVENTORY_VERSION,items:[],equipment:{weapon:null,robe:null,amulet:null,ring1:null,ring2:null,artifact:null},found:0,legacy_imported:false};
+  return {version:ARCANUM_INVENTORY_VERSION,items:[],equipment:{weapon:null,robe:null,amulet:null,ring1:null,ring2:null,focus:null},found:0,legacy_imported:false};
+}
+function lootNormalizeV2(input){
+  const state=JSON.parse(JSON.stringify(input||lootEmptyState()));
+  const old=state.equipment||{};
+  state.items=(Array.isArray(state.items)?state.items:[]).map(item=>({...item,slot:item.slot==="artifact"?"focus":item.slot}));
+  state.equipment={...lootEmptyState().equipment,...old};
+  if(old.artifact&&!state.equipment.focus)state.equipment.focus=old.artifact;
+  delete state.equipment.artifact;
+  state.version=ARCANUM_INVENTORY_VERSION;
+  return state;
 }
 function lootLegacyLoad(profile){
   try{
     const raw=localStorage.getItem(lootMageKey(profile));
     const parsed=raw?JSON.parse(raw):null;
-    return parsed&&parsed.version===ARCANUM_INVENTORY_VERSION?parsed:null;
+    return parsed&&(parsed.version===1||parsed.version===2)?lootNormalizeV2(parsed):null;
   }catch{return null;}
 }
 function lootLoad(profile){
   const parsed=lootServerCache.get(lootNameKey(profile));
   if(!parsed)return lootEmptyState();
-  const state=JSON.parse(JSON.stringify(parsed));
+  const state=lootNormalizeV2(parsed);
   state.items=Array.isArray(state.items)?state.items.slice(0,ARCANUM_INVENTORY_CAP):[];
   state.equipment={...lootEmptyState().equipment,...(state.equipment||{})};
   return state;
@@ -151,7 +161,7 @@ function lootSchoolLabel(code){
   return ({ascendant:"Aurea",verdant:"Viridia",eradication:"Cineria",abyssal:"Nadir",phantasm:"Oneiria",plain:"Neutral"})[code]||code;
 }
 function lootSlotLabel(slot){
-  return ({weapon:"Arma",robe:"Túnica",amulet:"Amuleto",ring:"Anillo",artifact:"Artefacto"})[slot]||slot;
+  return ({weapon:"Arma",robe:"Túnica",amulet:"Amuleto",ring:"Anillo",focus:"Foco Arcano"})[slot]||slot;
 }
 function lootItemStats(item){
   const rows=[];
@@ -201,6 +211,12 @@ function lootEquipmentCard(slot,state){
   if(!item)return '<div class="loot-equip-slot"><small>'+esc(slot.label)+'</small><span>Vacío</span></div>';
   return '<div class="loot-equip-slot filled rarity-'+esc(item.rarity)+'"><small>'+esc(slot.label)+'</small><strong>'+esc(item.name)+'</strong><span>iP '+n(item.power)+'</span><button class="loot-unequip" type="button" data-loot-unequip="'+esc(slot.key)+'">×</button></div>';
 }
+function canonicalRelicEquipmentCard(){
+  const relic=typeof canonicalEquippedRelic==="function"?canonicalEquippedRelic():null;
+  if(!relic)return '<div class="loot-equip-slot relic-slot"><small>Reliquia</small><span>Vacío</span></div>';
+  const name=typeof canonicalItemDisplayName==="function"?canonicalItemDisplayName(relic):(typeof artifactDef==="function"?artifactDef(relic.artifact_id)?.name:relic.artifact_id);
+  return '<div class="loot-equip-slot filled relic-slot"><small>Reliquia</small><strong>'+esc(name||"Reliquia")+'</strong><span>'+esc((relic.category||"reliquia").toUpperCase())+'</span><button class="loot-unequip" type="button" data-relic-unequip="relic">×</button></div>';
+}
 function renderArchmageInventory(profile){
   if(!profile?.is_self)return "";
   const state=lootLoad(profile);
@@ -208,7 +224,7 @@ function renderArchmageInventory(profile){
   return '<section class="archmage-inventory" data-loot-root>'+
     '<div class="profile-section-title"><span>INVENTARIO DEL ARCHIMAGO</span><small>'+state.items.length+' / '+ARCANUM_INVENTORY_CAP+' huecos</small></div>'+
     '<div class="loot-summary"><div><small>PODER DE EQUIPO</small><strong>'+n(total.power)+'</strong></div><div><small>PODER ARCANO</small><strong>+'+n(total.arcane_power)+'</strong></div><div><small>VIDA</small><strong>+'+n(total.life)+'</strong></div><div><small>MANÁ</small><strong>+'+n(total.mana)+'</strong></div></div>'+
-    '<div class="loot-equipment">'+ARCANUM_EQUIP_SLOTS.map(slot=>lootEquipmentCard(slot,state)).join("")+'</div>'+
+    '<div class="loot-equipment">'+ARCANUM_EQUIP_SLOTS.map(slot=>lootEquipmentCard(slot,state)).join("")+canonicalRelicEquipmentCard()+'</div>'+
     '<div class="loot-toolbar"><div><strong>Cámara del Arconte</strong><small>Botín procedural controlado · cada pieza nace con rolls propios.</small></div><button class="profile-action" type="button" data-loot-test-drop '+(state.items.length>=ARCANUM_INVENTORY_CAP?'disabled':'')+'>✦ HALLAZGO DE PRUEBA</button></div>'+
     '<div class="loot-grid">'+(state.items.length?state.items.map(lootItemCard).join(""):'<div class="empty">Tu Cámara está vacía.</div>')+'</div>'+
     '<p class="loot-beta-note">Prueba de beta: el botón de hallazgo permite validar rarezas, afijos, tiers y equipamiento. Cuando activemos PvE, esta generación pasará a expediciones, jefes y eventos.</p>'+
@@ -249,18 +265,31 @@ function wireInventoryPanel(profile){
   root.querySelectorAll("[data-loot-equip]").forEach(btn=>btn.addEventListener("click",async()=>{
     btn.disabled=true;
     try{
-      const data=await stateApi("/inventory/equip",{method:"POST",body:{item_id:btn.dataset.lootEquip}});
-      lootSave(profile,data.inventory);lootRefreshProfile(profile);toast(data.item.name+" equipado.");
+      const data=typeof equipCanonicalItem==="function"
+        ?await equipCanonicalItem("gear",btn.dataset.lootEquip)
+        :await stateApi("/inventory/equip",{method:"POST",body:{item_id:btn.dataset.lootEquip}});
+      if(data.inventory)lootSave(profile,data.inventory);lootRefreshProfile(profile);toast((data.item?.name||"Objeto")+" equipado.");
     }catch(e){toast(humanError(e),"error");btn.disabled=false}
   }));
 
   root.querySelectorAll("[data-loot-unequip]").forEach(btn=>btn.addEventListener("click",async()=>{
     btn.disabled=true;
     try{
-      const data=await stateApi("/inventory/unequip",{method:"POST",body:{slot:btn.dataset.lootUnequip}});
-      lootSave(profile,data.inventory);lootRefreshProfile(profile);
+      const data=typeof unequipCanonicalSlot==="function"
+        ?await unequipCanonicalSlot(btn.dataset.lootUnequip)
+        :await stateApi("/inventory/unequip",{method:"POST",body:{slot:btn.dataset.lootUnequip}});
+      if(data.inventory)lootSave(profile,data.inventory);lootRefreshProfile(profile);
     }catch(e){toast(humanError(e),"error");btn.disabled=false}
   }));
+
+  root.querySelector("[data-relic-unequip]")?.addEventListener("click",async btnEvent=>{
+    const btn=btnEvent.currentTarget;btn.disabled=true;
+    try{
+      if(typeof unequipCanonicalSlot==="function")await unequipCanonicalSlot("relic");
+      lootRefreshProfile(profile);
+      toast("Reliquia desvinculada.");
+    }catch(e){toast(humanError(e),"error");btn.disabled=false}
+  });
 
   root.querySelectorAll("[data-loot-destroy]").forEach(btn=>btn.addEventListener("click",async()=>{
     const state=lootLoad(profile),id=btn.dataset.lootDestroy,item=state.items.find(x=>x.id===id);if(!item)return;
