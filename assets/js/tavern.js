@@ -26,9 +26,54 @@ const tavernMapAsset={ready:false,canvas:null,mask:null,width:0,height:0,colors:
 
 async function tavernGunzipBase64(value){
   const raw=Uint8Array.from(atob(String(value||"")),c=>c.charCodeAt(0));
-  if(typeof DecompressionStream!=="function")throw new Error("Este navegador no soporta el mapa comprimido de la Taberna.");
-  const stream=new Blob([raw]).stream().pipeThrough(new DecompressionStream("gzip"));
-  return new Uint8Array(await new Response(stream).arrayBuffer());
+  if(window.pako?.ungzip){
+    return new Uint8Array(window.pako.ungzip(raw));
+  }
+  if(typeof DecompressionStream==="function"){
+    try{
+      const stream=new Blob([raw]).stream().pipeThrough(new DecompressionStream("gzip"));
+      return new Uint8Array(await new Response(stream).arrayBuffer());
+    }catch{}
+  }
+  throw new Error("No se pudo descomprimir el mapa de la Taberna.");
+}
+
+function tavernPrepareFallback(){
+  const width=160,height=120;
+  const c=document.createElement("canvas");
+  c.width=width;c.height=height;
+  const cx=c.getContext("2d",{alpha:false});
+  cx.fillStyle="#140c07";cx.fillRect(0,0,width,height);
+  cx.fillStyle="#6e4327";cx.fillRect(8,8,width-16,height-16);
+  cx.fillStyle="#2b1a10";cx.fillRect(8,8,width-16,8);
+  cx.fillRect(8,height-16,width-16,8);
+  cx.fillRect(8,8,8,height-16);
+  cx.fillRect(width-16,8,8,height-16);
+  cx.fillStyle="#8b5a32";cx.fillRect(82,30,56,10);
+  cx.fillRect(24,34,30,18);cx.fillRect(24,74,34,12);
+  cx.fillRect(67,55,26,14);cx.fillRect(104,60,26,14);
+  cx.fillStyle="#c99d5b";cx.fillRect(78,96,12,16);
+  const bits=width*height;
+  const mask=new Uint8Array(Math.ceil(bits/8));
+  const set=(x,y)=>{
+    if(x<0||y<0||x>=width||y>=height)return;
+    const bit=y*width+x;mask[bit>>3]|=1<<(7-(bit&7));
+  };
+  for(let y=16;y<104;y++)for(let x=16;x<144;x++)set(x,y);
+  const block=(x0,y0,w,h)=>{
+    for(let y=y0;y<y0+h;y++)for(let x=x0;x<x0+w;x++){
+      const bit=y*width+x;mask[bit>>3]&=~(1<<(7-(bit&7)));
+    }
+  };
+  block(82,30,56,10);block(24,34,30,18);block(24,74,34,12);block(67,55,26,14);block(104,60,26,14);
+  tavernMapAsset.ready=true;
+  tavernMapAsset.canvas=c;
+  tavernMapAsset.mask=mask;
+  tavernMapAsset.width=width;
+  tavernMapAsset.height=height;
+  tavernMapAsset.colors=0;
+  tavernMapAsset.fallback=true;
+  return true;
 }
 
 async function tavernPrepareMap(){
@@ -169,7 +214,6 @@ function tavernMove(rt,dt){
   if(rt.keys.has("ArrowUp")||rt.keys.has("w"))dy--;
   if(rt.keys.has("ArrowDown")||rt.keys.has("s"))dy++;
   if(!dx&&!dy){rt.player.moving=false;return false;}
-  rt.player.moving=true;
   rt.player.moving=true;
   const len=Math.hypot(dx,dy)||1;dx/=len;dy/=len;
   const mx=dx*TAVERN_SPEED*dt,my=dy*TAVERN_SPEED*dt;
@@ -322,8 +366,14 @@ async function renderTavern(){
   const canvas=document.querySelector("#tavern-canvas");
   const status=document.querySelector("#tavern-status");
   if(status)status.textContent="Cargando mapa…";
-  await tavernPrepareMap();
-  if(status)status.textContent="Conectando…";
+  try{
+    await tavernPrepareMap();
+  }catch(err){
+    console.warn("Tavern map fallback:",err);
+    tavernPrepareFallback();
+    if(status)status.textContent="Mapa de seguridad";
+  }
+  if(status && !tavernMapAsset.fallback)status.textContent="Conectando…";
   const rt={
     active:true,canvas,ctx:canvas.getContext("2d"),status:document.querySelector("#tavern-status"),
     id:String(getSession()?.user?.id||mage),player:{name:mage,school,x:TAVERN_SPAWN.x,y:TAVERN_SPAWN.y,dir:"up",moving:false,bubble:"",bubbleUntil:0},
