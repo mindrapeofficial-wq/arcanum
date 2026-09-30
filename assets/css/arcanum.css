@@ -395,3 +395,19 @@ table .school-dot{width:17px;height:17px;min-width:17px;margin-right:6px}
 .archmage-identity-card strong{color:#e6c58f;font-size:16px;font-weight:500}
 .archmage-identity-card span{color:#847765;font:9px/1.5 Arial,sans-serif}
 .archmage-identity-card em{color:#5f5548;font:italic 8px/1.4 Arial,sans-serif}
+
+
+/* Astrael · guía IA dentro del mundo */
+.sidebar-oracle-row{border:1px solid rgba(218,151,57,.12);background:linear-gradient(90deg,rgba(124,77,26,.11),rgba(0,0,0,.02))}
+.sidebar-oracle-player{grid-template-columns:7px 18px minmax(0,1fr)}
+.oracle-rune{width:18px;height:18px;display:grid;place-items:center;border:1px solid rgba(218,151,57,.26);color:#e2bd78;font-size:9px;transform:rotate(45deg);background:rgba(177,112,33,.08)}
+.sidebar-oracle-copy{}.sidebar-oracle-player strong em{display:inline-block;margin-left:4px;padding:2px 4px;border:1px solid rgba(218,151,57,.2);color:#d9a85d;font:800 6px Arial,sans-serif;letter-spacing:.09em;vertical-align:1px}
+.oracle-presence{background:#d3a151!important;box-shadow:0 0 8px rgba(211,161,81,.6)!important}
+.oracle-dm-button{color:#e0b569;border-color:rgba(218,151,57,.28)}
+.oracle-chat{border-color:rgba(218,151,57,.4);box-shadow:0 22px 70px rgba(0,0,0,.72),0 0 34px rgba(164,100,29,.08)}
+.oracle-chat .direct-chat-head{background:linear-gradient(90deg,rgba(137,83,26,.14),rgba(0,0,0,.02))}
+.oracle-chat .direct-chat-profile{cursor:default}
+.oracle-chat .direct-chat-profile .presence-dot{background:#d3a151;box-shadow:0 0 8px rgba(211,161,81,.55)}
+.oracle-message{border-color:rgba(218,151,57,.18)!important;background:linear-gradient(135deg,rgba(126,76,23,.11),rgba(255,255,255,.012))!important}
+.oracle-message p{color:#d9c3a0!important}
+.oracle-thinking{opacity:.72;font-style:italic}
