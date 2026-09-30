@@ -204,6 +204,7 @@ test("flujo crítico completo: login, reino, explorar, construir, investigar, re
 
   await expect(page.locator("#game-view")).toBeVisible();
   await expect(page.locator("#mage-title")).toHaveText("E2E_TESTER");
+  await expect(page.locator("#mage-school")).toContainText("Nivel 4");
 
   await page.locator("#realm-explore-turns").fill("2");
   await page.locator("#realm-explore-button").click();
