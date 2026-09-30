@@ -10,6 +10,18 @@ const PASSIVE_RESOURCE_FIELDS={
 };
 let passiveResourceFlow=null;
 
+function passivePowerYield(state=realmState){
+  const power=Math.max(1,Number(state?.realm?.net_power||0));
+  const scale=Math.pow(power,0.55);
+  return {
+    gold:Math.max(1,Math.round(scale*2)),
+    mana:Math.max(1,Math.round(scale*0.5)),
+    population:Math.max(1,Math.round(scale*0.15)),
+    land:0,
+    net_power:0
+  };
+}
+
 function passiveBuildingSignature(state=realmState){
   const b=state?.buildings||{};
   return Object.keys(b).sort().map(k=>`${k}:${Number(b[k]||0)}`).join("|");
@@ -67,7 +79,9 @@ function syncPassiveResourceFlow(state=realmState){
   if(!state?.realm)return;
   const now=Date.now(), current=passiveSnapshot(state), previous=passiveResourceFlow?.snapshot||null;
   const sameSignature=!!previous&&previous.buildingSignature===current.buildingSignature;
-  let yieldPerTurn=passiveServerYield(state)||passiveReadCache(state)||(sameSignature?passiveResourceFlow?.yieldPerTurn:null)||{};
+  const powerYield=passivePowerYield(state);
+  let yieldPerTurn=passiveServerYield(state)||passiveReadCache(state)||(sameSignature?passiveResourceFlow?.yieldPerTurn:null)||powerYield;
+  yieldPerTurn={...powerYield,...yieldPerTurn};
 
   if(previous && sameSignature){
     const turnsGained=current.turns-previous.turns;
@@ -75,10 +89,13 @@ function syncPassiveResourceFlow(state=realmState){
     if(turnsGained>0 && scheduleAdvanced){
       const learned={};
       for(const field of Object.keys(PASSIVE_RESOURCE_FIELDS)){
-        learned[field]=(current.values[field]-previous.values[field])/turnsGained;
+        const delta=(current.values[field]-previous.values[field])/turnsGained;
+        if(Number.isFinite(delta) && delta!==0)learned[field]=delta;
       }
-      yieldPerTurn={...yieldPerTurn,...learned};
-      passiveWriteCache(state,yieldPerTurn);
+      if(Object.keys(learned).length){
+        yieldPerTurn={...yieldPerTurn,...learned};
+        passiveWriteCache(state,yieldPerTurn);
+      }
     }
   }
 
