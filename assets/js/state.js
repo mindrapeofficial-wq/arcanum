@@ -19,8 +19,8 @@ const symbols = { ascendant:"✦", verdant:"♧", eradication:"✹", abyssal:"�
 const rankNames = { simple:"Simple", average:"Medio", complex:"Complejo", ultimate:"Supremo", ancient:"Antiguo" };
 const buildMeta = {
   farms:["Granjas","Alimentos + población","5"], towns:["Pueblos","Población + oro","30"], nodes:["Nodos","Producción y capacidad de maná","30"],
-  workshops:["Talleres","Aceleran la construcción futura","10"], guilds:["Gremios","Generan investigación","20"], barracks:["Cuarteles","Permiten reclutar tropas","5"],
-  fortresses:["Fortalezas","Defensa y supervivencia del Archimago","300"], barriers:["Barreras","Defensa arcana · 1 por turno","1 turno"]
+  workshops:["Talleres","Aceleran la construcción futura","10"], guilds:["Gremios","Generan conocimiento arcano","20"], barracks:["Cuarteles","Permiten reclutar tropas","5"],
+  fortresses:["Fortalezas","Defensa y supervivencia del Arconte","300"], barriers:["Barreras","Defensa arcana · 1 por turno","1 turno"]
 };
 
 let mode = "login";
@@ -67,21 +67,21 @@ function humanError(error){
     ["BUYER_NOT_ENOUGH_GOLD","No tienes oro suficiente para aceptar este contrato."],["BUYER_NOT_ENOUGH_MANA","No tienes maná suficiente para aceptar este contrato."],["BUYER_NOT_ENOUGH_POPULATION","No tienes población suficiente para aceptar este contrato."],
     ["SELLER_NOT_ENOUGH_GOLD","El vendedor ya no dispone del oro comprometido."],["SELLER_NOT_ENOUGH_MANA","El vendedor ya no dispone del maná comprometido."],["SELLER_NOT_ENOUGH_POPULATION","El vendedor ya no dispone de la población comprometida."],
     ["MARKET_OFFER_EXPIRED","Este contrato ya ha caducado."],["MARKET_OFFER_NOT_OPEN","Este contrato ya no está disponible."],["MARKET_OFFER_NOT_FOUND","No se ha encontrado este contrato."],
-    ["CANNOT_ACCEPT_OWN_OFFER","No puedes aceptar tu propio contrato."],["MARKET_SEASON_MISMATCH","El contrato pertenece a otra temporada."],["MARKET_SELLER_NOT_ALIVE","El reino vendedor ya no puede comerciar."],
+    ["CANNOT_ACCEPT_OWN_OFFER","No puedes aceptar tu propio contrato."],["MARKET_SEASON_MISMATCH","El contrato pertenece a otra temporada."],["MARKET_SELLER_NOT_ALIVE","El dominio vendedor ya no puede comerciar."],
     ["MARKET_OFFER_LIMIT","Ya tienes 8 contratos activos."],["MARKET_OPERATION_FAILED","No se pudo completar la operación del mercado."],
     ["NOT_ENOUGH_TURNS","No tienes turnos suficientes."],["NOT_ENOUGH_WILDERNESS","No tienes terreno salvaje suficiente."],
     ["NOT_ENOUGH_GOLD","No tienes oro suficiente."],["NOT_ENOUGH_MANA","No tienes maná suficiente."],["NOT_ENOUGH_POPULATION","No tienes población suficiente."],
     ["NO_RESEARCH_PRODUCTION","Necesitas al menos un Gremio para investigar."],["SPELL_NOT_RESEARCHABLE","Ese hechizo no puede investigarse con tu Escuela."],
-    ["RESEARCH_QUEUE_MUST_START_WITH_CURRENT","Debes terminar primero la investigación actual."],["NO_BARRACKS","Necesitas Cuarteles para reclutar."],
+    ["RESEARCH_QUEUE_MUST_START_WITH_CURRENT","Debes terminar primero la conocimiento arcano actual."],["NO_BARRACKS","Necesitas Cuarteles para reclutar."],
     ["ATTACKER_HAS_NO_ARMY","Necesitas un ejército antes de atacar."],["TARGET_HAS_NO_ARMY","Ese objetivo no tiene ejército disponible para esta beta."],
     ["NOT_ENOUGH_RESOURCES_FOR_WAR_EXPENSE","No puedes pagar el gasto de guerra de tu ejército."],["BARRIERS_REQUIRE_EXCLUSIVE_BUILD","Las Barreras deben construirse en una orden separada."],
-    ["BUILD_BATCH_TOO_LARGE","Ese lote de construcción requiere más de 50 turnos. Reduce la cantidad."],["REALM_ALREADY_EXISTS","Ya tienes un reino en esta temporada."],
-    ["INVITE_REQUIRED","Esta cuenta no tiene una invitación válida de ARCANUM."],["MAGE_NOT_ALIVE","Este Archimago ya no está vivo."],
-    ["TARGET_NOT_FOUND","No se ha encontrado al Archimago objetivo."],["TARGET_NOT_ALIVE","Ese Archimago ya ha caído."],
-    ["UNRESOLVED_TERRITORY_DAMAGE","Tu reino tiene daño territorial pendiente de resolver."],["INVALID_BUILD_PLAN","El plan de construcción no es válido."],
+    ["BUILD_BATCH_TOO_LARGE","Ese lote de construcción requiere más de 50 turnos. Reduce la cantidad."],["REALM_ALREADY_EXISTS","Ya tienes un dominio en esta temporada."],
+    ["INVITE_REQUIRED","Esta cuenta no tiene una invitación válida de ARCANUM."],["MAGE_NOT_ALIVE","Este Arconte ya no está vivo."],
+    ["TARGET_NOT_FOUND","No se ha encontrado al Arconte objetivo."],["TARGET_NOT_ALIVE","Ese Arconte ya ha caído."],
+    ["UNRESOLVED_TERRITORY_DAMAGE","Tu dominio tiene daño territorial pendiente de resolver."],["INVALID_BUILD_PLAN","El plan de construcción no es válido."],
     ["UNIT_UNDISBANDABLE","Esta unidad no puede ser disuelta."],["SPELL_NOT_KNOWN","Aún no conoces ese hechizo."],
     ["NO_ATTRIBUTE_POINTS","No tienes puntos de atributo disponibles."],["ATTRIBUTE_AT_CAP","Ese atributo ya ha alcanzado el máximo de esta beta."],["INVALID_ATTRIBUTE","Ese atributo no es válido."],
-    ["REALM_NOT_FOUND","Aún no has fundado un reino."],["ARENA_NO_SEALS","Has gastado los 6 Sellos de Arena de hoy."],["CANNOT_FIGHT_SELF","No puedes combatir contra tu propio Archimago."],["EVOLUTION_LEVEL_LOCKED","Ese nivel todavía no está disponible."],["EVOLUTION_ALREADY_CHOSEN","Ese destino ya fue elegido."],["EVOLUTION_ORDER_REQUIRED","Debes resolver primero la evolución pendiente anterior."],["EVOLUTION_OPTION_INVALID","La opción de evolución ya no es válida."]
+    ["REALM_NOT_FOUND","Aún no has fundado un dominio."],["ARENA_NO_SEALS","Has gastado los 6 Sellos de Arena de hoy."],["CANNOT_FIGHT_SELF","No puedes combatir contra tu propio Arconte."],["EVOLUTION_LEVEL_LOCKED","Ese nivel todavía no está disponible."],["EVOLUTION_ALREADY_CHOSEN","Ese destino ya fue elegido."],["EVOLUTION_ORDER_REQUIRED","Debes resolver primero la evolución pendiente anterior."],["EVOLUTION_OPTION_INVALID","La opción de evolución ya no es válida."]
   ];
   for(const [k,v] of map) if(m.includes(k)) return v;
   if(m.includes("duplicate key") || m.includes("unique")) return "Ese nombre ya está ocupado.";
