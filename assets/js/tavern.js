@@ -172,7 +172,7 @@ function tavernDrawMage(ctx,p,isSelf=false){
     if(p.dir==="left"||p.dir==="right"){ctx.fillStyle="#d7bf9c";ctx.fillRect(p.dir==="left"?-14:10,-3,4,10);}
   }
 
-  tavernDrawPixelText(ctx,p.name||"Archimago",0,ascendant?-67:-34,12);
+  tavernDrawPixelText(ctx,p.name||"Arconte",0,ascendant?-67:-34,12);
   if(p.bubble && p.bubbleUntil>Date.now()){
     const txt=String(p.bubble).slice(0,42);
     ctx.font="700 12px sans-serif";
@@ -280,7 +280,7 @@ async function tavernConnect(rt){
   channel.on("broadcast",{event:"tavern_chat"},({payload})=>{
     if(!payload?.id||!payload?.text)return;
     if(payload.id===rt.id)return;
-    const p=rt.remotes.get(payload.id)||{id:payload.id,name:payload.name||"Archimago",school:payload.school||"" ,x:512,y:384};
+    const p=rt.remotes.get(payload.id)||{id:payload.id,name:payload.name||"Arconte",school:payload.school||"" ,x:512,y:384};
     p.bubble=String(payload.text).slice(0,120);p.bubbleUntil=Date.now()+6500;
     rt.remotes.set(payload.id,p);
     tavernAppendChat(rt,p.name,p.bubble,false);
@@ -338,7 +338,7 @@ function tavernWireControls(rt){
 async function renderTavern(){
   stopTavern();
   const host=document.querySelector("#view-host");
-  const mage=realmState?.realm?.mage_name||"Archimago";
+  const mage=realmState?.realm?.mage_name||"Arconte";
   const school=realmState?.realm?.school_code||"";
   host.innerHTML=`
     <div id="tavern-root" class="tavern-root">
@@ -357,7 +357,7 @@ async function renderTavern(){
           </div>
         </section>
         <aside class="tavern-side">
-          <section class="panel tavern-nearby"><div class="tavern-side-title"><span class="section-kicker">CERCA DE TI</span><strong>Archimagos</strong></div><div id="tavern-nearby-list"><div class="tavern-empty">Buscando jugadores…</div></div></section>
+          <section class="panel tavern-nearby"><div class="tavern-side-title"><span class="section-kicker">CERCA DE TI</span><strong>Arcontes</strong></div><div id="tavern-nearby-list"><div class="tavern-empty">Buscando jugadores…</div></div></section>
           <section class="panel tavern-chat"><div class="tavern-side-title"><span class="section-kicker">CONVERSACIÓN</span><strong>Chat de la sala</strong></div><div id="tavern-chat-log" class="tavern-chat-log"></div><form id="tavern-chat-form"><input id="tavern-chat-input" maxlength="120" autocomplete="off" placeholder="Di algo en la taberna…"><button type="submit">ENVIAR</button></form></section>
         </aside>
       </div>
