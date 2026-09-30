@@ -14,7 +14,7 @@ const ARENA_SPRITE_FILES={verdant:"assets/ui/arena/verdant.b64",ascendant:"asset
 const ARENA_SPRITE_CACHE={};
 function arenaSpriteHtml(code,cls){var school=ARENA_SPRITE_FILES[code]?code:"ascendant";return '<span class="arena-sprite school-'+school+' '+(cls||"")+'" data-school="'+school+'" aria-hidden="true"></span>'}
 async function arenaHydrateSprites(root){var host=root||document,nodes=host.querySelectorAll?host.querySelectorAll(".arena-sprite[data-school]"):[];for(var i=0;i<nodes.length;i++){var el=nodes[i],school=el.dataset.school||"ascendant",path=ARENA_SPRITE_FILES[school]||ARENA_SPRITE_FILES.ascendant;try{if(!ARENA_SPRITE_CACHE[school])ARENA_SPRITE_CACHE[school]=fetch(path,{cache:"force-cache"}).then(function(r){if(!r.ok)throw new Error("sprite "+r.status);return r.text()}).then(function(x){return "url(data:image/webp;base64,"+x.trim()+")"});el.style.backgroundImage=await ARENA_SPRITE_CACHE[school]}catch(e){el.classList.add("arena-sprite--fallback")}}}
-function arenaDivision(v){return v>=1700?"Leyenda Arcana":v>=1500?"Archimago":v>=1350?"Gran Mago":v>=1200?"Maestro":v>=1050?"Adepto":v>=900?"Aprendiz":"Iniciado"}
+function arenaDivision(v){return v>=1700?"Leyenda Arcana":v>=1500?"Arconte":v>=1350?"Gran Mago":v>=1200?"Maestro":v>=1050?"Adepto":v>=900?"Aprendiz":"Iniciado"}
 function arenaTargets(rows){
   const me=String(realmState?.realm?.mage_name||"").toLowerCase();
   const power=Math.max(1,Number(realmState?.realm?.net_power||1));
@@ -28,7 +28,7 @@ function arenaHistoryRecord(row){
   return {
     id:String(row.id),
     at:row.created_at,
-    opponent:String(row.defender_username||"Archimago"),
+    opponent:String(row.defender_username||"Arconte"),
     won:Boolean(row.attacker_won),
     mode:String(row.mode||"friendly"),
     delta:Number(row.rating_delta||0),
