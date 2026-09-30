@@ -5,7 +5,7 @@
 .tavern-status{display:grid;grid-template-columns:auto auto;align-items:center;gap:2px 8px;padding:10px 12px;border:1px solid rgba(210,166,92,.28);background:rgba(17,11,7,.72);min-width:150px}
 .tavern-status small{grid-column:2;color:#aa9a83}
 .tavern-layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:14px;min-width:0}
-.tavern-stage{position:relative;min-width:0;border:1px solid rgba(210,166,92,.26);background:#0e0906;overflow:hidden;aspect-ratio:16/10}
+.tavern-stage{position:relative;min-width:0;border:1px solid rgba(210,166,92,.26);background:#0e0906;overflow:hidden;aspect-ratio:4/3}
 #tavern-canvas{display:block;width:100%;height:100%;image-rendering:pixelated;touch-action:none}
 .tavern-help{position:absolute;left:10px;top:10px;padding:6px 8px;font-size:11px;background:rgba(13,8,5,.82);border:1px solid rgba(210,166,92,.24);color:#d5c19d}
 .tavern-side{display:flex;flex-direction:column;gap:12px;min-width:0}
@@ -28,4 +28,4 @@
 .tavern-dpad button.pressed{background:rgba(183,129,61,.78)}
 .tavern-dpad button:nth-child(1){grid-column:2}.tavern-dpad button:nth-child(2){grid-column:1;grid-row:2}.tavern-dpad button:nth-child(3){grid-column:2;grid-row:2}.tavern-dpad button:nth-child(4){grid-column:3;grid-row:2}
 @media(max-width:980px){.tavern-layout{grid-template-columns:1fr}.tavern-side{display:grid;grid-template-columns:1fr 1fr}.tavern-chat-log{height:170px}.tavern-dpad{display:grid}.tavern-help{right:10px;left:auto}}
-@media(max-width:620px){.tavern-head{flex-direction:column}.tavern-status{width:100%}.tavern-side{grid-template-columns:1fr}.tavern-stage{aspect-ratio:10/12}.tavern-help{font-size:10px}.tavern-chat-log{height:150px}}
+@media(max-width:620px){.tavern-head{flex-direction:column}.tavern-status{width:100%}.tavern-side{grid-template-columns:1fr}.tavern-stage{aspect-ratio:4/3}.tavern-help{font-size:10px}.tavern-chat-log{height:150px}}
