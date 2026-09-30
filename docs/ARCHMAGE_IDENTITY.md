@@ -120,14 +120,11 @@ Uses the same Archmage Snapshot for player identity, level, combat profile and v
 ### Social surfaces
 Profile links resolve into the same canonical character sheet.
 
-## Unresolved work for Point 4
+## Point 4 integration
 
-Point 3 deliberately does not merge procedural equipment and named relic mechanics.
+The canonical item model is now defined in `docs/ITEM_MODEL.md`.
 
-Point 4 must define:
-1. one item taxonomy,
-2. one slot model,
-3. whether Duel Weapon becomes an item, archetype, style or separate intrinsic,
-4. how relics interact with equipment,
-5. which item effects apply to Arena, PvE and realm systems,
-6. one authoritative trade/equip lifecycle.
+The Archmage identity consumes seven equipment slots:
+Weapon, Robe, Amulet, Ring I, Ring II, Focus and Relic.
+
+The Duel Weapon remains an intrinsic combat identity rather than a physical inventory item.
