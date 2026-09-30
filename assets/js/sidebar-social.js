@@ -12,6 +12,7 @@ const ORACLE_NAME="Astrael";
 const ORACLE_TITLE="Arconte IA · Consejero";
 const ONLINE_PANEL_COLLAPSED_KEY="arcanum_online_panel_collapsed_v1";
 let oracleHistory=[];
+let oracleCapabilityWarmupDone=false;
 
 function isOnlinePanelCollapsed(){
   try{
@@ -97,6 +98,23 @@ async function oracleApi(message){
   const data=await res.json().catch(()=>({}));
   if(!res.ok)throw new Error(data?.error||"No he podido consultar al Archivista.");
   return data;
+}
+async function warmOracleCapabilities(){
+  if(oracleCapabilityWarmupDone)return;
+  const session=getSession();
+  if(!session?.access_token)return;
+  oracleCapabilityWarmupDone=true;
+  try{
+    const res=await fetch(ORACLE_API,{
+      method:"POST",
+      headers:{Authorization:`Bearer ${session.access_token}`,"Content-Type":"application/json"},
+      body:JSON.stringify({op:"capabilities"}),
+      cache:"no-store"
+    });
+    if(!res.ok)oracleCapabilityWarmupDone=false;
+  }catch{
+    oracleCapabilityWarmupDone=false;
+  }
 }
 function sidebarOnlineRow(player,friends){
   const username=String(player?.username||"").trim();
@@ -296,6 +314,7 @@ async function refreshSidebarPresence(force=false){
 function startSidebarSocial(){
   stopSidebarSocial(false);
   ensureOnlinePanelCollapseButton();
+  warmOracleCapabilities();
   refreshSidebarPresence(true);
   sidebarPresenceTimer=setInterval(()=>refreshSidebarPresence(false),15000);
 }
