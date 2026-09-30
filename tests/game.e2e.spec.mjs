@@ -251,7 +251,7 @@ test("flujo crítico completo: login, reino, explorar, construir, investigar, re
   await expect(page.locator(".toast").last()).toContainText("Investigación avanzada");
 
   await page.locator('#main-nav button[data-view="army"]').click();
-  await expect(page.getByRole("heading",{name:"Ejército"})).toBeVisible();
+  await expect(page.getByRole("heading",{name:"Formaciones"})).toBeVisible();
   await page.locator("#recruit-turns").fill("1");
   await page.locator("#recruit-button").click();
   await expect(page.locator(".toast").last()).toContainText("Reclutadas 5 unidades");
@@ -327,7 +327,7 @@ test("la ficha de personaje se abre, permite gastar un punto y editar la bio", a
   await expect(page.getByText("PROGRESIÓN DEL ARCHIMAGO")).toBeVisible();
   await expect(page.getByText("Poder Arcano",{exact:true}).first()).toBeVisible();
   await expect(page.getByText("FUENTES DE EXPERIENCIA")).toBeVisible();
-  await expect(page.getByText("Investigación",{exact:true})).toBeVisible();
+  await expect(page.locator("#modal-content").getByText("Investigación",{exact:true})).toBeVisible();
   await expect(page.getByText("Jefes PvE",{exact:true})).toBeVisible();
   await expect(page.getByText("Sendero Híbrido")).toBeVisible();
   await expect(page.locator(".archmage-level-row > div:first-child strong")).toHaveText("4");
