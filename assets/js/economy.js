@@ -55,7 +55,7 @@ function renderEconomy(){
     </section>`;
 
   updatePassiveResourceDisplay();
-  $(".econ-action").forEach(btn=>btn.addEventListener("click",()=>doEconomy(btn.dataset.action,btn)));
+  $$(".econ-action").forEach(btn=>btn.addEventListener("click",()=>doEconomy(btn.dataset.action,btn)));
   $("#explore-button").addEventListener("click",()=>doExplore($("#explore-button")));
 }
 
