@@ -1,8 +1,8 @@
 "use strict";
 
 const VIEW_RENDERERS={
-  market:{name:"renderMarket",src:"assets/js/market.js?v=0.2.52-hotfix1"},
-  artifacts:{name:"renderArtifactLibrary",src:"assets/js/artifacts.js?v=0.2.52-hotfix1"}
+  market:{name:"renderMarket",src:"assets/js/market.js?v=0.2.60"},
+  artifacts:{name:"renderArtifactLibrary",src:"assets/js/artifacts.js?v=0.2.60"}
 };
 
 async function ensureViewRenderer(view){
