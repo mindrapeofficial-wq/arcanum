@@ -10,8 +10,8 @@ const ARCANUM_ARTIFACT_CATALOG=Object.freeze([
   {id:"black_candle",name:"Vela Negra de Vigilia",category:"minor",effect:"+5% resistencia a magia Abisal.",lore:"Su llama oscura ilumina aquello que desea permanecer oculto."},
   {id:"pilgrim_map",name:"Mapa del Peregrino Perdido",category:"minor",effect:"+4% rendimiento de exploración.",lore:"Añade caminos que no estaban dibujados la noche anterior."},
   {id:"griffin_feather",name:"Pluma de Grifo",category:"minor",effect:"+3% velocidad de tropas.",lore:"Aún conserva el impulso de una criatura nacida sobre las nubes."},
-  {id:"sealed_letter",name:"Carta del Rey Sin Nombre",category:"minor",effect:"+5 Influencia.",lore:"El sello no pertenece a ningún reino conocido."},
-  {id:"star_ink",name:"Tinta Estelar",category:"minor",effect:"+4% investigación.",lore:"Los glifos escritos con ella brillan al pronunciarse."},
+  {id:"sealed_letter",name:"Carta del Rey Sin Nombre",category:"minor",effect:"+5 Influencia.",lore:"El sello no pertenece a ningún dominio conocido."},
+  {id:"star_ink",name:"Tinta Estelar",category:"minor",effect:"+4% conocimiento arcano.",lore:"Los glifos escritos con ella brillan al pronunciarse."},
   {id:"obsidian_key",name:"Llave de Obsidiana",category:"minor",effect:"+4% probabilidad de botín en ruinas.",lore:"Abre cerraduras que todavía no han sido construidas."},
   {id:"silver_hourglass",name:"Reloj de Arena de Plata",category:"minor",effect:"-3% tiempo de construcción.",lore:"La arena asciende cuando nadie la observa."},
   {id:"witch_bell",name:"Campana de la Bruja",category:"minor",effect:"+4% defensa contra invocaciones.",lore:"Su tañido se oye mejor bajo tierra."},
@@ -33,8 +33,8 @@ const ARCANUM_ARTIFACT_CATALOG=Object.freeze([
   {id:"echo_flute",name:"Flauta del Eco",category:"minor",effect:"+3% poder de invocación.",lore:"Repite notas que aún no han sido tocadas."},
 
   {id:"verdant_crown",name:"Corona del Bosque Primigenio",category:"school",school:"verdant",effect:"+12% regeneración y +8% producción de alimentos.",lore:"Las ramas que la forman siguen creciendo alrededor de su portador."},
-  {id:"verdant_codex",name:"Códice de las Mil Raíces",category:"school",school:"verdant",effect:"+10% investigación Verdante.",lore:"Cada página contiene el mapa de un bosque distinto."},
-  {id:"verdant_seedheart",name:"Corazón Semilla",category:"school",school:"verdant",effect:"+10% vida del Archimago y +6% defensa.",lore:"Late lentamente bajo una corteza de oro verde."},
+  {id:"verdant_codex",name:"Códice de las Mil Raíces",category:"school",school:"verdant",effect:"+10% conocimiento arcano Verdante.",lore:"Cada página contiene el mapa de un bosque distinto."},
+  {id:"verdant_seedheart",name:"Corazón Semilla",category:"school",school:"verdant",effect:"+10% vida del Arconte y +6% defensa.",lore:"Late lentamente bajo una corteza de oro verde."},
 
   {id:"eradication_brand",name:"Marca del Sol Quebrado",category:"school",school:"eradication",effect:"+12% daño de Escuela.",lore:"El metal permanece rojo aunque repose sobre hielo."},
   {id:"eradication_furnace",name:"Núcleo de la Forja Roja",category:"school",school:"eradication",effect:"+9% poder ofensivo y +5% reclutamiento.",lore:"Un pequeño horno que devora brasas y devuelve guerra."},
@@ -60,13 +60,13 @@ const ARCANUM_ARTIFACT_CATALOG=Object.freeze([
 
   {id:"crown_five_voices",name:"Corona de las Cinco Voces",category:"unique",effect:"+15% poder mágico global y afinidad ampliada.",lore:"Cinco metales imposibles cantan cuando las Escuelas entran en conflicto."},
   {id:"eryndor_chalice",name:"Cáliz de Eryndor",category:"unique",effect:"+20% regeneración de maná y +10 Voluntad.",lore:"El agua servida en él recuerda a todos sus propietarios."},
-  {id:"staff_first_archmage",name:"Báculo del Primer Archimago",category:"unique",effect:"+18 Poder Arcano y +12 Conocimiento.",lore:"Nadie sabe quién fue el primero, pero el báculo sí."},
+  {id:"staff_first_archmage",name:"Báculo del Primer Arconte",category:"unique",effect:"+18 Poder Arcano y +12 Conocimiento.",lore:"Nadie sabe quién fue el primero, pero el báculo sí."},
   {id:"sword_last_dawn",name:"Espada del Último Amanecer",category:"unique",effect:"+20% daño de ejército y +10% moral.",lore:"Su filo refleja un amanecer que todavía no ha sucedido."},
   {id:"atlas_unwritten",name:"Atlas de lo No Escrito",category:"unique",effect:"+20% exploración y revela rutas excepcionales.",lore:"Sus mapas aparecen justo antes de que el mundo cambie."},
   {id:"throne_ashes",name:"Trono de Cenizas Portátil",category:"unique",effect:"+15% oro, +15 Influencia.",lore:"Un fragmento del asiento de un imperio borrado de los registros."},
-  {id:"orb_ninth_moon",name:"Orbe de la Novena Luna",category:"unique",effect:"+20% capacidad de maná y +10% investigación.",lore:"Contiene una luna que ningún astrónomo ha visto."},
+  {id:"orb_ninth_moon",name:"Orbe de la Novena Luna",category:"unique",effect:"+20% capacidad de maná y +10% conocimiento arcano.",lore:"Contiene una luna que ningún astrónomo ha visto."},
   {id:"bell_worlds_end",name:"Campana del Fin del Mundo",category:"unique",effect:"+18% poder de rituales y +12% defensa mágica.",lore:"Su sonido ha terminado guerras antes de empezar."},
-  {id:"key_underworld",name:"Llave del Reino Inferior",category:"unique",effect:"+20% botín de jefes y acceso a encuentros raros.",lore:"No abre una puerta. Decide dónde aparece."},
+  {id:"key_underworld",name:"Llave del Dominio Inferior",category:"unique",effect:"+20% botín de jefes y acceso a encuentros raros.",lore:"No abre una puerta. Decide dónde aparece."},
   {id:"heart_arcanum",name:"Corazón de ARCANUM",category:"unique",effect:"+10% a producción, magia y defensa.",lore:"Una gema imposible cuya pulsación parece acompasarse con el servidor."}
 ]);
 
@@ -157,7 +157,7 @@ async function discoverNamedArtifact(){
 async function equipNamedArtifact(id){
   try{
     await communityApi("/artifacts/equip/"+encodeURIComponent(id),{method:"POST",body:{}});
-    toast("Reliquia vinculada al Archimago.");
+    toast("Reliquia vinculada al Arconte.");
     await loadArtifactLibrary();
   }catch(e){toast(humanError(e),"error");}
 }
