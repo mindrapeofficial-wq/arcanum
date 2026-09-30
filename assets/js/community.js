@@ -42,7 +42,7 @@ function communityCategoryLabel(code){
 async function renderCommunity(){
   communitySignature="";
   const school=profileSchoolName(realmState?.realm?.school_code);
-  $("#view-host").innerHTML=`${viewHeader("PLAZA ARCANA","Comunidad","Encuentra Archimagos, descubre quién está conectado y entra en la estancia común de tu Escuela.")}
+  $("#view-host").innerHTML=`
     <div class="community-tabs">
       <button class="community-tab ${communityMode==="chat"?"active":""}" data-community-tab="chat">CHAT GLOBAL</button>
       <button class="community-tab ${communityMode==="school"?"active":""}" data-community-tab="school">MI ESCUELA</button>
