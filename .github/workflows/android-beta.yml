@@ -35,8 +35,62 @@ jobs:
       - name: Create Android project
         run: npx cap add android
 
+      - name: Prepare ARCANUM artwork
+        run: |
+          rm -rf .android-assets
+          mkdir -p .android-assets
+          cp logo.png .android-assets/logo.png
+
+      - name: Generate Android launcher icons and splash assets
+        run: >
+          npx @capacitor/assets generate --android
+          --assetPath .android-assets
+          --iconBackgroundColor '#020202'
+          --iconBackgroundColorDark '#020202'
+          --splashBackgroundColor '#020202'
+          --splashBackgroundColorDark '#020202'
+          --logoSplashScale 0.24
+
+      - name: Add Android 13 themed icons
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          src = Path("android/app/src/main/res/mipmap-anydpi-v26")
+          dst = Path("android/app/src/main/res/mipmap-anydpi-v33")
+          dst.mkdir(parents=True, exist_ok=True)
+
+          for filename in ("ic_launcher.xml", "ic_launcher_round.xml"):
+              source = src / filename
+              if not source.exists():
+                  raise SystemExit(f"Missing adaptive icon: {source}")
+              text = source.read_text(encoding="utf-8")
+              match = re.search(r'<foreground android:drawable="([^"]+)"\s*/>', text)
+              if not match:
+                  raise SystemExit(f"Could not find foreground drawable in {source}")
+              if "<monochrome " not in text:
+                  text = text.replace(
+                      "</adaptive-icon>",
+                      f'    <monochrome android:drawable="{match.group(1)}" />\n</adaptive-icon>'
+                  )
+              (dst / filename).write_text(text, encoding="utf-8")
+          PY
+
       - name: Sync Capacitor
         run: npx cap sync android
+
+      - name: Verify launcher resources
+        run: |
+          test -f android/app/src/main/res/mipmap-mdpi/ic_launcher.png
+          test -f android/app/src/main/res/mipmap-hdpi/ic_launcher.png
+          test -f android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
+          test -f android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+          test -f android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+          test -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+          test -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
+          test -f android/app/src/main/res/mipmap-anydpi-v33/ic_launcher.xml
+          test -f android/app/src/main/res/mipmap-anydpi-v33/ic_launcher_round.xml
 
       - name: Build debug APK
         working-directory: android
@@ -45,7 +99,7 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: arcanum-android-beta
+          name: arcanum-android-beta-icons-fixed
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 14
