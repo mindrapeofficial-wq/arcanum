@@ -348,3 +348,44 @@ table .school-dot{width:17px;height:17px;min-width:17px;margin-right:6px}
 @media(max-width:760px){.construction-actionbar{bottom:70px}}
 @media(max-width:560px){.construction-shell{padding:13px}.construction-hero-copy{padding:20px 16px}.construction-hero-copy h3{font-size:24px}.construction-metrics{grid-template-columns:1fr}.construction-hero-art{min-height:210px}.construction-art-caption{left:12px;right:12px;bottom:10px}.construction-section-mark{display:none}.building-card{grid-template-columns:72px minmax(0,1fr);min-height:166px}.building-card-art img{width:55px;height:55px}.building-art-halo{width:58px;height:58px}.building-card-body{padding:12px 11px}.building-card-head h3{font-size:16px}.building-current{min-width:52px;padding-left:6px}.building-current strong{font-size:17px}.building-card-controls{grid-template-columns:1fr 94px;gap:8px}.building-cost small{font-size:7.5px}.construction-actionbar{align-items:stretch;flex-direction:column;bottom:67px}.build-submit{width:100%;min-width:0}}
 @media(max-width:390px){.building-card{grid-template-columns:1fr}.building-card-art{min-height:80px;border-right:0;border-bottom:1px solid rgba(218,151,57,.08)}.building-card-controls{grid-template-columns:1fr 96px}}
+
+
+/* Bandeja Arcana · solicitudes y mensajes privados */
+.topbar{grid-template-columns:240px minmax(0,1fr) auto minmax(220px,360px) auto}
+.top-inbox-shell{position:relative;align-self:center;justify-self:end;padding:0 4px}
+.top-inbox-button{position:relative;height:36px;min-width:112px;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid rgba(218,151,57,.16);background:rgba(0,0,0,.22);color:#9c886e;padding:0 12px;cursor:pointer;font:800 8px Arial,sans-serif;letter-spacing:.1em}
+.top-inbox-button:hover,.top-inbox-button[aria-expanded="true"]{border-color:rgba(218,151,57,.38);background:rgba(177,112,33,.08);color:#ddc59e}
+.top-inbox-icon{font-size:13px;color:#b8874a}
+.top-inbox-badge{position:absolute;top:-7px;right:-7px;min-width:18px;height:18px;display:grid;place-items:center;padding:0 5px;border:1px solid rgba(233,181,101,.58);background:#2a1607;color:#f1d29f;font:900 8px Arial,sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.45)}
+.top-inbox-panel{position:absolute;right:4px;top:45px;z-index:70;width:390px;max-height:min(610px,calc(100dvh - 82px));overflow-y:auto;border:1px solid rgba(218,151,57,.28);background:linear-gradient(180deg,rgba(11,8,5,.995),rgba(4,3,2,.995));box-shadow:0 22px 65px rgba(0,0,0,.68)}
+.top-inbox-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 14px;border-bottom:1px solid rgba(218,151,57,.13);background:rgba(177,112,33,.045)}
+.top-inbox-head .section-kicker{display:block;margin-bottom:4px}.top-inbox-head strong{display:block;color:#e6cda4;font:500 16px Georgia,serif}
+.top-inbox-refresh{width:32px;height:32px;border:1px solid rgba(218,151,57,.14);background:transparent;color:#8a775e;cursor:pointer}.top-inbox-refresh:hover{border-color:rgba(218,151,57,.35);color:#e4c89b;background:rgba(177,112,33,.08)}
+.top-inbox-section{padding:10px 10px 12px}.top-inbox-section+.top-inbox-section{border-top:1px solid rgba(218,151,57,.1)}
+.top-inbox-section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 4px 8px;color:#7d6d5a;font:800 7px Arial,sans-serif;letter-spacing:.12em}
+.top-inbox-section-head b{min-width:18px;height:18px;display:grid;place-items:center;border:1px solid rgba(218,151,57,.12);color:#aa895d;font-size:8px}
+.top-inbox-list{display:grid;gap:4px}
+.top-inbox-empty{padding:10px;border:1px dashed rgba(218,151,57,.09);color:#625748;font:8px/1.45 Arial,sans-serif;text-align:center}
+.inbox-request-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:7px;border:1px solid rgba(218,151,57,.1);background:rgba(255,255,255,.012)}
+.inbox-request-profile{min-width:0;display:grid;grid-template-columns:18px minmax(0,1fr);align-items:center;gap:8px;border:0;background:transparent;color:inherit;text-align:left;padding:9px;cursor:pointer}
+.inbox-request-profile strong,.inbox-request-profile small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.inbox-request-profile strong{color:#d5c09d;font:700 10px Arial,sans-serif}.inbox-request-profile small{margin-top:2px;color:#6d604f;font:7px Arial,sans-serif;text-transform:uppercase;letter-spacing:.06em}
+.inbox-request-actions{display:flex;gap:3px;padding-right:7px}.inbox-request-actions button{height:28px;border:1px solid rgba(218,151,57,.16);background:rgba(177,112,33,.055);color:#a98b62;padding:0 8px;cursor:pointer;font:800 7px Arial,sans-serif}.inbox-request-actions button:first-child{color:#d7bd91}.inbox-request-actions button:hover{border-color:rgba(218,151,57,.36);background:rgba(177,112,33,.11)}
+.inbox-message-row{position:relative;width:100%;display:grid;grid-template-columns:18px minmax(0,1fr) auto;align-items:center;gap:8px;border:1px solid rgba(218,151,57,.08);background:rgba(255,255,255,.01);color:inherit;text-align:left;padding:9px;cursor:pointer}
+.inbox-message-row:hover{border-color:rgba(218,151,57,.24);background:rgba(177,112,33,.05)}.inbox-message-row.unread{border-color:rgba(218,151,57,.2);background:linear-gradient(90deg,rgba(177,112,33,.11),rgba(0,0,0,.02))}
+.inbox-message-copy{min-width:0}.inbox-message-copy strong,.inbox-message-copy small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.inbox-message-copy strong{color:#d7c09c;font:700 10px Arial,sans-serif}.inbox-message-copy small{margin-top:3px;color:#776958;font:8px Arial,sans-serif}
+.inbox-message-row.unread .inbox-message-copy strong{color:#f0d5a6}.inbox-message-row.unread .inbox-message-copy small{color:#9a8567}
+.inbox-message-meta{display:grid;justify-items:end;gap:4px}.inbox-message-meta i{width:6px;height:6px;border-radius:50%;background:#d79b4c;box-shadow:0 0 8px rgba(215,155,76,.45)}.inbox-message-meta time{color:#5f5548;font:7px Arial,sans-serif;white-space:nowrap}
+
+@media(max-width:1000px){
+  .topbar{grid-template-columns:190px minmax(0,1fr) auto auto}
+  .top-inbox-shell{grid-column:3}
+  .top-actions{grid-column:4}
+}
+@media(max-width:760px){
+  .topbar{grid-template-columns:1fr auto auto;grid-template-rows:58px 46px}
+  .top-inbox-shell{grid-column:2;grid-row:1;padding:0 4px}
+  .top-inbox-button{width:40px;min-width:40px;height:38px;padding:0}
+  .top-inbox-label{display:none}
+  .top-actions{grid-column:3;grid-row:1}
+  .top-inbox-panel{position:fixed;left:10px;right:10px;top:54px;width:auto;max-height:calc(100dvh - 128px)}
+}
