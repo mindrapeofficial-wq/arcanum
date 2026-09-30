@@ -24,6 +24,11 @@ async function loadCanonicalItems(){
     const profile=globalThis.ownProfileBadge||{mage_name:realmState?.realm?.mage_name,is_self:true};
     lootCacheState(profile,data.inventory);
   }
+  if(Array.isArray(data?.delivered)&&data.delivered.length){
+    const names=data.delivered.slice(0,2).map(x=>x?.name).filter(Boolean);
+    const extra=data.delivered.length>2?" y "+(data.delivered.length-2)+" más":"";
+    toast("Recompensas pendientes entregadas: "+names.join(", ")+extra+".","success",5500);
+  }
   return data;
 }
 async function equipCanonicalItem(kind,itemId){
@@ -47,6 +52,72 @@ function canonicalItemDisplayName(item){
   return item.name||item.raw?.name||"Objeto";
 }
 
+function canonicalLootSourceLabel(source){
+  return ({
+    starter:"Legado inicial",
+    legacy_beta:"Beta anterior",
+    exploration:"Exploración",
+    arena:"Arena clasificada",
+    world_boss:"Boss mundial",
+    event:"Evento"
+  })[String(source||"")]||"Origen desconocido";
+}
+function canonicalLootTierLabel(tier){
+  return ({
+    starter:"Inicial",
+    legacy:"Legado",
+    scouting:"Rastreo",
+    expedition:"Expedición",
+    deep_exploration:"Exploración profunda",
+    arena_victory:"Victoria de Arena",
+    arena_veteran:"Arena veterana",
+    arena_elite:"Arena élite",
+    boss_participant:"Participación",
+    boss_arcane:"Cofre Arcano",
+    boss_major:"Cofre Mayor",
+    boss_legend:"Botín legendario",
+    debug:"Prueba"
+  })[String(tier||"")]||String(tier||"");
+}
+function canonicalLootOriginText(item){
+  const origin=item?.origin||item?.raw?.origin||{};
+  const source=canonicalLootSourceLabel(origin.source||item?.source);
+  const tier=canonicalLootTierLabel(origin.reward_tier||item?.reward_tier);
+  return tier&&tier!==source?source+" · "+tier:source;
+}
+function cacheLootRewardInventory(result){
+  if(result?.inventory&&typeof lootCacheState==="function"){
+    const profile=globalThis.ownProfileBadge||{mage_name:realmState?.realm?.mage_name,is_self:true};
+    lootCacheState(profile,result.inventory);
+  }
+}
+function announceCanonicalLootReward(result,context="Botín"){
+  if(!result)return result;
+  cacheLootRewardInventory(result);
+  if(result.status==="completed"&&result.item){
+    const rarity=result.item.rarityLabel||result.item.rarity||"";
+    toast(context+": "+result.item.name+(rarity?" · "+rarity:"")+".","success",6000);
+  }else if(result.status==="pending_inventory"&&result.item){
+    toast("Has encontrado "+result.item.name+", pero la Cámara está llena. La recompensa queda reservada.","success",7000);
+  }
+  return result;
+}
+async function startLootExplorationClaim(turns){
+  return stateApi("/loot/exploration/start",{method:"POST",body:{turns}});
+}
+async function completeLootExplorationClaim(claimKey){
+  const data=await stateApi("/loot/exploration/complete",{method:"POST",body:{claim_key:claimKey}});
+  return announceCanonicalLootReward(data,"Hallazgo de exploración");
+}
+async function claimArenaLoot(matchId){
+  const data=await stateApi("/loot/arena/claim",{method:"POST",body:{match_id:matchId}});
+  return data;
+}
+async function claimWorldBossGear(eventId){
+  const data=await stateApi("/loot/boss/claim",{method:"POST",body:{event_id:eventId}});
+  return data;
+}
+
 globalThis.cacheCanonicalItems=cacheCanonicalItems;
 globalThis.getCanonicalItems=getCanonicalItems;
 globalThis.loadCanonicalItems=loadCanonicalItems;
@@ -54,3 +125,11 @@ globalThis.equipCanonicalItem=equipCanonicalItem;
 globalThis.unequipCanonicalSlot=unequipCanonicalSlot;
 globalThis.canonicalEquippedRelic=canonicalEquippedRelic;
 globalThis.canonicalItemDisplayName=canonicalItemDisplayName;
+globalThis.canonicalLootSourceLabel=canonicalLootSourceLabel;
+globalThis.canonicalLootTierLabel=canonicalLootTierLabel;
+globalThis.canonicalLootOriginText=canonicalLootOriginText;
+globalThis.announceCanonicalLootReward=announceCanonicalLootReward;
+globalThis.startLootExplorationClaim=startLootExplorationClaim;
+globalThis.completeLootExplorationClaim=completeLootExplorationClaim;
+globalThis.claimArenaLoot=claimArenaLoot;
+globalThis.claimWorldBossGear=claimWorldBossGear;
