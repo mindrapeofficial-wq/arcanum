@@ -132,6 +132,7 @@ function renderPlayerProfile(profile,inbox=null){
       '<div class="profile-hero">'+profileAvatarMarkup(profile,true)+'<div class="profile-identity"><span class="section-kicker">'+(profile.is_npc?"ARCHIMAGO NPC":"FICHA DE ARCHIMAGO")+'</span><h3>'+esc(profile.mage_name)+'</h3><div class="profile-subline">'+esc(profileSchoolName(profile.school_code))+' '+(profile.is_npc?'<span class="tag npc-tag">NPC</span>':"")+' '+allianceBadge+'</div></div></div>'+
       '<div class="profile-stats"><div><small>PODER NETO</small><strong>'+n(profile.net_power)+'</strong></div><div><small>TIERRAS</small><strong>'+n(profile.land)+'</strong></div><div><small>NIVEL MÁGICO</small><strong>'+n(profile.spell_level)+'</strong></div><div><small>ESTADO</small><strong>'+esc(profile.status)+'</strong></div></div>'+
       renderArchmageProgression(profile)+
+      (profile.is_self&&typeof renderArchmageInventory==="function"?renderArchmageInventory(profile):"")+
       '<div class="profile-bio-block"><div class="profile-section-title"><span>BIOGRAFÍA</span>'+(profile.is_self?'<small>máx. 500 caracteres</small>':"")+'</div>'+bioBlock+'</div>'+
       actions+
       (profile.is_npc?'<div class="profile-system-note">Este reino está controlado por ARCANUM. Las acciones sociales están desactivadas para NPC.</div>':"")+
@@ -165,6 +166,7 @@ function renderOwnSocial(profile,inbox){
   return '<div class="profile-own-grid"><section class="profile-panel"><div class="profile-section-title"><span>AMISTADES</span><small>'+friends.length+'</small></div>'+requestHtml+'<div class="profile-friend-list">'+friendHtml+'</div></section><section class="profile-panel"><div class="profile-section-title"><span>ALIANZA</span></div>'+allianceHtml+'</section></div>';
 }
 function wireProfileSheet(profile){
+  if(typeof wireInventoryPanel==="function")wireInventoryPanel(profile);
   document.querySelectorAll("[data-archmage-attribute]").forEach(b=>b.addEventListener("click",()=>spendArchmageAttribute(b.dataset.archmageAttribute,profile)));
   $("#profile-save-bio")?.addEventListener("click",()=>saveOwnProfile(profile));
   $("#profile-avatar-file")?.addEventListener("change",e=>startProfileAvatarCrop(e.target.files?.[0],profile));
