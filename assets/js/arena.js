@@ -206,7 +206,11 @@ function arenaOpen(rec){
       (rec.won?"VICTORIA":"DERROTA")+
     '</strong><span>'+
       (rec.mode==="ranked"?"Rating "+(rec.delta>=0?"+":"")+rec.delta+" · total "+n(rec.rating):"Duelo amistoso · sin cambios de rating")+
-    '</span></div>'+
+    '</span>'+
+      (rec.lootReward?.item
+        ?'<em class="arena-loot-reward">'+(rec.lootReward.pending?"BOTÍN RESERVADO":"BOTÍN")+' · '+esc(rec.lootReward.item.name)+' · '+esc(rec.lootReward.item.rarityLabel||rec.lootReward.item.rarity||"")+'</em>'
+        :"")+
+    '</div>'+
     '<div class="arena-log" id="arena-log-panel">'+(rec.log||[]).map(function(x,i){
       return '<p><small>'+String(i+1).padStart(2,"0")+'</small>'+esc(x)+'</p>';
     }).join("")+'</div>';
@@ -276,6 +280,12 @@ async function arenaFight(name,mode,btn,opponentSchool){
     rec.playerName=String(rec.player?.name||realmState?.realm?.mage_name||"Archimago");
     rec.playerSchool=String(rec.player?.school||realmState?.realm?.school_code||"ascendant");
     rec.opponentSchool=String(rec.opponent_state?.school||opponentSchool||"ascendant");
+    let lootReward=data?.loot_reward||null;
+    if(!lootReward&&rec.mode==="ranked"&&rec.won&&typeof claimArenaLoot==="function"){
+      lootReward=await claimArenaLoot(rec.id).catch(error=>{console.warn("Arena Gear claim failed",error);return null});
+    }
+    rec.lootReward=lootReward;
+    if(lootReward&&typeof announceCanonicalLootReward==="function")announceCanonicalLootReward(lootReward,"Botín de Arena");
     arenaOpen(rec);
     await renderArena();
   }catch(e){
