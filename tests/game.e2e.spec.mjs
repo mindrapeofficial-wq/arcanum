@@ -34,6 +34,7 @@ async function installMocks(page){
   let army=[];
   let chatMessages=[];
   let boardPosts=[];
+  let friendRequests=[{mage_name:"REQUEST_TEST",school_code:"verdant"}];
   let archmageProgress={archmage_total_xp:520,arcane_power:2,knowledge:2,willpower:1,influence:1,attribute_points:1};
   const calls=[];
 
@@ -85,7 +86,7 @@ async function installMocks(page){
         friendship:self?null:(target==="FRIEND_TEST"?{status:"accepted"}:{status:"none"}),alliance:null,my_alliance:null,can_invite_to_alliance:false
       })});
     }
-    if(rpc==="social_inbox") return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({friend_requests:[],alliance_invites:[],friends:[{mage_name:"FRIEND_TEST",school_code:"phantasm"}]})});
+    if(rpc==="social_inbox") return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({friend_requests:friendRequests,alliance_invites:[],friends:[{mage_name:"FRIEND_TEST",school_code:"phantasm"}]})});
     if(rpc==="update_my_profile") return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({bio:body().p_bio||"",avatar_path:body().p_avatar_path||null})});
     if(rpc==="spend_archmage_attribute"){
       const key=String(body().p_attribute||"");
@@ -99,7 +100,16 @@ async function installMocks(page){
       return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({...archmageProgress,archmage_level:4})});
     }
     if(rpc==="friend_request") return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({status:"pending",direction:"outgoing"})});
-    if(rpc==="conversation_with") return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({messages:[]})});
+    if(rpc==="friend_respond"){
+      const target=String(body().p_mage_name||"");
+      friendRequests=friendRequests.filter(x=>x.mage_name!==target);
+      return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({status:body().p_accept?"accepted":"rejected"})});
+    }
+    if(rpc==="conversation_with"){
+      const target=String(body().p_mage_name||"");
+      const messages=target==="FRIEND_TEST"?[{id:"dm-in-1",mine:false,body:"¿Entramos juntos a explorar?",created_at:new Date(Date.now()-30000).toISOString()}]:[];
+      return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({messages})});
+    }
     if(rpc==="send_direct_message") return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({sent:true,id:1})});
     if(rpc==="explore"){
       const turns=Number(body().p_turns||1);
@@ -367,4 +377,31 @@ test("la barra lateral muestra conectados y abre chat privado solo entre amigos"
   await page.locator("#direct-chat-input").fill("Mensaje privado de prueba");
   await page.locator("#direct-chat-send").click();
   await expect(page.locator("#direct-chat-input")).toHaveValue("");
+});
+
+
+test("Bandeja Arcana muestra solicitudes, mensajes y permite aceptar amistad", async ({page})=>{
+  await installMocks(page);
+  await page.goto("/");
+  await page.locator("#username").fill("E2E_TESTER");
+  await page.locator("#password").fill("prueba-segura");
+  await page.locator("#submit-button").click();
+  await expect(page.locator("#game-view")).toBeVisible();
+
+  await expect(page.locator("#top-inbox-badge")).toHaveText("2");
+  await page.locator("#top-inbox-button").click();
+  await expect(page.locator("#top-inbox-panel")).toBeVisible();
+  await expect(page.locator("#top-inbox-requests")).toContainText("REQUEST_TEST");
+  await expect(page.locator("#top-inbox-messages")).toContainText("FRIEND_TEST");
+  await expect(page.locator("#top-inbox-messages")).toContainText("¿Entramos juntos a explorar?");
+
+  await page.locator('[data-inbox-friend-accept="REQUEST_TEST"]').click();
+  await expect(page.locator("#top-inbox-requests")).not.toContainText("REQUEST_TEST");
+
+  await page.locator("#top-inbox-button").click();
+  await page.locator("#top-inbox-button").click();
+  await page.locator('[data-inbox-chat="FRIEND_TEST"]').click();
+  await expect(page.locator("#direct-chat-window")).toBeVisible();
+  await expect(page.locator("#direct-chat-messages")).toContainText("¿Entramos juntos a explorar?");
+  await expect(page.locator("#top-inbox-badge")).toBeHidden();
 });
