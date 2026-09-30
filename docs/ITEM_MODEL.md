@@ -171,3 +171,12 @@ Any future physical object must declare:
 3. authority,
 4. mechanical scope,
 5. trade/destruction rules.
+
+
+## Verified acquisition
+
+Procedural Gear acquisition is defined by `docs/LOOT_LOOP.md`.
+
+Normal play must not grant Gear by directly mutating the browser inventory. Exploration, ranked Arena and World Boss rewards now use server-authoritative, idempotent claims.
+
+Each newly generated Gear item records its gameplay provenance. If inventory is full, the generated reward remains reserved on the claim until it can be delivered.
