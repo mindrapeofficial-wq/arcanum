@@ -54,9 +54,9 @@ async function bossApi(path="",{method="GET",body}={}){
   }
   return data;
 }
-function bossRewardText(me,boss){
+function bossRewardText(me,boss,artifactReward=null){
   if(boss.status==="defeated"){
-    if(me?.reward_granted_at)return `${n(me.reward_fragments)} Fragmentos del Umbral · ${esc(me.reward_tier||"PARTICIPACIÓN")}`;
+    if(me?.reward_granted_at){const relic=artifactReward?` · Reliquia: ${esc(typeof artifactGameplayName==="function"?artifactGameplayName(artifactReward.artifact_id):artifactReward.artifact_id)}`:"";return `${n(me.reward_fragments)} Fragmentos del Umbral · ${esc(me.reward_tier||"PARTICIPACIÓN")}${relic}`;}
     return "Sin recompensa: era necesario participar antes de la derrota.";
   }
   const damage=Number(me?.damage||0);
@@ -87,6 +87,7 @@ function drawBoss(data){
   if(currentView!=="event")return;
   const boss=data?.boss||{};
   const me=data?.me||null;
+  const artifactReward=data?.artifact_reward||null;
   const top=Array.isArray(data?.top)?data.top:[];
   const maxHp=Math.max(1,Number(boss.max_hp||1));
   const hp=Math.max(0,Number(boss.current_hp||0));
@@ -124,7 +125,7 @@ function drawBoss(data){
         <div><small>POSICIÓN</small><strong>${me?.rank?"#"+n(me.rank):"—"}</strong></div>
         <div><small>DAÑO ESTIMADO</small><strong>~${n(bossDamageEstimate())}</strong></div>
       </div>
-      <div class="boss-reward-strip"><span>RECOMPENSA DE EVENTO</span><strong>${bossRewardText(me,boss)}</strong></div>
+      <div class="boss-reward-strip"><span>RECOMPENSA DE EVENTO</span><strong>${bossRewardText(me,boss,artifactReward)}</strong></div>
       <div class="boss-action-row">
         <div><small>COSTE DE INCURSIÓN</small><strong>${turnCost} turnos</strong><p>El servidor valida tu reino, descuenta los turnos y calcula el golpe a partir de tu Poder Neto. El navegador no decide el daño.</p></div>
         <button class="primary-action boss-attack" id="boss-attack" ${ended||defeated?"disabled":""}>⚔ ${defeated?"BOSS DERROTADO":ended?"EVENTO CERRADO":"ATACAR AL BOSS"}</button>
@@ -170,7 +171,7 @@ async function attackWorldBoss(){
     realmState=await rpc("my_realm_state");
     renderChrome();
     const hit=Number(data?.attack?.damage||0);
-    if(data?.boss?.status==="defeated")toast(`¡El Devorador ha caído! Tu último golpe infligió ${n(hit)} de daño.`,"success",6500);
+    if(data?.boss?.status==="defeated"){toast(`¡El Devorador ha caído! Tu último golpe infligió ${n(hit)} de daño.`,"success",6500);if(typeof artifactGameplayDrop==="function")artifactGameplayDrop(data,"recompensa del Boss mundial");}
     else toast(`Has infligido ${n(hit)} de daño al Devorador mundial.`,"success");
     drawBoss(data);
     startBossPolling();
