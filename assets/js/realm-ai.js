@@ -152,11 +152,11 @@ function realmAiKingdomDescription(){
 function realmAiDefaultCharacter(){
   const code=realmState?.realm?.school_code;
   const presets={
-    verdant:"a Verdant archmage in deep forest robes, living-vine ornaments, botanical sigils and restrained emerald magic",
-    eradication:"an Eradication archmage in dark severe robes with ember-like sigils, scorched metal details and restrained destructive magic",
-    ascendant:"an Ascendant archmage in pale ceremonial robes, sun-metal details and disciplined luminous warding magic",
-    abyssal:"an Abyssal archmage in shadowed ritual garments, obsidian ornaments and controlled violet-black occult energy",
-    phantasm:"a Phantasm archmage in layered scholar robes, mirrored charms and subtle blue-violet illusion magic"
+    verdant:"a Viridia archmage in deep forest robes, living-vine ornaments, botanical sigils and restrained emerald magic",
+    eradication:"a Cineria archmage in dark severe robes with ember-like sigils, scorched metal details and restrained destructive magic",
+    ascendant:"an Aurea archmage in pale ceremonial robes, sun-metal details and disciplined luminous warding magic",
+    abyssal:"a Nadir archmage in shadowed ritual garments, obsidian ornaments and controlled violet-black occult energy",
+    phantasm:"an Oneiria archmage in layered scholar robes, mirrored charms and subtle blue-violet illusion magic"
   };
   return presets[code]||"a mysterious archmage whose clothing and magic reflect their arcane school";
 }
