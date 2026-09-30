@@ -1,6 +1,6 @@
 {
-  "version": "0.2.71",
+  "version": "0.3.0",
   "channel": "beta",
   "updated_at": "2026-09-30T20:45:00+02:00",
-  "note": "Astrael live knowledge plus Community and online-panel reliability fixes"
+  "note": "Consolidation phase 1: combat evolution, Arena seals, rating and duel outcomes moved to server authority"
 }
