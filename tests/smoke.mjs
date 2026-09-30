@@ -9,7 +9,7 @@ const version=JSON.parse(read("version.json"));
 const jsFiles=[
   "assets/js/immersive.js","assets/js/state.js","assets/js/auth.js","assets/js/archmage.js","assets/js/combat-profile.js","assets/js/items.js","assets/js/inventory.js","assets/js/archmage-sheet.js","assets/js/profile.js","assets/js/realm-state.js","assets/js/router.js",
   "assets/js/community.js","assets/js/realm.js","assets/js/economy.js","assets/js/construction.js",
-  "assets/js/magic.js","assets/js/army.js","assets/js/war.js","assets/js/arena.js","assets/js/tutorial.js","assets/js/ui.js"
+  "assets/js/magic.js","assets/js/army.js","assets/js/war.js","assets/js/arena.js","assets/js/pve.js","assets/js/tutorial.js","assets/js/ui.js"
 ];
 const js=jsFiles.map(read).join("\n");
 const uiAssets=[
@@ -206,4 +206,27 @@ test("Gear provenance is visible to the player",()=>{
   assert.match(items,/arena:"Arena clasificada"/);
   assert.match(items,/world_boss:"Boss mundial"/);
   assert.match(inventory,/ORIGEN/);
+});
+
+
+test("personal PvE expeditions are server-authoritative and persistent",()=>{
+  const pve=read("assets/js/pve.js");
+  const router=read("assets/js/router.js");
+  assert.match(html,/data-view="pve"/);
+  assert.match(router,/pve:\{name:"renderPve"/);
+  assert.match(router,/view==="pve"\) await renderPve/);
+  assert.match(pve,/stateApi\("\/pve\/start"/);
+  assert.match(pve,/stateApi\("\/pve\/fight"/);
+  assert.match(pve,/stateApi\("\/pve\/retreat"/);
+  assert.match(pve,/VIDA DEL ARCHIMAGO/);
+  assert.match(pve,/pve-room-track/);
+  assert.match(pve,/Botín de expedición/);
+  assert.doesNotMatch(pve,/localStorage\.setItem/);
+});
+
+test("PvE Gear provenance is part of canonical item vocabulary",()=>{
+  const items=read("assets/js/items.js");
+  assert.match(items,/pve:"Expedición PvE"/);
+  assert.match(items,/pve_boss:"Jefe de expedición"/);
+  assert.match(items,/pve_boss_abyss:"Jefe del Abismo"/);
 });
