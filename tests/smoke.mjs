@@ -25,7 +25,12 @@ test("HTML is shell-only and references external assets",()=>{
   assert.doesNotMatch(html,/<script>[\s\S]*<\/script>/);
 });
 
-test("literal escaped newlines never leak into HTML",()=>{\n  assert.doesNotMatch(html,/\\\\n/, "index.html contains a literal \\\\n text node");\n  assert.doesNotMatch(read("version.json"),/\\\\n/, "version.json contains a literal \\\\n suffix");\n});\n\ntest("all JavaScript modules parse",()=>{
+test("literal escaped newlines never leak into HTML",()=>{
+  assert.doesNotMatch(html,/\\n/, "index.html contains a literal \\n text node");
+  assert.doesNotMatch(read("version.json"),/\\n/, "version.json contains a literal \\n suffix");
+});
+
+test("all JavaScript modules parse",()=>{
   for(const file of jsFiles) assert.doesNotThrow(()=>new vm.Script(read(file),{filename:file}));
 });
 
