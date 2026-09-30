@@ -1,6 +1,6 @@
 {
-  "version": "0.2.62",
+  "version": "0.2.63",
   "channel": "beta",
-  "updated_at": "2026-09-30T18:41:00+02:00",
-  "note": "Arena Arcana: individual auto-PvP with daily seals, rating and duel history"
+  "updated_at": "2026-09-30T19:05:00+02:00",
+  "note": "Persistent randomized Archmage combat identity: stats, weapons, traits and abilities; Arena now uses character build"
 }
