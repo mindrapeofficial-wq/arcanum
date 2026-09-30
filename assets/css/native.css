@@ -1,0 +1,45 @@
+/* ARCANUM native shell: edge-to-edge without sacrificing tappable UI around notches. */
+:root {
+  --arcanum-safe-top: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
+  --arcanum-safe-right: var(--safe-area-inset-right, env(safe-area-inset-right, 0px));
+  --arcanum-safe-bottom: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
+  --arcanum-safe-left: var(--safe-area-inset-left, env(safe-area-inset-left, 0px));
+}
+
+@media (max-width: 760px) {
+  .game-shell {
+    grid-template-rows: calc(64px + var(--arcanum-safe-top)) 1fr;
+  }
+
+  .topbar {
+    height: calc(64px + var(--arcanum-safe-top));
+    padding-top: var(--arcanum-safe-top);
+    padding-left: var(--arcanum-safe-left);
+    padding-right: var(--arcanum-safe-right);
+  }
+
+  .mobile-nav {
+    padding-left: var(--arcanum-safe-left);
+    padding-right: var(--arcanum-safe-right);
+  }
+
+  .view-host {
+    padding-left: max(18px, var(--arcanum-safe-left));
+    padding-right: max(18px, var(--arcanum-safe-right));
+  }
+
+  .modal-backdrop,
+  .avatar-crop-overlay {
+    padding-top: max(18px, var(--arcanum-safe-top));
+    padding-right: max(18px, var(--arcanum-safe-right));
+    padding-bottom: max(18px, var(--arcanum-safe-bottom));
+    padding-left: max(18px, var(--arcanum-safe-left));
+  }
+}
+
+html.arcanum-immersive,
+html.arcanum-immersive body {
+  width: 100%;
+  min-height: 100dvh;
+  background: #020202;
+}
