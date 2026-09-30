@@ -6,8 +6,10 @@
 
   if (!isTouchDevice) return;
 
+  const isNativeShell = /(?:^|\\s)ArcanumNative\\//.test(navigator.userAgent);
+
   const isDisplayFullscreen = () =>
-    window.matchMedia("(display-mode: fullscreen)").matches;
+    isNativeShell || window.matchMedia("(display-mode: fullscreen)").matches;
 
   const syncImmersiveClass = () => {
     root.classList.toggle(
