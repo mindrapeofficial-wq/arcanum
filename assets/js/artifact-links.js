@@ -43,7 +43,7 @@ async function artifactClaimPvp(battleId){
   if(!battleId)return null;
   try{
     const data=await communityApi("/artifacts/pvp/claim",{method:"POST",body:{battle_id:battleId}});
-    if(!data?.already_claimed)artifactGameplayDrop(data,data?.captured_unique?"arrebatado al reino rival":"botín de guerra");
+    if(!data?.already_claimed)artifactGameplayDrop(data,data?.captured_unique?"arrebatado al dominio rival":"botín de guerra");
     return data;
   }catch(e){
     const msg=String(e?.message||e);
@@ -72,7 +72,7 @@ function artifactMarketMessage(error){
 async function renderArtifactMarketPanel(){
   const root=$("#artifact-market-root");
   if(!root)return;
-  root.innerHTML='<section class="artifact-market-shell"><div class="artifact-market-head"><div><span class="section-kicker">MERCADO DE RELIQUIAS</span><h3>Trueque entre Archimagos</h3><p>Una reliquia entra y otra sale en la misma transacción. Los Únicos Mundiales también pueden cambiar de custodio mediante un trueque.</p></div><button id="artifact-market-refresh" class="icon-button" type="button">↻</button></div><div class="empty">Consultando ofertas…</div></section>';
+  root.innerHTML='<section class="artifact-market-shell"><div class="artifact-market-head"><div><span class="section-kicker">MERCADO DE RELIQUIAS</span><h3>Trueque entre Arcontes</h3><p>Una reliquia entra y otra sale en la misma transacción. Los Únicos Mundiales también pueden cambiar de custodio mediante un trueque.</p></div><button id="artifact-market-refresh" class="icon-button" type="button">↻</button></div><div class="empty">Consultando ofertas…</div></section>';
   try{
     artifactMarketState=await communityApi("/artifacts/market");
     paintArtifactMarketPanel();
@@ -95,7 +95,7 @@ function paintArtifactMarketPanel(){
     const own=l.seller_user_id===me;
     return '<article class="artifact-market-row"><div class="artifact-market-relic"><span class="artifact-market-kind">'+esc(artifactCategoryLabel(l.artifact?.category||""))+'</span><strong>'+esc(def?.name||l.artifact?.artifact_id||"Reliquia")+'</strong><small>ofrecida por '+esc(l.seller_username)+'</small></div><div class="artifact-market-want"><small>PIDE A CAMBIO</small><strong>'+esc(artifactCategoryLabel(l.want_category))+'</strong></div><div class="artifact-market-actions">'+(own?'<button class="ghost-button" data-artifact-market-cancel="'+esc(l.id)+'">RETIRAR</button>':'<button class="small-action" data-artifact-market-accept="'+esc(l.id)+'">INTERCAMBIAR</button>')+'</div></article>';
   }).join(""):'<div class="empty">Todavía no hay reliquias ofrecidas.</div>';
-  root.innerHTML='<section class="artifact-market-shell"><div class="artifact-market-head"><div><span class="section-kicker">MERCADO DE RELIQUIAS</span><h3>Trueque entre Archimagos</h3><p>Intercambios atómicos de reliquia por reliquia.</p></div><button id="artifact-market-refresh" class="icon-button" type="button">↻</button></div><div class="artifact-market-create"><label>OFREZCO<select id="artifact-market-mine">'+(options||'<option value="">Sin reliquias disponibles</option>')+'</select></label><label>QUIERO<select id="artifact-market-want"><option value="minor">Artefacto menor</option><option value="school">Reliquia de Escuela</option><option value="cursed">Artefacto maldito</option><option value="unique">Único mundial</option></select></label><button id="artifact-market-publish" class="profile-action" type="button" '+(available.length?"":"disabled")+'>PUBLICAR TRUEQUE</button></div><div class="artifact-market-list">'+rows+'</div></section>';
+  root.innerHTML='<section class="artifact-market-shell"><div class="artifact-market-head"><div><span class="section-kicker">MERCADO DE RELIQUIAS</span><h3>Trueque entre Arcontes</h3><p>Intercambios atómicos de reliquia por reliquia.</p></div><button id="artifact-market-refresh" class="icon-button" type="button">↻</button></div><div class="artifact-market-create"><label>OFREZCO<select id="artifact-market-mine">'+(options||'<option value="">Sin reliquias disponibles</option>')+'</select></label><label>QUIERO<select id="artifact-market-want"><option value="minor">Artefacto menor</option><option value="school">Reliquia de Escuela</option><option value="cursed">Artefacto maldito</option><option value="unique">Único mundial</option></select></label><button id="artifact-market-publish" class="profile-action" type="button" '+(available.length?"":"disabled")+'>PUBLICAR TRUEQUE</button></div><div class="artifact-market-list">'+rows+'</div></section>';
   $("#artifact-market-refresh")?.addEventListener("click",renderArtifactMarketPanel);
   $("#artifact-market-publish")?.addEventListener("click",publishArtifactMarketListing);
   root.querySelectorAll("[data-artifact-market-cancel]").forEach(b=>b.addEventListener("click",()=>cancelArtifactMarketListing(b.dataset.artifactMarketCancel)));
