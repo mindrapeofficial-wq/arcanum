@@ -148,8 +148,8 @@ async function renderArena(){
         const tr=arenaTrait(t.school_code);
         return '<article class="arena-row">'+arenaSpriteHtml(t.school_code,"arena-sprite--mini")+'<div><strong><button class="player-link" data-profile="'+esc(t.mage_name)+'">'+esc(t.mage_name)+'</button></strong>'+
           '<small>'+esc(tr.name)+' · Poder '+n(t.net_power)+'</small></div><div>'+
-          '<button class="small-action arena-fight" data-target="'+esc(t.mage_name)+'" data-mode="ranked" '+(Number(data.seals_remaining)<=0?"disabled":"")+'>DUELO</button>'+
-          '<button class="small-action arena-fight alt" data-target="'+esc(t.mage_name)+'" data-mode="friendly">AMISTOSO</button></div></article>';
+          '<button class="small-action arena-fight" data-target="'+esc(t.mage_name)+'" data-school="'+esc(t.school_code||"ascendant")+'" data-mode="ranked" '+(Number(data.seals_remaining)<=0?"disabled":"")+'>DUELO</button>'+
+          '<button class="small-action arena-fight alt" data-target="'+esc(t.mage_name)+'" data-school="'+esc(t.school_code||"ascendant")+'" data-mode="friendly">AMISTOSO</button></div></article>';
       }).join(""):'<div class="empty">No hay rivales disponibles.</div>')+'</div></section>'+
       '<section class="panel"><div class="arena-title"><span class="section-kicker">CRÓNICAS</span><h3>Últimos duelos</h3></div>'+
       '<div class="arena-history">'+(history.length?history.slice(0,8).map(function(h){
@@ -157,14 +157,14 @@ async function renderArena(){
           '<span><strong>'+esc(h.opponent)+'</strong><small>'+new Date(h.at).toLocaleString("es-ES")+'</small></span><b>'+(h.delta>0?"+":"")+h.delta+'</b></button>';
       }).join(""):'<div class="empty">Aún no has combatido en la Arena.</div>')+'</div></section></div>';
 
-  $$(".arena-fight").forEach(btn=>btn.addEventListener("click",()=>arenaFight(btn.dataset.target,btn.dataset.mode,btn)));
+  $(".arena-fight").forEach(btn=>btn.addEventListener("click",()=>arenaFight(btn.dataset.target,btn.dataset.mode,btn,btn.dataset.school)));
   $(".arena-history-row").forEach(btn=>btn.addEventListener("click",()=>{
     const rec=history.find(x=>x.id===btn.dataset.id);if(rec)arenaOpen(rec);
   }));
   arenaHydrateSprites($("#view-host"));
 }
 
-async function arenaFight(name,mode,btn){
+async function arenaFight(name,mode,btn,opponentSchool){
   if(!name)return;
   const old=btn?.textContent;
   if(btn){btn.disabled=true;btn.textContent="COMBATIENDO…";}
@@ -172,6 +172,9 @@ async function arenaFight(name,mode,btn){
     const data=await stateApi("/arena/fight",{method:"POST",body:{target:name,mode:mode}});
     const rec=data?.match;
     if(!rec)throw new Error("ARENA_RESULT_MISSING");
+    rec.playerName=String(realmState?.realm?.mage_name||"Archimago");
+    rec.playerSchool=String(realmState?.realm?.school_code||"ascendant");
+    rec.opponentSchool=String(opponentSchool||"ascendant");
     arenaOpen(rec);
     await renderArena();
   }catch(e){
