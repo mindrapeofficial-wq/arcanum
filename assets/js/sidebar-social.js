@@ -7,9 +7,54 @@ let arcaneInboxState={requests:[],conversations:[]};
 let directChatTimer=null;
 let directChatName="";
 let directChatSignature="";
+let directChatMode="player";
+const ORACLE_NAME="Astrael";
+const ORACLE_TITLE="Archivista Arcano · IA";
+let oracleHistory=[];
 
 function sidebarFriendNames(inbox){
   return new Set((inbox?.friends||[]).map(x=>String(x.mage_name||"").toLowerCase()));
+}
+function oracleStorageKey(){
+  const mage=String(realmState?.realm?.mage_name||"anon").toLowerCase().replace(/[^a-z0-9_-]+/g,"_");
+  return "arcanum_oracle_chat_v1_"+mage;
+}
+function loadOracleHistory(){
+  try{
+    const raw=localStorage.getItem(oracleStorageKey());
+    const rows=raw?JSON.parse(raw):[];
+    return Array.isArray(rows)?rows.slice(-30):[];
+  }catch{return [];}
+}
+function saveOracleHistory(){
+  try{localStorage.setItem(oracleStorageKey(),JSON.stringify(oracleHistory.slice(-30)));}catch{}
+}
+function sidebarOracleRow(){
+  return '<div class="sidebar-online-row has-dm sidebar-oracle-row">'+
+    '<button class="sidebar-online-player sidebar-oracle-player" type="button" data-oracle-chat title="Hablar con '+ORACLE_NAME+'">'+
+      '<span class="presence-dot oracle-presence" aria-hidden="true"></span>'+
+      '<span class="oracle-rune" aria-hidden="true">✦</span>'+
+      '<span class="sidebar-online-copy"><strong>'+ORACLE_NAME+' <em>IA</em></strong><small>ARCHIVISTA ARCANO · SIEMPRE DISPONIBLE</small></span>'+
+    '</button>'+
+    '<button class="sidebar-dm-button oracle-dm-button" type="button" data-oracle-chat title="Preguntar a '+ORACLE_NAME+'" aria-label="Abrir chat con '+ORACLE_NAME+'">✉</button>'+
+  '</div>';
+}
+async function oracleApi(message){
+  const session=getSession();
+  if(!session?.access_token)throw new Error("Tu sesión ha caducado. Vuelve a entrar.");
+  const history=oracleHistory.slice(-10).map(m=>({
+    role:m.mine?"user":"assistant",
+    content:String(m.body||"")
+  }));
+  const res=await fetch(ORACLE_API,{
+    method:"POST",
+    headers:{Authorization:`Bearer ${session.access_token}`,"Content-Type":"application/json"},
+    body:JSON.stringify({message,history}),
+    cache:"no-store"
+  });
+  const data=await res.json().catch(()=>({}));
+  if(!res.ok)throw new Error(data?.error||"No he podido consultar al Archivista.");
+  return data;
 }
 function sidebarOnlineRow(player,friends){
   const username=String(player?.username||"").trim();
@@ -196,13 +241,13 @@ async function refreshSidebarPresence(force=false){
         if(af!==bf)return af?-1:1;
         return String(a.username||"").localeCompare(String(b.username||""),"es");
       });
-    count.textContent=String(online.length);
-    host.innerHTML=online.length
+    count.textContent=String(online.length+1);
+    host.innerHTML=sidebarOracleRow()+(online.length
       ?online.map(x=>sidebarOnlineRow(x,friends)).join("")
-      :'<div class="sidebar-online-empty">Ningún otro Archimago conectado.</div>';
+      :'<div class="sidebar-online-empty">No hay otros Archimagos conectados ahora.</div>');
   }catch(e){
-    count.textContent="—";
-    host.innerHTML='<div class="sidebar-online-empty">Presencia no disponible.</div>';
+    count.textContent="1";
+    host.innerHTML=sidebarOracleRow()+'<div class="sidebar-online-empty">No se pudo consultar la presencia de otros Archimagos.</div>';
     if(!arcaneInboxState.requests.length&&!arcaneInboxState.conversations.length)refreshArcaneInbox();
   }finally{sidebarPresenceBusy=false;}
 }
@@ -255,7 +300,7 @@ function ensureDirectChatWindow(){
     '</form>';
   document.body.appendChild(shell);
   $("#direct-chat-close",shell).addEventListener("click",closeDirectChatWindow);
-  $("#direct-chat-profile",shell).addEventListener("click",()=>{if(directChatName)openPlayerProfile(directChatName);});
+  $("#direct-chat-profile",shell).addEventListener("click",()=>{if(directChatMode==="player"&&directChatName)openPlayerProfile(directChatName);});
   $("#direct-chat-form",shell).addEventListener("submit",sendDirectChatMessage);
   return shell;
 }
@@ -263,9 +308,63 @@ function renderDirectChatMessages(messages){
   const host=$("#direct-chat-messages");if(!host)return;
   const rows=messages||[];
   host.innerHTML=rows.length?rows.map(m=>
-    '<div class="dm-message '+(m.mine?"mine":"theirs")+'"><p>'+esc(m.body)+'</p><small>'+new Date(m.created_at).toLocaleString("es-ES")+'</small></div>'
+    '<div class="dm-message '+(m.mine?"mine":"theirs")+(m.oracle?" oracle-message":"")+'"><p>'+esc(m.body)+'</p><small>'+new Date(m.created_at).toLocaleString("es-ES")+'</small></div>'
   ).join(""):'<div class="empty">No hay mensajes todavía. Puedes abrir la conversación.</div>';
   host.scrollTop=host.scrollHeight;
+}
+function oracleGreeting(){
+  return {mine:false,oracle:true,body:"Soy Astrael, Archivista de ARCANUM. Pregúntame lo que quieras sobre tu reino, turnos, economía, construcción, magia, ejército, guerra, Escuelas o sistemas sociales.",created_at:new Date().toISOString()};
+}
+function renderOracleChat(){
+  if(!oracleHistory.length)oracleHistory=[oracleGreeting()];
+  renderDirectChatMessages(oracleHistory);
+}
+function openOracleChatWindow(){
+  const shell=ensureDirectChatWindow();
+  clearInterval(directChatTimer);directChatTimer=null;
+  directChatMode="oracle";
+  directChatName=ORACLE_NAME;
+  directChatSignature="";
+  oracleHistory=loadOracleHistory();
+  if(!oracleHistory.length){oracleHistory=[oracleGreeting()];saveOracleHistory();}
+  shell.classList.add("oracle-chat");
+  $("#direct-chat-name",shell).textContent=ORACLE_NAME;
+  $("#direct-chat-school",shell).textContent=ORACLE_TITLE;
+  $("#direct-chat-input",shell).placeholder="Pregunta algo sobre ARCANUM…";
+  $("#direct-chat-send",shell).textContent="CONSULTAR";
+  shell.classList.remove("hidden");
+  closeArcaneInbox();
+  hide($("#modal"));
+  renderOracleChat();
+  setTimeout(()=>$("#direct-chat-input",shell)?.focus(),0);
+}
+async function sendOracleMessage(body,input,btn){
+  const now=new Date().toISOString();
+  oracleHistory.push({mine:true,oracle:false,body,created_at:now});
+  saveOracleHistory();
+  renderOracleChat();
+  input.value="";
+  btn.disabled=true;btn.textContent="PENSANDO…";
+  const host=$("#direct-chat-messages");
+  const thinking=document.createElement("div");
+  thinking.className="dm-message theirs oracle-message oracle-thinking";
+  thinking.innerHTML="<p>Astrael consulta el archivo arcano…</p>";
+  host?.appendChild(thinking);
+  if(host)host.scrollTop=host.scrollHeight;
+  try{
+    const data=await oracleApi(body);
+    oracleHistory.push({mine:false,oracle:true,body:String(data?.answer||"No he encontrado una respuesta clara."),created_at:new Date().toISOString()});
+    saveOracleHistory();
+    renderOracleChat();
+  }catch(err){
+    thinking.remove();
+    oracleHistory.push({mine:false,oracle:true,body:"Ahora mismo no consigo acceder al archivo. Inténtalo de nuevo en unos segundos.",created_at:new Date().toISOString()});
+    saveOracleHistory();
+    renderOracleChat();
+    toast(humanError(err),"error");
+  }finally{
+    btn.disabled=false;btn.textContent="CONSULTAR";input.focus();
+  }
 }
 async function refreshDirectChat(quiet=true){
   if(!directChatName)return [];
@@ -297,10 +396,14 @@ async function openDirectChatWindow(name){
       return;
     }
     const shell=ensureDirectChatWindow();
+    directChatMode="player";
     directChatName=target;
     directChatSignature="";
+    shell.classList.remove("oracle-chat");
     $("#direct-chat-name",shell).textContent=target;
     $("#direct-chat-school",shell).textContent=profileSchoolName(profile.school_code);
+    $("#direct-chat-input",shell).placeholder="Escribe un mensaje privado…";
+    $("#direct-chat-send",shell).textContent="ENVIAR";
     $("#direct-chat-messages",shell).innerHTML='<div class="empty">Abriendo canal privado…</div>';
     shell.classList.remove("hidden");
     closeArcaneInbox();
@@ -313,7 +416,7 @@ async function openDirectChatWindow(name){
   }catch(e){toast(humanError(e),"error");}
 }
 function closeDirectChatWindow(){
-  clearInterval(directChatTimer);directChatTimer=null;directChatName="";directChatSignature="";
+  clearInterval(directChatTimer);directChatTimer=null;directChatName="";directChatSignature="";directChatMode="player";
   $("#direct-chat-window")?.classList.add("hidden");
 }
 async function sendDirectChatMessage(e){
@@ -321,6 +424,10 @@ async function sendDirectChatMessage(e){
   if(!directChatName)return;
   const input=$("#direct-chat-input"),btn=$("#direct-chat-send"),body=String(input?.value||"").trim();
   if(!body)return;
+  if(directChatMode==="oracle"){
+    await sendOracleMessage(body,input,btn);
+    return;
+  }
   btn.disabled=true;btn.textContent="ENVIANDO…";
   try{
     await rpc("send_direct_message",{p_mage_name:directChatName,p_body:body});
@@ -333,6 +440,13 @@ async function sendDirectChatMessage(e){
 }
 
 document.addEventListener("click",e=>{
+  const oracle=e.target.closest("[data-oracle-chat]");
+  if(oracle){
+    e.preventDefault();
+    e.stopPropagation();
+    openOracleChatWindow();
+    return;
+  }
   const dm=e.target.closest("[data-direct-chat],[data-inbox-chat]");
   if(dm){
     e.preventDefault();
