@@ -346,7 +346,6 @@ async function renderTavern(){
   host.innerHTML=`
     <div id="tavern-root" class="tavern-root">
       <div class="tavern-head">
-        <div><span class="section-kicker">ZONA SOCIAL</span><h2>La Taberna</h2><p>Camina, encuentra otros Archimagos y habla con ellos en tiempo real.</p></div>
         <div class="tavern-status"><span class="presence-dot"></span><strong id="tavern-status">Conectando…</strong><small><b id="tavern-online-count">1</b> dentro</small></div>
       </div>
       <div class="tavern-layout">
