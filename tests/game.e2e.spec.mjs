@@ -590,7 +590,7 @@ test("Expediciones inicia una incursión persistente y arrastra vida entre salas
   await expect(page.locator("#game-view")).toBeVisible();
 
   await page.locator('#main-nav button[data-view="pve"]').click();
-  await expect(page.getByRole("heading",{name:"Expediciones"})).toBeVisible();
+  await expect(page.getByRole("heading",{name:"Expediciones",exact:true})).toBeVisible();
   await expect(page.getByText("Ruinas del Umbral",{exact:true})).toBeVisible();
   await page.locator('[data-pve-start="ruins_threshold"][data-pve-difficulty="1"]').click();
 
