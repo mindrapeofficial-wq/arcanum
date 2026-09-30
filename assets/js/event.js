@@ -2,6 +2,7 @@
 
 let bossPollTimer=null;
 let bossRenderBusy=false;
+let bossArchmageSnapshot=null;
 
 function bossPhase(hpPct,status){
   if(status==="defeated")return "BOSS DERROTADO";
@@ -135,6 +136,7 @@ function drawBoss(data){
       <div class="boss-health-head"><div><small>VIDA MUNDIAL DEL BOSS</small><strong>${n(hp)} / ${n(maxHp)}</strong></div><b>${pct.toFixed(1)}%</b></div>
       <div class="boss-health"><span style="width:${pct}%"></span></div>
       <div class="boss-stats">
+        <div><small>ARCHIMAGO</small><strong>Nv ${n(bossArchmageSnapshot?.identity?.level||1)}</strong></div>
         <div><small>TU DAÑO</small><strong>${n(me?.damage||0)}</strong></div>
         <div><small>TUS INCURSIONES</small><strong>${n(me?.attacks||0)}</strong></div>
         <div><small>POSICIÓN</small><strong>${me?.rank?"#"+n(me.rank):"—"}</strong></div>
@@ -174,6 +176,11 @@ async function refreshBossView(silent=false){
 }
 async function renderEvent(){
   stopBossPolling();
+  try{
+    bossArchmageSnapshot=typeof loadArchmageSnapshot==="function"
+      ?await loadArchmageSnapshot(realmState?.realm?.mage_name,{force:true})
+      :null;
+  }catch(e){bossArchmageSnapshot=null;console.warn("Boss Archmage snapshot unavailable",e)}
   await refreshBossView(false);
 }
 async function attackWorldBoss(){
