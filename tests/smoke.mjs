@@ -7,7 +7,7 @@ const read=p=>fs.readFileSync(new URL("../"+p, import.meta.url),"utf8");
 const html=read("index.html");
 const version=JSON.parse(read("version.json"));
 const jsFiles=[
-  "assets/js/state.js","assets/js/auth.js","assets/js/archmage.js","assets/js/combat-profile.js","assets/js/items.js","assets/js/inventory.js","assets/js/archmage-sheet.js","assets/js/profile.js","assets/js/realm-state.js","assets/js/router.js",
+  "assets/js/immersive.js","assets/js/state.js","assets/js/auth.js","assets/js/archmage.js","assets/js/combat-profile.js","assets/js/items.js","assets/js/inventory.js","assets/js/archmage-sheet.js","assets/js/profile.js","assets/js/realm-state.js","assets/js/router.js",
   "assets/js/community.js","assets/js/realm.js","assets/js/economy.js","assets/js/construction.js",
   "assets/js/magic.js","assets/js/army.js","assets/js/war.js","assets/js/arena.js","assets/js/tutorial.js","assets/js/ui.js"
 ];
