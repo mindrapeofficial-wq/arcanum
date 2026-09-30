@@ -121,8 +121,7 @@ function drawBoss(data){
     </tr>`).join(""):`<tr><td colspan="5"><div class="empty">Todavía nadie ha herido al Devorador.</div></td></tr>`;
 
   $("#view-host").innerHTML=`
-    ${viewHeader("EVENTO MUNDIAL","La Brecha del Umbral","Todos los Archimagos atacan al mismo enemigo. La vida, el daño y el ranking son compartidos en tiempo real.")}
-    <section class="boss-hero">
+        <section class="boss-hero">
       <div class="boss-aura"></div>
       <div class="boss-copy">
         <span class="boss-live ${defeated?"boss-live-defeated":""}">${bossStatusLabel(boss.status)}</span>
@@ -168,7 +167,7 @@ async function refreshBossView(silent=false){
     startBossPolling();
   }catch(e){
     if(!silent && currentView==="event"){
-      $("#view-host").innerHTML=`${viewHeader("EVENTO MUNDIAL","La Brecha del Umbral","No se ha podido enlazar con la brecha.")}<div class="panel"><div class="empty">${esc(humanError(e))}</div></div>`;
+      $("#view-host").innerHTML=`<div class="panel"><div class="empty">${esc(humanError(e))}</div></div>`;
     }
     throw e;
   }finally{bossRenderBusy=false;}
