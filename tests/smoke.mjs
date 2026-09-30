@@ -176,3 +176,34 @@ test("inventory surfaces owned Relics through canonical lifecycle",()=>{
   assert.match(inventory,/data-relic-unequip-card/);
   assert.match(inventory,/unequipCanonicalSlot\("relic"\)/);
 });
+
+
+test("verified Gear comes from gameplay instead of debug drops",()=>{
+  const items=read("assets/js/items.js");
+  const inventory=read("assets/js/inventory.js");
+  const economy=read("assets/js/economy.js");
+  const arena=read("assets/js/arena.js");
+  const event=read("assets/js/event.js");
+  assert.doesNotMatch(inventory,/HALLAZGO DE PRUEBA/);
+  assert.doesNotMatch(inventory,/data-loot-test-drop/);
+  assert.match(inventory,/canonicalLootOriginText/);
+  assert.match(items,/stateApi\("\/loot\/exploration\/start"/);
+  assert.match(items,/stateApi\("\/loot\/exploration\/complete"/);
+  assert.match(items,/stateApi\("\/loot\/arena\/claim"/);
+  assert.match(items,/stateApi\("\/loot\/boss\/claim"/);
+  assert.match(economy,/startLootExplorationClaim/);
+  assert.match(economy,/completeLootExplorationClaim/);
+  assert.match(arena,/loot_reward/);
+  assert.match(arena,/announceCanonicalLootReward/);
+  assert.match(event,/claimWorldBossGear/);
+  assert.match(event,/bossGearClaimedEvents/);
+});
+
+test("Gear provenance is visible to the player",()=>{
+  const items=read("assets/js/items.js");
+  const inventory=read("assets/js/inventory.js");
+  assert.match(items,/exploration:"Exploración"/);
+  assert.match(items,/arena:"Arena clasificada"/);
+  assert.match(items,/world_boss:"Boss mundial"/);
+  assert.match(inventory,/ORIGEN/);
+});
