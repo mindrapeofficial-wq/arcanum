@@ -126,3 +126,13 @@ test("canonical Archmage identity uses one snapshot",()=>{
   assert.match(arena,/loadArchmageSnapshot\(realmState\.realm\.mage_name/);
   assert.match(arena,/const selfProfile=snapshot\.profile/);
 });
+
+
+test("Tavern and PvE consume canonical Archmage identity",()=>{
+  const tavern=read("assets/js/tavern.js");
+  const event=read("assets/js/event.js");
+  assert.match(tavern,/loadArchmageSnapshot\(realmState\?\.realm\?\.mage_name/);
+  assert.match(tavern,/level:rt\.player\.level,renown:rt\.player\.renown/);
+  assert.match(event,/loadArchmageSnapshot\(realmState\?\.realm\?\.mage_name/);
+  assert.match(event,/bossArchmageSnapshot\?\.identity\?\.level/);
+});
