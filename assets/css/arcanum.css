@@ -263,7 +263,7 @@ table .school-dot{width:17px;height:17px;min-width:17px;margin-right:6px}
 .sidebar-online-head strong{min-width:20px;height:20px;display:grid;place-items:center;border:1px solid rgba(218,151,57,.16);color:#c5a36d;font:800 9px Arial,sans-serif}
 .sidebar-online-list{display:grid;gap:3px;max-height:190px;overflow-y:auto;overscroll-behavior:contain;padding-right:2px}
 .sidebar-online-row{display:grid;grid-template-columns:minmax(0,1fr) 28px;gap:3px;align-items:center}
-.sidebar-online-row:not(:has(.sidebar-dm-button)){grid-template-columns:minmax(0,1fr)}
+.sidebar-online-row:not(.has-dm){grid-template-columns:minmax(0,1fr)}
 .sidebar-online-player{min-width:0;width:100%;display:grid;grid-template-columns:7px 10px minmax(0,1fr);align-items:center;gap:7px;border:1px solid transparent;background:transparent;color:inherit;text-align:left;padding:7px 7px;cursor:pointer}
 .sidebar-online-player:hover{border-color:rgba(218,151,57,.13);background:rgba(177,112,33,.06)}
 .sidebar-online-copy{min-width:0}.sidebar-online-copy strong,.sidebar-online-copy small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
