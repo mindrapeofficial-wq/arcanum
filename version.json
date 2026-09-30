@@ -1,6 +1,6 @@
 {
-  "version": "0.3.0",
+  "version": "0.3.1",
   "channel": "beta",
-  "updated_at": "2026-09-30T20:45:00+02:00",
-  "note": "Consolidation phase 1: combat evolution, Arena seals, rating and duel outcomes moved to server authority"
+  "updated_at": "2026-09-30T20:58:00+02:00",
+  "note": "Consolidation point 1: combat evolution, inventory, Arena seals, rating, equipment and duel outcomes are server-authoritative"
 }
