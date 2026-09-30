@@ -218,6 +218,29 @@ function canonicalRelicEquipmentCard(){
   const name=typeof canonicalItemDisplayName==="function"?canonicalItemDisplayName(relic):(typeof artifactDef==="function"?artifactDef(relic.artifact_id)?.name:relic.artifact_id);
   return '<div class="loot-equip-slot filled relic-slot"><small>Reliquia</small><strong>'+esc(name||"Reliquia")+'</strong><span>'+esc((relic.category||"reliquia").toUpperCase())+'</span><button class="loot-unequip" type="button" data-relic-unequip="relic">×</button></div>';
 }
+function canonicalRelicInventoryCards(){
+  const model=typeof getCanonicalItems==="function"?getCanonicalItems():null;
+  const relics=(model?.items||[]).filter(item=>item.kind==="relic");
+  const activeId=String(model?.equipment?.relic?.id||"");
+  if(!relics.length)return '<div class="empty">Todavía no custodias ninguna Reliquia.</div>';
+  return relics.map(item=>{
+    const active=String(item.id)===activeId||item.equipped;
+    const name=typeof canonicalItemDisplayName==="function"?canonicalItemDisplayName(item):(item.artifact_id||"Reliquia");
+    const category=typeof artifactCategoryLabel==="function"?artifactCategoryLabel(item.category):(item.category||"Reliquia");
+    const effect=typeof artifactDef==="function"?artifactDef(item.artifact_id)?.effect||"":"";
+    return '<article class="loot-item relic-inventory-card '+(active?'is-equipped':'')+'">'+
+      '<header><span class="loot-rarity">'+esc(category)+'</span><b>'+(active?'VINCULADA':'RELIQUIA')+'</b></header>'+
+      '<h4>'+esc(name)+'</h4>'+
+      (effect?'<p class="relic-inventory-effect">'+esc(effect)+'</p>':"")+
+      '<div class="loot-actions">'+
+        (active
+          ?'<button class="ghost-button" type="button" data-relic-unequip-card="'+esc(item.id)+'">DESVINCULAR</button>'
+          :'<button class="small-action" type="button" data-relic-equip="'+esc(item.id)+'">VINCULAR</button>')+
+      '</div>'+
+    '</article>';
+  }).join("");
+}
+
 function renderArchmageInventory(profile){
   if(!profile?.is_self)return "";
   const state=lootLoad(profile);
@@ -228,7 +251,8 @@ function renderArchmageInventory(profile){
     '<div class="loot-equipment">'+ARCANUM_EQUIP_SLOTS.map(slot=>lootEquipmentCard(slot,state)).join("")+canonicalRelicEquipmentCard()+'</div>'+
     '<div class="loot-toolbar"><div><strong>Cámara del Arconte</strong><small>Botín procedural controlado · cada pieza nace con rolls propios.</small></div><button class="profile-action" type="button" data-loot-test-drop '+(state.items.length>=ARCANUM_INVENTORY_CAP?'disabled':'')+'>✦ HALLAZGO DE PRUEBA</button></div>'+
     '<div class="loot-grid">'+(state.items.length?state.items.map(lootItemCard).join(""):'<div class="empty">Tu Cámara está vacía.</div>')+'</div>'+
-    '<p class="loot-beta-note">Prueba de beta: el botón de hallazgo permite validar rarezas, afijos, tiers y equipamiento. Cuando activemos PvE, esta generación pasará a expediciones, jefes y eventos.</p>'+
+    '<div class="loot-relic-vault"><div class="loot-toolbar"><div><strong>Reliquias custodiadas</strong><small>Objetos con nombre, procedencia e historia. Sólo una puede estar vinculada.</small></div></div><div class="loot-grid relic-inventory-grid">'+canonicalRelicInventoryCards()+'</div></div>'+
+    '<p class="loot-beta-note">Gear procedural y Reliquias comparten ahora el mismo modelo de equipamiento. La Biblioteca conserva el catálogo, lore e historia mundial.</p>'+
   '</section>';
 }
 function lootCanEquipInSlot(item,slotKey){
@@ -280,6 +304,26 @@ function wireInventoryPanel(profile){
         ?await unequipCanonicalSlot(btn.dataset.lootUnequip)
         :await stateApi("/inventory/unequip",{method:"POST",body:{slot:btn.dataset.lootUnequip}});
       if(data.inventory)lootSave(profile,data.inventory);lootRefreshProfile(profile);
+    }catch(e){toast(humanError(e),"error");btn.disabled=false}
+  }));
+
+  root.querySelectorAll("[data-relic-equip]").forEach(btn=>btn.addEventListener("click",async()=>{
+    btn.disabled=true;
+    try{
+      if(typeof equipCanonicalItem!=="function")throw new Error("Sistema canónico de objetos no disponible.");
+      await equipCanonicalItem("relic",btn.dataset.relicEquip);
+      lootRefreshProfile(profile);
+      toast("Reliquia vinculada.");
+    }catch(e){toast(humanError(e),"error");btn.disabled=false}
+  }));
+
+  root.querySelectorAll("[data-relic-unequip-card]").forEach(btn=>btn.addEventListener("click",async()=>{
+    btn.disabled=true;
+    try{
+      if(typeof unequipCanonicalSlot!=="function")throw new Error("Sistema canónico de objetos no disponible.");
+      await unequipCanonicalSlot("relic");
+      lootRefreshProfile(profile);
+      toast("Reliquia desvinculada.");
     }catch(e){toast(humanError(e),"error");btn.disabled=false}
   }));
 
