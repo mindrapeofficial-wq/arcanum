@@ -65,13 +65,41 @@ function combatRng(seed){
 }
 function combatPick(rng,arr){return arr[Math.floor(rng()*arr.length)]}
 function combatClone(value){return JSON.parse(JSON.stringify(value))}
-function combatProfileKey(name){return "arcanum_combat_profile_v1_"+String(name||"anon").toLowerCase().replace(/[^a-z0-9_-]+/g,"_")}
+const combatServerCache=new Map();
+function combatNameKey(name){return String(name||"anon").trim().toLowerCase()}
+function combatProfileKey(name){return "arcanum_combat_profile_v1_"+combatNameKey(name).replace(/[^a-z0-9_-]+/g,"_")}
 function combatCurrentLevel(profile){
   try{
     const p=typeof archmageProgressionFromProfile==="function"?archmageProgressionFromProfile(profile):null;
     if(p?.level)return Math.max(1,Number(p.level)||1);
   }catch(e){}
   return Math.max(1,Number(profile?.archmage_level||1));
+}
+function combatLegacyRaw(name){
+  try{return JSON.parse(localStorage.getItem(combatProfileKey(name))||"null")}catch(e){return null}
+}
+function combatCacheProfile(data){
+  if(data?.name)combatServerCache.set(combatNameKey(data.name),combatClone(data));
+  return data;
+}
+async function combatHydrateProfile(profile){
+  const name=profile?.mage_name||realmState?.realm?.mage_name||"";
+  if(!name)return null;
+  if(profile?.is_self){
+    const snap=await stateApi("/snapshot");
+    let combat=combatCacheProfile(snap?.combat);
+    const legacy=combatLegacyRaw(name);
+    if((combat?.levelBonuses||[]).length===0&&(legacy?.levelBonuses||[]).length){
+      const choices=(legacy.levelBonuses||[]).map(function(x){return {level:Number(x.level),option_id:String(x.id||"")}}).filter(function(x){return x.level>=2&&x.option_id});
+      if(choices.length){
+        const migrated=await stateApi("/combat/import-legacy",{method:"POST",body:{choices:choices}});
+        combat=combatCacheProfile(migrated?.combat||combat);
+      }
+    }
+    return combat;
+  }
+  const data=await stateApi("/combat/"+encodeURIComponent(name));
+  return combatCacheProfile(data?.combat);
 }
 function combatBaseProfile(name,school){
   const rng=combatRng("ARCANUM|"+String(name).toLowerCase()+"|"+String(school)+"|combat-v1");
@@ -115,12 +143,9 @@ function combatLoadRaw(profileOrRealm){
   const src=profileOrRealm||realmState?.realm||{};
   const name=src.mage_name||realmState?.realm?.mage_name||"Archimago";
   const school=src.school_code||realmState?.realm?.school_code||"ascendant";
-  let data=null;
-  try{data=JSON.parse(localStorage.getItem(combatProfileKey(name))||"null")}catch(e){}
-  if(!data||data.version!==1||data.school!==school){
-    data=combatBaseProfile(name,school);
-    combatSaveRaw(data);
-  }
+  let data=combatServerCache.get(combatNameKey(name))||null;
+  if(!data||data.version!==1||data.school!==school)data=combatBaseProfile(name,school);
+  data=combatClone(data);
   data.stats=data.stats||{};
   data.weapon=data.weapon||combatBaseProfile(name,school).weapon;
   data.trait=data.trait||combatBaseProfile(name,school).trait;
@@ -130,7 +155,7 @@ function combatLoadRaw(profileOrRealm){
   return data;
 }
 function combatSaveRaw(data){
-  try{localStorage.setItem(combatProfileKey(data?.name),JSON.stringify(data))}catch(e){}
+  combatCacheProfile(data);
 }
 function combatApplyBonus(state,bonus){
   const effect=bonus?.effect||{};
@@ -290,27 +315,16 @@ function combatPendingLevel(profile){
   for(let l=2;l<=level;l++)if(!chosen.has(l))return l;
   return null;
 }
-function combatChooseEvolution(profile,level,optionId){
+async function combatChooseEvolution(profile,level,optionId){
   if(!profile?.is_self)throw new Error("Solo puedes evolucionar tu propio Archimago.");
   const currentLevel=combatCurrentLevel(profile);
   level=Number(level);
   if(level<2||level>currentLevel)throw new Error("Ese nivel todavía no está disponible.");
-  const raw=combatLoadRaw(profile);
-  if((raw.levelBonuses||[]).some(function(x){return Number(x.level)===level}))throw new Error("Ese destino ya fue elegido.");
   const option=combatEvolutionOptions(profile,level).find(function(x){return x.id===optionId});
   if(!option)throw new Error("La opción de evolución ya no es válida.");
-  raw.levelBonuses.push({
-    level:level,
-    id:option.id,
-    kind:option.kind,
-    title:option.title,
-    desc:option.desc,
-    effect:combatClone(option.effect),
-    chosenAt:new Date().toISOString()
-  });
-  raw.levelBonuses.sort(function(a,b){return a.level-b.level});
-  combatSaveRaw(raw);
-  return option;
+  const data=await stateApi("/combat/evolve",{method:"POST",body:{level:level,option_id:optionId}});
+  combatCacheProfile(data?.combat);
+  return data?.chosen||option;
 }
 function renderCombatEvolution(profile){
   if(!profile?.is_self)return "";
@@ -349,16 +363,17 @@ function renderCombatIdentity(profile){
 }
 function wireCombatEvolution(profile){
   document.querySelectorAll("[data-combat-evolution]").forEach(function(btn){
-    btn.addEventListener("click",function(){
+    btn.addEventListener("click",async function(){
       const level=Number(btn.dataset.combatLevel),id=btn.dataset.combatEvolution;
       const option=combatEvolutionOptions(profile,level).find(function(x){return x.id===id});
       if(!option)return;
       if(!confirm("¿Elegir “"+option.title+"” para el nivel "+level+"? La otra opción desaparecerá."))return;
+      const old=btn.innerHTML;btn.disabled=true;
       try{
-        combatChooseEvolution(profile,level,id);
-        toast("Evolución elegida: "+option.title+".","success");
-        openPlayerProfile(profile.mage_name);
-      }catch(e){toast(humanError(e),"error")}
+        const chosen=await combatChooseEvolution(profile,level,id);
+        toast("Evolución elegida: "+(chosen?.title||option.title)+".","success");
+        await openPlayerProfile(profile.mage_name);
+      }catch(e){toast(humanError(e),"error");btn.disabled=false;btn.innerHTML=old}
     });
   });
 }
@@ -368,3 +383,4 @@ globalThis.combatDerived=combatDerived;
 globalThis.renderCombatIdentity=renderCombatIdentity;
 globalThis.wireCombatEvolution=wireCombatEvolution;
 globalThis.combatEvolutionOptions=combatEvolutionOptions;
+globalThis.combatHydrateProfile=combatHydrateProfile;
