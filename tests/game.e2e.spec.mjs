@@ -239,7 +239,7 @@ test("flujo crítico completo: login, reino, explorar, construir, investigar, re
   await expect(page.locator(".toast").last()).toContainText("Exploración completada");
 
   await page.locator('#main-nav button[data-view="build"]').click();
-  await expect(page.getByRole("heading",{name:"Construcción"})).toBeVisible();
+  await expect(page.getByRole("heading",{name:"Diseña el crecimiento de tu dominio"})).toBeVisible();
   await page.locator('[data-building="farms"]').fill("2");
   await page.locator("#build-button").click();
   await expect(page.locator(".toast").last()).toContainText("Construcción completada");
@@ -322,7 +322,7 @@ test("la ficha de personaje se abre, permite gastar un punto y editar la bio", a
   await expect(page.locator("#game-view")).toBeVisible();
   await expect(page.locator("#mage-title")).toHaveText("E2E_TESTER");
   await page.locator("#mage-card-button").click();
-  await expect(page.getByText("FICHA DE ARCHIMAGO")).toBeVisible();
+  await expect(page.getByText("FICHA DEL JUGADOR")).toBeVisible();
   await expect(page.locator("#profile-bio-input")).toBeVisible();
   await expect(page.getByText("PROGRESIÓN DEL ARCHIMAGO")).toBeVisible();
   await expect(page.getByText("Poder Arcano",{exact:true}).first()).toBeVisible();
@@ -384,6 +384,7 @@ test("la barra lateral muestra conectados y abre chat privado solo entre amigos"
   await page.locator("#submit-button").click();
   await expect(page.locator("#game-view")).toBeVisible();
 
+  await page.locator("#sidebar-online-collapse").click();
   const connected=page.locator('#sidebar-online-list [data-profile="FRIEND_TEST"]');
   await expect(connected).toBeVisible();
   await expect(page.locator("#sidebar-online-count")).toHaveText("2");
@@ -440,6 +441,7 @@ test("Astrael aparece conectado y responde dudas del juego", async ({page})=>{
 
   await expect(page.locator("#sidebar-online-list")).toContainText("Astrael");
   await expect(page.locator("#sidebar-online-list")).toContainText("IA");
+  await page.locator("#sidebar-online-collapse").click();
   await page.locator('#sidebar-online-list [data-oracle-chat]').first().click();
 
   await expect(page.locator("#direct-chat-window")).toBeVisible();
