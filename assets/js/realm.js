@@ -75,7 +75,7 @@ function renderRealm(){
           <button class="small-action" data-quick="war">GUERRA</button>
         </div>
       </div>
-      <small class="realm-art-label">REINO · NIVEL 0 · ARTE DE BETA</small>
+      <small class="realm-art-label" data-realm-ai-status>REINO · PREPARANDO ARTE IA</small>
     </section>
 
     <section class="realm-command panel">
@@ -127,6 +127,13 @@ function renderRealm(){
 
   document.querySelectorAll("[data-quick]").forEach(btn=>btn.addEventListener("click",()=>navigate(btn.dataset.quick)));
   $("#realm-explore-button").addEventListener("click",()=>doExplore($("#realm-explore-button"),"realm-explore-turns"));
+  if(typeof ensureRealmAiArtwork==="function"){
+    (async()=>{
+      try{if(typeof refreshOwnProfileBadge==="function")await refreshOwnProfileBadge();}
+      finally{ensureRealmAiArtwork();}
+    })();
+  }
+
   $("#realm-tip-action").addEventListener("click",()=>{
     const target=Number(r.wilderness||0)>=80?"build":Number(b.guilds||0)<5?"build":Number(b.barracks||0)<1?"build":Number(r.turns||0)>=20&&Number(r.land||0)<3500?"economy":"economy";
     navigate(target);
