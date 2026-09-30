@@ -6,6 +6,7 @@ const SESSION_KEY = "arcanum_session_v2";
 const BUILD_VERSION = "0.2.26";
 const VERSION_CHECK_INTERVAL_MS = 60000;
 const COMMUNITY_API = "https://smynvbrkgffpepbhrpxt.supabase.co/functions/v1/arcanum-community";
+const ORACLE_API = "https://smynvbrkgffpepbhrpxt.supabase.co/functions/v1/arcanum-oracle";
 const COMMUNITY_POLL_MS = 2500;
 
 
