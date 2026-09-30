@@ -83,6 +83,22 @@ function startBossPolling(){
 function bossStatusLabel(status){
   return status==="defeated"?"DERROTADO":status==="closed"?"CERRADO":"● EVENTO ACTIVO";
 }
+let bossArtDataUrl=null;
+let bossArtLoading=null;
+async function hydrateBossArt(){
+  const img=$("#boss-art-image");
+  if(!img)return;
+  try{
+    if(!bossArtDataUrl){
+      if(!bossArtLoading)bossArtLoading=fetch("assets/art/boss_devorador_umbral.b64?v=0.2.56",{cache:"force-cache"})
+        .then(r=>{if(!r.ok)throw new Error("BOSS_ART");return r.text();})
+        .then(text=>bossArtDataUrl="data:image/webp;base64,"+text.trim())
+        .finally(()=>bossArtLoading=null);
+      await bossArtLoading;
+    }
+    if($("#boss-art-image"))$("#boss-art-image").src=bossArtDataUrl;
+  }catch{}
+}
 function drawBoss(data){
   if(currentView!=="event")return;
   const boss=data?.boss||{};
@@ -114,7 +130,7 @@ function drawBoss(data){
         <p>Una criatura nacida entre escuelas consume maná, memoria y territorio. La única forma de cerrarle el paso es que los reinos golpeen la misma brecha.</p>
         <div class="boss-meta"><span>${bossPhase(pct,boss.status)}</span><span>TERMINA EN <b id="boss-clock">${bossTimeText(boss.ends_at)}</b></span><span>VIDA MUNDIAL SINCRONIZADA</span></div>
       </div>
-      <div class="boss-sigil-art" aria-hidden="true"><span>◈</span><i></i><b>✦</b></div>
+      <div class="boss-sigil-art boss-portrait" aria-hidden="true"><img id="boss-art-image" alt="" decoding="async" /><span class="boss-portrait-vignette"></span></div>
     </section>
     <section class="boss-panel">
       <div class="boss-health-head"><div><small>VIDA MUNDIAL DEL BOSS</small><strong>${n(hp)} / ${n(maxHp)}</strong></div><b>${pct.toFixed(1)}%</b></div>
@@ -140,6 +156,7 @@ function drawBoss(data){
       <article><span>02</span><h4>Fractura</h4><p>Al caer del 66%, la coraza se rompe y el mundo puede ver cómo el daño colectivo empieza a abrir grietas.</p></article>
       <article><span>03</span><h4>Eclipse</h4><p>Por debajo del 33%, comienza la fase final. Si cae, el servidor reparte automáticamente Fragmentos del Umbral según contribución.</p></article>
     </section>`;
+  hydrateBossArt();
   $("#boss-attack")?.addEventListener("click",attackWorldBoss);
 }
 async function refreshBossView(silent=false){
