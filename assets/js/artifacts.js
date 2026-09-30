@@ -123,8 +123,10 @@ async function loadArtifactLibrary(){
       const ownState=owned.length
         ?'<div class="artifact-owned">POSEES '+owned.length+(equipped?' · EQUIPADO':'')+'</div>'
         :"";
-      const equipButton=owned.length&&!equipped
-        ?'<button class="small-action" data-artifact-equip="'+esc(owned[0].id)+'">EQUIPAR</button>'
+      const equipButton=owned.length
+        ?(equipped
+          ?'<button class="ghost-button" data-artifact-unequip="'+esc(equipped.id)+'">DESVINCULAR</button>'
+          :'<button class="small-action" data-artifact-equip="'+esc(owned[0].id)+'">VINCULAR</button>')
         :"";
       const historyButton=a.category==="unique"?'<button class="ghost-button" data-artifact-history="'+esc(a.id)+'">HISTORIA</button>':"";
       return '<article class="artifact-card artifact-'+esc(a.category)+' '+(owned.length?'is-owned':'')+'">'+
@@ -134,6 +136,7 @@ async function loadArtifactLibrary(){
         '<div class="artifact-actions">'+equipButton+historyButton+'</div></article>';
     }).join("");
     grid.querySelectorAll("[data-artifact-equip]").forEach(b=>b.addEventListener("click",()=>equipNamedArtifact(b.dataset.artifactEquip)));
+    grid.querySelectorAll("[data-artifact-unequip]").forEach(b=>b.addEventListener("click",()=>unequipNamedArtifact()));
     grid.querySelectorAll("[data-artifact-history]").forEach(b=>b.addEventListener("click",()=>showArtifactHistory(b.dataset.artifactHistory)));
     if(typeof renderArtifactMarketPanel==="function")await renderArtifactMarketPanel(data);
   }catch(e){grid.innerHTML='<div class="empty">'+esc(humanError(e))+'</div>';}
@@ -156,8 +159,16 @@ async function discoverNamedArtifact(){
 
 async function equipNamedArtifact(id){
   try{
-    await communityApi("/artifacts/equip/"+encodeURIComponent(id),{method:"POST",body:{}});
-    toast("Reliquia vinculada al Arconte.");
+    if(typeof equipCanonicalItem==="function")await equipCanonicalItem("relic",id);
+    else await communityApi("/artifacts/equip/"+encodeURIComponent(id),{method:"POST",body:{}});
+    toast("Reliquia vinculada al slot canónico.");
+    await loadArtifactLibrary();
+  }catch(e){toast(humanError(e),"error");}
+}
+async function unequipNamedArtifact(){
+  try{
+    if(typeof unequipCanonicalSlot==="function")await unequipCanonicalSlot("relic");
+    toast("Reliquia desvinculada.");
     await loadArtifactLibrary();
   }catch(e){toast(humanError(e),"error");}
 }
