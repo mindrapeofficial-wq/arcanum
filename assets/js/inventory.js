@@ -276,3 +276,4 @@ function wireInventoryPanel(profile){
 
 globalThis.lootCombatBonuses=lootCombatBonuses;
 globalThis.lootHydrateProfile=lootHydrateProfile;
+globalThis.lootCacheState=function(profile,state){return lootSave(profile,state);};
