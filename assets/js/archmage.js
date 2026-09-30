@@ -28,6 +28,57 @@ const ARCHMAGE_IDENTITY_META = Object.freeze({
   balanced:{title:"Equilibrio Arcano",description:"Tus cuatro aptitudes avanzan en equilibrio, sin que ninguna domine todavía."}
 });
 
+const ARCHMAGE_XP_RULES = Object.freeze({
+  research_spell:Object.freeze({
+    label:"Completar investigación",
+    description:"Otorga experiencia una sola vez al aprender un hechizo.",
+    repeatable:false
+  }),
+  pve_first_clear:Object.freeze({
+    label:"Descubrir una expedición",
+    description:"La primera victoria en una localización PvE recompensa el descubrimiento.",
+    xp:25,
+    repeatable:false
+  }),
+  pve_repeat_clear:Object.freeze({
+    label:"Superar una expedición conocida",
+    description:"Las victorias repetidas dan experiencia reducida y tendrán límite diario.",
+    xp:8,
+    dailyCap:40,
+    repeatable:true
+  }),
+  pve_boss:Object.freeze({
+    label:"Derrotar un jefe",
+    description:"La primera derrota de cada jefe concede una recompensa importante.",
+    xp:40,
+    repeatable:false
+  }),
+  pvp_qualified:Object.freeze({
+    label:"Combate PvP cualificado",
+    description:"Solo contará contra rivales válidos; repetir al mismo rival no permitirá farmear experiencia.",
+    xp:10,
+    victoryBonus:10,
+    dailyCap:60,
+    repeatable:true
+  })
+});
+
+const ARCHMAGE_RESEARCH_XP = Object.freeze({
+  simple:20,
+  average:35,
+  complex:55,
+  ultimate:90,
+  ancient:0
+});
+
+function archmageResearchXp(rank){
+  return ARCHMAGE_RESEARCH_XP[String(rank||"").toLowerCase()]||0;
+}
+
+function archmageXpRule(key){
+  return ARCHMAGE_XP_RULES[key]||null;
+}
+
 function archmageIdentityFromProgression(progression){
   if(!progression?.stats)return null;
   const values=ARCHMAGE_STAT_KEYS.map(key=>[key,Number(progression.stats[key])||0]);
