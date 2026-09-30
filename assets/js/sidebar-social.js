@@ -346,7 +346,7 @@ function startAstraelAutoplay(){
   clearInterval(astraelPlayerTimer);
   astraelPlayerTimer=null;
   if(!isAstraelPlayerSession())return;
-  runAstraelPlayerTick(true);
+  runAstraelPlayerTick(false);
   astraelPlayerTimer=setInterval(()=>runAstraelPlayerTick(false),5*60*1000);
 }
 function stopAstraelAutoplay(){
