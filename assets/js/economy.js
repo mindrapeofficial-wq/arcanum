@@ -16,15 +16,15 @@ function renderEconomy(){
     <div class="economy-resource-grid">
       <div class="economy-resource-card">
         <img src="assets/ui/resources/oro.png?v=${BUILD_VERSION}" alt="" aria-hidden="true">
-        <div><small>TESORO</small><strong>${n(r.gold)}</strong><span>Oro disponible para construir, reclutar y sostener tu reino.</span></div>
+        <div><small>TESORO</small><strong><span data-live-resource="gold">${n(r.gold)}</span></strong><span>Oro disponible para construir, reclutar y sostener tu reino.</span></div>
       </div>
       <div class="economy-resource-card">
         <img src="assets/ui/resources/mana.png?v=${BUILD_VERSION}" alt="" aria-hidden="true">
-        <div><small>RESERVA ARCANA</small><strong>${n(r.mana)} <em>/ ${n(c.mana)}</em></strong><span>Maná almacenado y capacidad máxima de tus Nodos.</span></div>
+        <div><small>RESERVA ARCANA</small><strong><span data-live-resource="mana">${n(r.mana)}</span> <em>/ ${n(c.mana)}</em></strong><span>Maná almacenado y capacidad máxima de tus Nodos.</span></div>
       </div>
       <div class="economy-resource-card">
         <img src="assets/ui/resources/poblacion.png?v=${BUILD_VERSION}" alt="" aria-hidden="true">
-        <div><small>POBLACIÓN</small><strong>${n(r.population)} <em>/ ${n(popCap)}</em></strong><span>Habitantes disponibles. Granjas y Pueblos sostienen su crecimiento.</span></div>
+        <div><small>POBLACIÓN</small><strong><span data-live-resource="population">${n(r.population)}</span> <em>/ ${n(popCap)}</em></strong><span>Habitantes disponibles. Granjas y Pueblos sostienen su crecimiento.</span></div>
       </div>
     </div>
 
@@ -54,7 +54,8 @@ function renderEconomy(){
       </div>
     </section>`;
 
-  $$(".econ-action").forEach(btn=>btn.addEventListener("click",()=>doEconomy(btn.dataset.action,btn)));
+  updatePassiveResourceDisplay();
+  $(".econ-action").forEach(btn=>btn.addEventListener("click",()=>doEconomy(btn.dataset.action,btn)));
   $("#explore-button").addEventListener("click",()=>doExplore($("#explore-button")));
 }
 
