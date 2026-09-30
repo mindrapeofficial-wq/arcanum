@@ -14,14 +14,14 @@ const ARCHMAGE_STAT_KEYS = Object.freeze([
 
 const ARCHMAGE_STAT_META = Object.freeze({
   arcane_power:{label:"Poder Arcano",description:"Potencia personal aplicada a hechizos y efectos arcanos."},
-  knowledge:{label:"Conocimiento",description:"Dominio del saber, investigación y futuros desafíos de exploración."},
+  knowledge:{label:"Conocimiento",description:"Dominio del saber, conocimiento arcano y futuros desafíos de exploración."},
   willpower:{label:"Voluntad",description:"Resistencia frente a presión, corrupción y efectos mágicos."},
   influence:{label:"Influencia",description:"Peso personal en diplomacia, liderazgo y futuras interacciones sociales."}
 });
 
 const ARCHMAGE_IDENTITY_META = Object.freeze({
   arcane_power:{title:"Dominio Arcano",description:"Tu desarrollo se inclina hacia la potencia mágica y el control de fuerzas arcanas."},
-  knowledge:{title:"Mente Erudita",description:"Tu desarrollo se inclina hacia el estudio, la investigación y la comprensión de lo desconocido."},
+  knowledge:{title:"Mente Erudita",description:"Tu desarrollo se inclina hacia el estudio, la conocimiento arcano y la comprensión de lo desconocido."},
   willpower:{title:"Voluntad Inquebrantable",description:"Tu desarrollo se inclina hacia la resistencia mental, la disciplina y el dominio propio."},
   influence:{title:"Voz del Cónclave",description:"Tu desarrollo se inclina hacia el liderazgo, la diplomacia y el peso de tu palabra."},
   hybrid:{title:"Sendero Híbrido",description:"Tus mayores aptitudes están repartidas entre varios caminos arcanos."},
@@ -30,7 +30,7 @@ const ARCHMAGE_IDENTITY_META = Object.freeze({
 
 const ARCHMAGE_XP_RULES = Object.freeze({
   research_spell:Object.freeze({
-    label:"Completar investigación",
+    label:"Completar conocimiento arcano",
     description:"Otorga experiencia una sola vez al aprender un hechizo.",
     repeatable:false
   }),
