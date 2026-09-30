@@ -10,7 +10,44 @@ let directChatSignature="";
 let directChatMode="player";
 const ORACLE_NAME="Astrael";
 const ORACLE_TITLE="Archivista Arcano · IA";
+const ONLINE_PANEL_COLLAPSED_KEY="arcanum_online_panel_collapsed_v1";
 let oracleHistory=[];
+
+function isOnlinePanelCollapsed(){
+  try{return localStorage.getItem(ONLINE_PANEL_COLLAPSED_KEY)==="1";}catch{return false;}
+}
+function setOnlinePanelCollapsed(collapsed){
+  const panel=$("#sidebar-online-panel");
+  const button=$("#sidebar-online-collapse");
+  panel?.classList.toggle("is-collapsed",!!collapsed);
+  if(button){
+    button.setAttribute("aria-expanded",collapsed?"false":"true");
+    button.setAttribute("aria-label",collapsed?"Expandir conectados":"Minimizar conectados");
+    button.title=collapsed?"Expandir conectados":"Minimizar conectados";
+    button.textContent="⌄";
+  }
+  try{localStorage.setItem(ONLINE_PANEL_COLLAPSED_KEY,collapsed?"1":"0");}catch{}
+}
+function ensureOnlinePanelCollapseButton(){
+  const panel=$("#sidebar-online-panel");
+  const head=panel?.querySelector(".sidebar-online-head");
+  if(!panel||!head)return;
+  let button=$("#sidebar-online-collapse");
+  if(!button){
+    button=document.createElement("button");
+    button.id="sidebar-online-collapse";
+    button.type="button";
+    button.className="sidebar-online-collapse-button";
+    button.textContent="⌄";
+    button.addEventListener("click",e=>{
+      e.preventDefault();
+      e.stopPropagation();
+      setOnlinePanelCollapsed(!panel.classList.contains("is-collapsed"));
+    });
+    head.appendChild(button);
+  }
+  setOnlinePanelCollapsed(isOnlinePanelCollapsed());
+}
 
 function sidebarFriendNames(inbox){
   return new Set((inbox?.friends||[]).map(x=>String(x.mage_name||"").toLowerCase()));
@@ -255,6 +292,7 @@ async function refreshSidebarPresence(force=false){
 }
 function startSidebarSocial(){
   stopSidebarSocial(false);
+  ensureOnlinePanelCollapseButton();
   refreshSidebarPresence(true);
   sidebarPresenceTimer=setInterval(()=>refreshSidebarPresence(false),15000);
 }
