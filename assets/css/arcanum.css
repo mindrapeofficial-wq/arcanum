@@ -184,7 +184,7 @@ table .school-dot{width:17px;height:17px;min-width:17px;margin-right:6px}
 
 
 /* Economía · panel visual de recursos y acciones */
-.economy-resource-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:14px}
+.economy-resource-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-bottom:14px}
 .economy-resource-card{position:relative;overflow:hidden;display:grid;grid-template-columns:78px 1fr;gap:14px;align-items:center;min-height:132px;padding:16px;border:1px solid rgba(218,151,57,.16);background:radial-gradient(circle at 14% 40%,rgba(184,111,34,.11),transparent 38%),linear-gradient(180deg,rgba(17,12,8,.86),rgba(6,5,4,.9))}
 .economy-resource-card:after{content:"";position:absolute;inset:7px;border:1px solid rgba(218,151,57,.045);pointer-events:none}
 .economy-resource-card img{width:74px;height:74px;object-fit:contain;filter:drop-shadow(0 8px 14px rgba(0,0,0,.52))}
