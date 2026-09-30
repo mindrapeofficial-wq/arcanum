@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#11140f">
+  <title>FRONTLINE 1944 · Command & Supply</title>
+  <meta name="description" content="Prototipo de gran estrategia para navegador ambientado en el frente occidental de 1944.">
+  <link rel="stylesheet" href="styles.css?v=0.1.0">
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+  <header class="topbar">
+    <div class="brand"><div class="brand-mark">F44</div><div><strong>FRONTLINE 1944</strong><small>COMMAND & SUPPLY · PROTOTIPO 0.1</small></div></div>
+    <div class="clock"><span>CAMPAÑA</span><strong id="campaign-date">12 JUN 1944 · 06:00</strong></div>
+    <div class="top-actions"><button id="reset-game" class="ghost">REINICIAR</button><button id="end-phase" class="primary">FINALIZAR FASE</button></div>
+  </header>
+  <main class="shell">
+    <aside class="left-col">
+      <section class="panel commander">
+        <span class="eyebrow">PUESTO DE MANDO</span><h1>Operación Overlord</h1>
+        <p>Vertical slice estratégico inspirado en Normandía 1944. La meta no es reproducir con exactitud cada orden de batalla, sino probar mando, logística e información incompleta.</p>
+        <div class="side-switch"><button class="side-btn active" data-side="allies">FUERZAS ALIADAS</button><button class="side-btn" data-side="axis">FUERZAS ALEMANAS</button></div>
+      </section>
+      <section class="panel">
+        <div class="panel-title"><span>RECURSOS OPERACIONALES</span><b id="phase-label">FASE 1</b></div>
+        <div class="resources">
+          <div><small>PUNTOS DE MANDO</small><strong id="command-points">8</strong></div>
+          <div><small>SUMINISTROS</small><strong id="supply">420</strong></div>
+          <div><small>COMBUSTIBLE</small><strong id="fuel">260</strong></div>
+          <div><small>REEMPLAZOS</small><strong id="manpower">180</strong></div>
+          <div><small>INTELIGENCIA</small><strong id="intel">35%</strong></div>
+          <div><small>MORAL</small><strong id="morale">72%</strong></div>
+        </div>
+      </section>
+      <section class="panel">
+        <div class="panel-title"><span>FUERZAS BAJO TU MANDO</span><b id="unit-count">0</b></div>
+        <div id="unit-list" class="unit-list"></div>
+      </section>
+    </aside>
+
+    <section class="center-col">
+      <section class="panel map-panel">
+        <div class="map-head"><div><span class="eyebrow">TEATRO DE OPERACIONES</span><h2>Normandía</h2></div>
+          <div class="legend"><span><i class="dot allies"></i>Aliados</span><span><i class="dot axis"></i>Alemania</span><span><i class="dot contested"></i>En disputa</span></div>
+        </div>
+        <div class="map-wrap">
+          <svg id="war-map" viewBox="0 0 900 620" role="img" aria-label="Mapa estratégico simplificado de Normandía">
+            <defs><filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="5" stdDeviation="5" flood-opacity=".35"/></filter>
+            <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M30 0H0V30" fill="none" stroke="rgba(255,255,255,.035)" stroke-width="1"/></pattern></defs>
+            <path class="coast" d="M42 80 C180 20 315 45 402 105 C490 168 565 140 643 126 C746 109 822 155 860 244 L864 570 L80 574 C58 460 52 355 68 260 C83 174 34 129 42 80 Z"/>
+            <rect x="38" y="34" width="830" height="550" fill="url(#grid)" opacity=".7"/>
+            <g id="route-layer"></g><g id="province-layer"></g><g id="unit-layer"></g>
+          </svg>
+        </div>
+        <div class="map-footer"><span>Selecciona una formación y después una provincia adyacente.</span><span>TIEMPO: NUBLADO · SUELO: FIRME</span></div>
+      </section>
+      <section class="panel log-panel"><div class="panel-title"><span>DIARIO DEL CUARTEL GENERAL</span><b>EN VIVO</b></div><div id="battle-log" class="battle-log"></div></section>
+    </section>
+
+    <aside class="right-col">
+      <section class="panel province">
+        <span class="eyebrow">SECTOR SELECCIONADO</span><h2 id="province-name">Saint-Lô</h2>
+        <div class="province-meta"><span id="province-owner">CONTROL: ALIADOS</span><span id="province-terrain">TERRENO: BOCAGE</span></div>
+        <div class="province-stats">
+          <div><small>VALOR LOGÍSTICO</small><strong id="province-logistics">4</strong></div>
+          <div><small>DEFENSA</small><strong id="province-defense">35</strong></div>
+          <div><small>FERROCARRIL</small><strong id="province-rail">OPERATIVO</strong></div>
+          <div><small>VISIBILIDAD</small><strong id="province-visibility">MEDIA</strong></div>
+        </div>
+      </section>
+      <section class="panel order-panel">
+        <div class="panel-title"><span>ÓRDENES</span><b id="selected-unit-label">SIN UNIDAD</b></div>
+        <div id="order-summary" class="order-summary">Selecciona una unidad para emitir órdenes.</div>
+        <div class="order-grid">
+          <button data-order="recon">RECONOCER<small>1 PM</small></button><button data-order="move">MOVER<small>1 PM</small></button>
+          <button data-order="attack">ATACAR<small>2 PM</small></button><button data-order="entrench">ATRINCHERAR<small>1 PM</small></button>
+          <button data-order="resupply">REABASTECER<small>1 PM</small></button><button data-order="cancel">CANCELAR<small>0 PM</small></button>
+        </div>
+      </section>
+      <section class="panel doctrine">
+        <div class="panel-title"><span>DOCTRINA</span><b id="doctrine-name">ARMAS COMBINADAS</b></div>
+        <label>Prioridad<select id="doctrine-select"><option value="combined">Armas combinadas</option><option value="aggressive">Ruptura agresiva</option><option value="cautious">Avance cauteloso</option><option value="defensive">Defensa en profundidad</option></select></label>
+        <p id="doctrine-copy">Bonificación moderada al atacar con apoyo blindado y artillero.</p>
+      </section>
+      <section class="panel intel"><div class="panel-title"><span>INTELIGENCIA</span><b>G-2</b></div><div id="intel-report" class="intel-report">Actividad enemiga moderada alrededor de Caen y Falaise. Las cifras son estimaciones.</div></section>
+    </aside>
+  </main>
+  <script src="data.js?v=0.1.0"></script><script src="app.js?v=0.1.0"></script>
+</body>
+</html>
