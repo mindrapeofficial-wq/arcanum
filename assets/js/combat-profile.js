@@ -384,3 +384,4 @@ globalThis.renderCombatIdentity=renderCombatIdentity;
 globalThis.wireCombatEvolution=wireCombatEvolution;
 globalThis.combatEvolutionOptions=combatEvolutionOptions;
 globalThis.combatHydrateProfile=combatHydrateProfile;
+globalThis.combatCacheProfile=combatCacheProfile;
