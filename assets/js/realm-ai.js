@@ -226,7 +226,7 @@ function realmAiApplyImage(src){
   if(!img||!src)return false;
   img.src=src;
   img.classList.add("realm-ai-image");
-  img.alt="Escena dinámica del Archimago y su reino generada por IA";
+  img.alt="Escena dinámica del Arconte y su dominio generada por IA";
   img.removeAttribute("aria-hidden");
   return true;
 }
