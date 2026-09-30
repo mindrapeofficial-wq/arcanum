@@ -1,6 +1,6 @@
 {
-  "version": "0.2.49",
+  "version": "0.2.50",
   "channel": "beta",
-  "updated_at": "2026-09-30T10:40:00+02:00",
-  "note": "World Boss shared HP, server attacks and global damage ranking"
+  "updated_at": "2026-09-30T10:58:00+02:00",
+  "note": "Fix playable Tavern script loading and corrupted literal newlines"
 }
