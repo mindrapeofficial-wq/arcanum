@@ -2,11 +2,11 @@
 
 const ARENA_DAILY_SEALS=6;
 const ARENA_TRAITS={
-  verdant:{name:"Verdante",mark:"♧",skill:"Savia Ancestral"},
-  ascendant:{name:"Ascendente",mark:"✦",skill:"Égida Solar"},
-  eradication:{name:"Erradicación",mark:"✹",skill:"Ruptura Ígnea"},
-  abyssal:{name:"Abisal",mark:"◆",skill:"Pacto Sombrío"},
-  phantasm:{name:"Fantasma",mark:"◌",skill:"Paso Irreal"}
+  verdant:{name:"Viridia",mark:"♧",skill:"Savia Ancestral"},
+  ascendant:{name:"Aurea",mark:"✦",skill:"Égida Solar"},
+  eradication:{name:"Cineria",mark:"✹",skill:"Ruptura Ígnea"},
+  abyssal:{name:"Nadir",mark:"◆",skill:"Pacto Sombrío"},
+  phantasm:{name:"Oneiria",mark:"◌",skill:"Paso Irreal"}
 };
 
 function arenaTrait(code){return ARENA_TRAITS[code]||ARENA_TRAITS.ascendant}
