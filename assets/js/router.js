@@ -1,5 +1,36 @@
 "use strict";
 
+const VIEW_RENDERERS={
+  market:{name:"renderMarket",src:"assets/js/market.js?v=0.2.52-hotfix1"},
+  artifacts:{name:"renderArtifactLibrary",src:"assets/js/artifacts.js?v=0.2.52-hotfix1"}
+};
+
+async function ensureViewRenderer(view){
+  const feature=VIEW_RENDERERS[view];
+  if(!feature)return;
+  if(typeof globalThis[feature.name]==="function")return;
+
+  const existing=[...document.scripts].find(s=>s.src&&s.src.includes(feature.src.split("?")[0]));
+  if(existing){
+    await new Promise(resolve=>setTimeout(resolve,0));
+    if(typeof globalThis[feature.name]==="function")return;
+  }
+
+  await new Promise((resolve,reject)=>{
+    const script=document.createElement("script");
+    script.src=feature.src+"&retry="+Date.now();
+    script.defer=false;
+    script.async=false;
+    script.onload=resolve;
+    script.onerror=()=>reject(new Error("No se pudo cargar el módulo "+feature.name));
+    document.head.appendChild(script);
+  });
+
+  if(typeof globalThis[feature.name]!=="function"){
+    throw new Error("No se pudo iniciar "+feature.name);
+  }
+}
+
 function stopCommunityPolling(){ clearInterval(communityPollTimer); communityPollTimer=null; communityBusy=false; }
 function startCommunityPolling(){
   stopCommunityPolling();
@@ -17,6 +48,7 @@ async function navigate(view){
 async function renderView(view){
   const host=$("#view-host"); host.innerHTML=`<div class="skeleton" style="width:180px;height:9px;margin-bottom:10px"></div><div class="skeleton" style="width:55%;height:34px;margin-bottom:22px"></div><div class="panel"><div class="skeleton"></div></div>`;
   try{
+    await ensureViewRenderer(view);
     if(view==="realm"){
       renderRealm();
       host.querySelector(".view-header")?.remove();
