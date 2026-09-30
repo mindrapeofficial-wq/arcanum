@@ -190,6 +190,16 @@ function combatDerived(profile){
   if(w.id==="thorn_sickle")weaponPoison+=.06;
   if(w.id==="arcane_tome")armor+=2.4;
   if(abilityIds.has("weapon_master"))attack=Math.round(attack*1.10);
+  const gear=(typeof lootCombatBonuses==="function"?lootCombatBonuses(profile):null)||{};
+  maxHp+=Math.round(Number(gear.maxHp)||0);
+  attack+=Math.round(Number(gear.attack)||0);
+  armor+=Math.round(Number(gear.armor)||0);
+  speed+=Number(gear.speed)||0;
+  crit+=Number(gear.crit)||0;
+  dodge+=Number(gear.dodge)||0;
+  block+=Number(gear.block)||0;
+  regen+=Number(gear.regen)||0;
+  accuracy+=Number(gear.accuracy)||0;
   return {
     maxHp,
     attack,
@@ -202,10 +212,12 @@ function combatDerived(profile){
     lifesteal:Math.min(.30,lifesteal),
     secondWind:t.secondWind,
     accuracy,
-    fortune:t.fortune,
+    fortune:t.fortune+(Number(gear.fortune)||0),
     doubleStrike,
     weaponPoison,
-    firstStrike
+    firstStrike,
+    equipmentPower:Number(gear.equipmentPower)||0,
+    equipmentMana:Number(gear.mana)||0
   };
 }
 
@@ -331,7 +343,7 @@ function renderCombatIdentity(profile){
   return '<section class="combat-identity"><div class="profile-section-title"><span>IDENTIDAD DE COMBATE</span><small>semilla permanente #'+c.seed+'</small></div>'+
     '<div class="combat-summary"><div class="combat-weapon"><small>ARMA EQUIPADA</small><strong>'+esc(c.weapon.name)+'</strong><span>'+esc(c.weapon.type)+' · '+c.weapon.min+'–'+c.weapon.max+' daño · '+esc(c.weapon.effect)+'</span></div><div class="combat-trait"><small>RASGOS</small><div class="combat-trait-list">'+traitText+'</div></div></div>'+
     '<div class="combat-stats">'+stats+'</div>'+
-    '<div class="combat-derived"><span>❤ '+n(d.maxHp)+'</span><span>⚔ '+n(d.attack)+'</span><span>◆ '+n(d.armor)+'</span><span>⌁ '+d.speed.toFixed(1)+'</span><span>✦ '+Math.round(d.crit*100)+'% crítico</span><span>◌ '+Math.round(d.dodge*100)+'% esquiva</span></div>'+
+    '<div class="combat-derived"><span>❤ '+n(d.maxHp)+'</span><span>⚔ '+n(d.attack)+'</span><span>◆ '+n(d.armor)+'</span><span>⌁ '+d.speed.toFixed(1)+'</span><span>✦ '+Math.round(d.crit*100)+'% crítico</span><span>◌ '+Math.round(d.dodge*100)+'% esquiva</span>'+(d.equipmentPower?'<span class="combat-gear-power">⬡ '+n(d.equipmentPower)+' poder de equipo</span>':'')+'</div>'+
     '<div class="profile-section-title combat-abilities-title"><span>HABILIDADES</span><small>activación automática en combate</small></div><div class="combat-abilities">'+abilities+'</div>'+
     renderCombatEvolution(profile)+'</section>';
 }
