@@ -5,31 +5,31 @@ function manualNextStep(){
   const turns=Number(r.turns||0), wilderness=Number(r.wilderness||0), barracks=Number(b.barracks||0), guilds=Number(b.guilds||0);
   if(turns<=0) return {title:"Deja que el tiempo trabaje",text:"No tienes turnos disponibles. Cuando se regenere el siguiente, podrás volver a expandirte, producir o investigar."};
   if(wilderness>=80) return {title:"Convierte terreno salvaje en poder",text:`Tienes ${n(wilderness)} acres sin construir. Invierte parte en Pueblos, Granjas, Nodos y los edificios que necesite tu estrategia.`};
-  if(guilds<5) return {title:"Refuerza tu investigación",text:"Construye algunos Gremios. Son la base para generar investigación y ampliar tu grimorio."};
+  if(guilds<5) return {title:"Refuerza tu conocimiento arcano",text:"Construye algunos Gremios. Son la base para generar conocimiento arcano y ampliar tu grimorio."};
   if(barracks<1) return {title:"Prepara un ejército",text:"Aún no tienes Cuarteles. Construye al menos uno para comenzar a reclutar unidades."};
-  if(turns>=20 && Number(r.land||0)<3500) return {title:"Explora nuevas tierras",text:`Tienes ${n(turns)} turnos disponibles. Explorar puede darte nuevos acres para seguir desarrollando el reino.`};
-  return {title:"Equilibra crecimiento y defensa",text:"Revisa Economía, Investigación y Ejército. Intenta no acumular recursos sin convertirlos en crecimiento, magia o capacidad militar."};
+  if(turns>=20 && Number(r.land||0)<3500) return {title:"Explora nuevas tierras",text:`Tienes ${n(turns)} turnos disponibles. Explorar puede darte nuevos acres para seguir desarrollando el dominio.`};
+  return {title:"Equilibra crecimiento y defensa",text:"Revisa Economía, Conocimiento Arcano y Ejército. Intenta no acumular recursos sin convertirlos en crecimiento, magia o capacidad militar."};
 }
 function openManual(){
   const tip=manualNextStep();
   $("#modal-content").innerHTML=`
     <span class="section-kicker">GRIMORIO DEL APRENDIZ</span>
     <h3>Manual básico de ARCANUM</h3>
-    <p class="manual-intro">Una guía rápida para entender el reino sin tener que estudiar un tomo de ochocientas páginas antes de tu primer turno.</p>
+    <p class="manual-intro">Una guía rápida para entender el dominio sin tener que estudiar un tomo de ochocientas páginas antes de tu primer turno.</p>
     <div class="manual-now"><small>¿QUÉ HAGO AHORA?</small><strong>${esc(tip.title)}</strong><p>${esc(tip.text)}</p></div>
     <div class="manual-grid">
-      <details class="manual-section" open><summary>Objetivo y Poder Neto</summary><p>Haz crecer tu reino, desarrolla tu Escuela, forma un ejército y compite con otros Archimagos. El <b>Poder Neto</b> resume la fuerza global de tu dominio y sirve para compararte en la clasificación.</p></details>
+      <details class="manual-section" open><summary>Objetivo y Ascendencia</summary><p>Haz crecer tu dominio, desarrolla tu Escuela, forma un ejército y compite con otros Arcontes. El <b>Ascendencia</b> resume la fuerza global de tu dominio y sirve para compararte en la clasificación.</p></details>
       <details class="manual-section"><summary>Turnos</summary><p>Los turnos son el motor del juego. Se regeneran automáticamente y se gastan al explorar, producir, construir, investigar, reclutar y realizar otras acciones.</p></details>
-      <details class="manual-section"><summary>Recursos</summary><ul><li><b>Oro:</b> sostiene la economía, edificios y tropas.</li><li><b>Maná:</b> alimenta la magia y las invocaciones.</li><li><b>Población:</b> mantiene la actividad del reino y parte de su fuerza militar.</li><li><b>Tierras:</b> determinan cuánto puedes desarrollar.</li></ul></details>
-      <details class="manual-section"><summary>Exploración</summary><p>Convierte turnos en nuevas tierras. El rendimiento disminuye conforme tu reino se aproxima a <b>3.500 acres</b>, por lo que más adelante la expansión dependerá cada vez más de otras vías.</p></details>
-      <details class="manual-section"><summary>Construcción</summary><p>Convierte terreno salvaje en infraestructura.</p><ul><li><b>Granjas:</b> alimentos y población.</li><li><b>Pueblos:</b> población y oro.</li><li><b>Nodos:</b> producción y capacidad de maná.</li><li><b>Talleres:</b> mejoran la construcción.</li><li><b>Gremios:</b> generan investigación.</li><li><b>Cuarteles:</b> permiten reclutar.</li><li><b>Fortalezas y Barreras:</b> defensa del reino.</li></ul></details>
-      <details class="manual-section"><summary>Magia e Investigación</summary><p>Tu Escuela marca tus afinidades. Los Gremios generan investigación y permiten descubrir nuevos hechizos. Algunas magias serán más accesibles para tu Escuela que otras.</p></details>
+      <details class="manual-section"><summary>Recursos</summary><ul><li><b>Oro:</b> sostiene la economía, edificios y tropas.</li><li><b>Maná:</b> alimenta la magia y las invocaciones.</li><li><b>Población:</b> mantiene la actividad del dominio y parte de su fuerza militar.</li><li><b>Tierras:</b> determinan cuánto puedes desarrollar.</li></ul></details>
+      <details class="manual-section"><summary>Exploración</summary><p>Convierte turnos en nuevas tierras. El rendimiento disminuye conforme tu dominio se aproxima a <b>3.500 acres</b>, por lo que más adelante la expansión dependerá cada vez más de otras vías.</p></details>
+      <details class="manual-section"><summary>Construcción</summary><p>Convierte terreno salvaje en infraestructura.</p><ul><li><b>Granjas:</b> alimentos y población.</li><li><b>Pueblos:</b> población y oro.</li><li><b>Nodos:</b> producción y capacidad de maná.</li><li><b>Talleres:</b> mejoran la construcción.</li><li><b>Gremios:</b> generan conocimiento arcano.</li><li><b>Cuarteles:</b> permiten reclutar.</li><li><b>Fortalezas y Barreras:</b> defensa del dominio.</li></ul></details>
+      <details class="manual-section"><summary>Magia e Conocimiento Arcano</summary><p>Tu Escuela marca tus afinidades. Los Gremios generan conocimiento arcano y permiten descubrir nuevos hechizos. Algunas magias serán más accesibles para tu Escuela que otras.</p></details>
       <details class="manual-section"><summary>Ejército</summary><p>Los Cuarteles permiten reclutar unidades. También existen criaturas obtenidas mediante hechizos de invocación. Mantener un ejército cuesta recursos, así que tamaño y economía deben crecer juntos.</p></details>
-      <details class="manual-section"><summary>Guerra</summary><p>Los ataques consumen turnos y pueden causar bajas y cambios territoriales. Antes de combatir, asegúrate de poder mantener el gasto de guerra y de no dejar tu reino indefenso.</p></details>
+      <details class="manual-section"><summary>Guerra</summary><p>Los ataques consumen turnos y pueden causar bajas y cambios territoriales. Antes de combatir, asegúrate de poder mantener el gasto de guerra y de no dejar tu dominio indefenso.</p></details>
       <details class="manual-section"><summary>Mercado</summary><p>El Mercado permite publicar contratos de intercambio de <b>oro, maná y población</b>. El Mercado de Reliquias usa trueque directo de artefacto por artefacto y ejecuta ambos cambios en una sola operación.</p></details>\n      <details class="manual-section"><summary>Artefactos</summary><p>Las reliquias pueden aparecer al explorar, caer del Boss mundial, llegar como botín PvP o cambiar de manos mediante trueques. Los <b>Únicos Mundiales</b> sólo tienen un custodio activo y pueden ser capturados excepcionalmente durante un Asedio victorioso.</p></details>
-      <details class="manual-section"><summary>Comunidad</summary><p>El <b>Chat global</b> conecta a los Archimagos casi en tiempo real. El <b>Tablón</b> sirve para anuncios de diplomacia, reclutamiento, comercio, guerra y asuntos generales. Puedes borrar tus propios mensajes y anuncios.</p></details>
+      <details class="manual-section"><summary>Comunidad</summary><p>El <b>Chat global</b> conecta a los Arcontes casi en tiempo real. El <b>Tablón</b> sirve para anuncios de diplomacia, reclutamiento, comercio, guerra y asuntos generales. Puedes borrar tus propios mensajes y anuncios.</p></details>
     </div>
-    <div class="manual-steps"><b>Primeros pasos:</b> explora algunas tierras → construye una economía básica → levanta Gremios → investiga magia → crea Cuarteles y ejército → empieza a competir con otros reinos.</div>
+    <div class="manual-steps"><b>Primeros pasos:</b> explora algunas tierras → construye una economía básica → levanta Gremios → investiga magia → crea Cuarteles y ejército → empieza a competir con otros dominios.</div>
     <div class="manual-tutorial-cta"><div><small>TUTORIAL INTERACTIVO</small><strong>Recorre el juego paso a paso</strong><p>ARCANUM cambiará de sección y señalará cada sistema directamente sobre la interfaz.</p></div><button class="primary-action" id="manual-start-tutorial" type="button">✦ INICIAR TUTORIAL</button></div>`;
   $("#manual-start-tutorial")?.addEventListener("click",()=>startTutorial(true));
   show($("#modal"));
@@ -75,7 +75,7 @@ function wireStaticEvents(){
   });
   $("#create-form").addEventListener("submit",async e=>{
     e.preventDefault(); clearNotice($("#create-notice")); const username=String(getSession()?.user?.user_metadata?.username||"").trim(); if(!username){setNotice($("#create-notice"),"No se ha podido recuperar tu nombre de usuario. Vuelve a iniciar sesión.");return;} if(!selectedSchool){setNotice($("#create-notice"),"Elige una de las Cinco Escuelas.");return;} const btn=$("#create-button"); btn.disabled=true;
-    try{await rpc("create_archmage",{p_display_name:username,p_mage_name:username,p_school_code:selectedSchool}); toast("Tu reino ha sido fundado."); realmState=await rpc("my_realm_state"); showGame(); setTimeout(()=>startTutorial(false),450);}
+    try{await rpc("create_archmage",{p_display_name:username,p_mage_name:username,p_school_code:selectedSchool}); toast("Tu dominio ha sido fundado."); realmState=await rpc("my_realm_state"); showGame(); setTimeout(()=>startTutorial(false),450);}
     catch(err){setNotice($("#create-notice"),humanError(err));} finally{btn.disabled=false;}
   });
   $("#creation-logout").addEventListener("click",signOut); $("#logout-button").addEventListener("click",signOut); $("#refresh-button").addEventListener("click",()=>refreshState(false));
