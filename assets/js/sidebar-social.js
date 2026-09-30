@@ -9,6 +9,9 @@ let directChatName="";
 let directChatSignature="";
 let directChatMode="player";
 const ORACLE_NAME="Astrael";
+const ASTRAEL_PLAYER_API="https://smynvbrkgffpepbhrpxt.supabase.co/functions/v1/astrael-player";
+let astraelPlayerTimer=null;
+let astraelPlayerBusy=false;
 const ORACLE_TITLE="Arconte IA · Consejero";
 const ONLINE_PANEL_COLLAPSED_KEY="arcanum_online_panel_collapsed_v1";
 let oracleHistory=[];
@@ -311,16 +314,59 @@ async function refreshSidebarPresence(force=false){
     if(!arcaneInboxState.requests.length&&!arcaneInboxState.conversations.length)refreshArcaneInbox();
   }finally{sidebarPresenceBusy=false;}
 }
+function isAstraelPlayerSession(){
+  return String(realmState?.realm?.mage_name||"").trim().toLowerCase()==="astrael";
+}
+async function runAstraelPlayerTick(dryRun=false){
+  if(!isAstraelPlayerSession()||astraelPlayerBusy)return;
+  const session=getSession();
+  if(!session?.access_token)return;
+  astraelPlayerBusy=true;
+  try{
+    const res=await fetch(ASTRAEL_PLAYER_API,{
+      method:"POST",
+      headers:{Authorization:`Bearer ${session.access_token}`,"Content-Type":"application/json"},
+      body:JSON.stringify({dry_run:!!dryRun}),
+      cache:"no-store"
+    });
+    const data=await res.json().catch(()=>({}));
+    if(!res.ok)throw new Error(data?.error||"ASTRAEL_PLAYER_FAILED");
+    if(!dryRun){
+      realmState=await rpc("my_realm_state");
+      if(typeof renderChrome==="function")renderChrome();
+      if(typeof renderView==="function"&&typeof currentView!=="undefined")await renderView(currentView);
+    }
+  }catch(e){
+    console.warn("Astrael autonomous tick failed",e);
+  }finally{
+    astraelPlayerBusy=false;
+  }
+}
+function startAstraelAutoplay(){
+  clearInterval(astraelPlayerTimer);
+  astraelPlayerTimer=null;
+  if(!isAstraelPlayerSession())return;
+  runAstraelPlayerTick(true);
+  astraelPlayerTimer=setInterval(()=>runAstraelPlayerTick(false),5*60*1000);
+}
+function stopAstraelAutoplay(){
+  clearInterval(astraelPlayerTimer);
+  astraelPlayerTimer=null;
+  astraelPlayerBusy=false;
+}
+
 function startSidebarSocial(){
   stopSidebarSocial(false);
   ensureOnlinePanelCollapseButton();
   warmOracleCapabilities();
+  startAstraelAutoplay();
   refreshSidebarPresence(true);
   sidebarPresenceTimer=setInterval(()=>refreshSidebarPresence(false),15000);
 }
 function stopSidebarSocial(closeChat=true){
   clearInterval(sidebarPresenceTimer);
   sidebarPresenceTimer=null;
+  stopAstraelAutoplay();
   closeArcaneInbox();
   if(closeChat)closeDirectChatWindow();
 }
