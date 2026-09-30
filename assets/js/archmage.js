@@ -19,6 +19,25 @@ const ARCHMAGE_STAT_META = Object.freeze({
   influence:{label:"Influencia",description:"Peso personal en diplomacia, liderazgo y futuras interacciones sociales."}
 });
 
+const ARCHMAGE_IDENTITY_META = Object.freeze({
+  arcane_power:{title:"Dominio Arcano",description:"Tu desarrollo se inclina hacia la potencia mágica y el control de fuerzas arcanas."},
+  knowledge:{title:"Mente Erudita",description:"Tu desarrollo se inclina hacia el estudio, la investigación y la comprensión de lo desconocido."},
+  willpower:{title:"Voluntad Inquebrantable",description:"Tu desarrollo se inclina hacia la resistencia mental, la disciplina y el dominio propio."},
+  influence:{title:"Voz del Cónclave",description:"Tu desarrollo se inclina hacia el liderazgo, la diplomacia y el peso de tu palabra."},
+  hybrid:{title:"Sendero Híbrido",description:"Tus mayores aptitudes están repartidas entre varios caminos arcanos."},
+  balanced:{title:"Equilibrio Arcano",description:"Tus cuatro aptitudes avanzan en equilibrio, sin que ninguna domine todavía."}
+});
+
+function archmageIdentityFromProgression(progression){
+  if(!progression?.stats)return null;
+  const values=ARCHMAGE_STAT_KEYS.map(key=>[key,Number(progression.stats[key])||0]);
+  const max=Math.max(...values.map(([,value])=>value));
+  const leaders=values.filter(([,value])=>value===max).map(([key])=>key);
+  const key=leaders.length===ARCHMAGE_STAT_KEYS.length?"balanced":leaders.length>1?"hybrid":leaders[0];
+  const meta=ARCHMAGE_IDENTITY_META[key];
+  return Object.freeze({key,title:meta.title,description:meta.description,leaders:Object.freeze(leaders)});
+}
+
 function archmageXpForNextLevel(level){
   const current=Math.max(1,Math.min(ARCHMAGE_LEVEL_CAP,Math.floor(Number(level)||1)));
   if(current>=ARCHMAGE_LEVEL_CAP)return 0;
