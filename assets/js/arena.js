@@ -215,22 +215,21 @@ function arenaOpen(rec){
 }
 
 async function renderArena(){
-  const selfProfile=await rpc("player_profile",{p_mage_name:realmState.realm.mage_name});
-  if(typeof combatHydrateProfile==="function")await combatHydrateProfile(selfProfile);
-  if(typeof lootHydrateProfile==="function")await lootHydrateProfile(selfProfile);
-
-  const [arenaData,rows]=await Promise.all([
+  const [snapshot,arenaData,rows]=await Promise.all([
+    typeof loadArchmageSnapshot==="function"
+      ?loadArchmageSnapshot(realmState.realm.mage_name,{force:true})
+      :rpc("player_profile",{p_mage_name:realmState.realm.mage_name}).then(profile=>({profile})),
     stateApi("/arena"),
     rpc("leaderboard",{p_limit:100}).catch(()=>[])
   ]);
-
-  const data=arenaData?.arena||{rating:1000,wins:0,losses:0,seals_remaining:0};
+  const selfProfile=snapshot.profile;
+  const data=arenaData?.arena||snapshot?.arena||{rating:1000,wins:0,losses:0,seals_remaining:0};
   const history=(arenaData?.history||[]).map(arenaHistoryRecord);
   const targets=arenaTargets(rows);
   const combat=typeof getCombatProfile==="function"?getCombatProfile(selfProfile):null;
-  const gear=typeof lootCombatBonuses==="function"?lootCombatBonuses(selfProfile):{};
+  const gear=typeof lootCombatBonuses==="function"?lootCombatBonuses(selfProfile):{equipmentPower:Number(snapshot?.inventory?.equipment_power||0)};
   const trait=arenaTrait(selfProfile.school_code);
-  const level=typeof combatCurrentLevel==="function"?combatCurrentLevel(selfProfile):Math.max(1,Number(selfProfile.archmage_level||1));
+  const level=Number(snapshot?.identity?.level||(typeof combatCurrentLevel==="function"?combatCurrentLevel(selfProfile):Math.max(1,Number(selfProfile.archmage_level||1))));
 
   $("#view-host").innerHTML=
     viewHeader("DUELISTAS","Arena Arcana","PvP individual automático. El resultado, los Sellos y el rating se resuelven en el servidor.")+
