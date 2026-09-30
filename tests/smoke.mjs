@@ -158,3 +158,11 @@ test("relic equipment uses canonical item lifecycle",()=>{
   assert.match(artifacts,/equipCanonicalItem\("relic",id\)/);
   assert.match(artifacts,/unequipCanonicalSlot\("relic"\)/);
 });
+
+
+test("inventory v1 migration remains supported",()=>{
+  const inventory=read("assets/js/inventory.js");
+  assert.match(inventory,/arcanum_inventory_v1_/);
+  assert.match(inventory,/item\.slot==="artifact"\?"focus":item\.slot/);
+  assert.match(inventory,/old\.artifact&&!state\.equipment\.focus/);
+});
