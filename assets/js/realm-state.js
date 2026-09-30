@@ -6,7 +6,7 @@ const PASSIVE_RESOURCE_FIELDS={
   mana:{label:"Maná",aliases:["mana"]},
   population:{label:"Población",aliases:["population","poblacion","population_gain"]},
   land:{label:"Tierras",aliases:["land","tierras"]},
-  net_power:{label:"Poder Neto",aliases:["net_power","poder_neto","power"]}
+  net_power:{label:"Ascendencia",aliases:["net_power","poder_neto","power"]}
 };
 let passiveResourceFlow=null;
 
@@ -31,7 +31,7 @@ function researchResourceInfo(state=realmState){
   const hasStored=Object.prototype.hasOwnProperty.call(r,"research_points")&&Number.isFinite(Number(r.research_points));
   if(hasStored){
     const value=Math.max(0,Number(r.research_points)||0);
-    return {stored:true,value,label:"Investigación",text:n(value),title:`Puntos de investigación almacenados: ${n(value)} RP.`};
+    return {stored:true,value,label:"Conocimiento Arcano",text:n(value),title:`Puntos de conocimiento arcano almacenados: ${n(value)} RP.`};
   }
   const ppt=researchPointsPerTurn(state);
   const current=state?.research||{};
@@ -39,7 +39,7 @@ function researchResourceInfo(state=realmState){
     ?Math.max(0,Number(current.effective_cost)-Number(current.remaining_points))
     :null;
   const progressText=progress===null?"":` · progreso actual ${n(progress)} RP`;
-  return {stored:false,value:ppt,label:"Investigación",text:`${n(ppt)} RP/t`,title:`Producción de investigación: ${n(ppt)} RP por turno${progressText}. Los RP se aplican directamente al hechizo investigado.`};
+  return {stored:false,value:ppt,label:"Conocimiento Arcano",text:`${n(ppt)} RP/t`,title:`Producción de conocimiento arcano: ${n(ppt)} RP por turno${progressText}. Los RP se aplican directamente al hechizo investigado.`};
 }
 
 function passivePowerYield(state=realmState){
@@ -242,10 +242,10 @@ function renderResourceStrip(){
     <div class="resource-item has-icon resource-gold"><img class="resource-icon" src="assets/ui/resources/oro.png?v=0.2.35" alt="" aria-hidden="true" decoding="async" /><span class="resource-copy"><small>Oro</small><strong data-live-resource="gold">${n(r.gold)}</strong></span></div>
     <div class="resource-item has-icon resource-mana"><img class="resource-icon" src="assets/ui/resources/mana.png?v=0.2.35" alt="" aria-hidden="true" decoding="async" /><span class="resource-copy"><small>Maná</small><strong data-live-resource="mana">${n(r.mana)}</strong></span></div>
     <div class="resource-item has-icon resource-food" title="${esc(food.title)}"><img class="resource-icon" src="assets/ui/resources/poblacion.png?v=${BUILD_VERSION}" alt="" aria-hidden="true" decoding="async" /><span class="resource-copy"><small>Alimento</small><strong>${food.text}</strong></span></div>
-    <div class="resource-item has-icon resource-research" title="${esc(research.title)}"><img class="resource-icon" src="assets/ui/nav/investigacion.png?v=${BUILD_VERSION}" alt="" aria-hidden="true" decoding="async" /><span class="resource-copy"><small>Investigación</small><strong>${research.text}</strong></span></div>
+    <div class="resource-item has-icon resource-research" title="${esc(research.title)}"><img class="resource-icon" src="assets/ui/nav/investigacion.png?v=${BUILD_VERSION}" alt="" aria-hidden="true" decoding="async" /><span class="resource-copy"><small>Conocimiento Arcano</small><strong>${research.text}</strong></span></div>
     <div class="resource-item has-icon resource-population"><img class="resource-icon" src="assets/ui/resources/poblacion.png?v=0.2.35" alt="" aria-hidden="true" decoding="async" /><span class="resource-copy"><small>Población</small><strong data-live-resource="population">${n(r.population)}</strong></span></div>
     <div class="resource-item has-icon resource-land"><img class="resource-icon" src="assets/ui/resources/tierras.png?v=0.2.35" alt="" aria-hidden="true" decoding="async" /><span class="resource-copy"><small>Tierras</small><strong data-live-resource="land">${n(r.land)}</strong></span></div>
-    <div class="resource-item has-icon resource-power"><img class="resource-icon" src="assets/ui/resources/poder-neto.png?v=0.2.35" alt="" aria-hidden="true" decoding="async" /><span class="resource-copy"><small>Poder Neto</small><strong data-live-resource="net_power">${n(r.net_power)}</strong></span></div>`;
+    <div class="resource-item has-icon resource-power"><img class="resource-icon" src="assets/ui/resources/poder-neto.png?v=0.2.35" alt="" aria-hidden="true" decoding="async" /><span class="resource-copy"><small>Ascendencia</small><strong data-live-resource="net_power">${n(r.net_power)}</strong></span></div>`;
   updatePassiveResourceDisplay();
 }
 function updateTurnCountdown(){
@@ -257,6 +257,6 @@ function updateTurnCountdown(){
   const s=Math.ceil(d/1000); el.textContent=`${String(Math.floor(s/60)).padStart(2,"0")}:${String(s%60).padStart(2,"0")}`;
 }
 async function refreshState(quiet=false){
-  try{ realmState=await rpc("my_realm_state"); renderChrome(); if(["realm","economy","build","research","army"].includes(currentView)) await renderView(currentView); if(!quiet)toast("Reino actualizado."); }
+  try{ realmState=await rpc("my_realm_state"); renderChrome(); if(["realm","economy","build","research","army"].includes(currentView)) await renderView(currentView); if(!quiet)toast("Dominio actualizado."); }
   catch(e){ if(!quiet)toast(humanError(e),"error"); }
 }
