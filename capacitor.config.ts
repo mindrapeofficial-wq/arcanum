@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.arcanum.cincoescuelas',
+  appId: 'com.arcanum',
   appName: 'ARCANUM: Las Cinco Escuelas',
   webDir: 'www',
   server: {
