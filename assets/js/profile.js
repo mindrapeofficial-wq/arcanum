@@ -69,6 +69,20 @@ function friendshipActions(profile){
   if(f.status==="pending")return '<button class="profile-action secondary" data-profile-friend-remove="'+esc(profile.mage_name)+'">SOLICITUD ENVIADA</button>';
   return '<button class="profile-action" data-profile-friend-add="'+esc(profile.mage_name)+'">＋ AGREGAR AMIGO</button>';
 }
+function renderArchmageXpGuide(){
+  const researchMin=archmageResearchXp("simple"),researchMax=archmageResearchXp("ultimate");
+  return '<div class="archmage-xp-guide">'+
+    '<div class="profile-section-title"><span>FUENTES DE EXPERIENCIA</span><small>progresión protegida contra farmeo</small></div>'+
+    '<div class="archmage-xp-sources">'+
+      '<div><strong>Investigación</strong><span>'+n(researchMin)+'–'+n(researchMax)+' XP</span><small>Solo al aprender un hechizo nuevo.</small></div>'+
+      '<div><strong>Descubrimiento PvE</strong><span>'+n(ARCHMAGE_XP_RULES.pve_first_clear.xp)+' XP</span><small>Primera victoria de una expedición.</small></div>'+
+      '<div><strong>Jefes PvE</strong><span>'+n(ARCHMAGE_XP_RULES.pve_boss.xp)+' XP</span><small>Primera derrota de cada jefe.</small></div>'+
+      '<div><strong>PvP cualificado</strong><span>'+n(ARCHMAGE_XP_RULES.pvp_qualified.xp)+' + '+n(ARCHMAGE_XP_RULES.pvp_qualified.victoryBonus)+' XP</span><small>Combate válido + bonus por victoria.</small></div>'+
+    '</div>'+
+    '<p class="archmage-xp-rule-note">Construcción, economía y exploración territorial repetitiva no otorgarán XP. Las acciones repetibles tendrán límites diarios y controles contra rivales repetidos.</p>'+
+  '</div>';
+}
+
 function renderArchmageProgression(profile){
   const progression=archmageProgressionFromProfile(profile);
   if(!progression)return "";
@@ -86,7 +100,9 @@ function renderArchmageProgression(profile){
   return '<section class="archmage-progression"><div class="profile-section-title"><span>PROGRESIÓN DEL ARCHIMAGO</span><small>'+pointsLabel+'</small></div>'+
     '<div class="archmage-level-row"><div><small>NIVEL</small><strong>'+n(progression.level)+'</strong></div><div class="archmage-xp"><div><span>EXPERIENCIA</span><b>'+xpText+'</b></div><div class="archmage-xp-track"><i style="width:'+pct+'%"></i></div></div></div>'+
     (identity?'<div class="archmage-identity-card" data-archmage-identity="'+esc(identity.key)+'"><small>PERFIL ARCANO</small><strong>'+esc(identity.title)+'</strong><span>'+esc(identity.description)+'</span><em>Identidad narrativa · sin bonificación mecánica por ahora.</em></div>':"")+
-    '<div class="archmage-attributes">'+stats+'</div></section>';
+    '<div class="archmage-attributes">'+stats+'</div>'+
+    renderArchmageXpGuide()+
+    '</section>';
 }
 
 function renderPlayerProfile(profile,inbox=null){
