@@ -411,3 +411,13 @@ table .school-dot{width:17px;height:17px;min-width:17px;margin-right:6px}
 .oracle-message{border-color:rgba(218,151,57,.18)!important;background:linear-gradient(135deg,rgba(126,76,23,.11),rgba(255,255,255,.012))!important}
 .oracle-message p{color:#d9c3a0!important}
 .oracle-thinking{opacity:.72;font-style:italic}
+
+.archmage-xp-guide{margin-top:15px;padding-top:14px;border-top:1px solid rgba(218,151,57,.12)}
+.archmage-xp-sources{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.archmage-xp-sources>div{padding:10px;border:1px solid rgba(218,151,57,.1);background:rgba(0,0,0,.16)}
+.archmage-xp-sources strong,.archmage-xp-sources span,.archmage-xp-sources small{display:block}
+.archmage-xp-sources strong{color:#cdb184;font:800 8px Arial,sans-serif;letter-spacing:.04em}
+.archmage-xp-sources span{margin:5px 0;color:#efd29d;font-size:14px}
+.archmage-xp-sources small{color:#6f6354;font:8px/1.4 Arial,sans-serif}
+.archmage-xp-rule-note{margin:9px 0 0;color:#675b4d;font:8.5px/1.5 Arial,sans-serif}
+@media(max-width:820px){.archmage-xp-sources{grid-template-columns:1fr 1fr}}
