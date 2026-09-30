@@ -10,6 +10,10 @@ const ARENA_TRAITS={
 };
 
 function arenaTrait(code){return ARENA_TRAITS[code]||ARENA_TRAITS.ascendant}
+const ARENA_SPRITE_FILES={verdant:"assets/ui/arena/verdant.b64",ascendant:"assets/ui/arena/ascendant.b64",eradication:"assets/ui/arena/eradication.b64",abyssal:"assets/ui/arena/abyssal.b64",phantasm:"assets/ui/arena/phantasm.b64"};
+const ARENA_SPRITE_CACHE={};
+function arenaSpriteHtml(code,cls){var school=ARENA_SPRITE_FILES[code]?code:"ascendant";return '<span class="arena-sprite school-'+school+' '+(cls||"")+'" data-school="'+school+'" aria-hidden="true"></span>'}
+async function arenaHydrateSprites(root){var host=root||document,nodes=host.querySelectorAll?host.querySelectorAll(".arena-sprite[data-school]"):[];for(var i=0;i<nodes.length;i++){var el=nodes[i],school=el.dataset.school||"ascendant",path=ARENA_SPRITE_FILES[school]||ARENA_SPRITE_FILES.ascendant;try{if(!ARENA_SPRITE_CACHE[school])ARENA_SPRITE_CACHE[school]=fetch(path,{cache:"force-cache"}).then(function(r){if(!r.ok)throw new Error("sprite "+r.status);return r.text()}).then(function(x){return "url(data:image/webp;base64,"+x.trim()+")"});el.style.backgroundImage=await ARENA_SPRITE_CACHE[school]}catch(e){el.classList.add("arena-sprite--fallback")}}}
 function arenaDivision(v){return v>=1700?"Leyenda Arcana":v>=1500?"Archimago":v>=1350?"Gran Mago":v>=1200?"Maestro":v>=1050?"Adepto":v>=900?"Aprendiz":"Iniciado"}
 function arenaTargets(rows){
   const me=String(realmState?.realm?.mage_name||"").toLowerCase();
@@ -74,12 +78,12 @@ async function renderArena(){
         '<span><small>RÉCORD</small><b>'+n(data.wins)+'V · '+n(data.losses)+'D</b></span>'+
         '<span><small>ESTADO</small><b>SERVIDOR</b></span>'+
       '</div></div>'+
-      '<aside><i>'+trait.mark+'</i><strong>Nivel de Arena '+n(level)+'</strong><small>'+esc(trait.name)+' · '+esc(trait.skill)+'</small></aside>'+
+      '<aside><div class="arena-hero-avatar">'+arenaSpriteHtml(selfProfile.school_code,"arena-sprite--hero")+'<i>'+trait.mark+'</i></div><strong>Nivel de Arena '+n(level)+'</strong><small>'+esc(trait.name)+' · '+esc(trait.skill)+'</small></aside>'+
     '</section>'+
     '<div class="arena-grid"><section class="panel"><div class="arena-title"><span class="section-kicker">RIVALES</span><h3>Contrincantes cercanos</h3></div>'+
       '<div class="arena-list">'+(targets.length?targets.map(function(t){
         const tr=arenaTrait(t.school_code);
-        return '<article class="arena-row">'+arenaSpriteHtml(f.school,"arena-sprite--mini")+'<div><strong><button class="player-link" data-profile="'+esc(t.mage_name)+'">'+esc(t.mage_name)+'</button></strong>'+
+        return '<article class="arena-row">'+arenaSpriteHtml(t.school_code,"arena-sprite--mini")+'<div><strong><button class="player-link" data-profile="'+esc(t.mage_name)+'">'+esc(t.mage_name)+'</button></strong>'+
           '<small>'+esc(tr.name)+' · Poder '+n(t.net_power)+'</small></div><div>'+
           '<button class="small-action arena-fight" data-target="'+esc(t.mage_name)+'" data-mode="ranked" '+(Number(data.seals_remaining)<=0?"disabled":"")+'>DUELO</button>'+
           '<button class="small-action arena-fight alt" data-target="'+esc(t.mage_name)+'" data-mode="friendly">AMISTOSO</button></div></article>';
@@ -91,9 +95,10 @@ async function renderArena(){
       }).join(""):'<div class="empty">Aún no has combatido en la Arena.</div>')+'</div></section></div>';
 
   $$(".arena-fight").forEach(btn=>btn.addEventListener("click",()=>arenaFight(btn.dataset.target,btn.dataset.mode,btn)));
-  $$(".arena-history-row").forEach(btn=>btn.addEventListener("click",()=>{
+  $(".arena-history-row").forEach(btn=>btn.addEventListener("click",()=>{
     const rec=history.find(x=>x.id===btn.dataset.id);if(rec)arenaOpen(rec);
   }));
+  arenaHydrateSprites($("#view-host"));
 }
 
 async function arenaFight(name,mode,btn){
