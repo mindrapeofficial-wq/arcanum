@@ -134,7 +134,8 @@ async function loadArtifactLibrary(){
         '<div class="artifact-actions">'+equipButton+historyButton+'</div></article>';
     }).join("");
     grid.querySelectorAll("[data-artifact-equip]").forEach(b=>b.addEventListener("click",()=>equipNamedArtifact(b.dataset.artifactEquip)));
-    grid.querySelectorAll("[data-artifact-history]").forEach(b=>b.addEventListener("click",()=>showArtifactHistory(b.dataset.artifactHistory)));\n    if(typeof renderArtifactMarketPanel==="function")await renderArtifactMarketPanel(data);
+    grid.querySelectorAll("[data-artifact-history]").forEach(b=>b.addEventListener("click",()=>showArtifactHistory(b.dataset.artifactHistory)));
+    if(typeof renderArtifactMarketPanel==="function")await renderArtifactMarketPanel(data);
   }catch(e){grid.innerHTML='<div class="empty">'+esc(humanError(e))+'</div>';}
 }
 
