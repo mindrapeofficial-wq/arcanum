@@ -6,7 +6,7 @@
 
   if (!isTouchDevice) return;
 
-  const isNativeShell = /(?:^|\\s)ArcanumNative\\//.test(navigator.userAgent);
+  const isNativeShell = /(?:^|\s)ArcanumNative\//.test(navigator.userAgent);
 
   const isDisplayFullscreen = () =>
     isNativeShell || window.matchMedia("(display-mode: fullscreen)").matches;
