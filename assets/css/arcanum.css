@@ -891,3 +891,35 @@ html.arcanum-immersive .mobile-nav{
   overflow:hidden;
   text-overflow:ellipsis;
 }
+
+
+/* Economía canónica 0.3.2 */
+.economy-contract-banner{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:center;margin-bottom:14px;padding:18px;border:1px solid rgba(218,151,57,.2);background:radial-gradient(circle at 12% 50%,rgba(172,104,32,.11),transparent 36%),linear-gradient(180deg,rgba(17,12,8,.9),rgba(6,5,4,.94))}
+.economy-contract-banner h3{margin:5px 0 6px;color:#e6cfaa;font-size:21px;font-weight:500}
+.economy-contract-banner p{margin:0;max-width:900px;color:#8c7d69;font:10.5px/1.6 Arial,sans-serif}
+.economy-contract-banner p b{color:#cdb184}
+.economy-contract-seal{padding:8px 10px;border:1px solid rgba(191,137,67,.28);background:rgba(151,91,27,.08);color:#c99f65;font:800 8px Arial,sans-serif;letter-spacing:.14em}
+.economy-ledger,.economy-building-section{margin-bottom:14px;padding:18px;border:1px solid rgba(218,151,57,.16);background:linear-gradient(180deg,rgba(13,10,7,.82),rgba(5,4,3,.9))}
+.economy-ledger-head{display:flex;align-items:end;justify-content:space-between;gap:18px;margin-bottom:13px}
+.economy-ledger-head h3{margin:5px 0 0;color:#dfc79f;font-size:19px;font-weight:500}
+.economy-ledger-head>small{color:#6f6252;font:8px Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase}
+.economy-ledger-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+.economy-ledger-grid>div{min-width:0;padding:11px;border:1px solid rgba(218,151,57,.1);background:rgba(0,0,0,.2)}
+.economy-ledger-grid small{display:block;color:#8c704d;font:800 7px Arial,sans-serif;letter-spacing:.1em}
+.economy-ledger-grid strong{display:block;margin:5px 0 4px;color:#ead2aa;font-size:19px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.economy-ledger-grid span{display:block;color:#746756;font:8.5px/1.35 Arial,sans-serif}
+.economy-health-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:10px}
+.economy-health{display:grid;grid-template-columns:4px 1fr;gap:9px;padding:9px 10px;border:1px solid rgba(218,151,57,.09);background:rgba(0,0,0,.18)}
+.economy-health>span{background:#88704f}
+.economy-health.good>span{background:#6f956c}.economy-health.warn>span{background:#b98a43}.economy-health.danger>span{background:#ad594e}.economy-health.info>span{background:#6c7f9a}
+.economy-health strong{display:block;color:#ccb48d;font:700 10px Arial,sans-serif}
+.economy-health p{margin:3px 0 0;color:#74695b;font:9px/1.45 Arial,sans-serif}
+.economy-building-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.economy-building-card{min-height:112px;padding:12px;border:1px solid rgba(218,151,57,.11);background:rgba(0,0,0,.2)}
+.economy-building-card>div{display:flex;align-items:end;justify-content:space-between;gap:10px}
+.economy-building-card small{color:#9a794f;font:800 8px Arial,sans-serif;letter-spacing:.09em}
+.economy-building-card strong{color:#ead5b1;font-size:22px;font-weight:500}
+.economy-building-card p{margin:9px 0 0;color:#776a5a;font:9px/1.5 Arial,sans-serif}
+@media(max-width:1200px){.economy-ledger-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.economy-building-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.economy-contract-banner{grid-template-columns:1fr}.economy-contract-seal{justify-self:start}.economy-ledger-head{align-items:start;flex-direction:column;gap:5px}.economy-ledger-grid{grid-template-columns:1fr 1fr}.economy-health-list{grid-template-columns:1fr}.economy-building-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:460px){.economy-ledger-grid,.economy-building-grid{grid-template-columns:1fr}}
