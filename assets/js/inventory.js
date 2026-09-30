@@ -156,6 +156,25 @@ function lootEffectiveStats(state){
   });
   return total;
 }
+function lootCombatBonuses(profile){
+  const state=lootLoad(profile);
+  const total=lootEffectiveStats(state);
+  return {
+    maxHp:Math.max(0,Number(total.life)||0),
+    attack:Math.max(0,(Number(total.arcane_power)||0)*1.6+(Number(total.school_damage)||0)*1.25),
+    armor:Math.max(0,(Number(total.willpower)||0)*1.25+(Number(total.ward)||0)*1.1),
+    speed:Math.max(0,(Number(total.knowledge)||0)*0.08),
+    crit:Math.max(0,(Number(total.critical)||0)/100),
+    dodge:Math.max(0,(Number(total.evasion)||0)/100),
+    block:Math.max(0,(Number(total.ward)||0)*0.0015),
+    regen:Math.max(0,(Number(total.regen)||0)/100),
+    accuracy:Math.max(0,(Number(total.knowledge)||0)*0.002),
+    fortune:Math.max(0,(Number(total.influence)||0)*0.003),
+    mana:Math.max(0,Number(total.mana)||0),
+    equipmentPower:Math.max(0,Number(total.power)||0)
+  };
+}
+
 function lootEquipmentCard(slot,state){
   const itemId=state.equipment[slot.key],item=state.items.find(x=>x.id===itemId);
   if(!item)return '<div class="loot-equip-slot"><small>'+esc(slot.label)+'</small><span>Vacío</span></div>';
@@ -222,3 +241,6 @@ function wireInventoryPanel(profile){
     state.items=state.items.filter(x=>x.id!==id);lootSave(profile,state);lootRefreshProfile(profile);toast("Objeto destruido.");
   }));
 }
+
+
+globalThis.lootCombatBonuses=lootCombatBonuses;
