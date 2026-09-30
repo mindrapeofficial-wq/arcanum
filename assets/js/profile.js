@@ -73,6 +73,7 @@ function renderArchmageProgression(profile){
   const progression=archmageProgressionFromProfile(profile);
   if(!progression)return "";
   const canSpend=Boolean(profile.is_self)&&progression.attributePoints>0;
+  const identity=archmageIdentityFromProgression(progression);
   const stats=ARCHMAGE_STAT_KEYS.map(key=>{
     const meta=ARCHMAGE_STAT_META[key];
     const canUpgrade=canSpend&&progression.stats[key]<ARCHMAGE_ATTRIBUTE_CAP;
@@ -84,6 +85,7 @@ function renderArchmageProgression(profile){
   const xpText=progression.level>=ARCHMAGE_LEVEL_CAP?"NIVEL MÁXIMO":n(progression.xp)+" / "+n(progression.xpNext);
   return '<section class="archmage-progression"><div class="profile-section-title"><span>PROGRESIÓN DEL ARCHIMAGO</span><small>'+pointsLabel+'</small></div>'+
     '<div class="archmage-level-row"><div><small>NIVEL</small><strong>'+n(progression.level)+'</strong></div><div class="archmage-xp"><div><span>EXPERIENCIA</span><b>'+xpText+'</b></div><div class="archmage-xp-track"><i style="width:'+pct+'%"></i></div></div></div>'+
+    (identity?'<div class="archmage-identity-card" data-archmage-identity="'+esc(identity.key)+'"><small>PERFIL ARCANO</small><strong>'+esc(identity.title)+'</strong><span>'+esc(identity.description)+'</span><em>Identidad narrativa · sin bonificación mecánica por ahora.</em></div>':"")+
     '<div class="archmage-attributes">'+stats+'</div></section>';
 }
 
