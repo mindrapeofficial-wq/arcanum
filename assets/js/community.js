@@ -20,8 +20,8 @@ async function communityApi(path,{method="GET",body}={}){
       POST_LIMIT:"Ya tienes 5 anuncios activos. Borra uno antes de publicar otro.",
       INVALID_MESSAGE:"El mensaje debe tener entre 1 y 300 caracteres.",
       INVALID_POST:"Revisa el título, la categoría y el texto del anuncio.",
-      REALM_REQUIRED:"Necesitas haber fundado un reino para usar la comunidad.",
-      FORBIDDEN:"No puedes borrar contenido de otro Archimago.",
+      REALM_REQUIRED:"Necesitas haber fundado un dominio para usar la comunidad.",
+      FORBIDDEN:"No puedes borrar contenido de otro Arconte.",
       UNAUTHORIZED:"Tu sesión ha caducado. Vuelve a entrar."
     };
     throw new Error(map[code]||code);
@@ -43,7 +43,7 @@ async function renderCommunity(){
   communitySignature="";
   const school=profileSchoolName(realmState?.realm?.school_code);
   $("#view-host").innerHTML=`
-    ${viewHeader("SOCIAL","Comunidad","Chat global, salas de Escuela, directorio de Archimagos y tablón del mundo.")}
+    ${viewHeader("SOCIAL","Comunidad","Chat global, salas de Escuela, directorio de Arcontes y tablón del mundo.")}
     <div class="community-tabs">
       <button class="community-tab ${communityMode==="chat"?"active":""}" data-community-tab="chat">CHAT GLOBAL</button>
       <button class="community-tab ${communityMode==="school"?"active":""}" data-community-tab="school">MI ESCUELA</button>
@@ -103,10 +103,10 @@ function renderPlayersShell(){
     <div class="community-social-grid">
       <div class="panel">
         <span class="section-kicker">DIRECTORIO DEL MUNDO</span>
-        <h3>Buscar Archimago</h3>
+        <h3>Buscar Arconte</h3>
         <p class="community-note">Busca por nombre. Desde la ficha puedes agregar amistad, enviar mensaje o invitar a una alianza.</p>
-        <div class="player-search"><input id="player-search-input" maxlength="40" autocomplete="off" placeholder="Nombre del Archimago…" /><button class="primary-action" id="player-search-button" type="button">BUSCAR</button></div>
-        <div id="player-search-results" class="player-directory"><div class="empty">Escribe un nombre para buscar entre los Archimagos de la temporada.</div></div>
+        <div class="player-search"><input id="player-search-input" maxlength="40" autocomplete="off" placeholder="Nombre del Arconte…" /><button class="primary-action" id="player-search-button" type="button">BUSCAR</button></div>
+        <div id="player-search-results" class="player-directory"><div class="empty">Escribe un nombre para buscar entre los Arcontes de la temporada.</div></div>
       </div>
       <aside class="panel online-panel">
         <div class="online-head"><div><span class="section-kicker">PRESENCIA</span><h3>Conectados ahora</h3></div><strong id="online-count">0</strong></div>
@@ -160,7 +160,7 @@ function renderTopPlayerSearch(){
       <span class="school-dot ${esc(x.school_code)}"></span>
       <span><strong>${esc(x.mage_name)}</strong><small>${esc(profileSchoolName(x.school_code))}</small></span>
       <span><small>PODER</small><strong>${n(x.net_power)}</strong></span>
-    </button>`).join(""):'<div class="top-player-search-empty">No se encontró ningún Archimago.</div>';
+    </button>`).join(""):'<div class="top-player-search-empty">No se encontró ningún Arconte.</div>';
   host.classList.remove("hidden");
 }
 
@@ -206,7 +206,7 @@ async function loadPlayerDirectory(){
 function filterPlayerDirectory(){
   const host=$("#player-search-results"); if(!host)return;
   const q=String($("#player-search-input")?.value||"").trim().toLowerCase();
-  if(!q){host.innerHTML='<div class="empty">Escribe un nombre para buscar entre los Archimagos de la temporada.</div>';return;}
+  if(!q){host.innerHTML='<div class="empty">Escribe un nombre para buscar entre los Arcontes de la temporada.</div>';return;}
   const rows=communityDirectory.filter(x=>String(x.mage_name).toLowerCase().includes(q)).slice(0,30);
   host.innerHTML=rows.length?rows.map(x=>`
     <button class="player-directory-row" data-profile="${esc(x.mage_name)}">
@@ -214,7 +214,7 @@ function filterPlayerDirectory(){
       <span><strong>${esc(x.mage_name)}</strong><small>${esc(profileSchoolName(x.school_code))}</small></span>
       <span><small>PODER</small><strong>${n(x.net_power)}</strong></span>
       <span>VER FICHA ›</span>
-    </button>`).join(""):'<div class="empty">No hay ningún Archimago con ese nombre.</div>';
+    </button>`).join(""):'<div class="empty">No hay ningún Arconte con ese nombre.</div>';
 }
 async function loadPresence(){
   const host=$("#online-list"); if(!host)return;
@@ -227,7 +227,7 @@ async function loadPresence(){
       <button class="online-player" data-profile="${esc(x.username)}">
         <span class="presence-dot"></span><span class="school-dot ${esc(x.school_code)}"></span>
         <span><strong>${esc(x.username)}</strong><small>${esc(profileSchoolName(x.school_code))}</small></span>
-      </button>`).join(""):'<div class="empty">No hay otros Archimagos visibles ahora.</div>';
+      </button>`).join(""):'<div class="empty">No hay otros Arcontes visibles ahora.</div>';
   }catch(e){host.innerHTML=`<div class="empty">${esc(humanError(e))}</div>`;}
 }
 async function loadChatMessages(quiet=false){
