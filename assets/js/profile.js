@@ -12,6 +12,7 @@ function profileSchoolName(code){
 }
 function profileDefaultPortraitUrl(profile){
   if(profile?.school_code==="verdant")return "assets/art/characters/verdante/verdante-level-1.png?v=0.2.11";
+  if(profile?.school_code==="eradication")return "assets/art/characters/eradication/thanitos-level-1.webp?v=0.2.33";
   return "";
 }
 function profileAvatarMarkup(profile,large=false){
