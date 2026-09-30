@@ -608,3 +608,19 @@ html.arcanum-immersive .mobile-nav{
   padding-bottom:0;
   height:66px;
 }
+
+
+/* Mercado Arcano */
+.market-intro{display:grid;grid-template-columns:1.25fr .75fr;gap:14px;margin-bottom:14px}
+.market-hero{border:1px solid rgba(218,151,57,.16);background:radial-gradient(circle at 85% 15%,rgba(190,119,36,.16),transparent 32%),linear-gradient(135deg,rgba(19,13,8,.9),rgba(3,3,3,.95));padding:22px}
+.market-hero h2{margin:6px 0 8px;color:#ead6b2;font-size:31px;font-weight:500}.market-hero p{margin:0;color:#91826e;font:11px/1.6 Arial,sans-serif;max-width:760px}
+.market-status{border:1px solid rgba(218,151,57,.12);background:rgba(0,0,0,.22);padding:18px;display:grid;align-content:center;gap:8px}.market-status small{color:#8a704c;font:800 8px Arial,sans-serif;letter-spacing:.12em}.market-status strong{color:#dec69f;font-size:15px}.market-status p{margin:0;color:#746858;font:10px/1.5 Arial,sans-serif}
+.market-layout{display:grid;grid-template-columns:minmax(270px,.65fr) minmax(0,1.35fr);gap:14px}
+.market-form{display:grid;gap:10px}.market-form label{display:grid;gap:6px;color:#817462;font:800 8px Arial,sans-serif;letter-spacing:.1em;text-transform:uppercase}
+.market-form input,.market-form select,.market-form textarea,.market-filter{width:100%;border:1px solid rgba(218,151,57,.18);background:#070503;color:#d8c5a4;padding:11px 12px;font:11px Arial,sans-serif;outline:none}.market-form textarea{min-height:84px;resize:vertical}.market-form input:focus,.market-form select:focus,.market-form textarea:focus,.market-filter:focus{border-color:#b77b32}
+.market-pair{display:grid;grid-template-columns:1fr 1fr;gap:8px}.market-book-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}.market-book-tools{display:flex;gap:7px;align-items:center}.market-filter{width:auto;min-width:140px}
+.market-list{display:grid;gap:9px}.market-offer{border:1px solid rgba(218,151,57,.12);background:rgba(0,0,0,.18);padding:13px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px}
+.market-offer-main{min-width:0}.market-offer-user{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.market-exchange{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:9px}.market-chip{border:1px solid rgba(218,151,57,.18);padding:6px 8px;color:#cbb18a;font:800 9px Arial,sans-serif}.market-arrow{color:#8c6d43}.market-note{margin:8px 0 0;color:#7e7160;font:10px/1.45 Arial,sans-serif}.market-meta{margin-top:8px;color:#655b4e;font:8px Arial,sans-serif}.market-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}.market-actions button{white-space:nowrap}
+.market-warning{margin-top:10px;padding:9px 10px;border:1px solid rgba(218,151,57,.11);color:#726556;background:rgba(128,84,30,.05);font:9px/1.5 Arial,sans-serif}
+@media(max-width:900px){.market-intro,.market-layout{grid-template-columns:1fr}.market-status{min-height:auto}}
+@media(max-width:560px){.market-pair{grid-template-columns:1fr}.market-offer{grid-template-columns:1fr}.market-actions{justify-content:flex-start}.market-book-head{align-items:stretch;flex-direction:column}.market-book-tools{width:100%}.market-filter{flex:1;min-width:0}}
