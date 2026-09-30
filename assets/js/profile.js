@@ -8,7 +8,7 @@ function profileAvatarUrl(path){
   return SUPABASE_URL+"/storage/v1/object/public/avatars/"+String(path).split("/").map(encodeURIComponent).join("/");
 }
 function profileSchoolName(code){
-  return catalogs.schools.find(s=>s.code===code)?.name_es||code||"Escuela";
+  return typeof schoolName==="function"?schoolName(code):(catalogs.schools.find(s=>s.code===code)?.name_es||code||"Escuela");
 }
 function profileDefaultPortraitUrl(profile){
   if(profile?.school_code==="verdant")return "assets/art/characters/verdante/verdante-level-1.png?v=0.2.11";
