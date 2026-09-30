@@ -157,8 +157,8 @@ async function renderArena(){
           '<span><strong>'+esc(h.opponent)+'</strong><small>'+new Date(h.at).toLocaleString("es-ES")+'</small></span><b>'+(h.delta>0?"+":"")+h.delta+'</b></button>';
       }).join(""):'<div class="empty">Aún no has combatido en la Arena.</div>')+'</div></section></div>';
 
-  $(".arena-fight").forEach(btn=>btn.addEventListener("click",()=>arenaFight(btn.dataset.target,btn.dataset.mode,btn,btn.dataset.school)));
-  $(".arena-history-row").forEach(btn=>btn.addEventListener("click",()=>{
+  $$(".arena-fight").forEach(btn=>btn.addEventListener("click",()=>arenaFight(btn.dataset.target,btn.dataset.mode,btn,btn.dataset.school)));
+  $$(".arena-history-row").forEach(btn=>btn.addEventListener("click",()=>{
     const rec=history.find(x=>x.id===btn.dataset.id);if(rec)arenaOpen(rec);
   }));
   arenaHydrateSprites($("#view-host"));
