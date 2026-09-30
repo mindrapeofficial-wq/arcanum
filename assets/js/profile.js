@@ -167,7 +167,7 @@ function renderOwnSocial(profile,inbox){
 function wireProfileSheet(profile){
   document.querySelectorAll("[data-archmage-attribute]").forEach(b=>b.addEventListener("click",()=>spendArchmageAttribute(b.dataset.archmageAttribute,profile)));
   $("#profile-save-bio")?.addEventListener("click",()=>saveOwnProfile(profile));
-  $("#profile-avatar-file")?.addEventListener("change",e=>uploadProfileAvatar(e.target.files?.[0],profile));
+  $("#profile-avatar-file")?.addEventListener("change",e=>startProfileAvatarCrop(e.target.files?.[0],profile));
   $$("[data-profile-friend-add]").forEach(b=>b.addEventListener("click",()=>profileFriendRequest(b.dataset.profileFriendAdd)));
   $$("[data-profile-friend-accept]").forEach(b=>b.addEventListener("click",()=>profileFriendRespond(b.dataset.profileFriendAccept,true)));
   $$("[data-profile-friend-reject]").forEach(b=>b.addEventListener("click",()=>profileFriendRespond(b.dataset.profileFriendReject,false)));
@@ -205,6 +205,104 @@ async function saveOwnProfile(profile){
   }catch(e){toast(humanError(e),"error");}
   finally{if(btn){btn.disabled=false;btn.textContent=old;}}
 }
+
+function startProfileAvatarCrop(file,profile){
+  if(!file)return;
+  if(!["image/jpeg","image/png","image/webp"].includes(file.type)){toast("Usa una imagen JPG, PNG o WebP.","error");return;}
+  if(file.size>2*1024*1024){toast("La imagen no puede superar 2 MB.","error");return;}
+  const url=URL.createObjectURL(file);
+  const overlay=document.createElement("div");
+  overlay.className="avatar-crop-overlay";
+  overlay.innerHTML=
+    '<div class="avatar-crop-dialog" role="dialog" aria-modal="true" aria-label="Ajustar imagen de perfil">'+
+      '<div class="avatar-crop-head"><div><span class="section-kicker">IMAGEN DE PERFIL</span><h3>Ajusta el encuadre</h3></div><button class="avatar-crop-close" type="button" aria-label="Cerrar">×</button></div>'+
+      '<div class="avatar-crop-stage"><div class="avatar-crop-frame"><img alt="Vista previa del avatar" draggable="false"></div><div class="avatar-crop-hint">Arrastra la imagen para centrarla</div></div>'+
+      '<div class="avatar-crop-controls"><label><span>ZOOM</span><input class="avatar-crop-zoom" type="range" min="1" max="3" step="0.01" value="1"></label></div>'+
+      '<div class="avatar-crop-actions"><button class="profile-action secondary avatar-crop-cancel" type="button">CANCELAR</button><button class="profile-action avatar-crop-save" type="button">USAR ESTA IMAGEN</button></div>'+
+    '</div>';
+  document.body.appendChild(overlay);
+  const img=overlay.querySelector("img");
+  const frame=overlay.querySelector(".avatar-crop-frame");
+  const zoom=overlay.querySelector(".avatar-crop-zoom");
+  let naturalW=1,naturalH=1,baseScale=1,scale=1,offsetX=0,offsetY=0;
+  let dragging=false,startX=0,startY=0,startOffsetX=0,startOffsetY=0;
+
+  function frameSize(){return frame.getBoundingClientRect().width||320;}
+  function clampOffsets(){
+    const size=frameSize();
+    const w=naturalW*scale,h=naturalH*scale;
+    const limX=Math.max(0,(w-size)/2),limY=Math.max(0,(h-size)/2);
+    offsetX=Math.max(-limX,Math.min(limX,offsetX));
+    offsetY=Math.max(-limY,Math.min(limY,offsetY));
+  }
+  function paint(){
+    clampOffsets();
+    img.style.width=(naturalW*scale)+"px";
+    img.style.height=(naturalH*scale)+"px";
+    img.style.transform="translate(calc(-50% + "+offsetX+"px),calc(-50% + "+offsetY+"px))";
+  }
+  function resetScale(){
+    const size=frameSize();
+    baseScale=Math.max(size/naturalW,size/naturalH);
+    scale=baseScale*Number(zoom.value||1);
+    paint();
+  }
+  function close(){
+    URL.revokeObjectURL(url);
+    overlay.remove();
+  }
+  img.addEventListener("load",()=>{
+    naturalW=img.naturalWidth||1;
+    naturalH=img.naturalHeight||1;
+    resetScale();
+  },{once:true});
+  img.src=url;
+  zoom.addEventListener("input",()=>{scale=baseScale*Number(zoom.value||1);paint();});
+  frame.addEventListener("pointerdown",e=>{
+    dragging=true;startX=e.clientX;startY=e.clientY;startOffsetX=offsetX;startOffsetY=offsetY;
+    frame.setPointerCapture?.(e.pointerId);
+    frame.classList.add("dragging");
+  });
+  frame.addEventListener("pointermove",e=>{
+    if(!dragging)return;
+    offsetX=startOffsetX+(e.clientX-startX);
+    offsetY=startOffsetY+(e.clientY-startY);
+    paint();
+  });
+  const stopDrag=e=>{dragging=false;frame.classList.remove("dragging");try{frame.releasePointerCapture?.(e.pointerId);}catch{}};
+  frame.addEventListener("pointerup",stopDrag);
+  frame.addEventListener("pointercancel",stopDrag);
+  overlay.querySelector(".avatar-crop-close").addEventListener("click",close);
+  overlay.querySelector(".avatar-crop-cancel").addEventListener("click",close);
+  overlay.addEventListener("click",e=>{if(e.target===overlay)close();});
+  overlay.querySelector(".avatar-crop-save").addEventListener("click",async()=>{
+    const btn=overlay.querySelector(".avatar-crop-save");
+    btn.disabled=true;btn.textContent="PROCESANDO…";
+    try{
+      const out=512;
+      const canvas=document.createElement("canvas");
+      canvas.width=out;canvas.height=out;
+      const ctx=canvas.getContext("2d");
+      const size=frameSize();
+      const factor=out/size;
+      const drawW=naturalW*scale*factor,drawH=naturalH*scale*factor;
+      const dx=(out-drawW)/2+offsetX*factor;
+      const dy=(out-drawH)/2+offsetY*factor;
+      ctx.drawImage(img,dx,dy,drawW,drawH);
+      const mime=file.type==="image/png"?"image/png":"image/webp";
+      const blob=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error("No se pudo preparar la imagen.")),mime,.9));
+      const ext=mime==="image/png"?"png":"webp";
+      const cropped=new File([blob],"avatar-recortado."+ext,{type:mime});
+      close();
+      await uploadProfileAvatar(cropped,profile);
+    }catch(err){
+      toast(humanError(err),"error");
+      btn.disabled=false;btn.textContent="USAR ESTA IMAGEN";
+    }
+  });
+  window.addEventListener("resize",resetScale,{once:true});
+}
+
 async function uploadProfileAvatar(file,profile){
   if(!file)return;
   if(!["image/jpeg","image/png","image/webp"].includes(file.type)){toast("Usa una imagen JPG, PNG o WebP.","error");return;}
