@@ -88,8 +88,11 @@ function renderPlayerProfile(profile,inbox=null){
   const allianceBadge=alliance?'<span class="profile-alliance-badge">['+esc(alliance.tag)+'] '+esc(alliance.name)+'</span>':"";
   let actions="";
   if(!profile.is_self&&!profile.is_npc){
+    const friendshipAccepted=profile.friendship?.status==="accepted";
     actions='<div class="profile-actions">'+friendshipActions(profile)+
-      '<button class="profile-action" data-profile-message="'+esc(profile.mage_name)+'">✉ MENSAJE</button>'+
+      (friendshipAccepted
+        ?'<button class="profile-action" data-direct-chat="'+esc(profile.mage_name)+'">✉ CHAT PRIVADO</button>'
+        :'<span class="profile-chat-locked">CHAT PRIVADO · SE ACTIVA AL ACEPTAR LA AMISTAD</span>')+
       (profile.can_invite_to_alliance?'<button class="profile-action" data-profile-alliance-invite="'+esc(profile.mage_name)+'">♜ INVITAR A '+esc(profile.my_alliance?.tag||"ALIANZA")+'</button>':"")+
       '</div>';
   }
@@ -146,7 +149,6 @@ function wireProfileSheet(profile){
   $$("[data-profile-friend-accept]").forEach(b=>b.addEventListener("click",()=>profileFriendRespond(b.dataset.profileFriendAccept,true)));
   $$("[data-profile-friend-reject]").forEach(b=>b.addEventListener("click",()=>profileFriendRespond(b.dataset.profileFriendReject,false)));
   $$("[data-profile-friend-remove]").forEach(b=>b.addEventListener("click",()=>profileFriendRemove(b.dataset.profileFriendRemove)));
-  $$("[data-profile-message]").forEach(b=>b.addEventListener("click",()=>openProfileConversation(b.dataset.profileMessage)));
   $$("[data-profile-alliance-invite]").forEach(b=>b.addEventListener("click",()=>profileAllianceInvite(b.dataset.profileAllianceInvite)));
   $$("[data-alliance-accept]").forEach(b=>b.addEventListener("click",()=>profileAllianceRespond(b.dataset.allianceAccept,true)));
   $$("[data-alliance-reject]").forEach(b=>b.addEventListener("click",()=>profileAllianceRespond(b.dataset.allianceReject,false)));
@@ -200,14 +202,30 @@ async function uploadProfileAvatar(file,profile){
   }catch(e){toast(humanError(e),"error");}
 }
 async function profileFriendRequest(name){
-  try{await rpc("friend_request",{p_mage_name:name});toast("Solicitud de amistad enviada.","success");await openPlayerProfile(name);}catch(e){toast(humanError(e),"error");}
+  try{
+    await rpc("friend_request",{p_mage_name:name});
+    toast("Solicitud de amistad enviada. El chat privado se habilitará cuando la acepte.","success");
+    if(typeof refreshSidebarPresence==="function")refreshSidebarPresence();
+    await openPlayerProfile(name);
+  }catch(e){toast(humanError(e),"error");}
 }
 async function profileFriendRespond(name,accept){
-  try{await rpc("friend_respond",{p_mage_name:name,p_accept:accept});toast(accept?"Amistad aceptada.":"Solicitud rechazada.","success");await openPlayerProfile(realmState.realm.mage_name);}catch(e){toast(humanError(e),"error");}
+  try{
+    await rpc("friend_respond",{p_mage_name:name,p_accept:accept});
+    toast(accept?"Amistad aceptada. Ya podéis abrir un chat privado.":"Solicitud rechazada.","success");
+    if(typeof refreshSidebarPresence==="function")refreshSidebarPresence();
+    await openPlayerProfile(name);
+  }catch(e){toast(humanError(e),"error");}
 }
 async function profileFriendRemove(name){
   if(!confirm("¿Quitar o cancelar esta relación de amistad?"))return;
-  try{await rpc("friend_remove",{p_mage_name:name});toast("Amistad actualizada.","success");await openPlayerProfile(name);}catch(e){toast(humanError(e),"error");}
+  try{
+    await rpc("friend_remove",{p_mage_name:name});
+    toast("Amistad actualizada.","success");
+    if(typeof refreshSidebarPresence==="function")refreshSidebarPresence();
+    if(typeof directChatName!=="undefined"&&directChatName===name&&typeof closeDirectChatWindow==="function")closeDirectChatWindow();
+    await openPlayerProfile(name);
+  }catch(e){toast(humanError(e),"error");}
 }
 async function openProfileConversation(name){
   const host=$("#profile-social-detail");if(!host)return;
