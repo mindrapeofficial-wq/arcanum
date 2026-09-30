@@ -235,7 +235,7 @@ function tavernBroadcastPosition(rt,force=false){
   if(!rt.channel || !rt.connected || (!force && now-rt.lastBroadcast<TAVERN_BROADCAST_MS))return;
   rt.lastBroadcast=now;
   rt.channel.send({type:"broadcast",event:"position",payload:{
-    id:rt.id,name:rt.player.name,school:rt.player.school,x:Math.round(rt.player.x),y:Math.round(rt.player.y),dir:rt.player.dir,t:now
+    id:rt.id,name:rt.player.name,school:rt.player.school,level:rt.player.level,renown:rt.player.renown,x:Math.round(rt.player.x),y:Math.round(rt.player.y),dir:rt.player.dir,t:now
   }}).catch(()=>{});
 }
 
@@ -247,7 +247,7 @@ function tavernUpdateNearby(rt){
   const count=document.querySelector("#tavern-online-count");
   if(count)count.textContent=String(rt.presenceCount||list.length+1);
   if(!host)return;
-  host.innerHTML=list.length?list.map(p=>`<button type="button" class="tavern-nearby-player" data-profile="${esc(p.name)}"><span class="school-dot ${esc(p.school)}"></span><span><strong>${esc(p.name)}</strong><small>${p.d}px de distancia</small></span></button>`).join(""):'<div class="tavern-empty">No hay nadie cerca. Explora la sala.</div>';
+  host.innerHTML=list.length?list.map(p=>`<button type="button" class="tavern-nearby-player" data-profile="${esc(p.name)}"><span class="school-dot ${esc(p.school)}"></span><span><strong>${esc(p.name)}</strong><small>${p.level?"Nv "+n(p.level)+" · ":""}${p.renown?"Renombre "+n(p.renown)+" · ":""}${p.d}px de distancia</small></span></button>`).join(""):'<div class="tavern-empty">No hay nadie cerca. Explora la sala.</div>';
 }
 
 function tavernLoop(rt,ts){
@@ -294,7 +294,7 @@ async function tavernConnect(rt){
     if(status!=="SUBSCRIBED")return;
     rt.connected=true;
     rt.status.textContent="Sala sincronizada";
-    await channel.track({id:rt.id,name:rt.player.name,school:rt.player.school,joined_at:new Date().toISOString()}).catch(()=>{});
+    await channel.track({id:rt.id,name:rt.player.name,school:rt.player.school,level:rt.player.level,renown:rt.player.renown,joined_at:new Date().toISOString()}).catch(()=>{});
     tavernBroadcastPosition(rt,true);
   });
 }
@@ -338,8 +338,14 @@ function tavernWireControls(rt){
 async function renderTavern(){
   stopTavern();
   const host=document.querySelector("#view-host");
-  const mage=realmState?.realm?.mage_name||"Arconte";
-  const school=realmState?.realm?.school_code||"";
+  let tavernSnapshot=null;
+  try{
+    if(typeof loadArchmageSnapshot==="function")tavernSnapshot=await loadArchmageSnapshot(realmState?.realm?.mage_name,{force:true});
+  }catch(e){console.warn("Tavern Archmage snapshot unavailable",e)}
+  const mage=tavernSnapshot?.identity?.mage_name||realmState?.realm?.mage_name||"Arconte";
+  const school=tavernSnapshot?.identity?.school_code||realmState?.realm?.school_code||"";
+  const level=Number(tavernSnapshot?.identity?.level||1);
+  const renown=Number(tavernSnapshot?.trajectory?.renown?.score||0);
   host.innerHTML=`
     <div id="tavern-root" class="tavern-root">
       <div class="tavern-head">
@@ -376,7 +382,7 @@ async function renderTavern(){
   if(status && !tavernMapAsset.fallback)status.textContent="Conectando…";
   const rt={
     active:true,canvas,ctx:canvas.getContext("2d"),status:document.querySelector("#tavern-status"),
-    id:String(getSession()?.user?.id||mage),player:{name:mage,school,x:TAVERN_SPAWN.x,y:TAVERN_SPAWN.y,dir:"up",moving:false,bubble:"",bubbleUntil:0},
+    id:String(getSession()?.user?.id||mage),player:{name:mage,school,level,renown,x:TAVERN_SPAWN.x,y:TAVERN_SPAWN.y,dir:"up",moving:false,bubble:"",bubbleUntil:0},
     remotes:new Map(),keys:new Set(),lastBroadcast:0,lastNearby:0,presenceCount:1,connected:false,lastFrame:0
   };
   tavernRuntime=rt;
