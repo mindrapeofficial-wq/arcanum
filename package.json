@@ -4,9 +4,17 @@
   "version": "0.2.22",
   "scripts": {
     "test": "node --test tests/smoke.mjs",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "android:add": "npx cap add android",
+    "android:sync": "npx cap sync android",
+    "android:open": "npx cap open android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.4.3",
+    "@capacitor/core": "^7.4.3"
   },
   "devDependencies": {
+    "@capacitor/cli": "^7.4.3",
     "@playwright/test": "1.55.0"
   }
 }
