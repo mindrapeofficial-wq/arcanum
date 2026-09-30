@@ -27,7 +27,7 @@ The browser is never allowed to be the source of truth for progression or compet
 | Arena | daily seals, rating, wins/losses, history, duel result | Nexo Supabase / arcanum-state | SERVER_CANONICAL since 0.3.0 |
 | Combat derived stats | HP, attack, armor, speed, crit, dodge, block | Recalculated from combat profile | DERIVED |
 | Passive resource animation | interpolated per-second display | Browser cache | DERIVED / presentation only |
-| Procedural inventory | items, equipment, loot rolls | Browser localStorage | **MIGRATION REQUIRED** |
+| Procedural inventory | items, equipment, loot rolls | Nexo Supabase / arcanum-state | SERVER_CANONICAL since 0.3.1 |
 | Audio settings | volumes, mute | Browser localStorage | LOCAL_ONLY |
 | Tutorial completed | tutorial marker | Browser localStorage | LOCAL_ONLY |
 | Online panel collapsed | UI preference | Browser localStorage | LOCAL_ONLY |
