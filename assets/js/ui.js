@@ -35,8 +35,18 @@ function openManual(){
 }
 
 async function actionCall(btn,fn,successMessage=null,messageFn=null){
-  const old=btn?.innerHTML; if(btn){btn.disabled=true;btn.textContent="PROCESANDO...";}
-  try{const res=await fn(); toast(messageFn?messageFn(res):(successMessage||"Acción completada."),"success"); realmState=await rpc("my_realm_state"); renderChrome(); await renderView(currentView); return res;}
+  const old=btn?.innerHTML;
+  const realmAiContext=typeof realmAiCaptureAction==="function"?realmAiCaptureAction(btn):null;
+  if(btn){btn.disabled=true;btn.textContent="PROCESANDO...";}
+  try{
+    const res=await fn();
+    if(typeof realmAiRecordAction==="function"&&realmAiContext)realmAiRecordAction(realmAiContext,res);
+    toast(messageFn?messageFn(res):(successMessage||"Acción completada."),"success");
+    realmState=await rpc("my_realm_state");
+    renderChrome();
+    await renderView(currentView);
+    return res;
+  }
   catch(e){toast(humanError(e),"error"); throw e;}
   finally{if(btn){btn.disabled=false;if(old)btn.innerHTML=old;}}
 }
