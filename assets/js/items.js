@@ -59,6 +59,7 @@ function canonicalLootSourceLabel(source){
     exploration:"Exploración",
     arena:"Arena clasificada",
     world_boss:"Boss mundial",
+    pve:"Expedición PvE",
     event:"Evento"
   })[String(source||"")]||"Origen desconocido";
 }
@@ -76,6 +77,12 @@ function canonicalLootTierLabel(tier){
     boss_arcane:"Cofre Arcano",
     boss_major:"Cofre Mayor",
     boss_legend:"Botín legendario",
+    pve_room:"Cámara",
+    pve_depth:"Profundidad",
+    pve_abysm:"Abismo",
+    pve_boss:"Jefe de expedición",
+    pve_boss_depth:"Jefe de Profundidad",
+    pve_boss_abyss:"Jefe del Abismo",
     debug:"Prueba"
   })[String(tier||"")]||String(tier||"");
 }
