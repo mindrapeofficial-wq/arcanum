@@ -36,6 +36,7 @@ async function installMocks(page){
   let boardPosts=[];
   let friendRequests=[{mage_name:"REQUEST_TEST",school_code:"verdant"}];
   let archmageProgress={archmage_total_xp:520,arcane_power:2,knowledge:2,willpower:1,influence:1,attribute_points:1};
+  let pveRun=null;
   const calls=[];
 
   const schools=[
@@ -227,6 +228,51 @@ async function installMocks(page){
     if(req.method()==="POST"&&tail==="/loot/exploration/complete"){
       return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({status:"no_drop",item:null,pending:false,chance:.19,reward_tier:"scouting"})});
     }
+    const pveCatalog=[{
+      id:"ruins_threshold",name:"Ruinas del Umbral",subtitle:"Un corredor roto entre las Cinco Escuelas.",
+      description:"Cuatro cámaras enlazadas.",min_level:1,room_count:4,
+      difficulties:[
+        {id:1,name:"I · Incursión",min_level:1,unlocked:true},
+        {id:2,name:"II · Profundidad",min_level:5,unlocked:false},
+        {id:3,name:"III · Abismo",min_level:10,unlocked:false}
+      ]
+    }];
+    const pveRoom=(stage)=>[
+      {id:"ash_sentinel",name:"Vigilante de Ceniza",school:"eradication",boss:false,desc:"Una armadura calcinada protege el acceso."},
+      {id:"veil_weaver",name:"Tejedora del Velo",school:"phantasm",boss:false,desc:"Dobla pasillos y recuerdos."},
+      {id:"withered_keeper",name:"Custodio Marchito",school:"verdant",boss:false,desc:"Raíces muertas guardan la tercera cámara."},
+      {id:"hollow_cartographer",name:"El Cartógrafo Hueco",school:"abyssal",boss:true,desc:"Señor de las Ruinas."}
+    ][stage]||null;
+    const pveView=()=>pveRun?{...pveRun,current_room:pveRoom(pveRun.stage)}:null;
+
+    if(req.method()==="GET"&&tail==="/pve"){
+      return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({catalog:pveCatalog,run:pveView(),history:[],turn_cost_per_fight:1})});
+    }
+    if(req.method()==="POST"&&tail==="/pve/start"){
+      pveRun={
+        id:"pve-e2e-1",expedition_id:"ruins_threshold",expedition_name:"Ruinas del Umbral",
+        difficulty:1,difficulty_name:"I · Incursión",status:"active",stage:0,rooms_cleared:0,room_count:4,
+        player_hp:320,player_max_hp:320,last_enemy:null,last_log:[],last_loot:null,
+        started_at:new Date().toISOString(),updated_at:new Date().toISOString(),expires_at:new Date(Date.now()+86400000).toISOString()
+      };
+      return route.fulfill({status:201,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({run:pveView(),resumed:false})});
+    }
+    if(req.method()==="POST"&&tail==="/pve/fight"){
+      state.realm.turns-=1;
+      pveRun={...pveRun,stage:1,rooms_cleared:1,player_hp:247,last_enemy:{name:"Vigilante de Ceniza",school:"eradication",level:4,max_hp:260,hp:0},updated_at:new Date().toISOString()};
+      const loot={status:"completed",pending:false,item:{id:"loot-pve-e2e",name:"Foco de Umbral",rarity:"rare",rarityLabel:"Raro",origin:{source:"pve",reward_tier:"pve_room"}}};
+      pveRun.last_loot=loot;
+      return route.fulfill({status:201,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({
+        run:pveView(),
+        fight:{won:true,enemy:pveRun.last_enemy,player:{max_hp:320,hp:247},log:["RONDA 1","E2E_TESTER golpea al Vigilante de Ceniza: 42 de daño."]},
+        loot_reward:loot
+      })});
+    }
+    if(req.method()==="POST"&&tail==="/pve/retreat"){
+      pveRun={...pveRun,status:"retreated",current_room:null};
+      return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({run:pveRun})});
+    }
+
     if(req.method()==="GET"&&tail==="/items"){
       return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({items:emptyItems,inventory:emptyInventory,relics:[]})});
     }
@@ -529,4 +575,38 @@ test("Astrael aparece conectado y responde dudas del juego", async ({page})=>{
 
   await expect(page.locator("#direct-chat-messages")).toContainText("cada 5 minutos");
   expect(mock.calls.some(x=>x.path==="oracle")).toBeTruthy();
+});
+
+
+test("Expediciones inicia una incursión persistente y arrastra vida entre salas", async ({page})=>{
+  const errors=[];
+  page.on("pageerror",err=>errors.push(String(err)));
+  const mock=await installMocks(page);
+
+  await page.goto("/");
+  await page.locator("#username").fill("E2E_TESTER");
+  await page.locator("#password").fill("prueba-segura");
+  await page.locator("#submit-button").click();
+  await expect(page.locator("#game-view")).toBeVisible();
+
+  await page.locator('#main-nav button[data-view="pve"]').click();
+  await expect(page.getByRole("heading",{name:"Expediciones"})).toBeVisible();
+  await expect(page.getByText("Ruinas del Umbral",{exact:true})).toBeVisible();
+  await page.locator('[data-pve-start="ruins_threshold"][data-pve-difficulty="1"]').click();
+
+  await expect(page.getByText("Vigilante de Ceniza",{exact:true})).toBeVisible();
+  await expect(page.locator(".pve-hp-head")).toContainText("320 / 320");
+  await page.locator("#pve-fight").click();
+
+  await expect(page.locator("#modal")).toBeVisible();
+  await expect(page.locator("#modal-content")).toContainText("VICTORIA");
+  await expect(page.locator("#modal-content")).toContainText("Foco de Umbral");
+  await expect(page.locator("#modal-content")).toContainText("247 / 320");
+  await page.locator("#modal-close").click();
+
+  await expect(page.getByText("Tejedora del Velo",{exact:true})).toBeVisible();
+  await expect(page.locator(".pve-hp-head")).toContainText("247 / 320");
+  expect(mock.calls.some(x=>x.path==="state/pve/start")).toBeTruthy();
+  expect(mock.calls.some(x=>x.path==="state/pve/fight")).toBeTruthy();
+  expect(errors).toEqual([]);
 });
