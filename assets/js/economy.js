@@ -11,6 +11,7 @@ function economyActionCard(action,title,description,icon,label){
 function renderEconomy(){
   const r=realmState.realm,c=realmState.capacities;
   const popCap=Math.min(c.food,c.residential);
+  const food=foodResourceInfo(realmState), research=researchResourceInfo(realmState);
 
   $("#view-host").innerHTML=`
     <div class="economy-resource-grid">
@@ -25,6 +26,14 @@ function renderEconomy(){
       <div class="economy-resource-card">
         <img src="assets/ui/resources/poblacion.png?v=${BUILD_VERSION}" alt="" aria-hidden="true">
         <div><small>POBLACIÓN</small><strong><span data-live-resource="population">${n(r.population)}</span> <em>/ ${n(popCap)}</em></strong><span>Habitantes disponibles. Granjas y Pueblos sostienen su crecimiento.</span></div>
+      </div>
+      <div class="economy-resource-card" title="${esc(food.title)}">
+        <img src="assets/ui/resources/poblacion.png?v=${BUILD_VERSION}" alt="" aria-hidden="true">
+        <div><small>ALIMENTO</small><strong>${food.text}</strong><span>${food.stored?"Reserva alimentaria disponible para el reino.":"Capacidad alimentaria actual. Las Granjas sostienen cuánta población puede mantener tu reino."}</span></div>
+      </div>
+      <div class="economy-resource-card" title="${esc(research.title)}">
+        <img src="assets/ui/nav/investigacion.png?v=${BUILD_VERSION}" alt="" aria-hidden="true">
+        <div><small>INVESTIGACIÓN</small><strong>${research.text}</strong><span>${research.stored?"Puntos de investigación disponibles.":"Producción de RP por turno según tus Gremios. Se aplica directamente a la investigación activa."}</span></div>
       </div>
     </div>
 
