@@ -95,3 +95,18 @@ test("competitive state is not written to localStorage",()=>{
   assert.match(inventory,/stateApi\("\/inventory\/equip"/);
   assert.match(arena,/stateApi\("\/arena\/fight"/);
 });
+
+
+test("economy semantics stay canonical",()=>{
+  const realmStateJs=read("assets/js/realm-state.js");
+  const economyJs=read("assets/js/economy.js");
+  assert.match(realmStateJs,/function passiveFallbackYield\(\)[\s\S]*gold:0,mana:0,population:0/);
+  assert.doesNotMatch(realmStateJs,/Math\.pow\(power,0\.55\)/,"Client must not invent production from Ascendancy");
+  assert.match(realmStateJs,/Math\.min\(foodCapacity,residentialCapacity\)/);
+  assert.match(realmStateJs,/Math\.floor\(Math\.sqrt\(guilds\)\*3\.5\)/);
+  assert.match(realmStateJs,/Alimento es capacidad, no un stock consumible/);
+  assert.match(realmStateJs,/Los RP no se acumulan pasivamente/);
+  assert.match(economyJs,/ALIMENTO · CAPACIDAD/);
+  assert.match(economyJs,/INVESTIGACIÓN · FLUJO/);
+  assert.match(economyJs,/ASCENDENCIA[\s\S]*indicador, no recurso gastable/);
+});
