@@ -1,6 +1,6 @@
 {
-  "version": "0.2.65",
+  "version": "0.2.66",
   "channel": "beta",
-  "updated_at": "2026-09-30T19:34:00+02:00",
-  "note": "Two-choice permanent Archmage evolution per level, including stats, skills, traits and weapons used directly by Arena combat"
+  "updated_at": "2026-09-30T20:02:00+02:00",
+  "note": "Atomic player market: offers can now be accepted and gold, mana or population are exchanged safely in one transaction"
 }
