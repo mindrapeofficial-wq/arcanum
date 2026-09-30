@@ -37,79 +37,181 @@ function arenaHistoryRecord(row){
     log:Array.isArray(row.combat_log)?row.combat_log:[]
   };
 }
-function arenaReplayEvents(rec){
-  var log=Array.isArray(rec.log)?rec.log:[];
-  var me=String(rec.playerName||realmState?.realm?.mage_name||"Archimago");
-  var foe=String(rec.opponent||"Rival");
-  var events=[];
+function arenaCombatStats(rec){
+  var p=rec.player||{},o=rec.opponent_state||{};
+  var playerMax=Math.max(1,Number(p.maxHp)||100);
+  var enemyMax=Math.max(1,Number(o.maxHp)||100);
+  return {
+    player:{max:playerMax,final:Math.max(0,Math.min(playerMax,Number(p.hp)||0))},
+    enemy:{max:enemyMax,final:Math.max(0,Math.min(enemyMax,Number(o.hp)||0))}
+  };
+}
+function arenaSideForName(name,rec){
+  var n=String(name||"").toLowerCase();
+  var me=String(rec.playerName||rec.player?.name||realmState?.realm?.mage_name||"").toLowerCase();
+  var foe=String(rec.opponent||rec.opponent_state?.name||"").toLowerCase();
+  if(n&&me&&n.indexOf(me)!==-1)return "player";
+  if(n&&foe&&n.indexOf(foe)!==-1)return "enemy";
+  return null;
+}
+function arenaCombatTimeline(rec){
+  var out=[],log=Array.isArray(rec.log)?rec.log:[];
+  var me=String(rec.playerName||rec.player?.name||realmState?.realm?.mage_name||"Archimago");
+  var foe=String(rec.opponent||rec.opponent_state?.name||"Rival");
+  function other(side){return side==="player"?"enemy":"player"}
   log.forEach(function(line){
-    if(events.length>=7)return;
-    var t=String(line||"");
-    if(!/golpea|crítico|inflige|contraataca|desata|pronuncia|muerde|ataque|golpe/i.test(t))return;
-    if(t.indexOf(me)!==-1)events.push("player");
-    else if(t.indexOf(foe)!==-1)events.push("enemy");
+    if(out.length>=14)return;
+    var t=String(line||""),damage=0,heal=0,actor=null,target=null,kind="event";
+    var dmg=t.match(/(\d+)\s+de daño/i);
+    var hp=t.match(/regenera\s+(\d+)\s+de vida/i);
+    if(hp){
+      actor=arenaSideForName(t.split(" regenera")[0],rec);
+      if(actor){heal=Number(hp[1])||0;kind="heal"}
+    }else if(/evita el ataque/i.test(t)){
+      target=arenaSideForName(t.split(" evita")[0],rec);
+      if(target){actor=other(target);kind="miss"}
+    }else if(/bloquea con éxito/i.test(t)){
+      target=arenaSideForName(t.split(" bloquea")[0],rec);
+      if(target){actor=other(target);kind="block"}
+    }else if(dmg){
+      damage=Number(dmg[1])||0;
+      if(/El veneno inflige/i.test(t)){
+        target=t.toLowerCase().includes(foe.toLowerCase())?"enemy":t.toLowerCase().includes(me.toLowerCase())?"player":null;
+        actor=target?other(target):null;
+        kind="poison";
+      }else{
+        actor=t.toLowerCase().startsWith(me.toLowerCase())?"player":t.toLowerCase().startsWith(foe.toLowerCase())?"enemy":null;
+        target=actor?other(actor):null;
+        kind=/crítico/i.test(t)?"crit":"hit";
+      }
+    }
+    if(actor||target)out.push({actor:actor,target:target,damage:damage,heal:heal,kind:kind,text:t});
   });
-  if(!events.length)events=["player","enemy","player"];
-  var winner=rec.won?"player":"enemy";
-  if(events[events.length-1]!==winner)events.push(winner);
-  return events.slice(0,8);
+  if(!out.length){
+    out=[
+      {actor:"player",target:"enemy",damage:18,heal:0,kind:"hit",text:""},
+      {actor:"enemy",target:"player",damage:14,heal:0,kind:"hit",text:""},
+      {actor:rec.won?"player":"enemy",target:rec.won?"enemy":"player",damage:32,heal:0,kind:"crit",text:""}
+    ];
+  }
+  return out;
+}
+function arenaSetLife(side,value,max){
+  var bar=$("#arena-life-"+side),label=$("#arena-life-label-"+side);
+  if(!bar||!label)return;
+  value=Math.max(0,Math.min(max,value));
+  bar.style.width=((value/max)*100).toFixed(2)+"%";
+  label.textContent=Math.round(value)+" / "+Math.round(max);
+  bar.closest(".arena-life")?.classList.toggle("is-low",value/max<=.28);
+}
+function arenaFloatCombatText(side,text,kind){
+  var host=$("#arena-duelist-"+side+" .arena-float-layer");
+  if(!host)return;
+  var el=document.createElement("span");
+  el.className="arena-float "+(kind||"");
+  el.textContent=text;
+  host.appendChild(el);
+  setTimeout(function(){el.remove()},950);
 }
 function arenaRunReplay(rec){
   var token=++arenaReplayToken;
   var root=$("#arena-duel-stage"),player=$("#arena-duelist-player"),enemy=$("#arena-duelist-enemy");
   var result=$("#arena-result-panel"),log=$("#arena-log-panel");
   if(!root||!player||!enemy)return;
-  var events=arenaReplayEvents(rec),step=0;
+  var timeline=arenaCombatTimeline(rec),stats=arenaCombatStats(rec),hp={player:stats.player.max,enemy:stats.enemy.max},step=0;
+  arenaSetLife("player",hp.player,stats.player.max);
+  arenaSetLife("enemy",hp.enemy,stats.enemy.max);
+  function fighter(side){return side==="player"?player:enemy}
   function clearState(){
-    [player,enemy].forEach(function(x){if(x)x.classList.remove("is-attacking","is-hit")});
+    [player,enemy].forEach(function(x){if(x)x.classList.remove("is-attacking","is-hit","is-blocking","is-missing")});
+    root.classList.remove("is-impact");
+  }
+  function finish(){
+    clearState();
+    hp.player=Number(rec.player?.hp);
+    hp.enemy=Number(rec.opponent_state?.hp);
+    if(Number.isFinite(hp.player))arenaSetLife("player",hp.player,stats.player.max);
+    if(Number.isFinite(hp.enemy))arenaSetLife("enemy",hp.enemy,stats.enemy.max);
+    var loser=rec.won?enemy:player;
+    loser.classList.add("is-ko");
+    root.classList.add("is-finished");
+    setTimeout(function(){
+      if(token!==arenaReplayToken)return;
+      if(result)result.classList.add("is-visible");
+      if(log)log.classList.add("is-visible");
+    },620);
   }
   function next(){
     if(token!==arenaReplayToken||!document.body.contains(root))return;
     clearState();
-    if(step>=events.length){
-      (rec.won?enemy:player).classList.add("is-ko");
-      root.classList.add("is-finished");
-      if(result)result.classList.add("is-visible");
-      if(log)log.classList.add("is-visible");
+    if(step>=timeline.length){finish();return}
+    var ev=timeline[step],attacker=fighter(ev.actor),defender=fighter(ev.target);
+    if(ev.kind==="heal"){
+      if(attacker)attacker.classList.add("is-healing");
+      if(ev.actor){
+        hp[ev.actor]=Math.min(stats[ev.actor].max,hp[ev.actor]+ev.heal);
+        arenaSetLife(ev.actor,hp[ev.actor],stats[ev.actor].max);
+        arenaFloatCombatText(ev.actor,"+"+ev.heal,"heal");
+      }
+      setTimeout(function(){if(attacker)attacker.classList.remove("is-healing")},520);
+      setTimeout(function(){step++;next()},720);
       return;
     }
-    var attacker=events[step]==="enemy"?enemy:player;
-    var defender=attacker===player?enemy:player;
-    attacker.classList.add("is-attacking");
+    if(attacker)attacker.classList.add("is-attacking");
+    if(ev.kind==="miss"&&defender)defender.classList.add("is-missing");
+    if(ev.kind==="block"&&defender)defender.classList.add("is-blocking");
     setTimeout(function(){
       if(token!==arenaReplayToken||!document.body.contains(root))return;
-      defender.classList.add("is-hit");
-    },220);
+      if(ev.damage>0&&ev.target){
+        root.classList.add("is-impact");
+        if(defender)defender.classList.add("is-hit");
+        hp[ev.target]=Math.max(0,hp[ev.target]-ev.damage);
+        arenaSetLife(ev.target,hp[ev.target],stats[ev.target].max);
+        arenaFloatCombatText(ev.target,"-"+ev.damage,ev.kind==="crit"?"crit":ev.kind==="poison"?"poison":"damage");
+      }else if(ev.kind==="miss"&&ev.target){
+        arenaFloatCombatText(ev.target,"ESQUIVA","miss");
+      }else if(ev.kind==="block"&&ev.target){
+        arenaFloatCombatText(ev.target,"BLOQUEO","block");
+      }
+    },330);
+    setTimeout(function(){root.classList.remove("is-impact")},450);
     setTimeout(function(){
       if(token!==arenaReplayToken||!document.body.contains(root))return;
-      step++;
-      next();
-    },610);
+      step++;next();
+    },900);
   }
-  setTimeout(next,300);
+  setTimeout(next,520);
+}
+function arenaLifeHud(side,name,school,maxHp){
+  return '<div class="arena-combat-hud '+side+'"><div class="arena-combat-name"><strong>'+esc(name)+'</strong><small>'+esc(arenaTrait(school).name)+'</small></div>'+
+    '<div class="arena-life"><div class="arena-life-track"><i id="arena-life-'+side+'" style="width:100%"></i></div><div class="arena-life-meta"><span>VIDA</span><b id="arena-life-label-'+side+'">'+Math.round(maxHp)+' / '+Math.round(maxHp)+'</b></div></div></div>';
 }
 function arenaOpen(rec){
-  var ps=String(rec.playerSchool||realmState?.realm?.school_code||"ascendant");
-  var os=String(rec.opponentSchool||"ascendant");
-  var playerName=String(rec.playerName||realmState?.realm?.mage_name||"Archimago");
+  var ps=String(rec.playerSchool||rec.player?.school||realmState?.realm?.school_code||"ascendant");
+  var os=String(rec.opponentSchool||rec.opponent_state?.school||"ascendant");
+  var playerName=String(rec.playerName||rec.player?.name||realmState?.realm?.mage_name||"Archimago");
+  var stats=arenaCombatStats(rec);
   $("#modal-content").innerHTML=
     '<span class="section-kicker">ARENA ARCANA</span>'+
-    '<h3>'+(rec.won?"Victoria":"Derrota")+' contra '+esc(rec.opponent)+'</h3>'+
+    '<div class="arena-duel-title"><h3>'+esc(playerName)+' <span>vs</span> '+esc(rec.opponent)+'</h3><small>REPETICIÓN DEL COMBATE</small></div>'+
     '<div class="arena-duel-stage" id="arena-duel-stage">'+
-      '<div class="arena-duelist" id="arena-duelist-player"><div class="arena-fighter-shell">'+arenaSpriteHtml(ps,"arena-sprite--duel")+'</div><strong>'+esc(playerName)+'</strong><small>'+esc(arenaTrait(ps).name)+'</small></div>'+
-      '<b>VS</b>'+
-      '<div class="arena-duelist enemy" id="arena-duelist-enemy"><div class="arena-fighter-shell">'+arenaSpriteHtml(os,"arena-sprite--duel")+'</div><strong>'+esc(rec.opponent)+'</strong><small>'+esc(arenaTrait(os).name)+'</small></div>'+
+      '<div class="arena-hud-grid">'+arenaLifeHud("player",playerName,ps,stats.player.max)+arenaLifeHud("enemy",rec.opponent,os,stats.enemy.max)+'</div>'+
+      '<div class="arena-battlefield">'+
+        '<div class="arena-duelist" id="arena-duelist-player"><div class="arena-float-layer"></div><div class="arena-fighter-shell">'+arenaSpriteHtml(ps,"arena-sprite--duel")+'</div><div class="arena-ground-shadow"></div></div>'+
+        '<div class="arena-versus">VS</div>'+
+        '<div class="arena-duelist enemy" id="arena-duelist-enemy"><div class="arena-float-layer"></div><div class="arena-fighter-shell">'+arenaSpriteHtml(os,"arena-sprite--duel")+'</div><div class="arena-ground-shadow"></div></div>'+
+      '</div>'+
     '</div>'+
     '<div class="arena-result '+(rec.won?"win":"loss")+'" id="arena-result-panel"><strong>'+
-      (rec.won?"EL CÍRCULO TE RECONOCE":"EL RIVAL SE IMPONE")+
+      (rec.won?"VICTORIA":"DERROTA")+
     '</strong><span>'+
       (rec.mode==="ranked"?"Rating "+(rec.delta>=0?"+":"")+rec.delta+" · total "+n(rec.rating):"Duelo amistoso · sin cambios de rating")+
     '</span></div>'+
     '<div class="arena-log" id="arena-log-panel">'+(rec.log||[]).map(function(x,i){
       return '<p><small>'+String(i+1).padStart(2,"0")+'</small>'+esc(x)+'</p>';
     }).join("")+'</div>';
-  arenaHydrateSprites($("#modal-content")).then(function(){arenaRunReplay(rec)});
   show($("#modal"));
+  arenaHydrateSprites($("#modal-content")).then(function(){arenaRunReplay(rec)});
 }
 
 async function renderArena(){
@@ -172,9 +274,9 @@ async function arenaFight(name,mode,btn,opponentSchool){
     const data=await stateApi("/arena/fight",{method:"POST",body:{target:name,mode:mode}});
     const rec=data?.match;
     if(!rec)throw new Error("ARENA_RESULT_MISSING");
-    rec.playerName=String(realmState?.realm?.mage_name||"Archimago");
-    rec.playerSchool=String(realmState?.realm?.school_code||"ascendant");
-    rec.opponentSchool=String(opponentSchool||"ascendant");
+    rec.playerName=String(rec.player?.name||realmState?.realm?.mage_name||"Archimago");
+    rec.playerSchool=String(rec.player?.school||realmState?.realm?.school_code||"ascendant");
+    rec.opponentSchool=String(rec.opponent_state?.school||opponentSchool||"ascendant");
     arenaOpen(rec);
     await renderArena();
   }catch(e){
