@@ -132,6 +132,7 @@ function renderPlayerProfile(profile,inbox=null){
       '<div class="profile-hero">'+profileAvatarMarkup(profile,true)+'<div class="profile-identity"><span class="section-kicker">'+(profile.is_npc?"ARCHIMAGO NPC":"FICHA DE ARCHIMAGO")+'</span><h3>'+esc(profile.mage_name)+'</h3><div class="profile-subline">'+esc(profileSchoolName(profile.school_code))+' '+(profile.is_npc?'<span class="tag npc-tag">NPC</span>':"")+' '+allianceBadge+'</div></div></div>'+
       '<div class="profile-stats"><div><small>PODER NETO</small><strong>'+n(profile.net_power)+'</strong></div><div><small>TIERRAS</small><strong>'+n(profile.land)+'</strong></div><div><small>NIVEL MÁGICO</small><strong>'+n(profile.spell_level)+'</strong></div><div><small>ESTADO</small><strong>'+esc(profile.status)+'</strong></div></div>'+
       renderArchmageProgression(profile)+
+      (typeof renderCombatIdentity==="function"?renderCombatIdentity(profile):"")+
       (profile.is_self&&typeof renderArchmageInventory==="function"?renderArchmageInventory(profile):"")+
       '<div class="profile-bio-block"><div class="profile-section-title"><span>BIOGRAFÍA</span>'+(profile.is_self?'<small>máx. 500 caracteres</small>':"")+'</div>'+bioBlock+'</div>'+
       actions+
