@@ -154,8 +154,9 @@ function renderCanonicalArtifacts(snapshot){
   ).join("")+'</div></section>';
 }
 function renderCanonicalTrajectory(snapshot){
-  const t=snapshot?.trajectory||{},a=snapshot?.arena||{};
+  const t=snapshot?.trajectory||{},a=snapshot?.arena||{},renown=t.renown||{score:0,title:"Desconocido"};
   return '<section class="canonical-trajectory"><div class="profile-section-title"><span>TRAYECTORIA</span><small>historial del mismo Archimago</small></div>'+
+    '<div class="canonical-renown"><div><small>RENOMBRE</small><strong>'+n(renown.score||0)+'</strong></div><span>'+esc(renown.title||"Desconocido")+' · indicador derivado, sin efecto mecánico</span></div>'+
     '<div class="canonical-trajectory-grid">'+
       '<div><small>RATING ARENA</small><strong>'+n(a.rating||1000)+'</strong></div>'+
       '<div><small>ARENA</small><strong>'+n(a.wins||0)+'V · '+n(a.losses||0)+'D</strong></div>'+
@@ -201,6 +202,7 @@ function renderPlayerProfile(profile,inbox=null,snapshot=null){
   const arena=snapshot?.arena||{};
   const relicCount=Number(snapshot?.artifacts?.count||0);
   const equipmentPower=Number(snapshot?.inventory?.equipment_power||0);
+  const renown=Number(snapshot?.trajectory?.renown?.score||0);
 
   $("#modal-content").innerHTML=
     '<section class="character-sheet player-character-sheet canonical-archmage-sheet">'+
@@ -209,8 +211,8 @@ function renderPlayerProfile(profile,inbox=null,snapshot=null){
         '<div><small>ASCENDENCIA DEL REINO</small><strong>'+n(profile.net_power)+'</strong></div>'+
         '<div><small>TIERRAS</small><strong>'+n(profile.land)+'</strong></div>'+
         '<div><small>RATING ARENA</small><strong>'+n(arena.rating||1000)+'</strong></div>'+
+        '<div><small>RENOMBRE</small><strong>'+n(renown)+'</strong></div>'+
         '<div><small>RELIQUIAS</small><strong>'+n(relicCount)+'</strong></div>'+
-        '<div><small>EQUIPO</small><strong>'+n(equipmentPower)+' iP</strong></div>'+
         '<div><small>ESTADO</small><strong>'+esc(profile.status)+'</strong></div>'+
       '</div>'+
       '<nav class="player-sheet-nav canonical-sheet-nav" aria-label="Secciones de la ficha"><span>IDENTIDAD</span><span>APTITUDES</span><span>COMBATE</span><span>EQUIPO</span><span>RELIQUIAS</span><span>CRÓNICA</span></nav>'+
