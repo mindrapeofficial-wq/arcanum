@@ -82,10 +82,10 @@ async function installMocks(page){
         land:self?state.realm.land:480,net_power:self?state.realm.net_power:14200,spell_level:self?state.realm.spell_level:2,
         ...(self?archmageProgress:{archmage_total_xp:220,arcane_power:1,knowledge:1,willpower:2,influence:1,attribute_points:0}),
         bio:self?"Archimago de pruebas.":"Rival de pruebas.",avatar_path:null,is_self:self,is_npc:false,
-        friendship:self?null:{status:"none"},alliance:null,my_alliance:null,can_invite_to_alliance:false
+        friendship:self?null:(target==="FRIEND_TEST"?{status:"accepted"}:{status:"none"}),alliance:null,my_alliance:null,can_invite_to_alliance:false
       })});
     }
-    if(rpc==="social_inbox") return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({friend_requests:[],alliance_invites:[],friends:[]})});
+    if(rpc==="social_inbox") return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({friend_requests:[],alliance_invites:[],friends:[{mage_name:"FRIEND_TEST",school_code:"phantasm"}]})});
     if(rpc==="update_my_profile") return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({bio:body().p_bio||"",avatar_path:body().p_avatar_path||null})});
     if(rpc==="spend_archmage_attribute"){
       const key=String(body().p_attribute||"");
@@ -158,6 +158,13 @@ async function installMocks(page){
     const now=new Date().toISOString();
     calls.push({method:req.method(),path:"community"+tail});
     if(req.method()==="OPTIONS") return route.fulfill({status:204,headers:corsHeaders(),body:""});
+
+    if(tail.startsWith("/presence")){
+      return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({online:[
+        {username:"E2E_TESTER",school_code:"ascendant"},
+        {username:"FRIEND_TEST",school_code:"phantasm"}
+      ]})});
+    }
 
     if(tail.startsWith("/messages")){
       if(req.method()==="POST"){
@@ -332,4 +339,31 @@ test("atacar abre siempre la crónica de batalla", async ({page})=>{
   await expect(page.locator("#modal")).toBeVisible();
   await expect(page.locator("#modal-content")).toContainText("CRÓNICA DEL COMBATE");
   await expect(page.locator("#modal-content")).toContainText("37");
+});
+
+
+test("la barra lateral muestra conectados y abre chat privado solo entre amigos", async ({page})=>{
+  await installMocks(page);
+  await page.goto("/");
+  await page.locator("#username").fill("E2E_TESTER");
+  await page.locator("#password").fill("prueba-segura");
+  await page.locator("#submit-button").click();
+  await expect(page.locator("#game-view")).toBeVisible();
+
+  const connected=page.locator('#sidebar-online-list [data-profile="FRIEND_TEST"]');
+  await expect(connected).toBeVisible();
+  await expect(page.locator("#sidebar-online-count")).toHaveText("1");
+
+  await connected.click();
+  await expect(page.locator("#modal")).toBeVisible();
+  await expect(page.locator("#modal-content")).toContainText("FRIEND_TEST");
+  const privateChat=page.locator('#modal-content [data-direct-chat="FRIEND_TEST"]');
+  await expect(privateChat).toBeVisible();
+
+  await privateChat.click();
+  await expect(page.locator("#direct-chat-window")).toBeVisible();
+  await expect(page.locator("#direct-chat-name")).toHaveText("FRIEND_TEST");
+  await page.locator("#direct-chat-input").fill("Mensaje privado de prueba");
+  await page.locator("#direct-chat-send").click();
+  await expect(page.locator("#direct-chat-input")).toHaveValue("");
 });
