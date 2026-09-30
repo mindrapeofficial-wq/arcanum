@@ -10,6 +10,38 @@ const PASSIVE_RESOURCE_FIELDS={
 };
 let passiveResourceFlow=null;
 
+function researchPointsPerTurn(state=realmState){
+  const guilds=Math.max(0,Number(state?.buildings?.guilds||0));
+  return Math.floor(Math.sqrt(guilds)*3.5);
+}
+function foodResourceInfo(state=realmState){
+  const r=state?.realm||{}, c=state?.capacities||{};
+  const hasStored=Object.prototype.hasOwnProperty.call(r,"food")&&Number.isFinite(Number(r.food));
+  if(hasStored){
+    const value=Math.max(0,Number(r.food)||0);
+    return {stored:true,value,label:"Alimento",text:n(value),title:`Alimento almacenado: ${n(value)}.`};
+  }
+  const supply=Math.max(0,Number(c.food||0));
+  const population=Math.max(0,Number(r.population||0));
+  const margin=Math.max(0,supply-population);
+  return {stored:false,value:supply,label:"Alimento",text:n(supply),title:`Provisión alimentaria: ${n(supply)} de capacidad · población ${n(population)} · margen ${n(margin)}. Actualmente el servidor usa el alimento como capacidad de población.`};
+}
+function researchResourceInfo(state=realmState){
+  const r=state?.realm||{};
+  const hasStored=Object.prototype.hasOwnProperty.call(r,"research_points")&&Number.isFinite(Number(r.research_points));
+  if(hasStored){
+    const value=Math.max(0,Number(r.research_points)||0);
+    return {stored:true,value,label:"Investigación",text:n(value),title:`Puntos de investigación almacenados: ${n(value)} RP.`};
+  }
+  const ppt=researchPointsPerTurn(state);
+  const current=state?.research||{};
+  const progress=Number.isFinite(Number(current.effective_cost))&&Number.isFinite(Number(current.remaining_points))
+    ?Math.max(0,Number(current.effective_cost)-Number(current.remaining_points))
+    :null;
+  const progressText=progress===null?"":` · progreso actual ${n(progress)} RP`;
+  return {stored:false,value:ppt,label:"Investigación",text:`${n(ppt)} RP/t`,title:`Producción de investigación: ${n(ppt)} RP por turno${progressText}. Los RP se aplican directamente al hechizo investigado.`};
+}
+
 function passivePowerYield(state=realmState){
   const power=Math.max(1,Number(state?.realm?.net_power||0));
   const scale=Math.pow(power,0.55);
@@ -203,11 +235,14 @@ function renderChrome(){
 }
 function renderResourceStrip(){
   const r=realmState?.realm; if(!r)return; nextTurnAt=r.next_turn_at?new Date(r.next_turn_at):null;
+  const food=foodResourceInfo(realmState), research=researchResourceInfo(realmState);
   $("#resource-strip").innerHTML=`
     <div class="resource-item turns has-icon resource-turns"><span class="resource-icon resource-icon-inline" aria-hidden="true"><svg viewBox="0 0 48 48" focusable="false"><circle cx="24" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M24 10v5M24 33v5M10 24h5M33 24h5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M17 16h14l-2.2 5.2c-.8 1.8-2.2 3-4.8 3s-4-1.2-4.8-3L17 16Zm0 16h14l-2.2-5.2c-.8-1.8-2.2-3-4.8-3s-4 1.2-4.8 3L17 32Z" fill="currentColor" opacity=".92"/></svg></span><span class="resource-copy"><small>Turnos</small><strong><span id="turn-count">${n(r.turns)}</span> / ${n(r.max_turns)}</strong></span></div>
     <div class="resource-item has-icon resource-next"><img class="resource-icon" src="assets/ui/resources/tiempo.png?v=0.2.35" alt="" aria-hidden="true" decoding="async" /><span class="resource-copy"><small>Próximo</small><strong id="next-turn">${r.turns>=r.max_turns?"MÁXIMO":"--:--"}</strong></span></div>
     <div class="resource-item has-icon resource-gold"><img class="resource-icon" src="assets/ui/resources/oro.png?v=0.2.35" alt="" aria-hidden="true" decoding="async" /><span class="resource-copy"><small>Oro</small><strong data-live-resource="gold">${n(r.gold)}</strong></span></div>
     <div class="resource-item has-icon resource-mana"><img class="resource-icon" src="assets/ui/resources/mana.png?v=0.2.35" alt="" aria-hidden="true" decoding="async" /><span class="resource-copy"><small>Maná</small><strong data-live-resource="mana">${n(r.mana)}</strong></span></div>
+    <div class="resource-item has-icon resource-food" title="${esc(food.title)}"><img class="resource-icon" src="assets/ui/resources/poblacion.png?v=${BUILD_VERSION}" alt="" aria-hidden="true" decoding="async" /><span class="resource-copy"><small>Alimento</small><strong>${food.text}</strong></span></div>
+    <div class="resource-item has-icon resource-research" title="${esc(research.title)}"><img class="resource-icon" src="assets/ui/nav/investigacion.png?v=${BUILD_VERSION}" alt="" aria-hidden="true" decoding="async" /><span class="resource-copy"><small>Investigación</small><strong>${research.text}</strong></span></div>
     <div class="resource-item has-icon resource-population"><img class="resource-icon" src="assets/ui/resources/poblacion.png?v=0.2.35" alt="" aria-hidden="true" decoding="async" /><span class="resource-copy"><small>Población</small><strong data-live-resource="population">${n(r.population)}</strong></span></div>
     <div class="resource-item has-icon resource-land"><img class="resource-icon" src="assets/ui/resources/tierras.png?v=0.2.35" alt="" aria-hidden="true" decoding="async" /><span class="resource-copy"><small>Tierras</small><strong data-live-resource="land">${n(r.land)}</strong></span></div>
     <div class="resource-item has-icon resource-power"><img class="resource-icon" src="assets/ui/resources/poder-neto.png?v=0.2.35" alt="" aria-hidden="true" decoding="async" /><span class="resource-copy"><small>Poder Neto</small><strong data-live-resource="net_power">${n(r.net_power)}</strong></span></div>`;
