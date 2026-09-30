@@ -18,3 +18,31 @@
 .combat-evolution-history{margin-top:13px;padding-top:12px;border-top:1px solid rgba(218,151,57,.09)}.combat-evolution-history>div:not(.profile-section-title){display:grid;grid-template-columns:70px minmax(120px,.45fr) minmax(0,1fr);gap:9px;align-items:center;padding:8px 0;border-bottom:1px solid rgba(218,151,57,.055)}.combat-evolution-history span{color:#6b5944;font:800 7px Arial,sans-serif}.combat-evolution-history strong{color:#ccb183;font:10px Arial,sans-serif}.combat-evolution-history small{color:#665c50;font:8px/1.4 Arial,sans-serif}
 .combat-trait-list{display:grid;gap:5px;margin-top:5px}.combat-trait-chip{display:block;padding:6px 7px;border:1px solid rgba(218,151,57,.08);background:rgba(0,0,0,.13)}.combat-trait-chip b,.combat-trait-chip small{display:block}.combat-trait-chip b{color:#d9bd8e;font:700 9px Arial,sans-serif}.combat-trait-chip small{margin-top:3px;color:#706354;font:7.5px/1.35 Arial,sans-serif}
 @media(max-width:640px){.combat-choice-grid{grid-template-columns:1fr}.combat-evolution-history>div:not(.profile-section-title){grid-template-columns:58px 1fr}.combat-evolution-history small{grid-column:2}}
+
+
+/* Ficha de jugador unificada */
+.player-character-sheet{max-width:1180px}
+.player-sheet-hero{align-items:flex-start}
+.player-sheet-purpose{margin:7px 0 0;max-width:620px;color:#7d6d58;font:9px/1.55 Arial,sans-serif}
+.player-sheet-kingdom-stats{margin-top:12px}
+.player-sheet-nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:14px 0 12px;padding:6px;border:1px solid rgba(218,151,57,.12);background:rgba(0,0,0,.2)}
+.player-sheet-nav span{display:grid;place-items:center;min-height:34px;border:1px solid rgba(218,151,57,.08);background:linear-gradient(180deg,rgba(40,25,12,.42),rgba(8,6,4,.45));color:#b29468;font:800 8px Arial,sans-serif;letter-spacing:.11em}
+.player-sheet-layout{display:grid;grid-template-columns:minmax(0,.92fr) minmax(360px,1.08fr);gap:14px;align-items:start}
+.player-sheet-main,.player-sheet-side,.player-sheet-development{min-width:0;padding:13px;border:1px solid rgba(218,151,57,.12);background:linear-gradient(145deg,rgba(17,11,7,.56),rgba(0,0,0,.18))}
+.player-sheet-block-title{display:flex;justify-content:space-between;gap:12px;align-items:end;padding:0 2px 10px;border-bottom:1px solid rgba(218,151,57,.11)}
+.player-sheet-block-title b{color:#e1bf88;font:700 10px Arial,sans-serif;letter-spacing:.12em}
+.player-sheet-block-title small{color:#6f6252;font:8px Arial,sans-serif;text-align:right}
+.player-sheet-main .combat-identity,.player-sheet-side .archmage-inventory,.player-sheet-development .archmage-progression{margin-top:0;padding-top:0;border-top:0}
+.player-sheet-main .combat-identity{padding:12px 0 0;background:none;border-left:0;border-right:0;border-bottom:0}
+.player-sheet-side .archmage-inventory{padding-top:12px}
+.player-sheet-side .loot-summary{grid-template-columns:repeat(2,minmax(0,1fr))}
+.player-sheet-side .loot-equipment{grid-template-columns:repeat(2,minmax(0,1fr))}
+.player-sheet-side .loot-grid{grid-template-columns:1fr}
+.player-sheet-development{margin-top:14px}
+.player-sheet-development .archmage-progression{padding-top:12px}
+.player-sheet-remote-note{padding:16px;border:1px dashed rgba(218,151,57,.16);background:rgba(0,0,0,.15)}
+.player-sheet-remote-note b,.player-sheet-remote-note span{display:block}
+.player-sheet-remote-note b{color:#d7b77f;font:700 10px Arial,sans-serif;letter-spacing:.09em}
+.player-sheet-remote-note span{margin-top:8px;color:#756959;font:9px/1.55 Arial,sans-serif}
+@media(max-width:900px){.player-sheet-layout{grid-template-columns:1fr}.player-sheet-side .loot-equipment{grid-template-columns:repeat(3,minmax(0,1fr))}.player-sheet-side .loot-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){.player-sheet-nav{grid-template-columns:repeat(2,minmax(0,1fr))}.player-sheet-side .loot-equipment,.player-sheet-side .loot-grid{grid-template-columns:1fr}.player-sheet-block-title{align-items:flex-start;flex-direction:column}.player-sheet-block-title small{text-align:left}}
