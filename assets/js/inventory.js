@@ -89,7 +89,8 @@ function lootNormalizeV2(input){
 }
 function lootLegacyLoad(profile){
   try{
-    const raw=localStorage.getItem(lootMageKey(profile));
+    const mage=String(profile?.mage_name||realmState?.realm?.mage_name||"unknown").toLowerCase();
+    const raw=localStorage.getItem(lootMageKey(profile))||localStorage.getItem("arcanum_inventory_v1_"+mage);
     const parsed=raw?JSON.parse(raw):null;
     return parsed&&(parsed.version===1||parsed.version===2)?lootNormalizeV2(parsed):null;
   }catch{return null;}
