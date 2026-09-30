@@ -221,6 +221,12 @@ async function installMocks(page){
     if(req.method()==="GET"&&tail==="/inventory"){
       return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({inventory:emptyInventory,bonuses:{equipmentPower:0}})});
     }
+    if(req.method()==="POST"&&tail==="/loot/exploration/start"){
+      return route.fulfill({status:201,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({claim_key:"exploration:e2e",reused:false})});
+    }
+    if(req.method()==="POST"&&tail==="/loot/exploration/complete"){
+      return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({status:"no_drop",item:null,pending:false,chance:.19,reward_tier:"scouting"})});
+    }
     if(req.method()==="GET"&&tail==="/items"){
       return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({items:emptyItems,inventory:emptyInventory,relics:[]})});
     }
@@ -353,6 +359,8 @@ test("flujo crítico completo: login, reino, explorar, construir, investigar, re
     "/rest/v1/rpc/recruit_units",
     "/rest/v1/rpc/attack_targets",
     "/rest/v1/rpc/npc_directory",
+    "state/loot/exploration/start",
+    "state/loot/exploration/complete",
     "community/messages",
     "community/posts"
   ]) expect(paths.some(p=>p.startsWith(required)),`No se ejecutó ${required}`).toBeTruthy();
