@@ -20,6 +20,9 @@ async function confirmAttack(target,mode,btn){
       }catch(e){}
     }
     if(battleId){
+      if(typeof artifactClaimPvp==="function"){
+        try{await artifactClaimPvp(battleId);}catch(e){}
+      }
       try{await openBattleReport(battleId,true);}catch(e){}
     }
   }catch(e){toast(humanError(e),"error");}
