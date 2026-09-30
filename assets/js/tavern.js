@@ -6,7 +6,7 @@ const TAVERN_SPEED = 185;
 const TAVERN_RADIUS = 14;
 const TAVERN_BROADCAST_MS = 110;
 
-let tavernRuntime = null;
+let tavernRuntime = null;\nconst TAVERN_ASCENDANT_SPRITE = new Image();\nTAVERN_ASCENDANT_SPRITE.src = "assets/art/characters/ascendant/walk.svg?v=0.2.48";
 
 function tavernSchoolColor(code){
   return ({
@@ -159,21 +159,37 @@ function tavernDrawMage(ctx,p,isSelf=false){
   const color=tavernSchoolColor(p.school);
   ctx.save();
   ctx.translate(Math.round(p.x),Math.round(p.y));
-  if(isSelf){ctx.fillStyle="rgba(244,221,176,.22)";ctx.beginPath();ctx.arc(0,0,24,0,Math.PI*2);ctx.fill();}
-  ctx.fillStyle="rgba(0,0,0,.35)";ctx.beginPath();ctx.ellipse(0,15,15,6,0,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle=color;ctx.fillRect(-10,-7,20,22);
-  ctx.fillStyle="#d7bf9c";ctx.fillRect(-7,-18,14,12);
-  ctx.fillStyle="#23140d";ctx.fillRect(-8,-20,16,4);
-  ctx.fillStyle=color;ctx.beginPath();ctx.moveTo(-13,15);ctx.lineTo(0,-2);ctx.lineTo(13,15);ctx.closePath();ctx.fill();
-  if(p.dir==="left"||p.dir==="right"){ctx.fillStyle="#d7bf9c";ctx.fillRect(p.dir==="left"?-14:10,-3,4,10);}
-  tavernDrawPixelText(ctx,p.name||"Archimago",0,-34,12);
+  if(isSelf){ctx.fillStyle="rgba(244,221,176,.22)";ctx.beginPath();ctx.arc(0,0,30,0,Math.PI*2);ctx.fill();}
+  ctx.fillStyle="rgba(0,0,0,.35)";ctx.beginPath();ctx.ellipse(0,17,18,6,0,0,Math.PI*2);ctx.fill();
+
+  const moving=Boolean(p.moving || (p.movingUntil && p.movingUntil>Date.now()));
+  const ascendant=p.school==="ascendant" && TAVERN_ASCENDANT_SPRITE.complete && TAVERN_ASCENDANT_SPRITE.naturalWidth>0;
+  if(ascendant){
+    const frame=moving?Math.floor(Date.now()/105)%5:0;
+    const sw=128, sh=170;
+    const dw=58, dh=77;
+    const flip=p.dir==="left";
+    ctx.save();
+    if(flip)ctx.scale(-1,1);
+    ctx.drawImage(TAVERN_ASCENDANT_SPRITE,frame*sw,0,sw,sh,-dw/2,-dh+20,dw,dh);
+    ctx.restore();
+  }else{
+    ctx.fillStyle=color;ctx.fillRect(-10,-7,20,22);
+    ctx.fillStyle="#d7bf9c";ctx.fillRect(-7,-18,14,12);
+    ctx.fillStyle="#23140d";ctx.fillRect(-8,-20,16,4);
+    ctx.fillStyle=color;ctx.beginPath();ctx.moveTo(-13,15);ctx.lineTo(0,-2);ctx.lineTo(13,15);ctx.closePath();ctx.fill();
+    if(p.dir==="left"||p.dir==="right"){ctx.fillStyle="#d7bf9c";ctx.fillRect(p.dir==="left"?-14:10,-3,4,10);}
+  }
+
+  tavernDrawPixelText(ctx,p.name||"Archimago",0,ascendant?-67:-34,12);
   if(p.bubble && p.bubbleUntil>Date.now()){
     const txt=String(p.bubble).slice(0,42);
     ctx.font="700 12px sans-serif";
     const bw=Math.min(240,Math.max(72,ctx.measureText(txt).width+20));
-    ctx.fillStyle="rgba(20,13,9,.94)";ctx.fillRect(-bw/2,-72,bw,26);
-    ctx.strokeStyle="#c99d5b";ctx.strokeRect(-bw/2,-72,bw,26);
-    ctx.fillStyle="#fff0d0";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(txt,0,-59);
+    const by=ascendant?-104:-72;
+    ctx.fillStyle="rgba(20,13,9,.94)";ctx.fillRect(-bw/2,by,bw,26);
+    ctx.strokeStyle="#c99d5b";ctx.strokeRect(-bw/2,by,bw,26);
+    ctx.fillStyle="#fff0d0";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(txt,0,by+13);
   }
   ctx.restore();
 }
@@ -206,7 +222,7 @@ function tavernMove(rt,dt){
   if(rt.keys.has("ArrowRight")||rt.keys.has("d"))dx++;
   if(rt.keys.has("ArrowUp")||rt.keys.has("w"))dy--;
   if(rt.keys.has("ArrowDown")||rt.keys.has("s"))dy++;
-  if(!dx&&!dy)return false;
+  if(!dx&&!dy){rt.player.moving=false;return false;}
   const len=Math.hypot(dx,dy)||1;dx/=len;dy/=len;
   const nx=rt.player.x+dx*TAVERN_SPEED*dt, ny=rt.player.y+dy*TAVERN_SPEED*dt;
   if(tavernCanMove(nx,rt.player.y))rt.player.x=nx;
@@ -352,7 +368,7 @@ async function renderTavern(){
   const canvas=document.querySelector("#tavern-canvas");
   const rt={
     active:true,canvas,ctx:canvas.getContext("2d"),status:document.querySelector("#tavern-status"),
-    id:String(getSession()?.user?.id||mage),player:{name:mage,school,x:TAVERN_SPAWN.x,y:TAVERN_SPAWN.y,dir:"up",bubble:"",bubbleUntil:0},
+    id:String(getSession()?.user?.id||mage),player:{name:mage,school,x:TAVERN_SPAWN.x,y:TAVERN_SPAWN.y,dir:"up",moving:false,bubble:"",bubbleUntil:0},
     remotes:new Map(),keys:new Set(),lastBroadcast:0,lastNearby:0,presenceCount:1,connected:false,lastFrame:0
   };
   tavernRuntime=rt;
