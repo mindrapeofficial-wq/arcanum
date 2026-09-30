@@ -121,6 +121,7 @@ test("canonical Archmage identity uses one snapshot",()=>{
   assert.match(profile,/IDENTIDAD CANÓNICA/);
   assert.match(profile,/APTITUDES DEL ARCHIMAGO/);
   assert.match(profile,/CRÓNICA PERSONAL/);
+  assert.match(profile,/RENOMBRE/);
   assert.doesNotMatch(profile,/La sincronización pública del inventario se activará/);
   assert.match(arena,/loadArchmageSnapshot\(realmState\.realm\.mage_name/);
   assert.match(arena,/const selfProfile=snapshot\.profile/);
