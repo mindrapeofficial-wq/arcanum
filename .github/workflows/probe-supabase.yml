@@ -1,0 +1,37 @@
+name: Probe ARCANUM RPC schema
+
+on:
+  push:
+    paths:
+      - ".github/workflows/probe-supabase.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Read public PostgREST schema
+        env:
+          ARCANUM_URL: https://mrmvmoyysxuopqexbxfk.supabase.co
+          ARCANUM_KEY: sb_publishable_tZEPJi2v7Tp-xDuVa0qWRw_geizIGoD
+        run: |
+          set -euo pipefail
+          curl -fsS -H "apikey: $ARCANUM_KEY" "$ARCANUM_URL/rest/v1/" -o schema.json
+          python3 - <<'PY'
+          import json
+          data=json.load(open("schema.json"))
+          paths=sorted(data.get("paths",{}))
+          rpcs=[p for p in paths if "/rpc/" in p]
+          print("=== NPC / AGENT CANDIDATES ===")
+          for p in rpcs:
+              low=p.lower()
+              if any(k in low for k in ("npc","bot","agent","tick","seed","create","admin")):
+                  print(p)
+          print("=== ALL RPCS ===")
+          for p in rpcs:
+              print(p)
+          print("RPC_COUNT",len(rpcs))
+          PY
