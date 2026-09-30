@@ -1,6 +1,6 @@
 {
-  "version": "0.2.63",
+  "version": "0.2.64",
   "channel": "beta",
-  "updated_at": "2026-09-30T19:05:00+02:00",
-  "note": "Persistent randomized Archmage combat identity: stats, weapons, traits and abilities; Arena now uses character build"
+  "updated_at": "2026-09-30T19:20:00+02:00",
+  "note": "Food and research are now visible in the main resource bar and Economy, with backend-compatible stored-resource fallbacks"
 }
