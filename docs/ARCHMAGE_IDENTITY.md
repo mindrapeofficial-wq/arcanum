@@ -85,6 +85,19 @@ Until Point 4 merges the object model:
 
 The UI must never call both simply "equipped weapon".
 
+## Renown
+
+Renown is a derived summary of persistent accomplishments, not a currency and not a source of combat power.
+
+Current inputs include:
+- Archmage level,
+- Arena victories,
+- Arena rating above the baseline,
+- owned relics,
+- extra weight for World Unique relics.
+
+The server returns both the score and its breakdown. The value has no mechanical effect in 0.3.3.
+
 ## Chronicle
 
 The personal chronicle is a unified read model, not a new mutable authority.
