@@ -9,7 +9,7 @@ let directChatName="";
 let directChatSignature="";
 let directChatMode="player";
 const ORACLE_NAME="Astrael";
-const ORACLE_TITLE="Archivista Arcano · IA";
+const ORACLE_TITLE="Archimago IA · Consejero";
 const ONLINE_PANEL_COLLAPSED_KEY="arcanum_online_panel_collapsed_v1";
 let oracleHistory=[];
 
@@ -353,7 +353,7 @@ function renderDirectChatMessages(messages){
   host.scrollTop=host.scrollHeight;
 }
 function oracleGreeting(){
-  return {mine:false,oracle:true,body:"Soy Astrael, Archivista de ARCANUM. Pregúntame lo que quieras sobre tu reino, turnos, economía, construcción, magia, ejército, guerra, Escuelas o sistemas sociales.",created_at:new Date().toISOString()};
+  return {mine:false,oracle:true,body:"Soy Astrael, un Archimago controlado por IA dentro de ARCANUM. Puedo conversar contigo con profundidad sobre tu reino, economía, construcción, investigación, ejército, guerra, artefactos y estrategia. Mi siguiente evolución es actuar de forma autónoma como un jugador persistente dentro del mismo mundo.",created_at:new Date().toISOString()};
 }
 function renderOracleChat(){
   if(!oracleHistory.length)oracleHistory=[oracleGreeting()];
