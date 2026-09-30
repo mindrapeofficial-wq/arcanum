@@ -168,6 +168,7 @@ function renderOwnSocial(profile,inbox){
 }
 function wireProfileSheet(profile){
   if(typeof wireInventoryPanel==="function")wireInventoryPanel(profile);
+  if(typeof wireCombatEvolution==="function")wireCombatEvolution(profile);
   document.querySelectorAll("[data-archmage-attribute]").forEach(b=>b.addEventListener("click",()=>spendArchmageAttribute(b.dataset.archmageAttribute,profile)));
   $("#profile-save-bio")?.addEventListener("click",()=>saveOwnProfile(profile));
   $("#profile-avatar-file")?.addEventListener("change",e=>startProfileAvatarCrop(e.target.files?.[0],profile));
