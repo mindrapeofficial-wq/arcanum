@@ -1,9 +1,9 @@
 "use strict";
 
-const TAVERN_WORLD = { width: 1280, height: 820 };
-const TAVERN_SPAWN = { x: 640, y: 735 };
-const TAVERN_SPEED = 185;
-const TAVERN_RADIUS = 14;
+const TAVERN_WORLD = { width: 1024, height: 768 };
+const TAVERN_SPAWN = { x: 560, y: 587 };
+const TAVERN_SPEED = 180;
+const TAVERN_RADIUS = 13;
 const TAVERN_BROADCAST_MS = 110;
 
 let tavernRuntime = null;
@@ -22,39 +22,58 @@ function tavernSchoolColor(code){
 
 function tavernClamp(v,min,max){ return Math.max(min,Math.min(max,v)); }
 
-function tavernObstacles(){
-  return [
-    {x:0,y:0,w:1280,h:52},
-    {x:0,y:0,w:42,h:820},
-    {x:1238,y:0,w:42,h:820},
-    {x:0,y:778,w:500,h:42},
-    {x:780,y:778,w:500,h:42},
-    {x:82,y:92,w:360,h:108},
-    {x:838,y:82,w:350,h:132},
-    {x:84,y:257,w:220,h:96},
-    {x:975,y:300,w:190,h:110},
-    {x:93,y:606,w:250,h:88},
-    {x:930,y:600,w:260,h:92},
-    {x:412,y:248,w:168,h:82},
-    {x:704,y:248,w:168,h:82},
-    {x:418,y:492,w:168,h:82},
-    {x:698,y:492,w:168,h:82},
-    {x:537,y:610,w:212,h:72}
-  ];
+const tavernMapAsset={ready:false,canvas:null,mask:null,width:0,height:0,colors:0};
+
+async function tavernGunzipBase64(value){
+  const raw=Uint8Array.from(atob(String(value||"")),c=>c.charCodeAt(0));
+  if(typeof DecompressionStream!=="function")throw new Error("Este navegador no soporta el mapa comprimido de la Taberna.");
+  const stream=new Blob([raw]).stream().pipeThrough(new DecompressionStream("gzip"));
+  return new Uint8Array(await new Response(stream).arrayBuffer());
 }
 
-function tavernCircleHitsRect(x,y,r,o){
-  const cx=tavernClamp(x,o.x,o.x+o.w);
-  const cy=tavernClamp(y,o.y,o.y+o.h);
-  const dx=x-cx, dy=y-cy;
-  return dx*dx+dy*dy < r*r;
+async function tavernPrepareMap(){
+  if(tavernMapAsset.ready)return true;
+  const data=window.ARCANUM_TAVERN_MAP_DATA;
+  if(!data?.map||!data?.mask)throw new Error("No se ha podido cargar el mapa de la Taberna.");
+  const [mapBytes,maskBytes]=await Promise.all([tavernGunzipBase64(data.map),tavernGunzipBase64(data.mask)]);
+  const width=Number(data.width||128),height=Number(data.height||96),colors=Number(data.colors||32);
+  const paletteBytes=colors*3;
+  if(mapBytes.length<paletteBytes+width*height)throw new Error("Los datos del mapa de la Taberna están incompletos.");
+  const c=document.createElement("canvas");
+  c.width=width;c.height=height;
+  const cx=c.getContext("2d",{alpha:false});
+  const image=cx.createImageData(width,height);
+  for(let i=0;i<width*height;i++){
+    const pi=mapBytes[paletteBytes+i]*3,di=i*4;
+    image.data[di]=mapBytes[pi]||0;
+    image.data[di+1]=mapBytes[pi+1]||0;
+    image.data[di+2]=mapBytes[pi+2]||0;
+    image.data[di+3]=255;
+  }
+  cx.putImageData(image,0,0);
+  tavernMapAsset.ready=true;
+  tavernMapAsset.canvas=c;
+  tavernMapAsset.mask=maskBytes;
+  tavernMapAsset.width=width;
+  tavernMapAsset.height=height;
+  tavernMapAsset.colors=colors;
+  return true;
+}
+
+function tavernMaskWalkable(x,y){
+  if(!tavernMapAsset.ready||!tavernMapAsset.mask)return false;
+  if(x<0||y<0||x>=TAVERN_WORLD.width||y>=TAVERN_WORLD.height)return false;
+  const gx=Math.max(0,Math.min(tavernMapAsset.width-1,Math.floor(x/TAVERN_WORLD.width*tavernMapAsset.width)));
+  const gy=Math.max(0,Math.min(tavernMapAsset.height-1,Math.floor(y/TAVERN_WORLD.height*tavernMapAsset.height)));
+  const bit=gy*tavernMapAsset.width+gx;
+  const byte=tavernMapAsset.mask[bit>>3]||0;
+  return Boolean(byte&(1<<(7-(bit&7))));
 }
 
 function tavernCanMove(x,y){
-  if(x<TAVERN_RADIUS+44 || x>TAVERN_WORLD.width-TAVERN_RADIUS-44) return false;
-  if(y<TAVERN_RADIUS+54 || y>TAVERN_WORLD.height-TAVERN_RADIUS-44) return false;
-  if(y>758 && (x<510 || x>770)) return false;
-  return !tavernObstacles().some(o=>tavernCircleHitsRect(x,y,TAVERN_RADIUS,o));
+  const r=TAVERN_RADIUS;
+  const samples=[[0,0],[r,0],[-r,0],[0,r],[0,-r],[r*.72,r*.72],[r*.72,-r*.72],[-r*.72,r*.72],[-r*.72,-r*.72]];
+  return samples.every(([dx,dy])=>tavernMaskWalkable(x+dx,y+dy));
 }
 
 function tavernDrawPixelText(ctx,text,x,y,size=14,align="center"){
@@ -72,89 +91,14 @@ function tavernDrawPixelText(ctx,text,x,y,size=14,align="center"){
 }
 
 function tavernDrawRoom(ctx){
-  const w=TAVERN_WORLD.width,h=TAVERN_WORLD.height;
-  ctx.fillStyle="#17100b";ctx.fillRect(0,0,w,h);
-  ctx.fillStyle="#6f452b";ctx.fillRect(42,52,w-84,h-96);
-
-  // floor planks
-  for(let y=52;y<h-44;y+=32){
-    ctx.fillStyle=(Math.floor(y/32)%2)?"#5f3b25":"#694329";
-    ctx.fillRect(42,y,w-84,30);
-    ctx.fillStyle="rgba(33,19,11,.3)";
-    ctx.fillRect(42,y+28,w-84,2);
-    for(let x=52+(Math.floor(y/32)%2)*52;x<w-50;x+=104){
-      ctx.fillRect(x,y,2,30);
-    }
+  ctx.fillStyle="#050403";
+  ctx.fillRect(0,0,TAVERN_WORLD.width,TAVERN_WORLD.height);
+  if(tavernMapAsset.ready&&tavernMapAsset.canvas){
+    ctx.save();
+    ctx.imageSmoothingEnabled=false;
+    ctx.drawImage(tavernMapAsset.canvas,0,0,tavernMapAsset.width,tavernMapAsset.height,0,0,TAVERN_WORLD.width,TAVERN_WORLD.height);
+    ctx.restore();
   }
-
-  // stone entrance
-  ctx.fillStyle="#6f6a5d";ctx.fillRect(500,758,280,62);
-  for(let x=510;x<780;x+=45){ctx.fillStyle="#8d8675";ctx.fillRect(x,766,35,18);ctx.fillRect(x-18,790,35,18);}
-
-  // walls
-  ctx.fillStyle="#302117";ctx.fillRect(0,0,w,52);ctx.fillRect(0,0,42,h);ctx.fillRect(w-42,0,42,h);
-  ctx.fillRect(0,778,500,42);ctx.fillRect(780,778,500,42);
-  ctx.fillStyle="#9c7650";ctx.fillRect(0,42,w,10);ctx.fillRect(32,0,10,h);ctx.fillRect(w-42,0,10,h);
-
-  const drawTable=(x,y,ww,hh)=>{
-    ctx.fillStyle="#2c1a10";ctx.fillRect(x-8,y+8,ww+16,hh);
-    ctx.fillStyle="#8c572f";ctx.fillRect(x,y,ww,hh);
-    ctx.fillStyle="#a96c3a";ctx.fillRect(x+8,y+8,ww-16,10);
-    ctx.fillStyle="#24150d";
-    for(let i=0;i<ww;i+=38)ctx.fillRect(x+i,y+2,3,hh-4);
-  };
-
-  // bar + shelves
-  ctx.fillStyle="#3a2517";ctx.fillRect(82,92,360,108);
-  ctx.fillStyle="#8e5933";ctx.fillRect(94,105,336,18);
-  ctx.fillStyle="#21150e";
-  for(let x=110;x<415;x+=38){ctx.fillRect(x,134,18,44);ctx.fillStyle="#8b5f2f";ctx.fillRect(x+4,140,10,18);ctx.fillStyle="#21150e";}
-  ctx.fillStyle="#a16838";ctx.fillRect(84,188,356,28);
-  for(let x=110;x<430;x+=54){ctx.fillStyle="#4c2d1a";ctx.beginPath();ctx.arc(x,232,15,0,Math.PI*2);ctx.fill();}
-
-  // fireplace/lounge
-  ctx.fillStyle="#4b3528";ctx.fillRect(838,82,350,132);
-  ctx.fillStyle="#292929";ctx.fillRect(975,99,76,88);
-  ctx.fillStyle="#7d452b";ctx.fillRect(986,123,54,48);
-  ctx.fillStyle="#f5aa45";ctx.beginPath();ctx.moveTo(1000,169);ctx.quadraticCurveTo(1008,130,1021,166);ctx.quadraticCurveTo(1035,145,1037,170);ctx.fill();
-  ctx.fillStyle="#b58a54";ctx.fillRect(858,173,86,26);ctx.fillRect(1082,173,86,26);
-
-  drawTable(84,257,220,96);
-  drawTable(975,300,190,110);
-  drawTable(93,606,250,88);
-  drawTable(930,600,260,92);
-  drawTable(412,248,168,82);
-  drawTable(704,248,168,82);
-  drawTable(418,492,168,82);
-  drawTable(698,492,168,82);
-  drawTable(537,610,212,72);
-
-  // rugs / social center
-  ctx.fillStyle="#263b55";ctx.fillRect(576,342,128,124);
-  ctx.fillStyle="#c19a50";ctx.fillRect(586,352,108,104);
-  ctx.fillStyle="#2a4564";ctx.fillRect(590,356,100,96);
-  ctx.fillStyle="#cfaa5d";ctx.beginPath();ctx.arc(640,404,14,0,Math.PI*2);ctx.fill();
-
-  // quest board
-  ctx.fillStyle="#432b1a";ctx.fillRect(360,624,132,100);
-  ctx.fillStyle="#9a6a3b";ctx.fillRect(370,635,112,78);
-  ctx.fillStyle="#d8c28c";ctx.fillRect(381,646,30,38);ctx.fillRect(422,655,42,30);
-  ctx.fillStyle="#3a281d";ctx.fillRect(387,655,18,3);ctx.fillRect(428,665,30,3);
-
-  // bard stage
-  ctx.fillStyle="#392216";ctx.fillRect(975,300,190,110);
-  ctx.fillStyle="#915832";ctx.fillRect(985,312,170,82);
-  ctx.fillStyle="#c89b58";ctx.beginPath();ctx.arc(1060,350,17,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle="#4d2b18";ctx.fillRect(1056,365,8,30);
-
-  // lamps
-  [[62,73],[1216,73],[62,755],[1216,755],[640,90],[640,550]].forEach(([x,y])=>{
-    ctx.fillStyle="#321e10";ctx.fillRect(x-3,y-20,6,18);
-    ctx.fillStyle="#f1b24d";ctx.fillRect(x-8,y-8,16,18);
-    ctx.fillStyle="#ffe077";ctx.fillRect(x-3,y-3,6,8);
-  });
-
-  tavernDrawPixelText(ctx,"LA TABERNA DE ARCANUM",640,28,18);
 }
 
 function tavernDrawMage(ctx,p,isSelf=false){
@@ -225,6 +169,7 @@ function tavernMove(rt,dt){
   if(rt.keys.has("ArrowUp")||rt.keys.has("w"))dy--;
   if(rt.keys.has("ArrowDown")||rt.keys.has("s"))dy++;
   if(!dx&&!dy){rt.player.moving=false;return false;}
+  rt.player.moving=true;
   rt.player.moving=true;
   const len=Math.hypot(dx,dy)||1;dx/=len;dy/=len;
   const nx=rt.player.x+dx*TAVERN_SPEED*dt, ny=rt.player.y+dy*TAVERN_SPEED*dt;
@@ -368,6 +313,10 @@ async function renderTavern(){
     </div>`;
 
   const canvas=document.querySelector("#tavern-canvas");
+  const status=document.querySelector("#tavern-status");
+  if(status)status.textContent="Cargando mapa…";
+  await tavernPrepareMap();
+  if(status)status.textContent="Conectando…";
   const rt={
     active:true,canvas,ctx:canvas.getContext("2d"),status:document.querySelector("#tavern-status"),
     id:String(getSession()?.user?.id||mage),player:{name:mage,school,x:TAVERN_SPAWN.x,y:TAVERN_SPAWN.y,dir:"up",moving:false,bubble:"",bubbleUntil:0},
