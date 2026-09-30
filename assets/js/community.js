@@ -43,6 +43,7 @@ async function renderCommunity(){
   communitySignature="";
   const school=profileSchoolName(realmState?.realm?.school_code);
   $("#view-host").innerHTML=`
+    ${viewHeader("SOCIAL","Comunidad","Chat global, salas de Escuela, directorio de Archimagos y tablón del mundo.")}
     <div class="community-tabs">
       <button class="community-tab ${communityMode==="chat"?"active":""}" data-community-tab="chat">CHAT GLOBAL</button>
       <button class="community-tab ${communityMode==="school"?"active":""}" data-community-tab="school">MI ESCUELA</button>
