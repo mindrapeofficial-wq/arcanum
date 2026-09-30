@@ -18,4 +18,4 @@ function renderResearch(){
   <div class="panel"><h3>Catálogo mágico</h3><div class="spell-grid">${cards}</div></div>`;
   $("#research-button")?.addEventListener("click",()=>doResearch($("#research-button")));
 }
-async function doResearch(btn){ const id=$("#research-spell")?.value; if(!id)return; const turns=Math.max(1,Math.min(50,Number($("#research-turns").value)||1)); await actionCall(btn,()=>rpc("research",{p_spell_ids:[id],p_turns:turns}),null,res=>res.completed?.length?`Has aprendido ${res.completed.map(x=>x.name_es).join(", ")}.`:`Conocimiento Arcano avanzada ${n(res.total_points_generated)} RP.`); }
+async function doResearch(btn){ const id=$("#research-spell")?.value; if(!id)return; const turns=Math.max(1,Math.min(50,Number($("#research-turns").value)||1)); await actionCall(btn,()=>rpc("research",{p_spell_ids:[id],p_turns:turns}),null,res=>res.completed?.length?`Has aprendido ${res.completed.map(x=>x.name_es).join(", ")}.`:`Conocimiento Arcano avanzado ${n(res.total_points_generated)} RP.`); }
