@@ -12,6 +12,7 @@ const ARENA_TRAITS={
 function arenaTrait(code){return ARENA_TRAITS[code]||ARENA_TRAITS.ascendant}
 const ARENA_SPRITE_FILES={verdant:"assets/ui/arena/verdant.b64",ascendant:"assets/ui/arena/ascendant.b64",eradication:"assets/ui/arena/eradication.b64",abyssal:"assets/ui/arena/abyssal.b64",phantasm:"assets/ui/arena/phantasm.b64"};
 const ARENA_SPRITE_CACHE={};
+let arenaReplayToken=0;
 function arenaSpriteHtml(code,cls){var school=ARENA_SPRITE_FILES[code]?code:"ascendant";return '<span class="arena-sprite school-'+school+' '+(cls||"")+'" data-school="'+school+'" aria-hidden="true"></span>'}
 async function arenaHydrateSprites(root){var host=root||document,nodes=host.querySelectorAll?host.querySelectorAll(".arena-sprite[data-school]"):[];for(var i=0;i<nodes.length;i++){var el=nodes[i],school=el.dataset.school||"ascendant",path=ARENA_SPRITE_FILES[school]||ARENA_SPRITE_FILES.ascendant;try{if(!ARENA_SPRITE_CACHE[school])ARENA_SPRITE_CACHE[school]=fetch(path,{cache:"force-cache"}).then(function(r){if(!r.ok)throw new Error("sprite "+r.status);return r.text()}).then(function(x){return "url(data:image/webp;base64,"+x.trim()+")"});el.style.backgroundImage=await ARENA_SPRITE_CACHE[school]}catch(e){el.classList.add("arena-sprite--fallback")}}}
 function arenaDivision(v){return v>=1700?"Leyenda Arcana":v>=1500?"Arconte":v>=1350?"Gran Mago":v>=1200?"Maestro":v>=1050?"Adepto":v>=900?"Aprendiz":"Iniciado"}
@@ -36,18 +37,78 @@ function arenaHistoryRecord(row){
     log:Array.isArray(row.combat_log)?row.combat_log:[]
   };
 }
+function arenaReplayEvents(rec){
+  var log=Array.isArray(rec.log)?rec.log:[];
+  var me=String(rec.playerName||realmState?.realm?.mage_name||"Archimago");
+  var foe=String(rec.opponent||"Rival");
+  var events=[];
+  log.forEach(function(line){
+    if(events.length>=7)return;
+    var t=String(line||"");
+    if(!/golpea|crítico|inflige|contraataca|desata|pronuncia|muerde|ataque|golpe/i.test(t))return;
+    if(t.indexOf(me)!==-1)events.push("player");
+    else if(t.indexOf(foe)!==-1)events.push("enemy");
+  });
+  if(!events.length)events=["player","enemy","player"];
+  var winner=rec.won?"player":"enemy";
+  if(events[events.length-1]!==winner)events.push(winner);
+  return events.slice(0,8);
+}
+function arenaRunReplay(rec){
+  var token=++arenaReplayToken;
+  var root=$("#arena-duel-stage"),player=$("#arena-duelist-player"),enemy=$("#arena-duelist-enemy");
+  var result=$("#arena-result-panel"),log=$("#arena-log-panel");
+  if(!root||!player||!enemy)return;
+  var events=arenaReplayEvents(rec),step=0;
+  function clearState(){
+    [player,enemy].forEach(function(x){if(x)x.classList.remove("is-attacking","is-hit")});
+  }
+  function next(){
+    if(token!==arenaReplayToken||!document.body.contains(root))return;
+    clearState();
+    if(step>=events.length){
+      (rec.won?enemy:player).classList.add("is-ko");
+      root.classList.add("is-finished");
+      if(result)result.classList.add("is-visible");
+      if(log)log.classList.add("is-visible");
+      return;
+    }
+    var attacker=events[step]==="enemy"?enemy:player;
+    var defender=attacker===player?enemy:player;
+    attacker.classList.add("is-attacking");
+    setTimeout(function(){
+      if(token!==arenaReplayToken||!document.body.contains(root))return;
+      defender.classList.add("is-hit");
+    },220);
+    setTimeout(function(){
+      if(token!==arenaReplayToken||!document.body.contains(root))return;
+      step++;
+      next();
+    },610);
+  }
+  setTimeout(next,300);
+}
 function arenaOpen(rec){
+  var ps=String(rec.playerSchool||realmState?.realm?.school_code||"ascendant");
+  var os=String(rec.opponentSchool||"ascendant");
+  var playerName=String(rec.playerName||realmState?.realm?.mage_name||"Archimago");
   $("#modal-content").innerHTML=
     '<span class="section-kicker">ARENA ARCANA</span>'+
     '<h3>'+(rec.won?"Victoria":"Derrota")+' contra '+esc(rec.opponent)+'</h3>'+
-    '<div class="arena-result '+(rec.won?"win":"loss")+'"><strong>'+
+    '<div class="arena-duel-stage" id="arena-duel-stage">'+
+      '<div class="arena-duelist" id="arena-duelist-player"><div class="arena-fighter-shell">'+arenaSpriteHtml(ps,"arena-sprite--duel")+'</div><strong>'+esc(playerName)+'</strong><small>'+esc(arenaTrait(ps).name)+'</small></div>'+
+      '<b>VS</b>'+
+      '<div class="arena-duelist enemy" id="arena-duelist-enemy"><div class="arena-fighter-shell">'+arenaSpriteHtml(os,"arena-sprite--duel")+'</div><strong>'+esc(rec.opponent)+'</strong><small>'+esc(arenaTrait(os).name)+'</small></div>'+
+    '</div>'+
+    '<div class="arena-result '+(rec.won?"win":"loss")+'" id="arena-result-panel"><strong>'+
       (rec.won?"EL CÍRCULO TE RECONOCE":"EL RIVAL SE IMPONE")+
     '</strong><span>'+
       (rec.mode==="ranked"?"Rating "+(rec.delta>=0?"+":"")+rec.delta+" · total "+n(rec.rating):"Duelo amistoso · sin cambios de rating")+
     '</span></div>'+
-    '<div class="arena-log">'+(rec.log||[]).map(function(x,i){
+    '<div class="arena-log" id="arena-log-panel">'+(rec.log||[]).map(function(x,i){
       return '<p><small>'+String(i+1).padStart(2,"0")+'</small>'+esc(x)+'</p>';
     }).join("")+'</div>';
+  arenaHydrateSprites($("#modal-content")).then(function(){arenaRunReplay(rec)});
   show($("#modal"));
 }
 
