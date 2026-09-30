@@ -132,18 +132,20 @@ function archmageArtifactCategoryLabel(code){
   return ({minor:"Artefacto menor",school:"Reliquia de Escuela",cursed:"Artefacto maldito",unique:"Único mundial"})[code]||String(code||"Reliquia");
 }
 function renderCanonicalEquipment(snapshot,profile){
-  const inv=snapshot?.inventory;
-  if(!inv)return '<div class="player-sheet-remote-note"><b>EQUIPO</b><span>No hay datos de equipo disponibles.</span></div>';
   if(profile.is_self&&typeof renderArchmageInventory==="function")return renderArchmageInventory(profile);
-  const labels={weapon:"ARMA",robe:"TÚNICA",amulet:"AMULETO",ring1:"ANILLO I",ring2:"ANILLO II",artifact:"RELICARIO"};
-  const items=new Map((inv.items||[]).map(x=>[String(x.id),x]));
+  const model=snapshot?.items;
+  if(!model)return '<div class="player-sheet-remote-note"><b>EQUIPO</b><span>No hay datos de equipo disponibles.</span></div>';
+  const labels={weapon:"ARMA",robe:"TÚNICA",amulet:"AMULETO",ring1:"ANILLO I",ring2:"ANILLO II",focus:"FOCO ARCANO",relic:"RELIQUIA"};
   const rows=Object.entries(labels).map(([slot,label])=>{
-    const id=inv.equipment?.[slot],item=id?items.get(String(id)):null;
-    return '<div class="canonical-equipment-slot '+(item?'equipped':'empty')+'"><small>'+label+'</small>'+
-      (item?'<strong>'+esc(item.name||item.baseName||"Objeto equipado")+'</strong><span>'+esc(item.rarityLabel||item.rarity||"")+' · iP '+n(item.power||0)+'</span>':'<strong>Vacío</strong><span>Sin objeto equipado</span>')+
-      '</div>';
+    const item=model.equipment?.[slot]||null;
+    if(!item)return '<div class="canonical-equipment-slot empty"><small>'+label+'</small><strong>Vacío</strong><span>Sin objeto equipado</span></div>';
+    const name=item.kind==="relic"?archmageArtifactDisplayName(item.artifact_id):(item.name||item.raw?.name||"Objeto equipado");
+    const meta=item.kind==="relic"
+      ?archmageArtifactCategoryLabel(item.category)
+      :(String(item.rarity_label||item.rarity||"")+' · iP '+n(item.power||0));
+    return '<div class="canonical-equipment-slot equipped '+(item.kind==="relic"?"relic":"")+'"><small>'+label+'</small><strong>'+esc(name)+'</strong><span>'+esc(meta)+'</span></div>';
   }).join("");
-  return '<section class="canonical-equipment-public"><div class="canonical-equipment-grid">'+rows+'</div><p>La ficha pública muestra el equipo activo. El contenido de la mochila permanece privado.</p></section>';
+  return '<section class="canonical-equipment-public"><div class="canonical-equipment-grid">'+rows+'</div><p>La ficha pública muestra los siete slots activos. La mochila no equipada permanece privada.</p></section>';
 }
 function renderCanonicalArtifacts(snapshot){
   const data=snapshot?.artifacts||{},items=data.items||[];
@@ -206,7 +208,7 @@ function renderPlayerProfile(profile,inbox=null,snapshot=null){
 
   $("#modal-content").innerHTML=
     '<section class="character-sheet player-character-sheet canonical-archmage-sheet">'+
-      '<div class="profile-hero player-sheet-hero">'+profileAvatarMarkup(profile,true)+'<div class="profile-identity"><span class="section-kicker">'+(profile.is_npc?"ARCHIMAGO NPC":"IDENTIDAD CANÓNICA")+'</span><h3>'+esc(profile.mage_name)+'</h3><div class="profile-subline">'+esc(profileSchoolName(profile.school_code))+' · Nivel '+n(playerLevel)+' '+(profile.is_npc?'<span class="tag npc-tag">NPC</span>':"")+' '+allianceBadge+'</div><p class="player-sheet-purpose">Una sola persona detrás del reino: progresión, combate, equipo, reliquias, Arena y crónica comparten esta identidad persistente.</p></div><div class="canonical-authority"><small>FUENTE</small><strong>SERVIDOR</strong></div></div>'+
+      '<div class="profile-hero player-sheet-hero">'+profileAvatarMarkup(profile,true)+'<div class="profile-identity"><span class="section-kicker">'+(profile.is_npc?"ARCHIMAGO NPC":"IDENTIDAD CANÓNICA")+'</span><h3>'+esc(profile.mage_name)+'</h3><div class="profile-subline">'+esc(profileSchoolName(profile.school_code))+' · Nivel '+n(playerLevel)+' '+(profile.is_npc?'<span class="tag npc-tag">NPC</span>':"")+' '+allianceBadge+'</div><p class="player-sheet-purpose">Una sola persona detrás del reino: progresión, combate, siete slots de equipo, reliquias, Arena y crónica comparten esta identidad persistente.</p></div><div class="canonical-authority"><small>FUENTE</small><strong>SERVIDOR</strong></div></div>'+
       '<div class="profile-stats player-sheet-kingdom-stats canonical-summary-stats">'+
         '<div><small>ASCENDENCIA DEL REINO</small><strong>'+n(profile.net_power)+'</strong></div>'+
         '<div><small>TIERRAS</small><strong>'+n(profile.land)+'</strong></div>'+
