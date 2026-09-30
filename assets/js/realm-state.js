@@ -155,12 +155,13 @@ async function bootGame(){
     saveSession(null); showAuth(); setNotice($("#auth-notice"),humanError(error));
   }
 }
-function showAuth(){ hide($("#boot")); hide($("#create-view")); hide($("#game-view")); show($("#auth-view")); }
+function showAuth(){ if(typeof stopSidebarSocial==="function")stopSidebarSocial(true); hide($("#boot")); hide($("#create-view")); hide($("#game-view")); show($("#auth-view")); }
 function showCreateRealm(){ hide($("#boot")); hide($("#auth-view")); hide($("#game-view")); show($("#create-view")); const username=getSession()?.user?.user_metadata?.username||""; $("#realm-name-preview").textContent=username; renderSchools(); }
 function showGame(){
   hide($("#boot")); hide($("#auth-view")); hide($("#create-view")); show($("#game-view"));
   renderChrome(); navigate("realm");
   if(typeof refreshOwnProfileBadge==="function")refreshOwnProfileBadge(true);
+  if(typeof startSidebarSocial==="function")startSidebarSocial();
   clearInterval(periodicTimer); periodicTimer=setInterval(()=>refreshState(true),45000);
   clearInterval(countdownTimer); countdownTimer=setInterval(updateTurnCountdown,1000); updateTurnCountdown();
 }
