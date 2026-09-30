@@ -64,7 +64,15 @@ function combatRng(seed){
   return function(){x^=x<<13;x^=x>>>17;x^=x<<5;return (x>>>0)/4294967296;};
 }
 function combatPick(rng,arr){return arr[Math.floor(rng()*arr.length)]}
+function combatClone(value){return JSON.parse(JSON.stringify(value))}
 function combatProfileKey(name){return "arcanum_combat_profile_v1_"+String(name||"anon").toLowerCase().replace(/[^a-z0-9_-]+/g,"_")}
+function combatCurrentLevel(profile){
+  try{
+    const p=typeof archmageProgressionFromProfile==="function"?archmageProgressionFromProfile(profile):null;
+    if(p?.level)return Math.max(1,Number(p.level)||1);
+  }catch(e){}
+  return Math.max(1,Number(profile?.archmage_level||1));
+}
 function combatBaseProfile(name,school){
   const rng=combatRng("ARCANUM|"+String(name).toLowerCase()+"|"+String(school)+"|combat-v1");
   const stats={};
@@ -96,13 +104,14 @@ function combatBaseProfile(name,school){
     name:String(name),
     school:String(school),
     stats:stats,
-    weapon:weapon,
-    trait:trait,
-    abilities:[a1,a2],
+    weapon:combatClone(weapon),
+    trait:combatClone(trait),
+    bonusTraits:[],
+    abilities:[combatClone(a1),combatClone(a2)],
     levelBonuses:[]
   };
 }
-function getCombatProfile(profileOrRealm){
+function combatLoadRaw(profileOrRealm){
   const src=profileOrRealm||realmState?.realm||{};
   const name=src.mage_name||realmState?.realm?.mage_name||"Archimago";
   const school=src.school_code||realmState?.realm?.school_code||"ascendant";
@@ -110,31 +119,240 @@ function getCombatProfile(profileOrRealm){
   try{data=JSON.parse(localStorage.getItem(combatProfileKey(name))||"null")}catch(e){}
   if(!data||data.version!==1||data.school!==school){
     data=combatBaseProfile(name,school);
-    try{localStorage.setItem(combatProfileKey(name),JSON.stringify(data))}catch(e){}
+    combatSaveRaw(data);
   }
+  data.stats=data.stats||{};
+  data.weapon=data.weapon||combatBaseProfile(name,school).weapon;
+  data.trait=data.trait||combatBaseProfile(name,school).trait;
+  data.bonusTraits=Array.isArray(data.bonusTraits)?data.bonusTraits:[];
+  data.abilities=Array.isArray(data.abilities)?data.abilities:[];
+  data.levelBonuses=Array.isArray(data.levelBonuses)?data.levelBonuses:[];
   return data;
 }
+function combatSaveRaw(data){
+  try{localStorage.setItem(combatProfileKey(data?.name),JSON.stringify(data))}catch(e){}
+}
+function combatApplyBonus(state,bonus){
+  const effect=bonus?.effect||{};
+  if(effect.type==="stat"&&COMBAT_STAT_META[effect.stat]){
+    state.stats[effect.stat]=Number(state.stats[effect.stat]||0)+Number(effect.amount||0);
+  }else if(effect.type==="ability"&&effect.ability){
+    if(!state.abilities.some(function(x){return x.id===effect.ability.id}))state.abilities.push(combatClone(effect.ability));
+  }else if(effect.type==="weapon"&&effect.weapon){
+    state.weapon=combatClone(effect.weapon);
+  }else if(effect.type==="trait"&&effect.trait){
+    if(state.trait?.id!==effect.trait.id&&!state.bonusTraits.some(function(x){return x.id===effect.trait.id}))state.bonusTraits.push(combatClone(effect.trait));
+  }
+}
+function combatEffective(raw,maxLevel=Infinity){
+  const state=combatClone(raw);
+  state.bonusTraits=Array.isArray(state.bonusTraits)?state.bonusTraits:[];
+  state.levelBonuses=[];
+  (raw.levelBonuses||[]).slice().sort(function(a,b){return a.level-b.level}).forEach(function(bonus){
+    if(Number(bonus.level)<=maxLevel){
+      combatApplyBonus(state,bonus);
+      state.levelBonuses.push(combatClone(bonus));
+    }
+  });
+  return state;
+}
+function getCombatProfile(profileOrRealm){
+  return combatEffective(combatLoadRaw(profileOrRealm));
+}
+function combatTraitMods(c){
+  const traits=[c.trait].concat(c.bonusTraits||[]).filter(Boolean);
+  const mods={hp:0,speed:0,crit:0,dodge:0,block:0,regen:0,lifesteal:0,armor:0,accuracy:0,fortune:0,secondWind:false};
+  traits.forEach(function(t){
+    const m=t.mods||{};
+    ["hp","speed","crit","dodge","block","regen","lifesteal","armor","accuracy","fortune"].forEach(function(k){mods[k]+=Number(m[k]||0)});
+    if(m.secondWind)mods.secondWind=true;
+  });
+  return mods;
+}
 function combatDerived(profile){
-  const c=getCombatProfile(profile),s=c.stats,w=c.weapon,t=c.trait?.mods||{};
-  const maxHp=Math.round((115+s.vitality*12+s.endurance*4)*(1+(t.hp||0)));
-  const attack=Math.round(s.strength*3.1+s.precision*1.1+(w.min+w.max)/2);
-  const armor=Math.round(s.endurance*2.8+s.will*1.2);
-  const speed=Math.max(1,s.speed*1.25+s.agility*.55+w.speed);
-  const crit=Math.min(.4,.03+s.fortune*.007+s.precision*.003+(t.crit||0));
-  const dodge=Math.min(.35,.02+s.agility*.008+s.speed*.003+(t.dodge||0));
-  const block=Math.min(.35,w.block*.01+s.endurance*.002+(t.block||0));
-  return {maxHp,attack,armor,speed,crit,dodge,block,regen:t.regen||0,lifesteal:t.lifesteal||0,secondWind:!!t.secondWind,accuracy:t.accuracy||0,fortune:t.fortune||0};
+  const c=getCombatProfile(profile),s=c.stats,w=c.weapon,t=combatTraitMods(c);
+  const abilityIds=new Set((c.abilities||[]).map(function(a){return a.id}));
+  let maxHp=Math.round((115+s.vitality*12+s.endurance*4)*(1+t.hp));
+  let attack=Math.round(s.strength*3.1+s.precision*1.1+(w.min+w.max)/2);
+  let armor=Math.round((s.endurance*2.8+s.will*1.2)*(1+t.armor));
+  let speed=Math.max(1,(s.speed*1.25+s.agility*.55+w.speed)*(1+t.speed));
+  let crit=.03+s.fortune*.007+s.precision*.003+t.crit;
+  let dodge=.02+s.agility*.008+s.speed*.003+t.dodge;
+  let block=w.block*.01+s.endurance*.002+t.block;
+  let regen=t.regen, lifesteal=t.lifesteal, accuracy=t.accuracy;
+  let doubleStrike=0,weaponPoison=0,firstStrike=0;
+  if(w.id==="ash_staff")regen+=.03;
+  if(w.id==="sun_blade")accuracy+=.04;
+  if(w.id==="ember_maul")crit+=.05;
+  if(w.id==="void_scythe")lifesteal+=.06;
+  if(w.id==="glass_daggers")doubleStrike+=.08;
+  if(w.id==="hunter_bow")firstStrike+=.10;
+  if(w.id==="thorn_sickle")weaponPoison+=.06;
+  if(w.id==="arcane_tome")armor+=2.4;
+  if(abilityIds.has("weapon_master"))attack=Math.round(attack*1.10);
+  return {
+    maxHp,
+    attack,
+    armor,
+    speed,
+    crit:Math.min(.45,crit),
+    dodge:Math.min(.38,dodge),
+    block:Math.min(.38,block),
+    regen:Math.min(.25,regen),
+    lifesteal:Math.min(.30,lifesteal),
+    secondWind:t.secondWind,
+    accuracy,
+    fortune:t.fortune,
+    doubleStrike,
+    weaponPoison,
+    firstStrike
+  };
+}
+
+function combatStatEvolution(rng,level){
+  const keys=Object.keys(COMBAT_STAT_META);
+  const stat=combatPick(rng,keys);
+  const amount=level%5===0?3:2;
+  return {
+    id:"L"+level+"-stat-"+stat+"-"+amount,
+    kind:"stat",
+    icon:"＋",
+    title:"+"+amount+" "+COMBAT_STAT_META[stat],
+    desc:"Tu cuerpo arcano se adapta permanentemente.",
+    effect:{type:"stat",stat:stat,amount:amount}
+  };
+}
+function combatAbilityEvolution(rng,raw,state,level){
+  const pool=COMBAT_ABILITIES.filter(function(a){return (!a.school||a.school===raw.school)&&!state.abilities.some(function(x){return x.id===a.id})});
+  if(!pool.length)return combatStatEvolution(rng,level);
+  const ability=combatClone(combatPick(rng,pool));
+  return {id:"L"+level+"-ability-"+ability.id,kind:"ability",icon:"✦",title:ability.name,desc:ability.desc,effect:{type:"ability",ability:ability}};
+}
+function combatTraitEvolution(rng,raw,state,level){
+  const owned=new Set([state.trait?.id].concat((state.bonusTraits||[]).map(function(x){return x.id})));
+  const pool=COMBAT_TRAITS.filter(function(t){return (!t.school||t.school===raw.school)&&!owned.has(t.id)});
+  if(!pool.length)return combatStatEvolution(rng,level);
+  const trait=combatClone(combatPick(rng,pool));
+  return {id:"L"+level+"-trait-"+trait.id,kind:"trait",icon:"◆",title:trait.name,desc:trait.desc,effect:{type:"trait",trait:trait}};
+}
+function combatWeaponEvolution(rng,raw,state,level){
+  const pool=COMBAT_WEAPONS.filter(function(w){return (!w.school||w.school===raw.school)&&w.id!==state.weapon?.id});
+  if(!pool.length)return combatStatEvolution(rng,level);
+  const base=combatClone(combatPick(rng,pool));
+  const bonus=1+Math.floor(level/5);
+  base.min+=bonus;
+  base.max+=bonus*2;
+  base.evolutionLevel=level;
+  base.effect=base.effect+" · Forjada en nivel "+level;
+  return {
+    id:"L"+level+"-weapon-"+base.id+"-"+bonus,
+    kind:"weapon",
+    icon:"⚔",
+    title:base.name,
+    desc:base.type+" · "+base.min+"–"+base.max+" daño · "+base.effect,
+    effect:{type:"weapon",weapon:base}
+  };
+}
+function combatEvolutionOptions(profile,level){
+  const raw=combatLoadRaw(profile);
+  const before=combatEffective(raw,Number(level)-1);
+  const rng=combatRng(raw.seed+"|evolution|"+level+"|two-paths-v1");
+  const factories=[
+    combatStatEvolution,
+    combatAbilityEvolution,
+    combatTraitEvolution,
+    combatWeaponEvolution
+  ];
+  const firstFactory=factories[Math.floor(rng()*factories.length)];
+  let secondFactory=factories[Math.floor(rng()*factories.length)];
+  if(secondFactory===firstFactory)secondFactory=factories[(factories.indexOf(firstFactory)+1+Math.floor(rng()*3))%factories.length];
+  const make=function(factory){return factory===combatStatEvolution?factory(rng,level):factory(rng,raw,before,level)};
+  let a=make(firstFactory),b=make(secondFactory);
+  if(b.id===a.id)b=combatStatEvolution(rng,level);
+  return [a,b];
+}
+function combatPendingLevel(profile){
+  const level=combatCurrentLevel(profile);
+  const raw=combatLoadRaw(profile);
+  const chosen=new Set((raw.levelBonuses||[]).map(function(x){return Number(x.level)}));
+  for(let l=2;l<=level;l++)if(!chosen.has(l))return l;
+  return null;
+}
+function combatChooseEvolution(profile,level,optionId){
+  if(!profile?.is_self)throw new Error("Solo puedes evolucionar tu propio Archimago.");
+  const currentLevel=combatCurrentLevel(profile);
+  level=Number(level);
+  if(level<2||level>currentLevel)throw new Error("Ese nivel todavía no está disponible.");
+  const raw=combatLoadRaw(profile);
+  if((raw.levelBonuses||[]).some(function(x){return Number(x.level)===level}))throw new Error("Ese destino ya fue elegido.");
+  const option=combatEvolutionOptions(profile,level).find(function(x){return x.id===optionId});
+  if(!option)throw new Error("La opción de evolución ya no es válida.");
+  raw.levelBonuses.push({
+    level:level,
+    id:option.id,
+    kind:option.kind,
+    title:option.title,
+    desc:option.desc,
+    effect:combatClone(option.effect),
+    chosenAt:new Date().toISOString()
+  });
+  raw.levelBonuses.sort(function(a,b){return a.level-b.level});
+  combatSaveRaw(raw);
+  return option;
+}
+function renderCombatEvolution(profile){
+  if(!profile?.is_self)return "";
+  const raw=combatLoadRaw(profile);
+  const level=combatCurrentLevel(profile);
+  const pending=combatPendingLevel(profile);
+  const history=(raw.levelBonuses||[]).slice().sort(function(a,b){return b.level-a.level}).slice(0,6);
+  let choice="";
+  if(pending){
+    const options=combatEvolutionOptions(profile,pending);
+    choice='<section class="combat-evolution pending"><div class="profile-section-title"><span>EVOLUCIÓN PENDIENTE · NIVEL '+pending+'</span><small>'+(level-pending+1)+' elección'+(level-pending+1===1?"":"es")+' pendiente'+(level-pending+1===1?"":"s")+'</small></div>'+
+      '<p class="combat-evolution-intro">Elige un destino. La otra posibilidad desaparecerá para este Archimago.</p>'+
+      '<div class="combat-choice-grid">'+options.map(function(o){
+        return '<button type="button" class="combat-choice" data-combat-evolution="'+esc(o.id)+'" data-combat-level="'+pending+'"><i>'+esc(o.icon)+'</i><span><small>'+esc(o.kind.toUpperCase())+'</small><strong>'+esc(o.title)+'</strong><em>'+esc(o.desc)+'</em></span><b>ELEGIR</b></button>';
+      }).join("")+'</div></section>';
+  }else if(level>=2){
+    choice='<section class="combat-evolution complete"><div class="profile-section-title"><span>EVOLUCIÓN</span><small>destinos al día</small></div><p class="combat-evolution-intro">Has resuelto todas las elecciones disponibles hasta el nivel '+level+'.</p></section>';
+  }
+  const historyHtml=history.length?'<div class="combat-evolution-history"><div class="profile-section-title"><span>HUELLAS DE EVOLUCIÓN</span><small>'+raw.levelBonuses.length+' decisiones</small></div>'+history.map(function(h){
+    return '<div><span>NIVEL '+h.level+'</span><strong>'+esc(h.title)+'</strong><small>'+esc(h.desc||"")+'</small></div>';
+  }).join("")+'</div>':"";
+  return choice+historyHtml;
 }
 function renderCombatIdentity(profile){
   const c=getCombatProfile(profile),d=combatDerived(profile);
   const stats=Object.entries(c.stats).map(function(entry){return '<div class="combat-stat"><small>'+esc(COMBAT_STAT_META[entry[0]])+'</small><strong>'+n(entry[1])+'</strong></div>'}).join("");
   const abilities=c.abilities.map(function(a){return '<div class="combat-ability"><strong>'+esc(a.name)+'</strong><span>'+esc(a.desc)+'</span></div>'}).join("");
+  const traits=[c.trait].concat(c.bonusTraits||[]).filter(Boolean);
+  const traitText=traits.map(function(t){return '<span class="combat-trait-chip"><b>'+esc(t.name)+'</b><small>'+esc(t.desc)+'</small></span>'}).join("");
   return '<section class="combat-identity"><div class="profile-section-title"><span>IDENTIDAD DE COMBATE</span><small>semilla permanente #'+c.seed+'</small></div>'+
-    '<div class="combat-summary"><div class="combat-weapon"><small>ARMA INICIAL</small><strong>'+esc(c.weapon.name)+'</strong><span>'+esc(c.weapon.type)+' · '+c.weapon.min+'–'+c.weapon.max+' daño · '+esc(c.weapon.effect)+'</span></div><div class="combat-trait"><small>RASGO</small><strong>'+esc(c.trait.name)+'</strong><span>'+esc(c.trait.desc)+'</span></div></div>'+
+    '<div class="combat-summary"><div class="combat-weapon"><small>ARMA EQUIPADA</small><strong>'+esc(c.weapon.name)+'</strong><span>'+esc(c.weapon.type)+' · '+c.weapon.min+'–'+c.weapon.max+' daño · '+esc(c.weapon.effect)+'</span></div><div class="combat-trait"><small>RASGOS</small><div class="combat-trait-list">'+traitText+'</div></div></div>'+
     '<div class="combat-stats">'+stats+'</div>'+
     '<div class="combat-derived"><span>❤ '+n(d.maxHp)+'</span><span>⚔ '+n(d.attack)+'</span><span>◆ '+n(d.armor)+'</span><span>⌁ '+d.speed.toFixed(1)+'</span><span>✦ '+Math.round(d.crit*100)+'% crítico</span><span>◌ '+Math.round(d.dodge*100)+'% esquiva</span></div>'+
-    '<div class="profile-section-title combat-abilities-title"><span>HABILIDADES</span><small>activación automática en combate</small></div><div class="combat-abilities">'+abilities+'</div></section>';
+    '<div class="profile-section-title combat-abilities-title"><span>HABILIDADES</span><small>activación automática en combate</small></div><div class="combat-abilities">'+abilities+'</div>'+
+    renderCombatEvolution(profile)+'</section>';
 }
+function wireCombatEvolution(profile){
+  document.querySelectorAll("[data-combat-evolution]").forEach(function(btn){
+    btn.addEventListener("click",function(){
+      const level=Number(btn.dataset.combatLevel),id=btn.dataset.combatEvolution;
+      const option=combatEvolutionOptions(profile,level).find(function(x){return x.id===id});
+      if(!option)return;
+      if(!confirm("¿Elegir “"+option.title+"” para el nivel "+level+"? La otra opción desaparecerá."))return;
+      try{
+        combatChooseEvolution(profile,level,id);
+        toast("Evolución elegida: "+option.title+".","success");
+        openPlayerProfile(profile.mage_name);
+      }catch(e){toast(humanError(e),"error")}
+    });
+  });
+}
+
 globalThis.getCombatProfile=getCombatProfile;
 globalThis.combatDerived=combatDerived;
 globalThis.renderCombatIdentity=renderCombatIdentity;
+globalThis.wireCombatEvolution=wireCombatEvolution;
+globalThis.combatEvolutionOptions=combatEvolutionOptions;
