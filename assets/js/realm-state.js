@@ -188,7 +188,7 @@ async function loadCatalogs(){
     rest("unit_catalog","select=id,school_code,name_es,acquisition,power_rank,recruit_gold,recruit_mana,recruit_population,upkeep_gold,upkeep_mana,upkeep_population,natural_flying,natural_ranged,undisbandable,related_spell_id&order=school_code,power_rank"),
     rest("summon_profiles","select=spell_id,unit_id,reference_spell_level,reference_min_yield,reference_max_yield,reference_alignment")
   ]);
-  catalogs={schools,spells,units,summons};
+  catalogs={schools:schools.map(s=>({...s,name_es:schoolName(s.code)})),spells,units,summons};
 }
 
 async function bootGame(){
