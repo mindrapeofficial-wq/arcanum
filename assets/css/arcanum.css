@@ -965,3 +965,9 @@ html.arcanum-immersive .mobile-nav{
 .canonical-history-row.info{border-left:2px solid rgba(151,113,62,.45)}
 @media(max-width:1000px){.canonical-summary-stats,.canonical-trajectory-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.canonical-relic-grid{grid-template-columns:1fr 1fr}.canonical-sheet-nav{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:650px){.canonical-authority{display:none}.canonical-summary-stats,.canonical-trajectory-grid{grid-template-columns:1fr 1fr}.canonical-relic-grid,.canonical-equipment-grid{grid-template-columns:1fr}.canonical-history-row{grid-template-columns:62px minmax(0,1fr)}.canonical-history-row time{grid-column:2}.archmage-aptitude-label{align-items:flex-start;flex-direction:column}.archmage-aptitude-label span{text-align:left}}
+
+.canonical-renown{display:flex;align-items:end;justify-content:space-between;gap:14px;margin:10px 0;padding:11px 12px;border:1px solid rgba(218,151,57,.12);background:radial-gradient(circle at 0 50%,rgba(161,104,39,.1),transparent 42%),rgba(0,0,0,.18)}
+.canonical-renown small{display:block;color:#8d704d;font:800 7px Arial,sans-serif;letter-spacing:.11em}
+.canonical-renown strong{display:block;margin-top:3px;color:#e5cda5;font-size:24px;font-weight:500}
+.canonical-renown>span{color:#786a58;font:8.5px/1.4 Arial,sans-serif;text-align:right}
+@media(max-width:650px){.canonical-renown{align-items:flex-start;flex-direction:column}.canonical-renown>span{text-align:left}}
