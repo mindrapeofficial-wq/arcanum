@@ -254,3 +254,37 @@ table .school-dot{width:17px;height:17px;min-width:17px;margin-right:6px}
 .archmage-attribute-upgrade{width:30px;height:30px;display:grid;place-items:center;border:1px solid rgba(230,173,84,.5);background:linear-gradient(180deg,rgba(217,155,57,.18),rgba(0,0,0,.3));color:var(--gold-hot);font:900 17px/1 Arial,sans-serif;box-shadow:inset 0 0 12px rgba(217,155,57,.05)}
 .archmage-attribute-upgrade:hover:not(:disabled){border-color:var(--gold-hot);background:rgba(217,155,57,.16);transform:translateY(-1px)}
 .archmage-attribute-upgrade:disabled{opacity:.35;cursor:wait}
+
+
+/* Presencia lateral y chat privado */
+.sidebar-online-panel{margin-top:14px;border-top:1px solid rgba(218,151,57,.13);padding:12px 2px 0;min-height:0}
+.sidebar-online-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 8px 8px;color:#8d7d68;font:800 8px Arial,sans-serif;letter-spacing:.12em}
+.sidebar-online-head span{display:flex;align-items:center;gap:6px}.sidebar-online-head span::first-letter{color:#66a869}
+.sidebar-online-head strong{min-width:20px;height:20px;display:grid;place-items:center;border:1px solid rgba(218,151,57,.16);color:#c5a36d;font:800 9px Arial,sans-serif}
+.sidebar-online-list{display:grid;gap:3px;max-height:190px;overflow-y:auto;overscroll-behavior:contain;padding-right:2px}
+.sidebar-online-row{display:grid;grid-template-columns:minmax(0,1fr) 28px;gap:3px;align-items:center}
+.sidebar-online-row:not(:has(.sidebar-dm-button)){grid-template-columns:minmax(0,1fr)}
+.sidebar-online-player{min-width:0;width:100%;display:grid;grid-template-columns:7px 10px minmax(0,1fr);align-items:center;gap:7px;border:1px solid transparent;background:transparent;color:inherit;text-align:left;padding:7px 7px;cursor:pointer}
+.sidebar-online-player:hover{border-color:rgba(218,151,57,.13);background:rgba(177,112,33,.06)}
+.sidebar-online-copy{min-width:0}.sidebar-online-copy strong,.sidebar-online-copy small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sidebar-online-copy strong{color:#cdbb9d;font:700 9px Arial,sans-serif}.sidebar-online-copy small{margin-top:2px;color:#665b4d;font:7px Arial,sans-serif;text-transform:uppercase;letter-spacing:.05em}
+.sidebar-dm-button{width:28px;height:28px;border:1px solid rgba(218,151,57,.15);background:rgba(177,112,33,.05);color:#b48a52;cursor:pointer;font-size:11px}
+.sidebar-dm-button:hover{color:#f0d4a5;border-color:rgba(218,151,57,.34);background:rgba(177,112,33,.12)}
+.sidebar-online-empty{padding:9px 8px;color:#5f5548;font:8px/1.4 Arial,sans-serif}
+.profile-chat-locked{display:flex;align-items:center;padding:8px 10px;border:1px dashed rgba(218,151,57,.14);color:#6b5f50;font:800 7px Arial,sans-serif;letter-spacing:.06em}
+
+.direct-chat-window{position:fixed;right:18px;bottom:18px;z-index:90;width:min(360px,calc(100vw - 28px));height:min(520px,calc(100dvh - 110px));display:grid;grid-template-rows:auto minmax(0,1fr) auto;border:1px solid rgba(218,151,57,.28);background:linear-gradient(180deg,rgba(12,9,6,.99),rgba(4,3,2,.99));box-shadow:0 22px 70px rgba(0,0,0,.72)}
+.direct-chat-window.hidden{display:none}
+.direct-chat-head{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(218,151,57,.13);background:rgba(177,112,33,.055)}
+.direct-chat-profile{min-width:0;display:grid;grid-template-columns:8px minmax(0,1fr);gap:9px;align-items:center;flex:1;border:0;background:transparent;text-align:left;padding:11px 12px;color:inherit;cursor:pointer}
+.direct-chat-profile strong,.direct-chat-profile small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.direct-chat-profile strong{color:#e1cba6;font-size:12px}.direct-chat-profile small{margin-top:2px;color:#786b5a;font:7px Arial,sans-serif;text-transform:uppercase;letter-spacing:.1em}
+.direct-chat-close{width:40px;height:40px;border:0;border-left:1px solid rgba(218,151,57,.1);background:transparent;color:#8e7a60;font-size:20px;cursor:pointer}
+.direct-chat-close:hover{color:#ead0a1;background:rgba(177,112,33,.07)}
+.direct-chat-messages{min-height:0;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+.direct-chat-messages .dm-message{max-width:84%;padding:8px 10px;border:1px solid rgba(218,151,57,.1);background:rgba(255,255,255,.018)}
+.direct-chat-messages .dm-message.mine{align-self:flex-end;background:rgba(177,112,33,.1);border-color:rgba(218,151,57,.18)}.direct-chat-messages .dm-message.theirs{align-self:flex-start}
+.direct-chat-messages .dm-message p{margin:0;color:#c9b89b;font:10px/1.45 Arial,sans-serif;white-space:pre-wrap;overflow-wrap:anywhere}.direct-chat-messages .dm-message small{display:block;margin-top:5px;color:#62584b;font:7px Arial,sans-serif}
+.direct-chat-form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:10px;border-top:1px solid rgba(218,151,57,.13)}
+.direct-chat-form textarea{min-height:44px;max-height:100px;resize:vertical;border:1px solid rgba(218,151,57,.17);background:#080604;color:#d8c4a2;padding:10px 11px;font:11px/1.4 Arial,sans-serif;outline:none}.direct-chat-form textarea:focus{border-color:rgba(218,151,57,.42)}
+.direct-chat-form .profile-action{align-self:end;min-height:44px}
+@media(max-width:760px){.sidebar-online-panel{display:none}.direct-chat-window{left:10px;right:10px;bottom:74px;width:auto;height:min(480px,calc(100dvh - 120px))}}
