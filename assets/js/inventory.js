@@ -172,9 +172,11 @@ function lootItemStats(item){
 }
 function lootItemCard(item){
   const stats=lootItemStats(item).map(x=>'<li><span>+'+n(x.value)+' '+esc(x.label)+'</span>'+(x.tier?'<small>T'+x.tier+' · '+x.rollMin+'–'+x.rollMax+'</small>':'<small>implícito</small>')+'</li>').join("");
+  const origin=typeof canonicalLootOriginText==="function"?canonicalLootOriginText(item):"Origen desconocido";
   return '<article class="loot-item rarity-'+esc(item.rarity)+'" data-loot-id="'+esc(item.id)+'">'+
     '<header><span class="loot-rarity">'+esc(item.rarityLabel)+'</span><b>iP '+n(item.power)+'</b></header>'+
     '<h4>'+esc(item.name)+'</h4><div class="loot-meta">'+esc(lootSlotLabel(item.slot))+' · Nv. '+n(item.level)+' · '+esc(lootSchoolLabel(item.affinity))+'</div>'+
+    '<div class="loot-origin"><small>ORIGEN</small><span>'+esc(origin)+'</span></div>'+
     '<ul>'+stats+'</ul><div class="loot-actions"><button class="small-action" type="button" data-loot-equip="'+esc(item.id)+'">EQUIPAR</button><button class="ghost-button" type="button" data-loot-destroy="'+esc(item.id)+'">DESTRUIR</button></div>'+
   '</article>';
 }
@@ -249,7 +251,7 @@ function renderArchmageInventory(profile){
     '<div class="profile-section-title"><span>INVENTARIO DEL ARCHIMAGO</span><small>'+state.items.length+' / '+ARCANUM_INVENTORY_CAP+' huecos</small></div>'+
     '<div class="loot-summary"><div><small>PODER DE EQUIPO</small><strong>'+n(total.power)+'</strong></div><div><small>PODER ARCANO</small><strong>+'+n(total.arcane_power)+'</strong></div><div><small>VIDA</small><strong>+'+n(total.life)+'</strong></div><div><small>MANÁ</small><strong>+'+n(total.mana)+'</strong></div></div>'+
     '<div class="loot-equipment">'+ARCANUM_EQUIP_SLOTS.map(slot=>lootEquipmentCard(slot,state)).join("")+canonicalRelicEquipmentCard()+'</div>'+
-    '<div class="loot-toolbar"><div><strong>Cámara del Arconte</strong><small>Botín procedural controlado · cada pieza nace con rolls propios.</small></div><button class="profile-action" type="button" data-loot-test-drop '+(state.items.length>=ARCANUM_INVENTORY_CAP?'disabled':'')+'>✦ HALLAZGO DE PRUEBA</button></div>'+
+    '<div class="loot-toolbar"><div><strong>Cámara del Arconte</strong><small>El Gear llega de Exploración, Arena y eventos verificados por servidor.</small></div></div>'+
     '<div class="loot-grid">'+(state.items.length?state.items.map(lootItemCard).join(""):'<div class="empty">Tu Cámara está vacía.</div>')+'</div>'+
     '<div class="loot-relic-vault"><div class="loot-toolbar"><div><strong>Reliquias custodiadas</strong><small>Objetos con nombre, procedencia e historia. Sólo una puede estar vinculada.</small></div></div><div class="loot-grid relic-inventory-grid">'+canonicalRelicInventoryCards()+'</div></div>'+
     '<p class="loot-beta-note">Gear procedural y Reliquias comparten ahora el mismo modelo de equipamiento. La Biblioteca conserva el catálogo, lore e historia mundial.</p>'+
@@ -276,16 +278,6 @@ function lootRefreshProfile(profile){
 }
 function wireInventoryPanel(profile){
   const root=document.querySelector("[data-loot-root]");if(!root||!profile?.is_self)return;
-
-  root.querySelector("[data-loot-test-drop]")?.addEventListener("click",async()=>{
-    const btn=root.querySelector("[data-loot-test-drop]");if(btn)btn.disabled=true;
-    try{
-      const data=await stateApi("/inventory/test-drop",{method:"POST",body:{}});
-      lootSave(profile,data.inventory);
-      toast("Has encontrado: "+data.item.name+" · "+data.item.rarityLabel);
-      lootRefreshProfile(profile);
-    }catch(e){toast(humanError(e),"error");if(btn)btn.disabled=false}
-  });
 
   root.querySelectorAll("[data-loot-equip]").forEach(btn=>btn.addEventListener("click",async()=>{
     btn.disabled=true;
