@@ -7,7 +7,8 @@ function startCommunityPolling(){
   communityPollTimer=setInterval(()=>{ if(currentView==="community" && ["chat","school"].includes(communityMode)){ loadChatMessages(true); loadPresence(); } },COMMUNITY_POLL_MS);
 }
 async function navigate(view){
-  if(currentView==="tavern" && view!=="tavern" && typeof stopTavern==="function")stopTavern();\n  if(currentView==="event" && view!=="event" && typeof stopBossPolling==="function")stopBossPolling();
+  if(currentView==="tavern" && view!=="tavern" && typeof stopTavern==="function")stopTavern();
+  if(currentView==="event" && view!=="event" && typeof stopBossPolling==="function")stopBossPolling();
   currentView=view;
   document.querySelectorAll("[data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===view));
   if(view!=="community")stopCommunityPolling();
