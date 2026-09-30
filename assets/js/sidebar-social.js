@@ -42,7 +42,9 @@ function sidebarOracleRow(){
 async function oracleApi(message){
   const session=getSession();
   if(!session?.access_token)throw new Error("Tu sesión ha caducado. Vuelve a entrar.");
-  const history=oracleHistory.slice(-10).map(m=>({
+  const historyRows=oracleHistory.slice(-11);
+  if(historyRows.length&&historyRows.at(-1)?.mine&&String(historyRows.at(-1)?.body||"")===String(message||""))historyRows.pop();
+  const history=historyRows.slice(-10).map(m=>({
     role:m.mine?"user":"assistant",
     content:String(m.body||"")
   }));
