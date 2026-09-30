@@ -624,3 +624,52 @@ html.arcanum-immersive .mobile-nav{
 .market-warning{margin-top:10px;padding:9px 10px;border:1px solid rgba(218,151,57,.11);color:#726556;background:rgba(128,84,30,.05);font:9px/1.5 Arial,sans-serif}
 @media(max-width:900px){.market-intro,.market-layout{grid-template-columns:1fr}.market-status{min-height:auto}}
 @media(max-width:560px){.market-pair{grid-template-columns:1fr}.market-offer{grid-template-columns:1fr}.market-actions{justify-content:flex-start}.market-book-head{align-items:stretch;flex-direction:column}.market-book-tools{width:100%}.market-filter{flex:1;min-width:0}}
+
+
+/* HUD resources alignment 0.2.67 */
+.resource-strip{min-width:0}
+.resource-copy{min-width:0;overflow:hidden}
+.resource-copy small,.resource-copy strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.resource-food{--resource-accent:184,126,53}
+.resource-research{--resource-accent:184,142,72}
+
+@media(min-width:1501px){
+  .resource-strip{
+    display:grid;
+    grid-template-columns:repeat(5,minmax(84px,1fr)) minmax(112px,1.18fr) repeat(2,minmax(84px,1fr)) minmax(108px,1.08fr);
+    overflow:hidden;
+  }
+  .resource-item,.resource-item.has-icon{
+    min-width:0;
+    width:auto;
+    height:100%;
+    padding:0 9px;
+    grid-template-columns:20px minmax(0,1fr);
+    column-gap:6px;
+  }
+  .resource-power{min-width:0}
+}
+
+@media(min-width:1001px) and (max-width:1500px){
+  .topbar{grid-template-columns:240px minmax(0,1fr) auto auto}
+  .top-player-search{display:none}
+  .top-inbox-shell{grid-column:3}
+  .top-actions{grid-column:4}
+  .resource-strip{
+    display:grid;
+    grid-template-columns:repeat(5,minmax(72px,1fr)) minmax(102px,1.15fr) repeat(2,minmax(72px,1fr)) minmax(96px,1.05fr);
+    overflow:hidden;
+  }
+  .resource-item,.resource-item.has-icon{
+    min-width:0;
+    width:auto;
+    height:100%;
+    padding:0 7px;
+    grid-template-columns:18px minmax(0,1fr);
+    column-gap:5px;
+  }
+  .resource-copy small{font-size:6.8px;letter-spacing:.09em}
+  .resource-copy strong{font-size:11.8px}
+  .resource-icon,.resource-power .resource-icon{width:18px;height:18px}
+  .resource-power{min-width:0}
+}
