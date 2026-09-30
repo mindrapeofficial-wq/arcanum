@@ -53,44 +53,36 @@ jobs:
 
       - name: Add Android 13 themed icons
         run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          import re
-
-          src = Path("android/app/src/main/res/mipmap-anydpi-v26")
-          dst = Path("android/app/src/main/res/mipmap-anydpi-v33")
-          dst.mkdir(parents=True, exist_ok=True)
-
-          for filename in ("ic_launcher.xml", "ic_launcher_round.xml"):
-              source = src / filename
-              if not source.exists():
-                  raise SystemExit(f"Missing adaptive icon: {source}")
-              text = source.read_text(encoding="utf-8")
-              match = re.search(r'<foreground android:drawable="([^"]+)"\s*/>', text)
-              if not match:
-                  raise SystemExit(f"Could not find foreground drawable in {source}")
-              if "<monochrome " not in text:
-                  text = text.replace(
-                      "</adaptive-icon>",
-                      f'    <monochrome android:drawable="{match.group(1)}" />\n</adaptive-icon>'
-                  )
-              (dst / filename).write_text(text, encoding="utf-8")
-          PY
+          mkdir -p android/app/src/main/res/mipmap-anydpi-v33
+          cat > android/app/src/main/res/mipmap-anydpi-v33/ic_launcher.xml <<'XML'
+          <?xml version="1.0" encoding="utf-8"?>
+          <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+              <background android:drawable="@mipmap/ic_launcher_background" />
+              <foreground android:drawable="@mipmap/ic_launcher_foreground" />
+              <monochrome android:drawable="@mipmap/ic_launcher_foreground" />
+          </adaptive-icon>
+          XML
+          cp android/app/src/main/res/mipmap-anydpi-v33/ic_launcher.xml android/app/src/main/res/mipmap-anydpi-v33/ic_launcher_round.xml
 
       - name: Sync Capacitor
         run: npx cap sync android
 
       - name: Verify launcher resources
         run: |
-          test -f android/app/src/main/res/mipmap-mdpi/ic_launcher.png
-          test -f android/app/src/main/res/mipmap-hdpi/ic_launcher.png
-          test -f android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
-          test -f android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
-          test -f android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+          for density in ldpi mdpi hdpi xhdpi xxhdpi xxxhdpi; do
+            test -f "android/app/src/main/res/mipmap-$density/ic_launcher.png"
+            test -f "android/app/src/main/res/mipmap-$density/ic_launcher_round.png"
+            test -f "android/app/src/main/res/mipmap-$density/ic_launcher_foreground.png"
+            test -f "android/app/src/main/res/mipmap-$density/ic_launcher_background.png"
+          done
           test -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
           test -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
           test -f android/app/src/main/res/mipmap-anydpi-v33/ic_launcher.xml
           test -f android/app/src/main/res/mipmap-anydpi-v33/ic_launcher_round.xml
+          test -f android/app/src/main/res/drawable/splash.png
+          grep -q 'android:icon="@mipmap/ic_launcher"' android/app/src/main/AndroidManifest.xml
+          grep -q 'android:roundIcon="@mipmap/ic_launcher_round"' android/app/src/main/AndroidManifest.xml
+          grep -q '<monochrome android:drawable="@mipmap/ic_launcher_foreground"' android/app/src/main/res/mipmap-anydpi-v33/ic_launcher.xml
 
       - name: Build debug APK
         working-directory: android
