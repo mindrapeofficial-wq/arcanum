@@ -14,7 +14,10 @@ const ONLINE_PANEL_COLLAPSED_KEY="arcanum_online_panel_collapsed_v1";
 let oracleHistory=[];
 
 function isOnlinePanelCollapsed(){
-  try{return localStorage.getItem(ONLINE_PANEL_COLLAPSED_KEY)==="1";}catch{return false;}
+  try{
+    const value=localStorage.getItem(ONLINE_PANEL_COLLAPSED_KEY);
+    return value===null?true:value==="1";
+  }catch{return true;}
 }
 function setOnlinePanelCollapsed(collapsed){
   const panel=$("#sidebar-online-panel");
