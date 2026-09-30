@@ -141,7 +141,7 @@ function combatBaseProfile(name,school){
 }
 function combatLoadRaw(profileOrRealm){
   const src=profileOrRealm||realmState?.realm||{};
-  const name=src.mage_name||realmState?.realm?.mage_name||"Archimago";
+  const name=src.mage_name||realmState?.realm?.mage_name||"Arconte";
   const school=src.school_code||realmState?.realm?.school_code||"ascendant";
   let data=combatServerCache.get(combatNameKey(name))||null;
   if(!data||data.version!==1||data.school!==school)data=combatBaseProfile(name,school);
@@ -316,7 +316,7 @@ function combatPendingLevel(profile){
   return null;
 }
 async function combatChooseEvolution(profile,level,optionId){
-  if(!profile?.is_self)throw new Error("Solo puedes evolucionar tu propio Archimago.");
+  if(!profile?.is_self)throw new Error("Solo puedes evolucionar tu propio Arconte.");
   const currentLevel=combatCurrentLevel(profile);
   level=Number(level);
   if(level<2||level>currentLevel)throw new Error("Ese nivel todavía no está disponible.");
@@ -336,7 +336,7 @@ function renderCombatEvolution(profile){
   if(pending){
     const options=combatEvolutionOptions(profile,pending);
     choice='<section class="combat-evolution pending"><div class="profile-section-title"><span>EVOLUCIÓN PENDIENTE · NIVEL '+pending+'</span><small>'+(level-pending+1)+' elección'+(level-pending+1===1?"":"es")+' pendiente'+(level-pending+1===1?"":"s")+'</small></div>'+
-      '<p class="combat-evolution-intro">Elige un destino. La otra posibilidad desaparecerá para este Archimago.</p>'+
+      '<p class="combat-evolution-intro">Elige un destino. La otra posibilidad desaparecerá para este Arconte.</p>'+
       '<div class="combat-choice-grid">'+options.map(function(o){
         return '<button type="button" class="combat-choice" data-combat-evolution="'+esc(o.id)+'" data-combat-level="'+pending+'"><i>'+esc(o.icon)+'</i><span><small>'+esc(o.kind.toUpperCase())+'</small><strong>'+esc(o.title)+'</strong><em>'+esc(o.desc)+'</em></span><b>ELEGIR</b></button>';
       }).join("")+'</div></section>';
