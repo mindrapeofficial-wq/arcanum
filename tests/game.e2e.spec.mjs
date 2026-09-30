@@ -197,6 +197,24 @@ async function installMocks(page){
     return route.fulfill({status:404,contentType:"application/json",headers:corsHeaders(),body:'{"error":"NOT_FOUND"}'});
   });
 
+  await page.route(/^https:\/\/smynvbrkgffpepbhrpxt\.supabase\.co\/functions\/v1\/arcanum-oracle$/, async route=>{
+    const req=route.request();
+    calls.push({method:req.method(),path:"oracle"});
+    if(req.method()==="OPTIONS") return route.fulfill({status:204,headers:corsHeaders(),body:""});
+    const payload=req.postDataJSON();
+    return route.fulfill({
+      status:200,
+      contentType:"application/json",
+      headers:corsHeaders(),
+      body:JSON.stringify({
+        name:"Astrael",
+        title:"Archivista Arcano",
+        mode:"ai",
+        answer:`Los turnos se regeneran cada 5 minutos. Ahora tienes ${state.realm.turns} de ${state.realm.max_turns}.`
+      })
+    });
+  });
+
   return {state,calls};
 }
 
@@ -365,7 +383,7 @@ test("la barra lateral muestra conectados y abre chat privado solo entre amigos"
 
   const connected=page.locator('#sidebar-online-list [data-profile="FRIEND_TEST"]');
   await expect(connected).toBeVisible();
-  await expect(page.locator("#sidebar-online-count")).toHaveText("1");
+  await expect(page.locator("#sidebar-online-count")).toHaveText("2");
 
   await connected.click();
   await expect(page.locator("#modal")).toBeVisible();
@@ -406,4 +424,27 @@ test("Bandeja Arcana muestra solicitudes, mensajes y permite aceptar amistad", a
   await expect(page.locator("#direct-chat-window")).toBeVisible();
   await expect(page.locator("#direct-chat-messages")).toContainText("¿Entramos juntos a explorar?");
   await expect(page.locator("#top-inbox-badge")).toBeHidden();
+});
+
+
+test("Astrael aparece conectado y responde dudas del juego", async ({page})=>{
+  const mock=await installMocks(page);
+  await page.goto("/");
+  await page.locator("#username").fill("E2E_TESTER");
+  await page.locator("#password").fill("prueba-segura");
+  await page.locator("#submit-button").click();
+  await expect(page.locator("#game-view")).toBeVisible();
+
+  await expect(page.locator("#sidebar-online-list")).toContainText("Astrael");
+  await expect(page.locator("#sidebar-online-list")).toContainText("IA");
+  await page.locator('#sidebar-online-list [data-oracle-chat]').first().click();
+
+  await expect(page.locator("#direct-chat-window")).toBeVisible();
+  await expect(page.locator("#direct-chat-name")).toHaveText("Astrael");
+  await expect(page.locator("#direct-chat-school")).toContainText("IA");
+  await page.locator("#direct-chat-input").fill("¿Cómo funcionan los turnos?");
+  await page.locator("#direct-chat-send").click();
+
+  await expect(page.locator("#direct-chat-messages")).toContainText("cada 5 minutos");
+  expect(mock.calls.some(x=>x.path==="oracle")).toBeTruthy();
 });
