@@ -34,6 +34,7 @@ async function installMocks(page){
   let army=[];
   let chatMessages=[];
   let boardPosts=[];
+  let archmageProgress={archmage_total_xp:520,arcane_power:2,knowledge:2,willpower:1,influence:1,attribute_points:1};
   const calls=[];
 
   const schools=[
@@ -79,13 +80,24 @@ async function installMocks(page){
       return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({
         mage_name:target,school_code:self?state.realm.school_code:"abyssal",status:"alive",
         land:self?state.realm.land:480,net_power:self?state.realm.net_power:14200,spell_level:self?state.realm.spell_level:2,
-        archmage_total_xp:self?520:220,arcane_power:self?3:2,knowledge:self?4:2,willpower:self?2:3,influence:self?1:2,attribute_points:self?1:0,
+        ...(self?archmageProgress:{archmage_total_xp:220,arcane_power:1,knowledge:1,willpower:2,influence:1,attribute_points:0}),
         bio:self?"Archimago de pruebas.":"Rival de pruebas.",avatar_path:null,is_self:self,is_npc:false,
         friendship:self?null:{status:"none"},alliance:null,my_alliance:null,can_invite_to_alliance:false
       })});
     }
     if(rpc==="social_inbox") return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({friend_requests:[],alliance_invites:[],friends:[]})});
     if(rpc==="update_my_profile") return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({bio:body().p_bio||"",avatar_path:body().p_avatar_path||null})});
+    if(rpc==="spend_archmage_attribute"){
+      const key=String(body().p_attribute||"");
+      if(!["arcane_power","knowledge","willpower","influence"].includes(key)){
+        return route.fulfill({status:400,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({message:"INVALID_ATTRIBUTE"})});
+      }
+      if(archmageProgress.attribute_points<1){
+        return route.fulfill({status:400,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({message:"NO_ATTRIBUTE_POINTS"})});
+      }
+      archmageProgress={...archmageProgress,[key]:archmageProgress[key]+1,attribute_points:archmageProgress.attribute_points-1};
+      return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({...archmageProgress,archmage_level:4})});
+    }
     if(rpc==="friend_request") return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({status:"pending",direction:"outgoing"})});
     if(rpc==="conversation_with") return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({messages:[]})});
     if(rpc==="send_direct_message") return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({sent:true,id:1})});
@@ -264,8 +276,9 @@ test("la navegación móvil abre Comunidad sin errores", async ({page})=>{
 });
 
 
-test("la ficha de personaje se abre desde el nombre y permite editar la bio", async ({page})=>{
-  await installMocks(page);
+test("la ficha de personaje se abre, permite gastar un punto y editar la bio", async ({page})=>{
+  const mock=await installMocks(page);
+  page.on("dialog",dialog=>dialog.accept());
   await page.goto("/");
   await page.locator("#username").fill("E2E_TESTER");
   await page.locator("#password").fill("prueba-segura");
@@ -278,6 +291,12 @@ test("la ficha de personaje se abre desde el nombre y permite editar la bio", as
   await expect(page.getByText("PROGRESIÓN DEL ARCHIMAGO")).toBeVisible();
   await expect(page.getByText("Poder Arcano")).toBeVisible();
   await expect(page.locator(".archmage-level-row > div:first-child strong")).toHaveText("4");
+  await expect(page.locator('[data-archmage-stat="knowledge"] strong')).toHaveText("2");
+  await page.locator('[data-archmage-attribute="knowledge"]').click();
+  await expect(page.locator(".toast").last()).toContainText("Conocimiento ha aumentado a 3");
+  await expect(page.locator('[data-archmage-stat="knowledge"] strong')).toHaveText("3");
+  await expect(page.locator("[data-archmage-attribute]")).toHaveCount(0);
+  expect(mock.calls.some(x=>x.path==="/rest/v1/rpc/spend_archmage_attribute")).toBeTruthy();
   await page.locator("#profile-bio-input").fill("Nueva bio de pruebas.");
   await page.locator("#profile-save-bio").click();
   await expect(page.locator(".toast").last()).toContainText("Ficha de personaje actualizada");

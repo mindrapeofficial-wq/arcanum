@@ -248,3 +248,9 @@ table .school-dot{width:17px;height:17px;min-width:17px;margin-right:6px}
 .army-art-empty{grid-template-columns:1fr 180px;min-height:190px}.army-art-empty .army-art-copy{padding:22px}.army-art-empty-mark{display:grid;place-items:center;border-left:1px solid rgba(218,151,57,.09);color:rgba(218,151,57,.25);font-size:66px;background:radial-gradient(circle,rgba(218,151,57,.06),transparent 55%)}
 @media(max-width:900px){.army-art-panel{grid-template-columns:1fr}.army-art-visual{min-height:300px;border-left:0;border-top:1px solid rgba(218,151,57,.1)}.army-art-empty{grid-template-columns:1fr}.army-art-empty-mark{display:none}}
 @media(max-width:560px){.army-art-copy{padding:18px 15px}.army-art-copy h3{font-size:21px}.army-art-visual{min-height:240px}.army-art-total{flex-wrap:wrap}.army-art-total small{flex-basis:100%}.army-art-actions{align-items:flex-start;flex-direction:column}.army-art-actions .small-action{width:100%}}
+
+.archmage-attribute-value{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.archmage-attribute-value strong{margin:4px 0}
+.archmage-attribute-upgrade{width:30px;height:30px;display:grid;place-items:center;border:1px solid rgba(230,173,84,.5);background:linear-gradient(180deg,rgba(217,155,57,.18),rgba(0,0,0,.3));color:var(--gold-hot);font:900 17px/1 Arial,sans-serif;box-shadow:inset 0 0 12px rgba(217,155,57,.05)}
+.archmage-attribute-upgrade:hover:not(:disabled){border-color:var(--gold-hot);background:rgba(217,155,57,.16);transform:translateY(-1px)}
+.archmage-attribute-upgrade:disabled{opacity:.35;cursor:wait}
