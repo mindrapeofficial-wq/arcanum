@@ -9,6 +9,7 @@
   <link rel="icon" href="logo.png" />
   <link rel="stylesheet" href="assets/css/arcanum.css?v=0.2.29" />
   <link rel="stylesheet" href="assets/css/support.css?v=0.2.28" />
+  <link rel="stylesheet" href="assets/css/audio.css?v=0.2.31" />
   <style id="arcanum-mmorpg-cursor">
     @media (pointer:fine) {
       html, body, body * {
@@ -129,6 +130,7 @@
       </div>
       <div class="top-actions">
         <button class="icon-button" id="manual-top-button" title="Manual básico" aria-label="Abrir manual básico">?</button>
+        <button class="icon-button audio-button" id="audio-settings-button" type="button" title="Audio" aria-label="Abrir ajustes de audio" aria-expanded="false">♫</button>
         <button class="icon-button" id="refresh-button" title="Actualizar">↻</button>
         <button class="ghost-button" id="logout-button">Salir</button>
       </div>
@@ -184,11 +186,22 @@
     </nav>
   </main>
 
+  <section id="audio-panel" class="audio-panel hidden" aria-label="Ajustes de audio">
+    <div class="audio-panel-head"><div><strong>Mezclador Arcano</strong><small>MÚSICA Y EFECTOS</small></div><button id="audio-panel-close" class="audio-panel-close" type="button" aria-label="Cerrar ajustes de audio">×</button></div>
+    <div class="audio-track"><label for="audio-master">General</label><input id="audio-master" type="range" min="0" max="100" step="1" value="75"><output id="audio-master-value">75%</output></div>
+    <div class="audio-track"><label for="audio-music">Música</label><input id="audio-music" type="range" min="0" max="100" step="1" value="45"><output id="audio-music-value">45%</output></div>
+    <div class="audio-track"><label for="audio-sfx">Efectos</label><input id="audio-sfx" type="range" min="0" max="100" step="1" value="62"><output id="audio-sfx-value">62%</output></div>
+    <div class="audio-toggles"><label class="audio-toggle-row"><span>Música ambiental</span><input id="audio-music-toggle" type="checkbox" checked></label><label class="audio-toggle-row"><span>Efectos de interfaz</span><input id="audio-sfx-toggle" type="checkbox" checked></label></div>
+    <button id="audio-mute-toggle" class="ghost-button audio-mute" type="button" aria-pressed="false">SILENCIAR TODO</button>
+    <div class="audio-now"><small>SONANDO</small><strong>Dungeon Lobby</strong></div>
+  </section>
+
   <div id="toast-host" class="toast-host" aria-live="polite"></div>
   <div id="modal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
     <div class="modal-card"><div id="modal-content"></div><button id="modal-close" class="ghost-button">Cerrar</button></div>
   </div>
 
+  <script defer src="assets/js/audio.js?v=0.2.31"></script>
   <script defer src="assets/js/state.js?v=0.2.30"></script>
   <script defer src="assets/js/auth.js?v=0.2.28"></script>
   <script defer src="assets/js/archmage.js?v=0.2.28"></script>
