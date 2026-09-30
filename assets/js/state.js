@@ -16,6 +16,8 @@ const $ = (s, root=document) => root.querySelector(s);
 const $$ = (s, root=document) => [...root.querySelectorAll(s)];
 const fmt = new Intl.NumberFormat("es-ES", { maximumFractionDigits: 0 });
 const symbols = { ascendant:"✦", verdant:"♧", eradication:"✹", abyssal:"◆", phantasm:"◌", plain:"⚔" };
+const SCHOOL_NAMES = { verdant:"Viridia", ascendant:"Aurea", eradication:"Cineria", abyssal:"Nadir", phantasm:"Oneiria", plain:"Neutral" };
+function schoolName(code){ return SCHOOL_NAMES[code] || code || "Escuela"; }
 const rankNames = { simple:"Simple", average:"Medio", complex:"Complejo", ultimate:"Supremo", ancient:"Antiguo" };
 const buildMeta = {
   farms:["Granjas","Alimentos + población","5"], towns:["Pueblos","Población + oro","30"], nodes:["Nodos","Producción y capacidad de maná","30"],
