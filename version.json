@@ -1,6 +1,6 @@
 {
-  "version": "0.3.6",
+  "version": "0.3.7",
   "channel": "beta",
-  "updated_at": "2026-09-30T22:30:00+02:00",
-  "note": "Verified gameplay loot: Gear rewards from Exploration, ranked Arena and World Boss with provenance and idempotent claims"
+  "updated_at": "2026-09-30T22:53:00+02:00",
+  "note": "Persistent personal PvE Expeditions: Ruinas del Umbral, locked loadout, carried HP, server combat and verified Gear rewards"
 }
