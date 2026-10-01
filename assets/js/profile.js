@@ -14,7 +14,8 @@ const PROFILE_SCHOOL_PORTRAITS={
   verdant:{1:"assets/art/characters/verdante/viridia-level-1.png?v=0.3.16"},
   eradication:{1:"assets/art/characters/eradication/cineria-level-1.png?v=0.3.16"},
   phantasm:{1:"assets/art/characters/phantasm/oneiria-level-1.png?v=0.3.16"},
-  ascendant:{1:"assets/art/characters/ascendant/aurea-level-1.png?v=0.3.16"}
+  ascendant:{1:"assets/art/characters/ascendant/aurea-level-1.png?v=0.3.16"},
+  abyssal:{1:"assets/art/characters/abyssal/nadir-level-1.png?v=0.3.18"}
 };
 function profileDefaultPortraitUrl(profile){
   const school=String(profile?.school_code||"");
