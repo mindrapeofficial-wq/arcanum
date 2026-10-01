@@ -186,7 +186,7 @@ function renderRealmTools(army,unitById,compatible){
       </div>
     </div>
     <div class="panel" id="formation-calc-panel">
-      <h3>Calculadora de formaciones</h3>
+      <h3>Calculadora de ejército</h3>
       <p class="tools-note">Herramienta gratuita y sin efecto sobre tu reino: prueba una composición y consulta cuánto costaría y cuánto mantenimiento tendría según el catálogo. El coste y el ingreso reales los confirma siempre el servidor.</p>
       <div class="calc-grid">${calcRows||`<div class="empty">Sin unidades disponibles.</div>`}</div>
       <div class="calc-actions"><button id="calc-load" class="small-action" type="button">CARGAR MI EJÉRCITO</button><button id="calc-clear" class="small-action" type="button">LIMPIAR</button></div>

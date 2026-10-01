@@ -84,10 +84,17 @@ function characterTraits(raw){
   if(!traits.length)return '<div class="character-empty compact">Sin rasgos activos.</div>';
   return traits.map((t,i)=>'<article class="character-bonus-tile"><span>'+["✦","◆","◇","✧"][i%4]+'</span><strong>'+esc(t.name||"Rasgo")+'</strong><small>'+esc(t.desc||"")+'</small></article>').join("");
 }
+function characterFamiliar(raw){
+  return (raw?.familiars||[]).map(characterFamiliarTile).join("");
+}
+function characterFamiliarTile(fam){
+  if(!fam)return "";
+  return '<article class="character-bonus-tile ability"><span>❖</span><strong>Familiar · '+esc(fam.name||"Familiar")+(Number(fam.grade)>1?' · Grado '+["","I","II","III"][Math.min(3,Number(fam.grade))]:'')+'</strong><small>'+esc(fam.desc||"")+(fam.detail?' · '+esc(fam.detail):'')+'</small></article>';
+}
 function characterAbilities(raw){
   const rows=raw?.abilities||[];
-  if(!rows.length)return '<div class="character-empty compact">Aún no hay habilidades.</div>';
-  return rows.map((a,i)=>'<article class="character-bonus-tile ability"><span>'+["⚡","✹","◌","♧","✦"][i%5]+'</span><strong>'+esc(a.name||"Habilidad")+'</strong><small>'+esc(a.desc||"")+'</small></article>').join("");
+  if(!rows.length&&!(raw?.familiars||[]).length)return '<div class="character-empty compact">Aún no hay habilidades.</div>';
+  return characterFamiliar(raw)+rows.map((a,i)=>'<article class="character-bonus-tile ability"><span>'+["⚡","✹","◌","♧","✦"][i%5]+'</span><strong>'+esc(a.name||"Habilidad")+(Number(a.grade)>1?' · Grado '+["","I","II","III"][Math.min(3,Number(a.grade))]:'')+'</strong><small>'+esc(a.desc||"")+(a.detail?' · '+esc(a.detail):'')+'</small></article>').join("");
 }
 function characterEquipmentTiles(profile){
   if(typeof lootLoad!=="function")return '<div class="character-empty compact">Equipo no disponible.</div>';
@@ -139,10 +146,17 @@ function renderCharacterLayout(profile,snapshot){
 
     '<div class="character-brute-grid">'+
       '<aside class="character-left-column">'+
-        '<section class="character-brute-panel">'+
-          '<div class="character-brute-title"><span>ARSENAL Y DONES DE COMBATE</span><small>Todo lo que entra contigo al duelo</small></div>'+
-          '<div class="character-loadout-grid">'+characterEquipmentTiles(profile)+'</div>'+
-          '<div class="character-bonus-grid">'+characterTraits(raw)+characterAbilities(raw)+'</div>'+
+        '<section class="character-brute-panel character-combat-kit">'+
+          '<div class="character-brute-title"><span>PREPARACIÓN PARA EL DUELO</span><small>Tu configuración de combate</small></div>'+
+          '<div class="character-kit-section">'+
+            '<div class="character-kit-heading"><div><span class="section-kicker">EQUIPO</span><h3>Equipo equipado</h3></div><small>Lo que llevas al combate</small></div>'+
+            '<div class="character-loadout-grid">'+characterEquipmentTiles(profile)+'</div>'+
+          '</div>'+
+          '<div class="character-kit-divider"></div>'+
+          '<div class="character-kit-section">'+
+            '<div class="character-kit-heading"><div><span class="section-kicker">PODERES</span><h3>Dones y habilidades</h3></div><small>Rasgos, familiares y técnicas activas</small></div>'+
+            '<div class="character-bonus-grid character-ability-list">'+characterTraits(raw)+characterAbilities(raw)+'</div>'+
+          '</div>'+
         '</section>'+
       '</aside>'+
 

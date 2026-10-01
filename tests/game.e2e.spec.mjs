@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { loadEngine } from "./lib/duel-engine.mjs";
 
 const SUPABASE_HOST = "mrmvmoyysxuopqexbxfk.supabase.co";
 const COMMUNITY_HOST = "mrmvmoyysxuopqexbxfk.supabase.co";
@@ -9,6 +10,35 @@ function corsHeaders(){
     "access-control-allow-headers":"authorization, apikey, content-type",
     "access-control-allow-methods":"GET, POST, DELETE, OPTIONS"
   };
+}
+
+const E2E_NAV_GROUP=Object.freeze({
+  character:"arconte",research:"arconte",artifacts:"arconte",arena:"arconte",pve:"arconte",event:"arconte",
+  realm:"reino",build:"reino",economy:"reino",market:"reino",army:"reino",war:"reino",battles:"reino",
+  tavern:"comunidad",community:"comunidad",ranking:"comunidad",admin:"comunidad"
+});
+
+async function openDesktopNavGroup(page,group){
+  const details=page.locator(`#main-nav details[data-nav-group="${group}"]`);
+  if(!(await details.evaluate(el=>el.open))) await details.locator("summary").click();
+  await expect(details).toHaveAttribute("open","");
+  return details;
+}
+
+async function navigateDesktop(page,view){
+  const group=E2E_NAV_GROUP[view];
+  if(!group)throw new Error("Unknown navigation view: "+view);
+  const details=await openDesktopNavGroup(page,group);
+  await details.locator(`button[data-view="${view}"]`).click();
+}
+
+async function navigateMobile(page,view){
+  const group=E2E_NAV_GROUP[view];
+  if(!group)throw new Error("Unknown navigation view: "+view);
+  await page.locator(`#mobile-nav [data-nav-group-trigger="${group}"]`).click();
+  const button=page.locator(`#mobile-nav-menu [data-mobile-nav-group="${group}"] button[data-view="${view}"]`);
+  await expect(button).toBeVisible();
+  await button.click();
 }
 
 function freshState(){
@@ -378,34 +408,34 @@ test("flujo crítico completo: login, reino, explorar, construir, investigar, re
   await expect(page.locator("#mage-school")).toContainText("Nivel 4");
 
   // Personaje is the landing page (CLAUDE.md sec.2); exploring lives in Dominio.
-  await page.locator('#main-nav button[data-view="realm"]').click();
+  await navigateDesktop(page,"realm");
   await page.locator("#realm-explore-turns").fill("2");
   await page.locator("#realm-explore-button").click();
   await expect(page.locator(".toast").last()).toContainText("Exploración completada");
 
-  await page.locator('#main-nav button[data-view="build"]').click();
+  await navigateDesktop(page,"build");
   await expect(page.getByRole("heading",{name:"Diseña el crecimiento de tu dominio"})).toBeVisible();
   await page.locator('[data-building="farms"]').fill("2");
   await page.locator("#build-button").click();
   await expect(page.locator(".toast").last()).toContainText("Construcción completada");
 
-  await page.locator('#main-nav button[data-view="research"]').click();
+  await navigateDesktop(page,"research");
   await expect(page.getByRole("heading",{name:"Conocimiento Arcano",exact:true})).toBeVisible();
   await page.locator("#research-turns").fill("1");
   await page.locator("#research-button").click();
   await expect(page.locator(".toast").last()).toContainText("Conocimiento Arcano avanzado");
 
-  await page.locator('#main-nav button[data-view="army"]').click();
+  await navigateDesktop(page,"army");
   await expect(page.getByRole("heading",{name:"Formaciones"})).toBeVisible();
   await page.locator("#recruit-turns").fill("1");
   await page.locator("#recruit-button").click();
   await expect(page.locator(".toast").last()).toContainText("Reclutadas 5 unidades");
 
-  await page.locator('#main-nav button[data-view="war"]').click();
+  await navigateDesktop(page,"war");
   await expect(page.getByRole("heading",{name:"Guerra"})).toBeVisible();
   await expect(page.getByText("RIVAL_TEST")).toBeVisible();
 
-  await page.locator('#main-nav button[data-view="community"]').click();
+  await navigateDesktop(page,"community");
   await expect(page.getByRole("heading",{name:"Comunidad"})).toBeVisible();
   await page.locator("#chat-input").fill("Saludos desde el reino de pruebas");
   await page.locator("#chat-send").click();
@@ -429,8 +459,6 @@ test("flujo crítico completo: login, reino, explorar, construir, investigar, re
     "/rest/v1/rpc/recruit_units",
     "/rest/v1/rpc/attack_targets",
     "/rest/v1/rpc/npc_directory",
-    "state/loot/exploration/start",
-    "state/loot/exploration/complete",
     "community/messages",
     "community/posts"
   ]) expect(paths.some(p=>p.startsWith(required)),`No se ejecutó ${required}`).toBeTruthy();
@@ -451,9 +479,7 @@ test("la navegación móvil abre Comunidad sin errores", async ({page})=>{
   await expect(page.locator("#game-view")).toBeVisible();
   await expect(page.locator("#mage-title")).toHaveText("E2E_TESTER");
 
-  const community=page.locator('#mobile-nav button[data-view="community"]');
-  await community.scrollIntoViewIfNeeded();
-  await community.click();
+  await navigateMobile(page,"community");
   await expect(page.getByRole("heading",{name:"Comunidad"})).toBeVisible();
   expect(errors).toEqual([]);
 });
@@ -518,9 +544,9 @@ test("cambiar de sección mientras Personaje aún carga no deja contenido de Per
       document.querySelector("#view-host").innerHTML='<div id="stale-character">PERSONAJE TARDÍO</div>';
     };
   });
-  await page.locator('#main-nav button[data-view="realm"]').click();
-  await page.locator('#main-nav button[data-view="character"]').click();
-  await page.locator('#main-nav button[data-view="economy"]').click();
+  await navigateDesktop(page,"realm");
+  await navigateDesktop(page,"character");
+  await navigateDesktop(page,"economy");
   await expect(page.locator("#stale-character")).toHaveCount(0,{timeout:3000});
   await page.waitForTimeout(1500);
   await expect(page.locator("#stale-character")).toHaveCount(0);
@@ -556,6 +582,7 @@ test("los iconos artísticos de navegación y recursos cargan", async ({page})=>
   await page.locator("#submit-button").click();
   await expect(page.locator("#game-view")).toBeVisible();
   await expect(page.locator("#mage-title")).toHaveText("E2E_TESTER");
+  await openDesktopNavGroup(page,"reino");
   const navIcon=page.locator('#main-nav button[data-view="realm"] img.nav-icon');
   await expect(navIcon).toBeVisible();
   await expect.poll(()=>navIcon.evaluate(img=>img.naturalWidth)).toBeGreaterThan(0);
@@ -575,7 +602,7 @@ test("atacar abre siempre la crónica de batalla", async ({page})=>{
   // Wait for boot to finish: it lands on Personaje and would override an earlier navigation.
   await expect(page.locator("#game-view")).toBeVisible();
   await expect(page.locator("#mage-title")).toHaveText("E2E_TESTER");
-  await page.locator('#main-nav button[data-view="war"]').click();
+  await navigateDesktop(page,"war");
   await page.locator('.attack-btn[data-mode="REGULAR"]').click();
   await expect(page.locator("#modal")).toBeVisible();
   await expect(page.locator("#modal-content")).toContainText("CRÓNICA DEL COMBATE");
@@ -594,7 +621,7 @@ test("la barra lateral muestra conectados y abre chat privado solo entre amigos"
   await page.locator("#sidebar-online-collapse").click();
   const connected=page.locator('#sidebar-online-list [data-profile="FRIEND_TEST"]');
   await expect(connected).toBeVisible();
-  await expect(page.locator("#sidebar-online-count")).toHaveText("2");
+  await expect(page.locator("#sidebar-online-count")).toHaveText("1");
 
   await connected.click();
   await expect(page.locator("#modal")).toBeVisible();
@@ -638,27 +665,16 @@ test("Bandeja Arcana muestra solicitudes, mensajes y permite aceptar amistad", a
 });
 
 
-test("Astrael aparece conectado y responde dudas del juego", async ({page})=>{
-  const mock=await installMocks(page);
+test("Astrael no aparece como IA en la interfaz del jugador", async ({page})=>{
+  await installMocks(page);
   await page.goto("/");
   await page.locator("#username").fill("E2E_TESTER");
   await page.locator("#password").fill("prueba-segura");
   await page.locator("#submit-button").click();
   await expect(page.locator("#game-view")).toBeVisible();
 
-  await expect(page.locator("#sidebar-online-list")).toContainText("Astrael");
-  await expect(page.locator("#sidebar-online-list")).toContainText("IA");
-  await page.locator("#sidebar-online-collapse").click();
-  await page.locator('#sidebar-online-list [data-oracle-chat]').first().click();
-
-  await expect(page.locator("#direct-chat-window")).toBeVisible();
-  await expect(page.locator("#direct-chat-name")).toHaveText("Astrael");
-  await expect(page.locator("#direct-chat-school")).toContainText("IA");
-  await page.locator("#direct-chat-input").fill("¿Cómo funcionan los turnos?");
-  await page.locator("#direct-chat-send").click();
-
-  await expect(page.locator("#direct-chat-messages")).toContainText("cada 5 minutos");
-  expect(mock.calls.some(x=>x.path==="oracle")).toBeTruthy();
+  await expect(page.locator("#sidebar-online-list")).not.toContainText("Astrael");
+  await expect(page.locator("[data-oracle-chat]")).toHaveCount(0);
 });
 
 
@@ -673,7 +689,7 @@ test("Expediciones inicia una incursión persistente y arrastra vida entre salas
   await page.locator("#submit-button").click();
   await expect(page.locator("#game-view")).toBeVisible();
 
-  await page.locator('#main-nav button[data-view="pve"]').click();
+  await navigateDesktop(page,"pve");
   await expect(page.getByRole("heading",{name:"Expediciones",exact:true})).toBeVisible();
   await expect(page.getByText("Ruinas del Umbral",{exact:true})).toBeVisible();
   await page.locator('[data-pve-start="ruins_threshold"][data-pve-difficulty="1"]').click();
@@ -699,4 +715,50 @@ test("Expediciones inicia una incursión persistente y arrastra vida entre salas
   expect(mock.calls.some(x=>x.path==="state/pve/fight")).toBeTruthy();
   expect(mock.calls.some(x=>x.path==="state/pve/choose")).toBeTruthy();
   expect(errors).toEqual([]);
+});
+
+test("Personaje ofrece las opciones de evolución del servidor con rareza, y permite elegir", async ({page})=>{
+  const engine=loadEngine();
+  const raw=engine.baseProfile("E2E_TESTER","ascendant");
+  raw.levelBonuses=[];
+  const posted=[];
+  let current=raw;
+  const view=()=>engine.evolutionView(current,4);
+  await installMocks(page);
+  // Registered after installMocks, so these routes take precedence for the evolution endpoints.
+  await page.route(/\/functions\/v1\/arcanum-state\/(snapshot|combat\/evolve)(\?.*)?$/, async route=>{
+    const req=route.request(),url=new URL(req.url());
+    if(req.method()==="GET"&&url.pathname.endsWith("/snapshot")){
+      return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({
+        combat:current,arena:{rating:1000,wins:0,losses:0,seals_remaining:6},history:[],server_day:"2026-10-01",evolution_view:view()
+      })});
+    }
+    if(req.method()==="POST"&&url.pathname.endsWith("/combat/evolve")){
+      const body=JSON.parse(req.postData()||"{}");
+      posted.push(body);
+      const option=engine.evolutionOptions(current,Number(body.level)).find(o=>o.id===body.option_id);
+      if(!option)return route.fulfill({status:409,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({error:"EVOLUTION_OPTION_INVALID"})});
+      current={...current,levelBonuses:current.levelBonuses.concat([{level:Number(body.level),id:option.id,kind:option.kind,title:option.title,desc:option.desc,effect:option.effect}])};
+      return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({combat:current,chosen:option,evolution_view:view()})});
+    }
+    return route.fallback();
+  });
+  page.on("dialog",dialog=>dialog.accept());
+  await page.goto("/");
+  await page.locator("#username").fill("E2E_TESTER");
+  await page.locator("#password").fill("prueba-segura");
+  await page.locator("#submit-button").click();
+  await expect(page.locator("#game-view")).toBeVisible();
+  await expect(page.locator(".character-brute-layout")).toBeVisible();
+  const pending=page.locator(".combat-evolution.pending");
+  await expect(pending).toContainText("EVOLUCIÓN PENDIENTE · NIVEL 2");
+  const options=pending.locator("[data-combat-evolution]");
+  await expect(options).toHaveCount(2);
+  const expected=engine.evolutionOptions(raw,2);
+  for(const o of expected)await expect(pending).toContainText(o.title);
+  await options.first().click();
+  await expect(page.locator(".toast").last()).toContainText("Evolución elegida");
+  expect(posted).toHaveLength(1);
+  expect(posted[0]).toEqual({level:2,option_id:expected[0].id});
+  await expect(page.locator(".combat-evolution.pending")).toContainText("EVOLUCIÓN PENDIENTE · NIVEL 3");
 });

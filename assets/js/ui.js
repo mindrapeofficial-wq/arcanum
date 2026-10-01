@@ -83,7 +83,10 @@ function wireStaticEvents(){
   });
   $("#creation-logout").addEventListener("click",signOut); $("#logout-button").addEventListener("click",signOut); $("#refresh-button").addEventListener("click",()=>refreshState(false));
   $("#manual-top-button").addEventListener("click",openManual); $("#manual-side-button").addEventListener("click",openManual); $("#tutorial-side-button")?.addEventListener("click",()=>startTutorial(true));
-  $("#main-nav").addEventListener("click",e=>{const b=e.target.closest("button[data-view]");if(b)navigate(b.dataset.view);}); $("#mobile-nav").addEventListener("click",e=>{const b=e.target.closest("button[data-view]");if(b)navigate(b.dataset.view);});
+  $("#main-nav").addEventListener("click",e=>{const b=e.target.closest("button[data-view]");if(b)navigate(b.dataset.view);});
+  $("#mobile-nav").addEventListener("click",e=>{const trigger=e.target.closest("[data-nav-group-trigger]");if(trigger)toggleMobileNavGroup(trigger.dataset.navGroupTrigger);});
+  $("#mobile-nav-menu")?.addEventListener("click",e=>{const b=e.target.closest("button[data-view]");if(b){closeMobileNavMenu();navigate(b.dataset.view);}});
+  $("#mobile-nav-close")?.addEventListener("click",closeMobileNavMenu);
   document.addEventListener("click",e=>{const b=e.target.closest("[data-open-mage-card]");if(b)$("#mage-card-button")?.click();});
   document.addEventListener("click",e=>{const p=e.target.closest("[data-profile]");if(p?.dataset.profile)openPlayerProfile(p.dataset.profile);});
   $("#modal-close").addEventListener("click",()=>hide($("#modal"))); $("#modal").addEventListener("click",e=>{if(e.target.id==="modal")hide($("#modal"));});

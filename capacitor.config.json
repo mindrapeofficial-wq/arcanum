@@ -4,6 +4,10 @@
   "webDir": "www",
   "appendUserAgent": " ArcanumNative/1.0",
   "backgroundColor": "#020202",
+  "server": {
+    "hostname": "arcanum-las-cinco-escuelas.onrender.com",
+    "androidScheme": "https"
+  },
   "android": {
     "backgroundColor": "#020202"
   },
