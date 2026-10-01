@@ -218,6 +218,7 @@ test("personal PvE expeditions are server-authoritative and persistent",()=>{
   assert.match(pve,/stateApi\("\/pve\/start"/);
   assert.match(pve,/stateApi\("\/pve\/fight"/);
   assert.match(pve,/stateApi\("\/pve\/retreat"/);
+  assert.match(pve,/stateApi\("\/pve\/choose"/);
   assert.match(pve,/VIDA DEL ARCHIMAGO/);
   assert.match(pve,/pve-room-track/);
   assert.match(pve,/Botín de expedición/);
@@ -229,4 +230,14 @@ test("PvE Gear provenance is part of canonical item vocabulary",()=>{
   assert.match(items,/pve:"Expedición PvE"/);
   assert.match(items,/pve_boss:"Jefe de expedición"/);
   assert.match(items,/pve_boss_abyss:"Jefe del Abismo"/);
+});
+
+
+test("PvE between-room choices are explicit and consequential",()=>{
+  const pve=read("assets/js/pve.js");
+  assert.match(pve,/DECISIÓN DEL UMBRAL/);
+  assert.match(pve,/data-pve-choice/);
+  assert.match(pve,/SIN COSTE DE TURNO/);
+  assert.match(pve,/Buscar un santuario/);
+  assert.match(pve,/Forzar el Umbral/);
 });
