@@ -7,18 +7,35 @@ function profileAvatarUrl(path){
   if(!path)return "";
   return SUPABASE_URL+"/storage/v1/object/public/avatars/"+String(path).split("/").map(encodeURIComponent).join("/");
 }
+function profileCanonicalSchoolCode(code){
+  const raw=String(code||"").trim().toLowerCase();
+  const aliases={
+    verdant:"verdant",verdante:"verdant",viridia:"verdant",
+    eradication:"eradication",erradicacion:"eradication",cineria:"eradication",
+    phantasm:"phantasm",fantasma:"phantasm",oneiria:"phantasm",
+    ascendant:"ascendant",ascendente:"ascendant",aurea:"ascendant",
+    abyssal:"abyssal",abisal:"abyssal",nadir:"abyssal"
+  };
+  return aliases[raw]||raw;
+}
+function profileSchoolSymbol(code){
+  const raw=String(code||"").trim().toLowerCase();
+  const canonical=profileCanonicalSchoolCode(raw);
+  return symbols?.[canonical]||symbols?.[raw]||"✦";
+}
 function profileSchoolName(code){
-  return typeof schoolName==="function"?schoolName(code):(catalogs.schools.find(s=>s.code===code)?.name_es||code||"Escuela");
+  const canonical=profileCanonicalSchoolCode(code);
+  return typeof schoolName==="function"?schoolName(canonical):(catalogs.schools.find(s=>s.code===canonical)?.name_es||code||"Escuela");
 }
 const PROFILE_SCHOOL_PORTRAITS={
-  verdant:{1:"assets/art/characters/verdante/viridia-level-1.png?v=0.3.21"},
-  eradication:{1:"assets/art/characters/eradication/cineria-level-1.png?v=0.3.21"},
-  phantasm:{1:"assets/art/characters/phantasm/oneiria-level-1.png?v=0.3.21"},
-  ascendant:{1:"assets/art/characters/ascendant/aurea-level-1.png?v=0.3.21"},
-  abyssal:{1:"assets/art/characters/abyssal/nadir-level-1.png?v=0.3.21"}
+  verdant:{1:"assets/art/characters/verdante/viridia-level-1.png?v=0.3.22"},
+  eradication:{1:"assets/art/characters/eradication/cineria-level-1.png?v=0.3.22"},
+  phantasm:{1:"assets/art/characters/phantasm/oneiria-level-1.png?v=0.3.22"},
+  ascendant:{1:"assets/art/characters/ascendant/aurea-level-1.png?v=0.3.22"},
+  abyssal:{1:"assets/art/characters/abyssal/nadir-level-1.png?v=0.3.22"}
 };
 function profileDefaultPortraitUrl(profile){
-  const school=String(profile?.school_code||"");
+  const school=profileCanonicalSchoolCode(profile?.school_code);
   const portraits=PROFILE_SCHOOL_PORTRAITS[school];
   if(!portraits)return "";
   const level=Math.max(1,Number(profile?.archmage_level||profile?.level||1));
@@ -27,32 +44,42 @@ function profileDefaultPortraitUrl(profile){
 function profileAvatarMarkup(profile,large=false){
   const cls=large?"profile-avatar profile-avatar-large":"profile-avatar";
   const src=profileDefaultPortraitUrl(profile);
+  const school=profileCanonicalSchoolCode(profile?.school_code);
+  const fallback=profileSchoolSymbol(profile?.school_code);
   if(src){
-    return '<span class="'+cls+'"><img src="'+esc(src)+'" alt="Avatar de '+esc(profile?.mage_name||"Arconte")+'" /></span>';
+    return '<span class="'+cls+' '+esc(school)+'"><span class="profile-avatar-inline-fallback">'+esc(fallback)+'</span><img src="'+esc(src)+'" alt="Avatar de '+esc(profile?.mage_name||"Arconte")+'" onload="if(this.previousElementSibling)this.previousElementSibling.style.display=\'none\'" onerror="this.remove()" /></span>';
   }
-  return '<span class="'+cls+' profile-avatar-fallback '+esc(profile?.school_code||"")+'">'+(symbols[profile?.school_code]||"✦")+'</span>';
+  return '<span class="'+cls+' profile-avatar-fallback '+esc(school)+'">'+esc(fallback)+'</span>';
 }
 function renderOwnProfileBadge(){
   const sigil=$("#mage-sigil");
   if(!sigil||!realmState?.realm)return;
-  const schoolName=profileSchoolName(realmState.realm.school_code);
+  const schoolCode=realmState.realm.school_code;
+  const schoolName=profileSchoolName(schoolCode);
   const progression=archmageProgressionFromProfile(ownProfileBadge);
   const schoolLabel=$("#mage-school");
   if(schoolLabel)schoolLabel.textContent=progression?schoolName+" · Nivel "+progression.level:schoolName;
-  const src=profileDefaultPortraitUrl({school_code:realmState.realm.school_code,archmage_level:ownProfileBadge?.archmage_level||1});
-  if(src){
-    const absoluteSrc=new URL(src,document.baseURI).href;
-    sigil.innerHTML='<img src="'+esc(absoluteSrc)+'" alt="Retrato de '+esc(realmState.realm.mage_name||"Arconte")+'" decoding="async" />';
+
+  const fallback=profileSchoolSymbol(schoolCode);
+  sigil.textContent=fallback;
+  sigil.classList.remove("has-avatar");
+
+  const src=profileDefaultPortraitUrl({school_code:schoolCode,archmage_level:ownProfileBadge?.archmage_level||1});
+  if(!src)return;
+
+  const img=new Image();
+  img.alt="Retrato de "+String(realmState.realm.mage_name||"Arconte");
+  img.decoding="async";
+  img.addEventListener("load",()=>{
+    sigil.textContent="";
+    sigil.appendChild(img);
     sigil.classList.add("has-avatar");
-    const img=sigil.querySelector("img");
-    img?.addEventListener("error",()=>{
-      sigil.textContent=symbols[realmState.realm.school_code]||"✦";
-      sigil.classList.remove("has-avatar");
-    },{once:true});
-  }else{
-    sigil.textContent=symbols[realmState.realm.school_code]||"✦";
+  },{once:true});
+  img.addEventListener("error",()=>{
+    sigil.textContent=fallback;
     sigil.classList.remove("has-avatar");
-  }
+  },{once:true});
+  img.src=new URL(src,document.baseURI).href;
 }
 async function retireCustomProfileAvatar(profile){
   const oldPath=profile?.avatar_path||null;
