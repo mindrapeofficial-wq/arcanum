@@ -11,10 +11,51 @@ const ARENA_TRAITS={
 
 function arenaTrait(code){return ARENA_TRAITS[code]||ARENA_TRAITS.ascendant}
 const ARENA_SPRITE_FILES={verdant:"assets/ui/arena/verdant.b64",ascendant:"assets/ui/arena/ascendant.b64",eradication:"assets/ui/arena/eradication.b64",abyssal:"assets/ui/arena/abyssal.b64",phantasm:"assets/ui/arena/phantasm.b64"};
+const ARENA_IDLE_FILES={verdant:[
+  "assets/ui/arena/verdant-idle-1.b64",
+  "assets/ui/arena/verdant-idle-2.b64",
+  "assets/ui/arena/verdant-idle-3.b64",
+  "assets/ui/arena/verdant-idle-4.b64"
+]};
 const ARENA_SPRITE_CACHE={};
+const ARENA_IDLE_CACHE={};
 let arenaReplayToken=0;
 function arenaSpriteHtml(code,cls){var school=ARENA_SPRITE_FILES[code]?code:"ascendant";return '<span class="arena-sprite school-'+school+' '+(cls||"")+'" data-school="'+school+'" aria-hidden="true"></span>'}
-async function arenaHydrateSprites(root){var host=root||document,nodes=host.querySelectorAll?host.querySelectorAll(".arena-sprite[data-school]"):[];for(var i=0;i<nodes.length;i++){var el=nodes[i],school=el.dataset.school||"ascendant",path=ARENA_SPRITE_FILES[school]||ARENA_SPRITE_FILES.ascendant;try{if(!ARENA_SPRITE_CACHE[school])ARENA_SPRITE_CACHE[school]=fetch(path,{cache:"force-cache"}).then(function(r){if(!r.ok)throw new Error("sprite "+r.status);return r.text()}).then(function(x){return "url(data:image/webp;base64,"+x.trim()+")"});el.style.backgroundImage=await ARENA_SPRITE_CACHE[school]}catch(e){el.classList.add("arena-sprite--fallback")}}}
+function arenaLoadSprite(path){
+  if(!ARENA_SPRITE_CACHE[path])ARENA_SPRITE_CACHE[path]=fetch(path,{cache:"force-cache"}).then(function(r){if(!r.ok)throw new Error("sprite "+r.status);return r.text()}).then(function(x){return "url(data:image/webp;base64,"+x.trim()+")"});
+  return ARENA_SPRITE_CACHE[path];
+}
+function arenaStartIdle(el,frames){
+  if(!el||!frames||!frames.length)return;
+  if(el._arenaIdleTimer)clearInterval(el._arenaIdleTimer);
+  var n=0;
+  el.style.backgroundImage=frames[0];
+  el._arenaIdleTimer=setInterval(function(){
+    if(!document.body.contains(el)){clearInterval(el._arenaIdleTimer);el._arenaIdleTimer=null;return}
+    var duel=el.closest?el.closest(".arena-duelist"):null;
+    if(duel&&["is-attacking","is-hit","is-blocking","is-missing","is-ko"].some(function(cls){return duel.classList.contains(cls)}))return;
+    n=(n+1)%frames.length;
+    el.style.backgroundImage=frames[n];
+  },260);
+}
+async function arenaHydrateSprites(root){
+  var host=root||document,nodes=host.querySelectorAll?host.querySelectorAll(".arena-sprite[data-school]"):[];
+  for(var i=0;i<nodes.length;i++){
+    var el=nodes[i],school=el.dataset.school||"ascendant",path=ARENA_SPRITE_FILES[school]||ARENA_SPRITE_FILES.ascendant;
+    try{
+      var idlePaths=ARENA_IDLE_FILES[school];
+      var animated=el.classList.contains("arena-sprite--duel")||el.classList.contains("arena-sprite--hero");
+      if(idlePaths&&idlePaths.length&&animated){
+        if(!ARENA_IDLE_CACHE[school])ARENA_IDLE_CACHE[school]=Promise.all(idlePaths.map(arenaLoadSprite));
+        arenaStartIdle(el,await ARENA_IDLE_CACHE[school]);
+      }else if(idlePaths&&idlePaths.length){
+        el.style.backgroundImage=await arenaLoadSprite(idlePaths[0]);
+      }else{
+        el.style.backgroundImage=await arenaLoadSprite(path);
+      }
+    }catch(e){el.classList.add("arena-sprite--fallback")}
+  }
+}
 function arenaDivision(v){return v>=1700?"Leyenda Arcana":v>=1500?"Arconte":v>=1350?"Gran Mago":v>=1200?"Maestro":v>=1050?"Adepto":v>=900?"Aprendiz":"Iniciado"}
 function arenaTargets(rows){
   const me=String(realmState?.realm?.mage_name||"").toLowerCase();
