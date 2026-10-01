@@ -107,7 +107,7 @@ async function act(who:any,body:any){
   if(action==="arena:update"){
     const patch:any={updated_at:new Date().toISOString()};
     if(body.rating!=null)patch.rating=Math.max(100,Math.floor(Number(body.rating)));
-    if(body.ranked_used!=null)patch.ranked_used=Math.max(0,Math.min(6,Math.floor(Number(body.ranked_used))));
+    if(body.ranked_used!=null)patch.ranked_used=Math.max(0,Math.min(8,Math.floor(Number(body.ranked_used))));
     if(body.ranked_used!=null)patch.ranked_day=new Intl.DateTimeFormat("en-CA",{timeZone:"Europe/Madrid"}).format(new Date());
     if(body.wins!=null)patch.wins=Math.max(0,Math.floor(Number(body.wins)));
     if(body.losses!=null)patch.losses=Math.max(0,Math.floor(Number(body.losses)));

@@ -84,10 +84,17 @@ function characterTraits(raw){
   if(!traits.length)return '<div class="character-empty compact">Sin rasgos activos.</div>';
   return traits.map((t,i)=>'<article class="character-bonus-tile"><span>'+["✦","◆","◇","✧"][i%4]+'</span><strong>'+esc(t.name||"Rasgo")+'</strong><small>'+esc(t.desc||"")+'</small></article>').join("");
 }
+function characterFamiliar(raw){
+  return (raw?.familiars||[]).map(characterFamiliarTile).join("");
+}
+function characterFamiliarTile(fam){
+  if(!fam)return "";
+  return '<article class="character-bonus-tile ability"><span>❖</span><strong>Familiar · '+esc(fam.name||"Familiar")+(Number(fam.grade)>1?' · Grado '+["","I","II","III"][Math.min(3,Number(fam.grade))]:'')+'</strong><small>'+esc(fam.desc||"")+(fam.detail?' · '+esc(fam.detail):'')+'</small></article>';
+}
 function characterAbilities(raw){
   const rows=raw?.abilities||[];
-  if(!rows.length)return '<div class="character-empty compact">Aún no hay habilidades.</div>';
-  return rows.map((a,i)=>'<article class="character-bonus-tile ability"><span>'+["⚡","✹","◌","♧","✦"][i%5]+'</span><strong>'+esc(a.name||"Habilidad")+(Number(a.grade)>1?' · Grado '+["","I","II","III"][Math.min(3,Number(a.grade))]:'')+'</strong><small>'+esc(a.desc||"")+(a.detail?' · '+esc(a.detail):'')+'</small></article>').join("");
+  if(!rows.length&&!(raw?.familiars||[]).length)return '<div class="character-empty compact">Aún no hay habilidades.</div>';
+  return characterFamiliar(raw)+rows.map((a,i)=>'<article class="character-bonus-tile ability"><span>'+["⚡","✹","◌","♧","✦"][i%5]+'</span><strong>'+esc(a.name||"Habilidad")+(Number(a.grade)>1?' · Grado '+["","I","II","III"][Math.min(3,Number(a.grade))]:'')+'</strong><small>'+esc(a.desc||"")+(a.detail?' · '+esc(a.detail):'')+'</small></article>').join("");
 }
 function characterEquipmentTiles(profile){
   if(typeof lootLoad!=="function")return '<div class="character-empty compact">Equipo no disponible.</div>';

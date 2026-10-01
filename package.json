@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.2.22",
   "scripts": {
-    "test": "node --test tests/smoke.mjs tests/duel-engine.mjs tests/combat-profile-client.mjs",
+    "test": "node --test tests/smoke.mjs tests/duel-engine.mjs tests/duel-spells-familiars.mjs tests/combat-profile-client.mjs",
     "test:e2e": "playwright test",
     "mobile:prepare": "node scripts/prepare-mobile.mjs",
     "android:init": "npm run mobile:prepare && npx cap add android && node scripts/patch-android.mjs",
