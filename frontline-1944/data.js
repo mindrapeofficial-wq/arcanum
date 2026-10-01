@@ -1,200 +1,146 @@
 const FRONTLINE_DATA = {
-  campaign: {
-    id:"fall-weiss-1939",
-    chapter:"CAPÍTULO I",
-    title:"POLONIA 1939",
-    operation:"FALL WEISS",
-    subtitle:"Heeresgruppe Süd · Heer",
-    commander:"Generaloberst Gerd von Rundstedt",
-    chiefOfStaff:"Generalmajor Erich von Manstein",
-    start:"1 SEP 1939 · 04:30",
-    theater:"Silesia y frontera sur de Polonia",
-    mode:"HISTÓRICO · TIERRA",
-    context:[
-      "El 23 de agosto de 1939 Alemania y la Unión Soviética firmaron el pacto germano-soviético. Un protocolo secreto contemplaba la partición de Polonia en esferas de influencia.",
-      "En la madrugada del 1 de septiembre de 1939 Alemania invadió Polonia. El ataque inició la guerra en Europa.",
-      "Heeresgruppe Süd, al mando de Gerd von Rundstedt, agrupaba a los ejércitos 8.º, 10.º y 14.º. El esfuerzo principal debía avanzar desde Silesia hacia el interior de Polonia.",
-      "Este capítulo separa los hechos documentados de las decisiones contrafactuales del jugador."
+  build: "0.3.0",
+
+  assets: {
+    heroPhoto: "https://upload.wikimedia.org/wikipedia/commons/d/df/Bundesarchiv_Bild_101I-012-0035-11A%2C_Polen%2C_Panzer_I_und_Infanterie.jpg",
+    campaignMap: "https://upload.wikimedia.org/wikipedia/commons/8/8d/Poland1939_GermanPlanMap.jpg",
+    staffPhoto: "https://upload.wikimedia.org/wikipedia/commons/9/99/Bundesarchiv_Bild_101I-001-0256-31%2C_Warschau%2C_Generale_v._Weichs%2C_Blaskowitz.jpg"
+  },
+
+  chapters: [
+    {id:"ch1",number:"I",year:"1939",title:"FALL WEISS",subtitle:"Polonia",status:"available"},
+    {id:"ch2",number:"II",year:"1940",title:"WESERÜBUNG",subtitle:"Dinamarca y Noruega",status:"locked"},
+    {id:"ch3",number:"III",year:"1940",title:"FALL GELB",subtitle:"Francia y Países Bajos",status:"locked"},
+    {id:"ch4",number:"IV",year:"1941",title:"BARBAROSSA",subtitle:"Unión Soviética",status:"locked"},
+    {id:"ch5",number:"V",year:"1942",title:"EL ESTE",subtitle:"Desgaste y profundidad",status:"locked"},
+    {id:"ch6",number:"VI",year:"1943",title:"LA INICIATIVA",subtitle:"Defensa y retirada",status:"locked"},
+    {id:"ch7",number:"VII",year:"1944",title:"FRONTLINE 1944",subtitle:"Normandía y colapso del frente",status:"locked"}
+  ],
+
+  chapter1: {
+    title:"CAPÍTULO I · FALL WEISS",
+    subtitle:"Polonia · 1 de septiembre de 1939",
+    protagonist:"General der Panzertruppe Heinz Guderian",
+    command:"XIX. Armeekorps (mot.) · 4. Armee · Heeresgruppe Nord",
+    dossier:[
+      "Alemania invade Polonia en la madrugada del 1 de septiembre de 1939. El ataque no es una respuesta defensiva: la justificación propagandística alemana se apoya, entre otros elementos, en un ataque fingido contra la emisora de Gleiwitz.",
+      "Tu mando es el XIX. Armeekorps motorizado. Su función inicial dentro del 4.º Ejército es contribuir a cortar el Corredor Polaco y avanzar hacia el Vístula.",
+      "Bajo el cuerpo se encuentran la 3. Panzer-Division, la 2. Infanterie-Division (mot.) y la 20. Infanterie-Division (mot.). La velocidad importa, pero también el combustible, los puentes, las carreteras, la niebla, el tráfico y la cohesión entre columnas."
+    ],
+    resources:{
+      command:8,
+      communications:78,
+      fuel:86,
+      ammunition:88,
+      movement:82,
+      cohesion:84,
+      reconnaissance:49,
+      fatigue:8
+    },
+    formations:[
+      {id:"3pz",name:"3. Panzer-Division",commander:"Generalleutnant Leo Geyr von Schweppenburg",role:"Schwerpunkt blindado",readiness:90,supply:89,position:"Frontera de Pomerania"},
+      {id:"2mot",name:"2. Infanterie-Division (mot.)",commander:"Generalleutnant Paul Bader",role:"Infantería motorizada",readiness:86,supply:91,position:"Centro del dispositivo"},
+      {id:"20mot",name:"20. Infanterie-Division (mot.)",commander:"Generalleutnant Mauritz von Wiktorin",role:"Ala septentrional",readiness:84,supply:88,position:"Norte del dispositivo"}
+    ],
+    staff:[
+      {id:"ia",rank:"Oberst i.G.",name:"Friedrich Keller",role:"Ia · Operaciones",fictional:true,trust:70,note:"Insiste en preservar el ritmo de marcha y evitar que las columnas se mezclen en los cruces."},
+      {id:"ic",rank:"Major i.G.",name:"Ernst Weber",role:"Ic · Inteligencia",fictional:true,trust:65,note:"La información sobre las posiciones polacas al otro lado de la frontera es incompleta y envejece rápido."},
+      {id:"qu",rank:"Oberstleutnant",name:"Otto Hartmann",role:"Qu · Logística",fictional:true,trust:72,note:"Advierte que velocidad y combustible no son lo mismo: una columna detenida también consume tiempo y capacidad de transporte."}
     ]
   },
 
-  resources:{
-    command:8,
-    communications:76,
-    logistics:78,
-    fuel:82,
-    ammunition:86,
-    reserves:74,
-    morale:81,
-    intelligence:64
-  },
-
-  formations:[
-    {id:"8A",name:"8. Armee",commander:"General Johannes Blaskowitz",sector:"Ala izquierda · Silesia central",status:"Avance iniciado",readiness:86,supply:84,certainty:"confirmado"},
-    {id:"10A",name:"10. Armee",commander:"General Walther von Reichenau",sector:"Centro · esfuerzo principal",status:"Concentración móvil principal",readiness:91,supply:88,certainty:"confirmado"},
-    {id:"14A",name:"14. Armee",commander:"General Wilhelm List",sector:"Ala derecha · Silesia/área eslovaca",status:"Avance iniciado",readiness:84,supply:82,certainty:"confirmado"},
-    {id:"reserve",name:"Reserva de Heeresgruppe Süd",commander:"Estado Mayor del Grupo de Ejércitos",sector:"Retaguardia operacional",status:"Disponible parcialmente",readiness:88,supply:90,certainty:"confirmado"}
-  ],
-
-  map:[
-    {id:"breslau",name:"BRESLAU",x:190,y:150,state:"hq",intel:"CUARTEL GENERAL"},
-    {id:"oppeln",name:"OPPELN",x:260,y:245,state:"german",intel:"8./10. ARMEE"},
-    {id:"czest",name:"CZĘSTOCHOWA",x:385,y:245,state:"contact",intel:"CONTACTO"},
-    {id:"katowice",name:"KATOWICE",x:305,y:365,state:"german",intel:"EJE DE AVANCE"},
-    {id:"krakow",name:"KRAKÓW",x:455,y:420,state:"unknown",intel:"OBJETIVO OPERACIONAL"},
-    {id:"lodz",name:"ŁÓDŹ",x:520,y:220,state:"unknown",intel:"INFORMACIÓN PARCIAL"},
-    {id:"kielce",name:"KIELCE",x:555,y:350,state:"unknown",intel:"INFORMACIÓN PARCIAL"},
-    {id:"warsaw",name:"VARSOVIA",x:700,y:205,state:"unknown",intel:"OBJETIVO ESTRATÉGICO"},
-    {id:"radom",name:"RADOM",x:650,y:330,state:"unknown",intel:"INFORMACIÓN PARCIAL"}
-  ],
-
-  links:[
-    ["breslau","oppeln"],["oppeln","czest"],["oppeln","katowice"],["czest","lodz"],
-    ["katowice","krakow"],["czest","kielce"],["lodz","warsaw"],["kielce","radom"],["radom","warsaw"]
-  ],
-
-  staff:[
-    {id:"manstein",rank:"Generalmajor",name:"Erich von Manstein",role:"Jefe de Estado Mayor",historical:true,trust:78,note:"Coordina el cuadro operacional del Grupo de Ejércitos y exige que el esfuerzo principal conserve concentración y libertad de maniobra."},
-    {id:"blumentritt",rank:"Oberst",name:"Günther Blumentritt",role:"Operaciones",historical:true,trust:74,note:"Mantiene el seguimiento de los ejércitos subordinados y el ritmo de avance previsto por Fall Weiss."},
-    {id:"signals",rank:"Hauptmann",name:"Friedrich Keller",role:"Enlace y transmisiones",historical:false,trust:65,note:"Personaje ficticio. Informa de congestión, retrasos de mensajeros y fiabilidad de las comunicaciones de campaña."},
-    {id:"quartermaster",rank:"Major",name:"Otto Reinhardt",role:"Intendencia",historical:false,trust:68,note:"Personaje ficticio. Supervisa combustible, munición, transporte y capacidad de reabastecimiento."}
-  ],
-
   scenes:{
-    opening:{
-      id:"opening",
-      time:"04:30",
+    briefing:{
+      id:"briefing",
+      date:"31 AGO 1939",
+      time:"23:35",
+      urgency:"GEHEIME KOMMANDOSACHE",
+      from:"4. Armee · Estado Mayor",
+      title:"La orden entra en vigor",
+      classification:"HECHO HISTÓRICO + RECONSTRUCCIÓN NARRATIVA",
+      body:[
+        "Las órdenes están confirmadas. El ataque comenzará a las 04:45. La misión del 4.º Ejército es romper el Corredor Polaco y establecer la conexión operativa hacia Prusia Oriental.",
+        "Tu cuerpo motorizado debe mantener velocidad y cohesión. Las carreteras son limitadas y el movimiento simultáneo de blindados, infantería motorizada, artillería y trenes logísticos puede crear sus propios atascos.",
+        "No dispones de un mapa omnisciente. Lo que tienes sobre la mesa son partes de reconocimiento, estimaciones y horarios."
+      ],
+      historical:[
+        "Alemania atacó Polonia el 1 de septiembre de 1939, iniciando la Segunda Guerra Mundial en Europa.",
+        "El XIX Cuerpo motorizado de Guderian estaba subordinado al 4.º Ejército del Grupo de Ejércitos Norte y participó en el ataque para cortar el Corredor Polaco.",
+        "La hora de ataque fijada para el 1 de septiembre fue las 04:45."
+      ],
+      choices:[
+        {id:"forward_hq",title:"PUESTO DE MANDO MUY ADELANTADO",tag:"AGRESIVO",desc:"Seguir de cerca al Schwerpunkt para reducir retrasos de mando.",effects:{command:-1,communications:+4,movement:+2,reconnaissance:+3,fatigue:+5},next:"fog",result:"Trasladas el puesto de mando hacia delante. La imagen táctica llega antes, pero el Estado Mayor queda más expuesto al caos de las columnas y al fuego amigo."},
+        {id:"mobile_hq",title:"MANDO MÓVIL ESCALONADO",tag:"EQUILIBRADO",desc:"Mantener un puesto móvil detrás de la vanguardia y enlaces adelantados.",effects:{communications:+2,cohesion:+3,movement:+1,fatigue:+2},next:"fog",result:"El Estado Mayor avanza por saltos. Pierdes algo de inmediatez a cambio de una red de mando más estable."},
+        {id:"rear_hq",title:"PUESTO DE MANDO EN RETAGUARDIA",tag:"PRUDENTE",desc:"Priorizar comunicaciones y control de tráfico por encima del contacto directo.",effects:{communications:+6,cohesion:+4,reconnaissance:-3,movement:-2},next:"fog",result:"El mando conserva una red de comunicaciones ordenada, pero los informes de vanguardia tardan más en llegar."}
+      ]
+    },
+
+    fog:{
+      id:"fog",
       date:"1 SEP 1939",
-      urgency:"ORDEN DE OPERACIONES",
-      from:"Cuartel General · Heeresgruppe Süd",
-      title:"Fall Weiss entra en ejecución",
+      time:"05:20",
+      urgency:"PARTE DE VANGUARDIA",
+      from:"3. Panzer-Division",
+      title:"Niebla, columnas y fuego propio",
       classification:"HECHO HISTÓRICO + DECISIÓN DEL JUGADOR",
       body:[
-        "Las unidades de Heeresgruppe Süd han comenzado a cruzar la frontera. El plan exige velocidad, concentración y una ruptura profunda desde Silesia, mientras los ejércitos de las alas protegen los flancos del esfuerzo principal.",
-        "Como comandante del Grupo de Ejércitos, no diriges cada compañía. Tu trabajo es decidir prioridades, conservar reservas, resolver fricciones entre ejércitos y mantener el sistema logístico que permite que la operación continúe.",
-        "Los primeros informes aún son incompletos. El mapa de situación representa únicamente la información que ha llegado al puesto de mando."
+        "La madrugada está cubierta de niebla. La vanguardia informa de visibilidad reducida, caminos congestionados y contacto irregular con unidades polacas.",
+        "Una batería propia ha abierto fuego demasiado cerca de elementos adelantados. El incidente revela el riesgo de llevar el mando y las columnas más rápidas por delante de la coordinación artillera.",
+        "El ritmo de la operación aún no está roto, pero cada parada se propaga hacia atrás por kilómetros de carretera."
       ],
       historical:[
-        "Alemania invadió Polonia el 1 de septiembre de 1939, iniciando la Segunda Guerra Mundial en Europa.",
-        "Heeresgruppe Süd estaba bajo Gerd von Rundstedt y comprendía los ejércitos 8.º, 10.º y 14.º.",
-        "El esfuerzo principal del grupo meridional recaía en el sector central, con un avance desde Silesia hacia el interior de Polonia."
+        "Las operaciones comenzaron el 1 de septiembre. Guderian acompañó personalmente a elementos de la 3. Panzer-Division durante el avance inicial.",
+        "Relatos posteriores describen un incidente en el que su vehículo quedó bajo fuego de artillería propia en condiciones de niebla.",
+        "El XIX Cuerpo estaba compuesto por la 3. Panzer-Division y las 2.ª y 20.ª divisiones de infantería motorizada."
       ],
       choices:[
-        {id:"center_mass",title:"CONCENTRAR EL ESFUERZO EN EL 10.º EJÉRCITO",tag:"CONCENTRACIÓN",desc:"Dar prioridad de carreteras, combustible y enlaces al eje principal de Reichenau.",effects:{command:-1,fuel:-5,logistics:-3,reserves:-4,morale:+2},next:"first_reports",result:"El Estado Mayor prioriza el eje central. La punta de lanza gana impulso, pero las alas dispondrán de menos margen si la resistencia obliga a improvisar."},
-        {id:"balanced_wings",title:"MANTENER EQUILIBRIO ENTRE LOS TRES EJÉRCITOS",tag:"PRUDENTE",desc:"Evitar que el esfuerzo principal absorba demasiada logística y conservar cohesión en las alas.",effects:{command:-1,logistics:+3,reserves:+2,fuel:-2},next:"first_reports",result:"El avance queda más equilibrado. Pierdes algo de velocidad potencial en el centro, pero reduces el riesgo de que una fricción local desordene al conjunto."},
-        {id:"reserve_first",title:"PROTEGER LA RESERVA OPERACIONAL",tag:"CONSERVADOR",desc:"Limitar compromisos iniciales y mantener fuerzas disponibles para responder a una reacción polaca inesperada.",effects:{command:-1,reserves:+7,morale:-1,intelligence:+2},next:"first_reports",result:"La reserva queda protegida. Tus subordinados reciben menos apoyo inmediato, a cambio de conservar una herramienta para reaccionar cuando el cuadro sea más claro."}
+        {id:"push_armor",title:"MANTENER EL RITMO BLINDADO",tag:"SCHWERPUNKT",desc:"Ordenar a la 3. Panzer-Division que preserve el impulso y resolver los atascos detrás.",effects:{movement:+6,fuel:-7,cohesion:-4,communications:-2,fatigue:+4},next:"chojnice",result:"Los blindados mantienen el ritmo. Ganas tiempo operativo, pero la cola logística se estira y las unidades de apoyo pierden contacto temporalmente."},
+        {id:"traffic_control",title:"REORDENAR COLUMNAS",tag:"CONTROL",desc:"Detener brevemente sectores de la marcha para separar artillería, blindados y trenes logísticos.",effects:{movement:-4,cohesion:+8,communications:+4,fuel:-2,fatigue:+1},next:"chojnice",result:"La marcha pierde minutos, pero los itinerarios quedan más limpios. La artillería y el suministro recuperan enlaces con las formaciones de cabeza."},
+        {id:"recon_first",title:"RECONOCIMIENTO ANTES DE ACELERAR",tag:"INFORMACIÓN",desc:"Utilizar elementos de reconocimiento para aclarar cruces y resistencia antes de forzar el paso.",effects:{movement:-2,reconnaissance:+9,cohesion:+3,fuel:-3},next:"chojnice",result:"El avance se hace algo más lento, pero la siguiente orden se emitirá con una imagen táctica menos borrosa."}
       ]
     },
 
-    first_reports:{
-      id:"first_reports",
-      time:"12:20",
+    chojnice:{
+      id:"chojnice",
       date:"1 SEP 1939",
-      urgency:"PARTE DE SITUACIÓN",
-      from:"Sección de Operaciones",
-      title:"Velocidad contra fricción",
-      classification:"RECONSTRUCCIÓN NARRATIVA SOBRE MARCO HISTÓRICO",
+      time:"09:45",
+      urgency:"SITUATIONSMELDUNG",
+      from:"Ia · XIX. Armeekorps",
+      title:"El corredor empieza a cerrarse",
+      classification:"HECHO HISTÓRICO + SIMULACIÓN OPERACIONAL",
       body:[
-        "Los partes de las primeras horas confirman avances en varios sectores, pero también empiezan a aparecer los problemas que no existen sobre un mapa limpio: columnas mezcladas, carreteras saturadas, retrasos en combustible y posiciones polacas que obligan a desplegar antes de lo previsto.",
-        "Manstein insiste en que una operación móvil pierde su ventaja cuando los escalones logísticos no pueden seguir a las unidades de cabeza. Blumentritt, por su parte, pide no frenar el esfuerzo principal mientras la iniciativa siga siendo alemana."
+        "Las columnas avanzan hacia el interior del Corredor Polaco. La resistencia no es uniforme: algunos sectores ceden, otros obligan a desplegar desde la marcha.",
+        "Tu problema ya no es únicamente romper la primera línea. Debes impedir que el cuerpo se convierta en tres divisiones avanzando a velocidades distintas y sin una reserva útil.",
+        "El objetivo operacional sigue siendo cortar el corredor y alcanzar las líneas del Vístula con la mayor rapidez compatible con la cohesión."
       ],
       historical:[
-        "La campaña alemana combinó fuerzas blindadas y aéreas con una amplia ofensiva terrestre y avanzó rápidamente desde el norte y desde Silesia y Eslovaquia en el sur.",
-        "La rapidez operacional no eliminaba las limitaciones de transporte, abastecimiento, comunicaciones y terreno."
+        "Fuentes contemporáneas y estudios posteriores sitúan al XIX Cuerpo avanzando por el sector del Corredor Polaco durante el primer día.",
+        "El 4.º Ejército había alcanzado la línea Konitz-Nakel al final del 1 de septiembre según un estudio histórico estadounidense de la campaña.",
+        "La misión general del 4.º Ejército era cortar el corredor con rapidez y avanzar hacia el Vístula."
       ],
       choices:[
-        {id:"tempo",title:"MANTENER EL TEMPO OPERACIONAL",tag:"AGRESIVO",desc:"Aceptar mayor desgaste logístico para explotar la iniciativa de las primeras horas.",effects:{command:-1,fuel:-7,ammunition:-4,logistics:-6,morale:+3},next:"western_war",result:"El mensaje a los ejércitos es inequívoco: avanzar mientras exista oportunidad. Las columnas de cabeza ganan libertad, pero la retaguardia empieza a trabajar por encima de su margen cómodo."},
-        {id:"supply_pause",title:"ORDENAR PAUSAS LOGÍSTICAS ESCALONADAS",tag:"LOGÍSTICA",desc:"Reorganizar convoyes y asegurar que combustible y munición alcancen a los elementos avanzados.",effects:{command:-1,logistics:+8,fuel:+3,ammunition:+3,morale:-1},next:"western_war",result:"Los escalones de suministro recuperan orden. Algunos mandos protestan por la pérdida de impulso, pero el Grupo de Ejércitos reduce el riesgo de una crisis de abastecimiento prematura."},
-        {id:"recon_priority",title:"PRIORIZAR RECONOCIMIENTO Y ENLACES",tag:"INFORMACIÓN",desc:"Aumentar el esfuerzo de inteligencia antes de comprometer nuevas reservas.",effects:{command:-2,intelligence:+9,communications:+5,reserves:+2},next:"western_war",result:"Se refuerzan enlaces y reconocimiento. El avance no se detiene, pero las reservas quedan sujetas a confirmación antes de recibir nuevas misiones."}
+        {id:"concentrate",title:"CONCENTRAR EL ESFUERZO",tag:"OPERACIONAL",desc:"Reforzar el eje principal y aceptar menor presión en sectores secundarios.",effects:{command:-1,movement:+5,ammunition:-5,cohesion:+2,reconnaissance:-2},next:"brda",result:"El cuerpo concentra potencia en el eje principal. El avance gana densidad, pero la información de los flancos se vuelve más delgada."},
+        {id:"broad_front",title:"MANTENER FRENTE AMPLIO",tag:"SEGURIDAD",desc:"Sostener presión simultánea para reducir sorpresas sobre los flancos.",effects:{movement:-3,cohesion:+4,reconnaissance:+5,ammunition:-3,fatigue:+2},next:"brda",result:"La presión se mantiene en una anchura mayor. El riesgo de una sorpresa disminuye, aunque el Schwerpunkt pierde algo de velocidad."},
+        {id:"pause_support",title:"PAUSA DE APOYO Y REABASTECIMIENTO",tag:"LOGÍSTICA",desc:"Dar prioridad a artillería, combustible y reparación antes del siguiente salto.",effects:{movement:-6,fuel:+7,ammunition:+6,cohesion:+6,fatigue:-4},next:"brda",result:"Los trenes de apoyo alcanzan a las vanguardias. Cedes tiempo, pero el cuerpo entra en la siguiente fase con mayor capacidad de sostener combate."}
       ]
     },
 
-    western_war:{
-      id:"western_war",
-      time:"12:10",
-      date:"3 SEP 1939",
-      urgency:"CAMBIO ESTRATÉGICO",
-      from:"OKH · Comunicación prioritaria",
-      title:"Gran Bretaña y Francia entran en guerra",
-      classification:"HECHO HISTÓRICO + DECISIÓN DEL JUGADOR",
+    brda:{
+      id:"brda",
+      date:"1 SEP 1939",
+      time:"18:30",
+      urgency:"FIN DE JORNADA",
+      from:"Estado Mayor del XIX. Armeekorps",
+      title:"Primer día de guerra",
+      classification:"HECHO HISTÓRICO + RESULTADO DEL JUGADOR",
       body:[
-        "Llega la confirmación: Gran Bretaña y Francia han declarado la guerra a Alemania. La campaña polaca continúa, pero el conflicto ya no puede considerarse aislado.",
-        "Tu autoridad sigue limitada a Heeresgruppe Süd. No decides la estrategia occidental, pero sí puedes ajustar cuánto riesgo estás dispuesto a asumir en Polonia ante la posibilidad de nuevas exigencias del Alto Mando."
+        "La luz cae sobre Pomerania. El cuerpo ha avanzado durante horas bajo presión de tiempo, tráfico y contactos dispersos.",
+        "Tu Estado Mayor prepara el balance: no basta con medir kilómetros. Importa qué divisiones siguen cohesionadas, cuánto combustible queda disponible en vanguardia y cuánto tarda una orden en recorrer la columna.",
+        "El primer capítulo termina aquí. El siguiente tramo continuará con la lucha en el área de los bosques de Tuchola y la carrera para cerrar el Corredor Polaco."
       ],
       historical:[
-        "Gran Bretaña y Francia declararon la guerra a Alemania el 3 de septiembre de 1939, dos días después de la invasión de Polonia.",
-        "En los primeros meses, el frente occidental permaneció relativamente limitado mientras la campaña en Polonia continuaba."
-      ],
-      choices:[
-        {id:"accelerate",title:"ACELERAR LA CAMPAÑA EN EL ESTE",tag:"PRESIÓN",desc:"Buscar una conclusión rápida antes de que la situación occidental exija recursos adicionales.",effects:{command:-2,fuel:-6,ammunition:-5,reserves:-5,morale:+2},next:"warsaw",result:"Las órdenes favorecen velocidad y explotación. La presión aumenta sobre logística y reservas, pero el objetivo político-militar es reducir cuanto antes la duración de la campaña."},
-        {id:"preserve",title:"CONSERVAR CAPACIDAD OPERACIONAL",tag:"PRUDENTE",desc:"Evitar que la campaña consuma las reservas y el material que podrían ser necesarios después.",effects:{command:-1,reserves:+6,logistics:+4,morale:-1},next:"warsaw",result:"El Grupo de Ejércitos recibe una directiva más contenida. Se exige avanzar, pero sin gastar reservas por objetivos locales que no cambien la situación operacional."},
-        {id:"intel_west",title:"SOLICITAR UNA VALORACIÓN DEL FRENTE OCCIDENTAL",tag:"ESTADO MAYOR",desc:"Pedir al OKH mayor claridad antes de modificar el ritmo de la campaña.",effects:{command:-1,intelligence:+5,communications:+3},next:"warsaw",result:"Tu Estado Mayor eleva la petición. No obtienes control sobre el oeste, pero reduces parte de la incertidumbre estratégica antes de comprometer la reserva."}
-      ]
-    },
-
-    warsaw:{
-      id:"warsaw",
-      time:"20:30",
-      date:"8 SEP 1939",
-      urgency:"INFORME DEL 10.º EJÉRCITO",
-      from:"10. Armee · Canal operacional",
-      title:"Las avanzadas alcanzan Varsovia",
-      classification:"HECHO HISTÓRICO + DECISIÓN DEL JUGADOR",
-      body:[
-        "Las fuerzas blindadas del 10.º Ejército han alcanzado los accesos de Varsovia. Los primeros intentos de penetrar directamente encuentran una defensa mucho más firme de lo esperado.",
-        "El avance de los últimos días ha sido extraordinariamente rápido, pero la ciudad transforma el problema: entrar inmediatamente, preparar un cerco o proteger antes los flancos frente a fuerzas polacas todavía activas."
-      ],
-      historical:[
-        "El 8 de septiembre unidades blindadas alemanas alcanzaron las afueras de Varsovia.",
-        "Los ataques alemanes de los días 8 y 9 encontraron una resistencia polaca fuerte y fueron rechazados."
-      ],
-      choices:[
-        {id:"assault",title:"INSISTIR EN EL ASALTO INMEDIATO",tag:"ALTO RIESGO",desc:"Buscar una ruptura rápida antes de que la defensa de la capital pueda consolidarse.",effects:{command:-2,ammunition:-9,fuel:-5,morale:-3,reserves:-4},next:"soviet_entry",result:"Autorizas una postura agresiva. La posibilidad de un resultado rápido existe, pero la defensa urbana y antitanque puede convertir la velocidad en pérdidas sin una preparación suficiente."},
-        {id:"encircle",title:"PREPARAR CERCO Y APOYO DE FUEGOS",tag:"METÓDICO",desc:"Evitar un asalto precipitado y organizar artillería, abastecimiento y aislamiento de la capital.",effects:{command:-1,ammunition:-4,logistics:+3,reserves:+2,intelligence:+3},next:"soviet_entry",result:"Se ordena contener y preparar. El ritmo visual del avance disminuye, pero las unidades ganan tiempo para reorganizar apoyo y abastecimiento."},
-        {id:"flank_security",title:"PRIORIZAR LOS FLANCOS DEL 10.º EJÉRCITO",tag:"OPERACIONAL",desc:"No permitir que la atracción de Varsovia deje expuesta la maniobra del Grupo de Ejércitos.",effects:{command:-1,reserves:-2,intelligence:+4,communications:+3},next:"soviet_entry",result:"La capital deja de ser el único centro de gravedad. Parte de la atención vuelve a las fuerzas polacas que aún pueden amenazar las líneas de avance."}
-      ]
-    },
-
-    soviet_entry:{
-      id:"soviet_entry",
-      time:"09:30",
-      date:"17 SEP 1939",
-      urgency:"NUEVA SITUACIÓN ESTRATÉGICA",
-      from:"OKH · Parte de situación",
-      title:"La Unión Soviética entra en Polonia",
-      classification:"HECHO HISTÓRICO + DECISIÓN DEL JUGADOR",
-      body:[
-        "Fuerzas soviéticas han cruzado la frontera oriental de Polonia. La campaña entra en una nueva fase política y militar.",
-        "El Alto Mando transmite nuevas delimitaciones y exige disciplina en los movimientos hacia el este. Para tu Grupo de Ejércitos el problema inmediato es terminar las operaciones pendientes sin generar fricción innecesaria en las zonas de contacto."
-      ],
-      historical:[
-        "La Unión Soviética invadió el este de Polonia el 17 de septiembre de 1939.",
-        "La acción se produjo dentro del marco del protocolo secreto del pacto germano-soviético, que había definido esferas de influencia en Europa oriental."
-      ],
-      choices:[
-        {id:"strict_boundaries",title:"IMPONER LÍMITES DE OPERACIONES ESTRICTOS",tag:"CONTROL",desc:"Evitar movimientos ambiguos y concentrar al Grupo de Ejércitos en los objetivos asignados.",effects:{command:-1,communications:+5,logistics:+2,morale:-1},next:"chapter_end",result:"Las órdenes de delimitación se repiten a los ejércitos. La claridad reduce el riesgo de incidentes, aunque limita la libertad táctica de algunas formaciones."},
-        {id:"finish_pockets",title:"PRIORIZAR BOLSAS DE RESISTENCIA",tag:"OPERACIONAL",desc:"Concentrar el esfuerzo en terminar combates pendientes antes de reorganizar el dispositivo.",effects:{command:-1,ammunition:-4,fuel:-3,reserves:-3},next:"chapter_end",result:"El Grupo de Ejércitos mantiene la presión sobre focos de resistencia. La campaña consume algunos recursos adicionales antes de iniciar la reorganización."},
-        {id:"reorganize",title:"EMPEZAR LA REORGANIZACIÓN DE POSGUERRA",tag:"LOGÍSTICA",desc:"Preparar descanso, mantenimiento, inventario y redistribución de las unidades que ya no están comprometidas.",effects:{command:-1,logistics:+6,fuel:+4,reserves:+4,morale:+2},next:"chapter_end",result:"La retaguardia empieza a ordenar el caos acumulado por semanas de movimiento. La prioridad pasa gradualmente de avanzar a recuperar capacidad operacional."}
-      ]
-    },
-
-    chapter_end:{
-      id:"chapter_end",
-      time:"18:00",
-      date:"6 OCT 1939",
-      urgency:"CIERRE DE CAPÍTULO",
-      from:"Archivo de Campaña",
-      title:"Polonia: balance de la primera campaña",
-      classification:"HECHO HISTÓRICO + BALANCE DEL JUGADOR",
-      body:[
-        "La campaña principal ha terminado. Varsovia capituló a finales de septiembre y la última gran formación operacional polaca se rindió el 6 de octubre.",
-        "El resultado histórico de la campaña no borra sus consecuencias: Polonia fue ocupada y dividida, y comenzó una guerra europea que crecería hasta convertirse en un conflicto mundial.",
-        "Tus decisiones no sustituyen la historia documentada. El juego registra cómo administraste mando, logística, reservas e información dentro de ese marco y utilizará ese perfil en los capítulos siguientes."
-      ],
-      historical:[
-        "Varsovia se rindió a finales de septiembre de 1939 tras bombardeos y combates intensos.",
-        "La última unidad operacional polaca se rindió el 6 de octubre de 1939.",
-        "Alemania y la Unión Soviética dividieron el territorio polaco conforme a los acuerdos secretos vinculados al pacto de no agresión."
+        "Al final del 1 de septiembre el 4.º Ejército había penetrado profundamente en el Corredor Polaco.",
+        "En los días siguientes, el XIX Cuerpo siguió avanzando hacia el Vístula y participó en el cierre del sector septentrional del corredor."
       ],
       choices:[]
     }
@@ -202,8 +148,10 @@ const FRONTLINE_DATA = {
 
   sources:[
     {short:"USHMM · Invasión de Polonia",title:"Invasión de Polonia, otoño de 1939",publisher:"United States Holocaust Memorial Museum",url:"https://encyclopedia.ushmm.org/content/es/article/invasion-of-poland-fall-1939"},
-    {short:"USHMM · Pacto germano-soviético",title:"Pacto Alemán-Soviético",publisher:"United States Holocaust Memorial Museum",url:"https://encyclopedia.ushmm.org/content/es/article/german-soviet-pact"},
-    {short:"U.S. Army · European War Review",title:"The European War · Military Review, December 1939",publisher:"U.S. Army",url:"https://www.armyupress.army.mil/Portals/7/online-publications/documents/the-european-war-military-review-december-1939.pdf"},
-    {short:"NBP · September 1939",title:"September 1939 – Warszawa, Wieluń, Westerplatte",publisher:"Narodowy Bank Polski",url:"https://nbp.pl/wp-content/uploads/2022/11/2009_10___wrzesien_1939_en.pdf"}
+    {short:"U.S. military study",title:"The German Campaign in Poland, September 1939",publisher:"Historical study preserved by HyperWar/ibiblio",url:"https://www.ibiblio.org/hyperwar/NHC/NewPDFs/GERMANY/GER%20German%20Campaign%20in%20Poland%20September%201939%2C%20Sept%201%20to%20Oct.%205.pdf"},
+    {short:"German Army OOB · 1 Sep 1939",title:"German Army, 1 September 1939",publisher:"General Staff / Nafziger Collection",url:"https://www.generalstaff.org/NAF/Pt_I_1939-1940/939giaa.pdf"},
+    {short:"USMA map · Poland 1939",title:"German plan of invasion of Poland, August 1939",publisher:"United States Military Academy via Wikimedia Commons",url:"https://commons.wikimedia.org/wiki/File:Poland1939_GermanPlanMap.jpg"},
+    {short:"Bundesarchiv · Panzer I",title:"Polen, Panzer I und Infanterie",publisher:"Bundesarchiv via Wikimedia Commons · CC BY-SA 3.0 DE",url:"https://commons.wikimedia.org/wiki/File:Bundesarchiv_Bild_101I-012-0035-11A,_Polen,_Panzer_I_und_Infanterie.jpg"},
+    {short:"Bundesarchiv · Stabsoffiziere",title:"Warschau, Generale v. Weichs, Blaskowitz",publisher:"Bundesarchiv via Wikimedia Commons · CC BY-SA 3.0 DE",url:"https://commons.wikimedia.org/wiki/File:Bundesarchiv_Bild_101I-001-0256-31,_Warschau,_Generale_v._Weichs,_Blaskowitz.jpg"}
   ]
 };
