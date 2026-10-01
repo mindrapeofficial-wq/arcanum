@@ -29,7 +29,7 @@ function characterPortraitUrl(profile){
   };
   const school=aliases[code]||code;
   const paths={
-    verdant:"assets/art/characters/verdante/viridia-level-1.png?v=0.3.19",
+    verdant:"assets/art/characters/verdante/verdante-level-1.png?v=0.3.20",
     eradication:"assets/art/characters/eradication/cineria-level-1.png?v=0.3.19",
     phantasm:"assets/art/characters/phantasm/oneiria-level-1.png?v=0.3.19",
     ascendant:"assets/art/characters/ascendant/aurea-level-1.png?v=0.3.19",
@@ -40,9 +40,11 @@ function characterPortraitUrl(profile){
 function characterSpriteMarkup(profile){
   const portrait=characterPortraitUrl(profile)||(typeof profileDefaultPortraitUrl==="function"?profileDefaultPortraitUrl(profile):"");
   const fallback=(typeof symbols!=="undefined"&&symbols[profile?.school_code])||"✦";
-  if(portrait)return '<img class="character-level-portrait" src="'+esc(portrait)+'" alt="'+esc(characterSchoolLabel(profile.school_code))+' · personaje nivel '+n(profile?.archmage_level||1)+'" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'grid\';" /><div class="character-symbol-fallback character-portrait-fallback" style="display:none">'+esc(fallback)+'</div>';
-  if(typeof arenaSpriteHtml==="function")return arenaSpriteHtml(profile.school_code,"character-sheet-sprite");
-  return '<div class="character-symbol-fallback">'+esc(fallback)+'</div>';
+  const arenaFallback=typeof arenaSpriteHtml==="function"
+    ?arenaSpriteHtml(profile.school_code,"character-sheet-sprite character-portrait-fallback")
+    :'<div class="character-symbol-fallback character-portrait-fallback">'+esc(fallback)+'</div>';
+  if(portrait)return '<img class="character-level-portrait" src="'+esc(portrait)+'" alt="'+esc(characterSchoolLabel(profile.school_code))+' · personaje nivel '+n(profile?.archmage_level||1)+'" onerror="this.style.display=\'none\';this.parentElement.classList.add(\'portrait-load-failed\');" />'+arenaFallback;
+  return arenaFallback;
 }
 function characterPercent(v){return Number.isFinite(Number(v))?Math.round(Number(v)*100)+"%":"—"}
 function characterNumber(v,decimals=0){
