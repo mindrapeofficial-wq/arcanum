@@ -222,7 +222,7 @@ function renderPlayerProfile(profile,inbox=null,snapshot=null,target=null){
       '<div class="player-sheet-development"><div class="player-sheet-block-title"><b>PROGRESIÓN Y APTITUDES</b><small>Nivel, experiencia y desarrollo personal del Archimago</small></div>'+renderArchmageProgression(profile)+'</div>'+
       '<div class="player-sheet-layout">'+
         '<div class="player-sheet-main"><div class="player-sheet-block-title"><b>CARACTERÍSTICAS DE COMBATE</b><small>La forma en que este mismo Archimago pelea</small></div>'+combat+'</div>'+
-        '<div class="player-sheet-side"><div class="player-sheet-block-title"><b>EQUIPO'+(profile.is_self?' E INVENTARIO':' ACTIVO')+'</b><small>'+(profile.is_self?'Cámara privada y objetos equipados':'Sólo equipamiento público')+'</small></div>'+equipment+'</div>'+
+        '<div class="player-sheet-side"><div class="player-sheet-block-title"><b>EQUIPO'+(profile.is_self?' E INVENTARIO':' ACTIVO')+'</b><small>'+(profile.is_self?'Inventario privado y objetos equipados':'Sólo equipamiento público')+'</small></div>'+equipment+'</div>'+
       '</div>'+
       renderCanonicalArtifacts(snapshot)+
       renderCanonicalTrajectory(snapshot)+
