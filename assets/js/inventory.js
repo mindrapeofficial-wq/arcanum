@@ -224,14 +224,15 @@ function lootEquipmentCard(slot,state){
   return '<div class="loot-equip-slot filled rarity-'+esc(item.rarity)+'"><small>'+esc(slot.label)+'</small><strong>'+esc(item.name)+'</strong><span>iP '+n(item.power)+'</span><button class="loot-unequip" type="button" data-loot-unequip="'+esc(slot.key)+'">×</button></div>';
 }
 function canonicalRelicEquipmentCard(){
-  const relic=typeof canonicalEquippedRelic==="function"?canonicalEquippedRelic():null;
+  const rawRelic=typeof canonicalEquippedRelic==="function"?canonicalEquippedRelic():null;
+  const relic=rawRelic&&!lootIsLegacyItem(rawRelic)?rawRelic:null;
   if(!relic)return '<div class="loot-equip-slot relic-slot"><small>Reliquia</small><span>Vacío</span></div>';
   const name=typeof canonicalItemDisplayName==="function"?canonicalItemDisplayName(relic):(typeof artifactDef==="function"?artifactDef(relic.artifact_id)?.name:relic.artifact_id);
   return '<div class="loot-equip-slot filled relic-slot"><small>Reliquia</small><strong>'+esc(name||"Reliquia")+'</strong><span>'+esc((relic.category||"reliquia").toUpperCase())+'</span><button class="loot-unequip" type="button" data-relic-unequip="relic">×</button></div>';
 }
 function canonicalRelicInventoryCards(){
   const model=typeof getCanonicalItems==="function"?getCanonicalItems():null;
-  const relics=(model?.items||[]).filter(item=>item.kind==="relic");
+  const relics=(model?.items||[]).filter(item=>item.kind==="relic"&&!lootIsLegacyItem(item));
   const activeId=String(model?.equipment?.relic?.id||"");
   if(!relics.length)return '<div class="empty">Todavía no custodias ninguna Reliquia.</div>';
   return relics.map(item=>{
