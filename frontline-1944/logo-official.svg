@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" role="img" aria-label="FRONTLINE 1944">
+  <defs>
+    <linearGradient id="metal" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#d1c59a"/><stop offset=".42" stop-color="#817b5c"/><stop offset="1" stop-color="#3d3d30"/>
+    </linearGradient>
+    <linearGradient id="cloth" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#545747"/><stop offset="1" stop-color="#1e201b"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="16" stdDeviation="18" flood-color="#000" flood-opacity=".55"/>
+    </filter>
+  </defs>
+
+  <circle cx="500" cy="500" r="455" fill="#11120e" stroke="url(#metal)" stroke-width="18" filter="url(#shadow)"/>
+  <circle cx="500" cy="500" r="415" fill="none" stroke="#4f513f" stroke-width="4"/>
+
+  <!-- officer cap -->
+  <g transform="translate(0,-35)">
+    <path d="M330 265 Q500 175 670 265 L645 355 Q500 390 355 355 Z" fill="url(#cloth)" stroke="#b9ad7f" stroke-width="10"/>
+    <path d="M300 345 Q500 305 700 345 Q650 410 500 420 Q350 410 300 345Z" fill="#20221c" stroke="#9d936c" stroke-width="8"/>
+    <path d="M390 338 Q500 318 610 338" fill="none" stroke="#c0b487" stroke-width="8"/>
+    <circle cx="500" cy="300" r="24" fill="#8a835e" stroke="#d2c79a" stroke-width="6"/>
+  </g>
+
+  <!-- bunkers -->
+  <g fill="#34362d" stroke="#8a8467" stroke-width="8">
+    <path d="M145 540 L300 490 L360 560 L330 650 L145 650 Z"/>
+    <path d="M855 540 L700 490 L640 560 L670 650 L855 650 Z"/>
+  </g>
+  <g fill="#0d0e0b">
+    <rect x="205" y="557" width="93" height="26" rx="5"/>
+    <rect x="702" y="557" width="93" height="26" rx="5"/>
+  </g>
+
+  <!-- tank -->
+  <g transform="translate(0,28)" stroke="#c6bb8e" stroke-width="8" stroke-linejoin="round">
+    <path d="M315 560 L675 560 L735 625 L690 708 L300 708 L255 625 Z" fill="#3e4336"/>
+    <path d="M395 510 L605 510 L650 570 L350 570 Z" fill="#4a4e3e"/>
+    <rect x="465" y="450" width="95" height="70" rx="12" fill="#505442"/>
+    <path d="M555 475 L790 445 L794 470 L555 500 Z" fill="#4a4d3f"/>
+    <circle cx="355" cy="690" r="42" fill="#1a1b16"/>
+    <circle cx="450" cy="690" r="42" fill="#1a1b16"/>
+    <circle cx="550" cy="690" r="42" fill="#1a1b16"/>
+    <circle cx="645" cy="690" r="42" fill="#1a1b16"/>
+  </g>
+
+  <rect x="160" y="780" width="680" height="122" rx="16" fill="#0d0e0b" stroke="#6b684f" stroke-width="5"/>
+  <text x="500" y="842" text-anchor="middle" fill="#e1d5a8" font-family="Georgia, serif" font-size="72" font-weight="700" letter-spacing="6">FRONTLINE</text>
+  <text x="500" y="888" text-anchor="middle" fill="#aba27c" font-family="Arial, sans-serif" font-size="34" font-weight="700" letter-spacing="14">1944</text>
+</svg>
