@@ -48,11 +48,29 @@ function renderOwnProfileBadge(){
     sigil.classList.remove("has-avatar");
   }
 }
+async function retireCustomProfileAvatar(profile){
+  const oldPath=profile?.avatar_path||null;
+  if(!oldPath)return profile;
+  try{
+    const session=await validSession();
+    await rpc("update_my_profile",{p_bio:profile?.bio||"",p_avatar_path:null});
+    if(session?.access_token){
+      fetch(SUPABASE_URL+"/storage/v1/object/avatars/"+oldPath.split("/").map(encodeURIComponent).join("/"),{
+        method:"DELETE",
+        headers:{apikey:SUPABASE_KEY,Authorization:"Bearer "+session.access_token}
+      }).catch(()=>{});
+    }
+    return {...profile,avatar_path:null};
+  }catch{
+    return {...profile,avatar_path:null};
+  }
+}
 async function refreshOwnProfileBadge(force=false){
   if(!realmState?.realm)return;
   if(ownProfileBadge&&!force){renderOwnProfileBadge();return;}
   try{
     ownProfileBadge=await rpc("player_profile",{p_mage_name:realmState.realm.mage_name});
+    ownProfileBadge=await retireCustomProfileAvatar(ownProfileBadge);
     renderOwnProfileBadge();
   }catch{}
 }
