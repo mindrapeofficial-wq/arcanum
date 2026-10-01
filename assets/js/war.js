@@ -4,7 +4,7 @@ async function renderWar(){
   const [targets,npcs]=await Promise.all([rpc("attack_targets",{p_limit:100}),rpc("npc_directory")]);
   const npcMap=new Map((npcs||[]).map(x=>[String(x.mage_name).toLowerCase(),x]));
   const rows=targets.length?targets.map(t=>{const npc=npcMap.get(String(t.mage_name).toLowerCase());return `<div class="target-row"><div><strong><span class="school-dot ${esc(t.school_code)}"></span><button class="player-link" data-profile="${esc(t.mage_name)}">${esc(t.mage_name)}</button> ${npc?'<span class="tag npc-tag">NPC</span>':''}</strong><small>${esc(catalogs.schools.find(s=>s.code===t.school_code)?.name_es||t.school_code)}${npc?` · ${esc(npc.archetype)}`:''}</small></div><div><small>TIERRAS</small><strong>${n(t.land)}</strong></div><div><small>ASCENDENCIA</small><strong>${n(t.net_power)}</strong></div><div class="action-buttons">${t.can_attack?`<button class="small-action attack-btn" data-target="${esc(t.mage_name)}" data-mode="REGULAR">ATACAR</button><button class="small-action attack-btn" data-target="${esc(t.mage_name)}" data-mode="SIEGE">ASEDIO</button>`:`<span class="tag">NO ATACABLE</span>`}</div></div>`}).join(""):`<div class="empty">Aún no hay otros Arcontes en esta temporada.</div>`;
-  $("#view-host").innerHTML=`${viewHeader("FRONTERA","Guerra","Elige un Arconte rival. Cada ataque consume 2 turnos en el ruleset actual.")}<div class="panel"><div class="target-list">${rows}</div></div>`;
+  $("#view-host").innerHTML=`<div class="view-header"><div><p>Cada ataque consume 2 turnos.</p></div></div><div class="panel"><div class="target-list">${rows}</div></div>`;
   $$(".attack-btn").forEach(b=>b.addEventListener("click",()=>confirmAttack(b.dataset.target,b.dataset.mode,b)));
 }
 async function confirmAttack(target,mode,btn){
