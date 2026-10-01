@@ -257,11 +257,30 @@ async function installMocks(page){
       };
       return route.fulfill({status:201,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({run:pveView(),resumed:false})});
     }
+    if(req.method()==="POST"&&tail==="/pve/choose"){
+      const choice=String(body().choice_id||"");
+      if(choice==="sanctuary"){
+        pveRun={...pveRun,pending_decision:null,player_hp:305,next_modifiers:{choice_id:"sanctuary",enemy_mult:1,loot_bonus:-.10,rarity_bias:-.08}};
+      }else if(choice==="forbidden"){
+        pveRun={...pveRun,pending_decision:null,next_modifiers:{choice_id:"forbidden",enemy_mult:1.15,loot_bonus:.18,rarity_bias:.14}};
+      }else{
+        pveRun={...pveRun,pending_decision:null,next_modifiers:{choice_id:"descend",enemy_mult:1,loot_bonus:0,rarity_bias:0}};
+      }
+      return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({run:pveView(),choice:{choice_id:choice,hp_before:247,hp_after:pveRun.player_hp}})});
+    }
     if(req.method()==="POST"&&tail==="/pve/fight"){
       state.realm.turns-=1;
       pveRun={...pveRun,stage:1,rooms_cleared:1,player_hp:247,last_enemy:{name:"Vigilante de Ceniza",school:"eradication",level:4,max_hp:260,hp:0},updated_at:new Date().toISOString()};
       const loot={status:"completed",pending:false,item:{id:"loot-pve-e2e",name:"Foco de Umbral",rarity:"rare",rarityLabel:"Raro",origin:{source:"pve",reward_tier:"pve_room"}}};
       pveRun.last_loot=loot;
+      pveRun.pending_decision={
+        type:"between_rooms",created_after_stage:0,
+        options:[
+          {id:"descend",title:"Descender al Umbral",subtitle:"Riesgo normal · Botín normal",description:"Mantén el plan.",icon:"↓",next_room:{id:"veil_weaver",name:"Tejedora del Velo",school:"phantasm",boss:false}},
+          {id:"sanctuary",title:"Buscar un santuario",subtitle:"+18% de vida · −10 puntos de Gear",description:"Recuperas parte de tu vida.",icon:"✦",next_room:{id:"veil_weaver",name:"Tejedora del Velo",school:"phantasm",boss:false}},
+          {id:"forbidden",title:"Forzar el Umbral",subtitle:"+15% enemigo · +18 puntos de Gear",description:"La próxima criatura será más peligrosa.",icon:"◆",next_room:{id:"veil_weaver",name:"Tejedora del Velo",school:"phantasm",boss:false}}
+        ]
+      };
       return route.fulfill({status:201,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({
         run:pveView(),
         fight:{won:true,enemy:pveRun.last_enemy,player:{max_hp:320,hp:247},log:["RONDA 1","E2E_TESTER golpea al Vigilante de Ceniza: 42 de daño."]},
@@ -606,7 +625,13 @@ test("Expediciones inicia una incursión persistente y arrastra vida entre salas
 
   await expect(page.getByText("Tejedora del Velo",{exact:true})).toBeVisible();
   await expect(page.locator(".pve-hp-head")).toContainText("247 / 320");
+  await expect(page.locator(".pve-decision-shell")).toContainText("DECISIÓN DEL UMBRAL");
+  await expect(page.locator(".pve-choice")).toHaveCount(3);
+  await page.locator('[data-pve-choice="sanctuary"]').click();
+  await expect(page.locator(".pve-decision-shell")).toHaveCount(0);
+  await expect(page.locator(".pve-hp-head")).toContainText("305 / 320");
   expect(mock.calls.some(x=>x.path==="state/pve/start")).toBeTruthy();
   expect(mock.calls.some(x=>x.path==="state/pve/fight")).toBeTruthy();
+  expect(mock.calls.some(x=>x.path==="state/pve/choose")).toBeTruthy();
   expect(errors).toEqual([]);
 });
