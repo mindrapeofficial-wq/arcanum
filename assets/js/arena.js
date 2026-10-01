@@ -292,7 +292,7 @@ async function renderArena(){
   $("#arena-rival-search-button")?.addEventListener("click",renderArenaSearch);
   renderArenaSearch();
   arenaWireFightButtons($("#view-host"));
-  $(".arena-history-row").forEach(btn=>btn.addEventListener("click",()=>{
+  $$(".arena-history-row").forEach(btn=>btn.addEventListener("click",()=>{
     const rec=history.find(x=>x.id===btn.dataset.id);if(rec)arenaOpen(rec);
   }));
   arenaHydrateSprites($("#view-host"));

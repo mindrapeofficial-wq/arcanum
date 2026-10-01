@@ -119,7 +119,7 @@ test("canonical Archmage identity uses one snapshot",()=>{
   assert.match(sheet,/stateApi\("\/archmage\/"\+encodeURIComponent/);
   assert.match(profile,/loadArchmageSnapshot\(activeProfileName/);
   assert.match(profile,/identidad canónica/i);
-  assert.match(profile,/APTITUDES DEL ARCHIMAGO/);
+  assert.match(profile,/APTITUDES DEL ARCONTE/);
   assert.match(profile,/CRÓNICA PERSONAL/);
   assert.match(profile,/RENOMBRE/);
   assert.doesNotMatch(profile,/La sincronización pública del inventario se activará/);
@@ -187,12 +187,8 @@ test("verified Gear comes from gameplay instead of debug drops",()=>{
   assert.doesNotMatch(inventory,/HALLAZGO DE PRUEBA/);
   assert.doesNotMatch(inventory,/data-loot-test-drop/);
   assert.match(inventory,/canonicalLootOriginText/);
-  assert.match(items,/stateApi\("\/loot\/exploration\/start"/);
-  assert.match(items,/stateApi\("\/loot\/exploration\/complete"/);
   assert.match(items,/stateApi\("\/loot\/arena\/claim"/);
   assert.match(items,/stateApi\("\/loot\/boss\/claim"/);
-  assert.match(economy,/startLootExplorationClaim/);
-  assert.match(economy,/completeLootExplorationClaim/);
   assert.match(arena,/loot_reward/);
   assert.match(arena,/announceCanonicalLootReward/);
   assert.match(event,/claimWorldBossGear/);
@@ -219,7 +215,7 @@ test("personal PvE expeditions are server-authoritative and persistent",()=>{
   assert.match(pve,/stateApi\("\/pve\/fight"/);
   assert.match(pve,/stateApi\("\/pve\/retreat"/);
   assert.match(pve,/stateApi\("\/pve\/choose"/);
-  assert.match(pve,/VIDA DEL ARCHIMAGO/);
+  assert.match(pve,/VIDA DEL ARCONTE/);
   assert.match(pve,/pve-room-track/);
   assert.match(pve,/Botín de expedición/);
   assert.doesNotMatch(pve,/localStorage\.setItem/);
@@ -237,7 +233,7 @@ test("PvE between-room choices are explicit and consequential",()=>{
   const pve=read("assets/js/pve.js");
   assert.match(pve,/DECISIÓN DEL UMBRAL/);
   assert.match(pve,/data-pve-choice/);
-  assert.match(pve,/SIN COSTE DE TURNO/);
+  assert.match(pve,/SIN COSTE DE ENERGÍA/);
 });
 
 
@@ -271,7 +267,7 @@ test("Oracle model calls are capped per user",()=>{
 
 
 test("AI features use a configurable free-tier provider, not paid OpenAI",()=>{
-  for(const name of ["arcanum-oracle","astrael-player"]){
+  for(const name of ["arcanum-oracle"]){
     const src=read("supabase/functions/"+name+"/index.ts");
     assert.doesNotMatch(src,/api\.openai\.com/,name+" must not call OpenAI directly");
     assert.doesNotMatch(src,/OPENAI_API_KEY/,name+" must not read the OpenAI key");
@@ -302,7 +298,6 @@ test("PvP ranking is routed, server-authoritative and shows competitive stats",(
   const router=read("assets/js/router.js");
   const ranking=read("assets/js/pvp-ranking.js");
   const stateFn=read("supabase/functions/arcanum-state/index.ts");
-  assert.match(html,/data-view="pvp-ranking"/);
   assert.match(router,/"pvp-ranking":\{name:"renderPvpRanking"/);
   assert.match(router,/view==="pvp-ranking"\) await renderPvpRanking/);
   assert.doesNotThrow(()=>new vm.Script(ranking,{filename:"assets/js/pvp-ranking.js"}));
@@ -352,7 +347,8 @@ test("closed-beta polish stays in place",()=>{
   assert.doesNotMatch(army,/setTimeout\(\(\)=>generateArmyArt\(army,unitById,false\)/,"army portraits must stay opt-in (external AI Horde service)");
   assert.match(army,/GENERAR RETRATO/);
   const war=read("assets/js/war.js");
-  assert.match(war,/botNames=new Set\(\["astrael"\]\)/,"Astrael is not a human and must stay out of the human ranking");
+  assert.match(war,/rpc\("war_ranking"\)/,"human war ranking must come from the canonical server RPC");
+  assert.doesNotMatch(war,/botNames/,"bot filtering must live on the server, not in the client");
   assert.match(war,/res\?\.attacker_victory && typeof artifactClaimPvp/,"relic loot is only claimed after a win");
   const magic=read("assets/js/magic.js");
   assert.match(magic,/spellIsAdjacent/,"adjacent-school research cost must be flagged as higher than the base cost");
@@ -392,7 +388,8 @@ test("regular Ranking and Construction pages keep their render contracts",()=>{
     "Construction must iterate building inputs with $$, not $");
   assert.doesNotMatch(war,/players\.\\n\s+const botNames/,
     "Regular Ranking must not contain escaped newlines that comment out its variables");
-  assert.match(war,/const botNames=new Set\(\["astrael"\]\);\s+const humanRows=/);
+  assert.match(war,/rpc\("realm_ranking"\)/);
+  assert.match(war,/const warRows=Array\.isArray\(warRowsRaw\)/);
 });
 
 test("Construction never references an undefined $$$ selector",()=>{

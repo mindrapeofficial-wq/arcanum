@@ -109,5 +109,13 @@ function announceCanonicalLootReward(result,context="Botín"){
   }
   return result;
 }
+async function claimArenaLoot(matchId){
+  const data=await stateApi("/loot/arena/claim",{method:"POST",body:{match_id:matchId}});
+  return data;
+}
+async function claimWorldBossGear(eventId){
+  const data=await stateApi("/loot/boss/claim",{method:"POST",body:{event_id:eventId}});
+  return data;
+}
 globalThis.claimArenaLoot=claimArenaLoot;
 globalThis.claimWorldBossGear=claimWorldBossGear;
