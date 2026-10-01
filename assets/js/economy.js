@@ -134,6 +134,8 @@ async function doEconomy(action,btn){
 
 async function doExplore(btn,inputId="explore-turns"){
   const turns=Math.max(1,Math.min(50,Number($("#"+inputId).value)||1));
+  const turnWord=turns===1?"turno":"turnos";
+  if(!window.confirm(`Explorar nuevas tierras gastará ${turns} ${turnWord}. ¿Quieres continuar?`))return null;
   const artifactClaim=typeof artifactStartExplorationClaim==="function"
     ?await artifactStartExplorationClaim(turns).catch(()=>null)
     :null;
