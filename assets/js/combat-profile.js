@@ -373,7 +373,7 @@ function wireCombatEvolution(profile){
       try{
         const chosen=await combatChooseEvolution(profile,level,id);
         toast("Evolución elegida: "+(chosen?.title||option.title)+".","success");
-        await openPlayerProfile(profile.mage_name);
+        if(typeof currentView!=="undefined"&&currentView==="character"&&typeof renderCharacterPage==="function")await renderCharacterPage();else await openPlayerProfile(profile.mage_name);
       }catch(e){toast(humanError(e),"error");btn.disabled=false;btn.innerHTML=old}
     });
   });
