@@ -3,7 +3,6 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
 
 const ARCANUM_URL = "https://mrmvmoyysxuopqexbxfk.supabase.co";
 const ARCANUM_KEY = "sb_publishable_tZEPJi2v7Tp-xDuVa0qWRw_geizIGoD";
-const EVENT_ID = "umbra-001";
 const TURN_COST = 3;
 
 const BOSS_ARTIFACTS = {
@@ -76,12 +75,26 @@ async function identity(req: Request) {
   return { userId: String(user.id), username, schoolCode, realm, token };
 }
 
-async function closeExpiredBoss() {
+async function currentBossEvent() {
+  const now = new Date().toISOString();
+  const { data, error } = await supabase
+    .from("arcanum_world_boss_events")
+    .select("event_id,boss_name,max_hp,current_hp,status,starts_at,ends_at,defeated_at,created_at")
+    .lte("starts_at", now)
+    .order("starts_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (error) throw error;
+  if (!data) throw new Response("BOSS_NOT_FOUND", { status: 404 });
+  return data;
+}
+
+async function closeExpiredBoss(eventId:string) {
   const now = new Date().toISOString();
   await supabase
     .from("arcanum_world_boss_events")
     .update({ status: "closed" })
-    .eq("event_id", EVENT_ID)
+    .eq("event_id", eventId)
     .eq("status", "active")
     .lte("ends_at", now);
 }
@@ -113,7 +126,7 @@ async function bossArtifactDefinition(schoolCode: string, weights: {minor:number
   return {id:bossPick(picked.pool),category:picked.category};
 }
 
-async function grantBossArtifactTo(participant:any, weights:{minor:number;school:number;cursed:number;unique:number}) {
+async function grantBossArtifactTo(participant:any, weights:{minor:number;school:number;cursed:number;unique:number}, eventId:string) {
   const chosen=await bossArtifactDefinition(String(participant.school_code||""),weights);
   const rarity=chosen.category==="unique"?"world_unique":chosen.category==="cursed"?"cursed":chosen.category==="school"?"school_relic":"relic";
   const { data: artifact, error } = await supabase
@@ -125,14 +138,14 @@ async function grantBossArtifactTo(participant:any, weights:{minor:number;school
       school_code:String(participant.school_code),
       category:chosen.category,
       rarity,
-      source:`boss:${EVENT_ID}`,
+      source:`boss:${eventId}`,
       equipped:false,
     })
     .select("id,artifact_id,category,rarity,source,equipped,acquired_at")
     .single();
   if(error){
     if(String((error as any)?.code||"")==="23505" && chosen.category==="unique"){
-      return grantBossArtifactTo(participant,{minor:45,school:45,cursed:10,unique:0});
+      return grantBossArtifactTo(participant,{minor:45,school:45,cursed:10,unique:0},eventId);
     }
     throw error;
   }
@@ -142,16 +155,16 @@ async function grantBossArtifactTo(participant:any, weights:{minor:number;school
     user_id:String(participant.user_id),
     username:String(participant.username),
     event_type:"won_from_world_boss",
-    source:`boss:${EVENT_ID}`,
+    source:`boss:${eventId}`,
   });
   return artifact;
 }
 
-async function grantBossArtifactRewards() {
+async function grantBossArtifactRewards(eventId:string) {
   const { data: boss, error: bossError } = await supabase
     .from("arcanum_world_boss_events")
     .select("event_id,status,current_hp")
-    .eq("event_id", EVENT_ID)
+    .eq("event_id", eventId)
     .single();
   if (bossError) throw bossError;
   if (boss.status !== "defeated" && Number(boss.current_hp || 0) > 0) return;
@@ -159,12 +172,12 @@ async function grantBossArtifactRewards() {
   const { data: participants, error } = await supabase
     .from("arcanum_world_boss_participants")
     .select("user_id,username,school_code,damage,attacks")
-    .eq("event_id", EVENT_ID)
+    .eq("event_id", eventId)
     .gt("damage", 0);
   if (error) throw error;
 
   for (const p of participants || []) {
-    const claimKey = `boss:${EVENT_ID}:${p.user_id}`;
+    const claimKey = `boss:${eventId}:${p.user_id}`;
     const { data: oldClaim } = await supabase
       .from("arcanum_artifact_claims")
       .select("claim_key")
@@ -185,7 +198,7 @@ async function grantBossArtifactRewards() {
       username:String(p.username),
       school_code:String(p.school_code),
       source:"world_boss",
-      metadata:{event_id:EVENT_ID,damage,attacks:Number(p.attacks||0),chance},
+      metadata:{event_id:eventId,damage,attacks:Number(p.attacks||0),chance},
     });
     if (claimError) {
       if (String((claimError as any)?.code || "") === "23505") continue;
@@ -199,7 +212,7 @@ async function grantBossArtifactRewards() {
       continue;
     }
 
-    const artifact = await grantBossArtifactTo(p, weights);
+    const artifact = await grantBossArtifactTo(p, weights, eventId);
     await supabase.from("arcanum_artifact_claims").update({
       status:"completed",
       artifact_instance_id:artifact.id,
@@ -209,26 +222,28 @@ async function grantBossArtifactRewards() {
 }
 
 async function loadPayload(userId: string) {
-  await closeExpiredBoss();
-  await grantBossArtifactRewards();
+  const selected = await currentBossEvent();
+  const eventId = String(selected.event_id);
+  await closeExpiredBoss(eventId);
+  await grantBossArtifactRewards(eventId);
 
   const [{ data: boss, error: bossError }, { data: top, error: topError }, { data: me, error: meError }] = await Promise.all([
     supabase
       .from("arcanum_world_boss_events")
       .select("event_id,boss_name,max_hp,current_hp,status,starts_at,ends_at,defeated_at")
-      .eq("event_id", EVENT_ID)
+      .eq("event_id", eventId)
       .single(),
     supabase
       .from("arcanum_world_boss_participants")
       .select("user_id,username,school_code,damage,attacks,reward_tier,reward_fragments,reward_granted_at")
-      .eq("event_id", EVENT_ID)
+      .eq("event_id", eventId)
       .order("damage", { ascending: false })
       .order("attacks", { ascending: true })
       .limit(20),
     supabase
       .from("arcanum_world_boss_participants")
       .select("user_id,username,school_code,damage,attacks,reward_tier,reward_fragments,reward_granted_at")
-      .eq("event_id", EVENT_ID)
+      .eq("event_id", eventId)
       .eq("user_id", userId)
       .maybeSingle(),
   ]);
@@ -241,7 +256,7 @@ async function loadPayload(userId: string) {
     const { count, error } = await supabase
       .from("arcanum_world_boss_participants")
       .select("user_id", { count: "exact", head: true })
-      .eq("event_id", EVENT_ID)
+      .eq("event_id", eventId)
       .gt("damage", Number(me.damage || 0));
     if (error) throw error;
     rank = Number(count || 0) + 1;
@@ -252,7 +267,7 @@ async function loadPayload(userId: string) {
   const { data: artifactClaim } = await supabase
     .from("arcanum_artifact_claims")
     .select("status,artifact_instance_id")
-    .eq("claim_key", `boss:${EVENT_ID}:${userId}`)
+    .eq("claim_key", `boss:${eventId}:${userId}`)
     .maybeSingle();
   if (artifactClaim?.artifact_instance_id) {
     const { data: artifact } = await supabase
@@ -304,7 +319,7 @@ Deno.serve(async (req: Request) => {
   const url = new URL(req.url);
   const path = url.pathname.replace(/\/+$/, "");
   if (req.method === "GET" && path.endsWith("/health")) {
-    return json(req, { ok: true, service: "arcanum-boss", version: 1 });
+    return json(req, { ok: true, service: "arcanum-boss", version: 2 });
   }
 
   try {
@@ -318,6 +333,8 @@ Deno.serve(async (req: Request) => {
       const body = await req.json().catch(() => ({}));
       const attackId = body?.request_id;
       if (!uuidLike(attackId)) return json(req, { error: "INVALID_REQUEST_ID" }, 400);
+      const current = await currentBossEvent();
+      const eventId = String(current.event_id);
 
       const { data: existing, error: existingError } = await supabase
         .from("arcanum_world_boss_attacks")
@@ -326,7 +343,7 @@ Deno.serve(async (req: Request) => {
         .maybeSingle();
       if (existingError) throw existingError;
       if (existing) {
-        if (existing.user_id !== who.userId || existing.event_id !== EVENT_ID) {
+        if (existing.user_id !== who.userId || existing.event_id !== eventId) {
           return json(req, { error: "REQUEST_ID_CONFLICT" }, 409);
         }
         return json(req, {
@@ -338,7 +355,7 @@ Deno.serve(async (req: Request) => {
       const { data: boss, error: bossError } = await supabase
         .from("arcanum_world_boss_events")
         .select("event_id,current_hp,status,starts_at,ends_at")
-        .eq("event_id", EVENT_ID)
+        .eq("event_id", eventId)
         .single();
       if (bossError) throw bossError;
 
@@ -348,7 +365,7 @@ Deno.serve(async (req: Request) => {
       }
       if (now < new Date(boss.starts_at).getTime()) return json(req, { error: "BOSS_NOT_STARTED" }, 409);
       if (now >= new Date(boss.ends_at).getTime()) {
-        await closeExpiredBoss();
+        await closeExpiredBoss(eventId);
         return json(req, { error: "BOSS_EVENT_ENDED" }, 409);
       }
 
@@ -366,7 +383,7 @@ Deno.serve(async (req: Request) => {
       for (let attempt = 0; attempt < 3; attempt++) {
         const { data, error } = await supabase.rpc("arcanum_world_boss_apply_attack", {
           p_attack_id: attackId,
-          p_event_id: EVENT_ID,
+          p_event_id: eventId,
           p_user_id: who.userId,
           p_username: who.username,
           p_school_code: who.schoolCode,
@@ -397,7 +414,7 @@ Deno.serve(async (req: Request) => {
     if (error instanceof Response) {
       const text = await error.text();
       const known = [
-        "NOT_ENOUGH_TURNS","BOSS_NOT_ACTIVE","BOSS_NOT_STARTED","BOSS_EVENT_ENDED",
+        "NOT_ENOUGH_TURNS","BOSS_NOT_FOUND","BOSS_NOT_ACTIVE","BOSS_NOT_STARTED","BOSS_EVENT_ENDED",
         "REALM_REQUIRED","UNAUTHORIZED","INVALID_REQUEST_ID","REQUEST_ID_CONFLICT"
       ].find(code => text.includes(code));
       return json(req, { error: known || text || "REQUEST_FAILED" }, error.status || 500);
