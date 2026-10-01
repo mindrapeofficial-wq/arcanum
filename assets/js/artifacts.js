@@ -41,7 +41,7 @@ const ARCANUM_ARTIFACT_CATALOG=Object.freeze([
   {id:"eradication_banner",name:"Estandarte de la Última Carga",category:"school",school:"eradication",effect:"+10% moral y +6% daño de ejército.",lore:"No puede caer mientras alguien siga combatiendo."},
 
   {id:"ascendant_halo",name:"Halo del Mediodía",category:"school",school:"ascendant",effect:"+12% Barrera.",lore:"Una circunferencia de luz flota detrás del elegido."},
-  {id:"ascendant_chalice",name:"Cáliz de Alba",category:"school",school:"ascendant",effect:"+10% maná y +6 Voluntad.",lore:"Siempre contiene una gota de luz líquida."},
+  {id:"ascendant_chalice",name:"Cáliz de Alba",category:"school",school:"ascendant",art:"assets/art/artifacts/ascendant-chalice.b64?v=1",effect:"+10% maná y +6 Voluntad.",lore:"Siempre contiene una gota de luz líquida."},
   {id:"ascendant_sunstone",name:"Piedra del Sol Quieto",category:"school",school:"ascendant",effect:"+9% defensa mágica.",lore:"Proyecta sombra incluso dentro de la oscuridad absoluta."},
 
   {id:"abyssal_eye",name:"Ojo del Fondo",category:"school",school:"abyssal",effect:"+12% daño Nadir.",lore:"Algo al otro lado mira de vuelta."},

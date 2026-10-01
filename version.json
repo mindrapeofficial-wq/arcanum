@@ -1,6 +1,6 @@
 {
-  "version": "0.3.25",
+  "version": "0.3.26",
   "channel": "beta",
-  "updated_at": "2026-10-01T13:19:27+02:00",
+  "updated_at": "2026-10-01T13:22:02+02:00",
   "note": "Acceso mas claro (contrasena minima de 8 al registrarse) y API de Astrael en el proyecto Arcanum"
 }
