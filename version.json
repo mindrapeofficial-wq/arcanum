@@ -1,6 +1,6 @@
 {
-  "version": "0.3.24",
+  "version": "0.3.25",
   "channel": "beta",
-  "updated_at": "2026-10-01T13:04:00+02:00",
-  "note": "Reconexion completa de APIs auxiliares al proyecto Supabase Arcanum"
+  "updated_at": "2026-10-01T13:07:00+02:00",
+  "note": "Arte visual del Cáliz de Alba integrado en el Relicario"
 }
