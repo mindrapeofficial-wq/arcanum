@@ -135,3 +135,5 @@ The Duel Weapon remains an intrinsic combat identity rather than a physical inve
 The Arconte changes personal play style and unlocks tactical options, but personal level, Gear and Relics do not directly generate realm resources or act as general multipliers for realm economy or army strength.
 
 Duel abilities have grades I-III and the evolution catalogue is documented in `docs/DUEL_CATALOG.md`.
+
+Duel abilities have grades I-III and the evolution catalogue is documented in `docs/DUEL_CATALOG.md`.
