@@ -2,7 +2,7 @@
 
 const VIEW_RENDERERS={
   character:{name:"renderCharacterPage",src:"assets/js/character.js?v=0.3.16"},
-  army:{name:"renderArmy",src:"assets/js/army.js?v=0.3.16"},
+  army:{name:"renderArmy",src:"assets/js/army.js?v=0.3.38"},
   community:{name:"renderCommunity",src:"assets/js/community.js?v=0.3.16"},
   market:{name:"renderMarket",src:"assets/js/market.js?v=0.2.60"},
   artifacts:{name:"renderArtifactLibrary",src:"assets/js/artifacts.js?v=0.2.60"},

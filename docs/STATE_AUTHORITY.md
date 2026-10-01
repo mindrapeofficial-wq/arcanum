@@ -33,6 +33,9 @@ The browser is never allowed to be the source of truth for progression or compet
 | Online panel collapsed | UI preference | Browser localStorage | LOCAL_ONLY |
 | Oracle/AI history cache | local convenience cache | Browser localStorage | LOCAL_ONLY / cache |
 | Army generated art cache | image cache | Browser localStorage | LOCAL_ONLY / cache |
+| Recruit replenishment plan | personal targets (fixed / % of army) used only to compute a shortfall; executing it calls the server `recruit_units` | Browser localStorage | LOCAL_ONLY / preference |
+| War messages | up to 10 saved phrases (140 chars); one may be sent as a direct message after an attack the player confirmed | Browser localStorage | LOCAL_ONLY / preference |
+| Formation calculator | what-if totals from the unit catalogue | Browser memory | DERIVED |
 | Auth session | access/refresh token | Browser localStorage | Authentication transport, not game authority |
 
 ## 0.3.0 changes

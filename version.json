@@ -1,6 +1,6 @@
 {
-  "version": "0.3.37",
+  "version": "0.3.38",
   "channel": "beta",
-  "updated_at": "2026-10-01T16:55:00+02:00",
-  "note": "Separa Puntuación Reino de Ascendencia y reduce la exploración base a 4-8 acres por turno"
+  "updated_at": "2026-10-01T15:49:59+00:00",
+  "note": "Ejército y Guerra: alerta de maná, costes de unidad, plan de reposición, calculadora de formaciones, informe de batalla ampliado y mensajes de guerra opcionales"
 }
