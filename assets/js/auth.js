@@ -57,6 +57,7 @@ function switchAuthMode(next){
   $("#login-tab").classList.toggle("active",!registering);
   $("#register-tab").classList.toggle("active",registering);
   $("#confirm-field").classList.toggle("hidden",!registering);
+  $("#password-hint")?.classList.toggle("hidden",!registering);
   $("#username").required=true;
   $("#confirm-password").required=registering;
   $("#password").autocomplete=registering?"new-password":"current-password";

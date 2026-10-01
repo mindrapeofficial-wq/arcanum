@@ -76,11 +76,12 @@
         </label>
         <label>
           <span>Contraseña</span>
-          <input id="password" type="password" autocomplete="current-password" placeholder="••••" minlength="4" required />
+          <input id="password" type="password" autocomplete="current-password" placeholder="Tu contraseña" minlength="4" required />
+          <small class="field-hint hidden" id="password-hint">Mínimo 8 caracteres. Mejor una frase que solo tú conozcas.</small>
         </label>
         <label class="hidden" id="confirm-field">
           <span>Repite la contraseña</span>
-          <input id="confirm-password" type="password" autocomplete="new-password" placeholder="••••" minlength="4" />
+          <input id="confirm-password" type="password" autocomplete="new-password" placeholder="Repite tu contraseña" minlength="4" />
         </label>
         <div id="auth-notice" class="notice hidden" role="status" aria-live="polite"></div>
         <button class="primary-action" id="submit-button" type="submit"><span>✦</span><b id="submit-label">ENTRAR</b></button>
