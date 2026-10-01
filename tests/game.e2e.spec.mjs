@@ -466,6 +466,27 @@ test("flujo crítico completo: login, reino, explorar, construir, investigar, re
   expect(errors).toEqual([]);
 });
 
+test("Dominio guía al jugador nuevo con Primeros pasos hasta su siguiente objetivo", async ({page})=>{
+  const errors=[];
+  page.on("pageerror",err=>errors.push(String(err)));
+  await installMocks(page);
+  await page.goto("/");
+  await page.locator("#username").fill("E2E_TESTER");
+  await page.locator("#password").fill("prueba-segura");
+  await page.locator("#submit-button").click();
+  await expect(page.locator("#game-view")).toBeVisible();
+  await navigateDesktop(page,"realm");
+  const panel=page.locator("#onboarding-panel");
+  await expect(panel).toBeVisible();
+  await expect(panel.locator(".onboarding-count")).toHaveText(/^\d \/ 7$/);
+  await expect(panel.locator("li.next")).toHaveCount(1);
+  await page.screenshot({path:"test-results/onboarding-realm.png",fullPage:false});
+  const nextView=await panel.locator("li.next button").getAttribute("data-onboarding-view");
+  await panel.locator("li.next button").click();
+  if(nextView!=="realm") await expect(page.locator(`[data-view="${nextView}"].active`).first()).toBeVisible();
+  expect(errors).toEqual([]);
+});
+
 test("la navegación móvil abre Comunidad sin errores", async ({page})=>{
   const errors=[];
   page.on("pageerror",err=>errors.push(String(err)));
