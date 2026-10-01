@@ -129,7 +129,7 @@ function renderEconomy(){
 
 async function doEconomy(action,btn){
   const turns=Math.max(1,Math.min(50,Number($("#econ-turns").value)||1));
-  await actionCall(btn,()=>rpc("run_economy",{p_action:action,p_turns:turns}),`Se han procesado ${turns} turno${turns===1?"":"s"}.`);
+  await actionCall(btn,()=>rpc("run_economy",{p_action:action,p_turns:turns}),`Se ${turns===1?"ha":"han"} procesado ${turns} turno${turns===1?"":"s"}.`);
 }
 
 async function doExplore(btn,inputId="explore-turns"){
