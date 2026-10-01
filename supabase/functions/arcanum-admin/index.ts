@@ -160,7 +160,31 @@ async function act(who:any,body:any){
     const {error}=await db.from("arcanum_world_boss_events").update(patch).eq("event_id",target);if(error)throw error;
     await audit(who,action,"boss",target,patch);return {ok:true};
   }
+  if(action==="supporter:grant"){
+    // Credit points are granted by hand after a donation. 2 = supporter, 15 = patron. Negative values revoke.
+    const delta=Math.trunc(Number(body?.credit_points));
+    if(!Number.isFinite(delta)||delta===0||Math.abs(delta)>1000)throw new Error("INVALID_CREDIT_DELTA");
+    const reason=String(body?.reason||"").trim().slice(0,200);
+    const userId=await userIdByMageName(target);
+    const {data,error}=await db.rpc("admin_grant_supporter_credit",{p_user_id:userId,p_delta:delta,p_reason:reason||null,p_actor:who.userId});if(error)throw error;
+    await audit(who,action,"player",target,{delta,reason,result:data});return {ok:true,result:data};
+  }
+  if(action==="luck:grant"){
+    const hours=Math.max(1,Math.min(72,Math.trunc(Number(body?.hours||24))||24));
+    const userId=await userIdByMageName(target);
+    const {data,error}=await db.rpc("admin_grant_luck",{p_user_id:userId,p_hours:hours});if(error)throw error;
+    await audit(who,action,"player",target,{hours,result:data});return {ok:true,result:data};
+  }
   throw new Error("UNKNOWN_ACTION");
+}
+async function userIdByMageName(name:string){
+  const clean=String(name||"").trim();
+  if(!clean)throw new Error("PLAYER_NOT_FOUND");
+  const pattern=clean.replace(/[\\%_]/g,m=>"\\"+m);
+  const {data,error}=await db.from("realms").select("player_id,created_at").ilike("mage_name",pattern).order("created_at",{ascending:false}).limit(1).maybeSingle();
+  if(error)throw error;
+  if(!data?.player_id)throw new Error("PLAYER_NOT_FOUND");
+  return String(data.player_id);
 }
 
 Deno.serve(async(req:Request)=>{
