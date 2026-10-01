@@ -641,3 +641,15 @@ test("character combat preparation is readable and mobile-first",()=>{
   assert.match(css,/\.character-center-column\{order:1\}/);
   assert.match(css,/\.character-ability-list/);
 });
+
+test("players table is not writable by signed-in players",()=>{
+  const dir=new URL("../supabase/migrations/",import.meta.url);
+  const all=fs.readdirSync(dir).filter(f=>f.endsWith(".sql")).sort().map(f=>read("supabase/migrations/"+f)).join("\n");
+  assert.match(all,/revoke insert, update, delete, truncate on public\.players from anon, authenticated/);
+  assert.match(all,/drop policy if exists players_update_own on public\.players/);
+  // the client must keep going through RPCs / Edge Functions: it never PATCHes players over REST
+  for(const f of fs.readdirSync(new URL("../assets/js/",import.meta.url)).filter(f=>f.endsWith(".js"))){
+    const src=read("assets/js/"+f);
+    assert.doesNotMatch(src,/\/rest\/v1\/players/,f+" must not write to the players table directly");
+  }
+});
