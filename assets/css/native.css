@@ -652,3 +652,14 @@ tbody tr:hover td{
   .realm-command:before{display:none}
   .realm-vital-card{min-height:88px}
 }
+
+
+/* External CC BY icon: Castle by Delapouite, game-icons.net */
+.realm-art-citadel{
+  background:
+    url("../vendor/game-icons/castle.svg") center/58% 58% no-repeat,
+    radial-gradient(circle,rgba(218,151,57,.15),rgba(3,3,3,.55))!important;
+}
+.realm-art-citadel span{
+  opacity:0!important;
+}
