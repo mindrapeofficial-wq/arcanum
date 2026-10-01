@@ -1,4 +1,5 @@
 "use strict";
+currentView="realm";
 
 const VIEW_RENDERERS={
   character:{name:"renderCharacterPage",src:"assets/js/character.js?v=0.3.43"},
