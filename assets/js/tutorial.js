@@ -15,7 +15,8 @@ const tutorialSteps = [
   {view:"army",target:"#view-host .grid-2",kicker:"PASO 7 · EJÉRCITO",title:"Primero Cuarteles, después tropas",text:"Recluta unidades compatibles con tu Escuela e invoca criaturas cuando conozcas los hechizos adecuados. Un ejército grande también exige una economía capaz de mantenerlo."},
   {view:"war",target:"#view-host .panel",kicker:"PASO 8 · GUERRA",title:"Atacar tiene consecuencias",text:"Los ataques gastan turnos, recursos y tropas. Revisa siempre tu ejército y tu economía antes de combatir. Las victorias pueden darte territorio."},
   {view:"community",target:".community-tabs",kicker:"PASO 9 · COMUNIDAD",title:"No estás solo en ARCANUM",text:"El Chat Global sirve para hablar con otros Arcontes. El Tablón permite publicar anuncios de diplomacia, comercio, reclutamiento o guerra."},
-  {view:"realm",target:"#manual-top-button",kicker:"PASO 10 · LISTO",title:"Tu grimorio queda abierto",text:"Puedes consultar el Manual Básico con el botón ? y repetir este tutorial cuando quieras desde el propio Manual o desde el menú lateral."}
+  {view:"character",target:".character-bottom-panel",kicker:"PASO 10 · TU PERSONAJE",title:"Equípate antes de combatir",text:"Tu inventario inicial trae objetos que no empiezan equipados. Equípalos desde Personaje para ganar poder en la Arena y en las Expediciones; sin ellos pierdes la primera sala casi seguro."},
+  {view:"realm",target:"#manual-top-button",kicker:"PASO 11 · LISTO",title:"Tu grimorio queda abierto",text:"Puedes consultar el Manual Básico con el botón ? y repetir este tutorial cuando quieras desde el propio Manual o desde el menú lateral."}
 ];
 
 function tutorialStorageKey(){
