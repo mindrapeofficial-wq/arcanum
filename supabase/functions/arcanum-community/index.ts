@@ -285,7 +285,6 @@ Deno.serve(async (req: Request) => {
 
     if (parts[0] === "presence") {
       if (req.method === "POST") {
-        await warmAstraelCapabilities(who.token).catch(() => {});
         const { error } = await supabase
           .from("arcanum_presence")
           .upsert({ user_id: who.userId, username: who.username, school_code: who.schoolCode, last_seen: new Date().toISOString() }, { onConflict: "user_id" });
