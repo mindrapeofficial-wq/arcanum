@@ -179,14 +179,24 @@ function lootItemStats(item){
   (item.affixes||[]).forEach(x=>rows.push({label:LOOT_STAT_LABELS[x.stat]||x.stat,value:x.value,tier:x.tier,rollMin:x.rollMin,rollMax:x.rollMax}));
   return rows;
 }
-function lootItemCard(item){
+function lootEquippedSlotForItem(item,state){
+  if(!item||!state?.equipment)return "";
+  const hit=Object.entries(state.equipment).find(([,id])=>String(id||"")===String(item.id||""));
+  return hit?.[0]||"";
+}
+function lootItemCard(item,state=null){
   const stats=lootItemStats(item).map(x=>'<li><span>+'+n(x.value)+' '+esc(x.label)+'</span>'+(x.tier?'<small>T'+x.tier+' · '+x.rollMin+'–'+x.rollMax+'</small>':'<small>implícito</small>')+'</li>').join("");
   const origin=typeof canonicalLootOriginText==="function"?canonicalLootOriginText(item):"Origen desconocido";
-  return '<article class="loot-item rarity-'+esc(item.rarity)+'" data-loot-id="'+esc(item.id)+'">'+
-    '<header><span class="loot-rarity">'+esc(item.rarityLabel)+'</span><b>iP '+n(item.power)+'</b></header>'+
+  const equippedSlot=lootEquippedSlotForItem(item,state);
+  const equipped=Boolean(equippedSlot);
+  const actions=equipped
+    ?'<button class="small-action" type="button" data-loot-unequip="'+esc(equippedSlot)+'">DESEQUIPAR</button>'
+    :'<button class="small-action" type="button" data-loot-equip="'+esc(item.id)+'">EQUIPAR</button><button class="ghost-button" type="button" data-loot-destroy="'+esc(item.id)+'">DESTRUIR</button>';
+  return '<article class="loot-item rarity-'+esc(item.rarity)+(equipped?' is-equipped':'')+'" data-loot-id="'+esc(item.id)+'">'+
+    '<header><span class="loot-rarity">'+esc(item.rarityLabel)+'</span><b>'+(equipped?'EQUIPADO · ':'')+'iP '+n(item.power)+'</b></header>'+
     '<h4>'+esc(item.name)+'</h4><div class="loot-meta">'+esc(lootSlotLabel(item.slot))+' · Nv. '+n(item.level)+' · '+esc(lootSchoolLabel(item.affinity))+'</div>'+
     '<div class="loot-origin"><small>ORIGEN</small><span>'+esc(origin)+'</span></div>'+
-    '<ul>'+stats+'</ul><div class="loot-actions"><button class="small-action" type="button" data-loot-equip="'+esc(item.id)+'">EQUIPAR</button><button class="ghost-button" type="button" data-loot-destroy="'+esc(item.id)+'">DESTRUIR</button></div>'+
+    '<ul>'+stats+'</ul><div class="loot-actions">'+actions+'</div>'+
   '</article>';
 }
 function lootEffectiveStats(state){
@@ -262,7 +272,7 @@ function renderArchmageInventory(profile){
     '<div class="loot-summary"><div><small>PODER DE EQUIPO</small><strong>'+n(total.power)+'</strong></div><div><small>PODER ARCANO</small><strong>+'+n(total.arcane_power)+'</strong></div><div><small>VIDA</small><strong>+'+n(total.life)+'</strong></div><div><small>MANÁ</small><strong>+'+n(total.mana)+'</strong></div></div>'+
     '<div class="loot-equipment">'+ARCANUM_EQUIP_SLOTS.map(slot=>lootEquipmentCard(slot,state)).join("")+canonicalRelicEquipmentCard()+'</div>'+
     '<div class="loot-toolbar"><div><strong>Mochila</strong><small>Botín obtenido en Exploración, Arena y eventos verificados por servidor.</small></div></div>'+
-    '<div class="loot-grid">'+(state.items.length?state.items.map(lootItemCard).join(""):'<div class="empty">Tu inventario está vacío.</div>')+'</div>'+
+    '<div class="loot-grid">'+(state.items.length?state.items.map(item=>lootItemCard(item,state)).join(""):'<div class="empty">Tu inventario está vacío.</div>')+'</div>'+
     '<div class="loot-relic-vault"><div class="loot-toolbar"><div><strong>Reliquias custodiadas</strong><small>Objetos con nombre, procedencia e historia. Sólo una puede estar vinculada.</small></div></div><div class="loot-grid relic-inventory-grid">'+canonicalRelicInventoryCards()+'</div></div>'+
     '<p class="loot-beta-note">Gear procedural y Reliquias comparten ahora el mismo modelo de equipamiento. La Biblioteca conserva el catálogo, lore e historia mundial.</p>'+
   '</section>';
