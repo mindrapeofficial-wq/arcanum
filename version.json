@@ -1,6 +1,6 @@
 {
-  "version": "0.3.27",
+  "version": "0.3.28",
   "channel": "beta",
-  "updated_at": "2026-10-01T14:05:00+02:00",
-  "note": "Ranking PvP con victorias, derrotas y ELO; el ELO competitivo actualiza a ambos duelistas"
+  "updated_at": "2026-10-01T14:25:00+02:00",
+  "note": "Confirmaciones antes de gastar turnos, Ascendencia sincronizada, vistas ocultas accesibles y mejor margen inicial de población"
 }
