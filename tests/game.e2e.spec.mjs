@@ -1,6 +1,11 @@
 import { test, expect } from "@playwright/test";
 import { loadEngine } from "./lib/duel-engine.mjs";
 
+const DOMAIN_FOCUS_E2E=true;
+test.beforeEach(async ({},testInfo)=>{
+  test.skip(DOMAIN_FOCUS_E2E&&!testInfo.title.startsWith("[DOMAIN FOCUS]"),"Legacy sections are intentionally hidden while ARCANUM is focused on Domain.");
+});
+
 const SUPABASE_HOST = "mrmvmoyysxuopqexbxfk.supabase.co";
 const COMMUNITY_HOST = "mrmvmoyysxuopqexbxfk.supabase.co";
 
@@ -142,6 +147,14 @@ async function installMocks(page){
       return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({messages})});
     }
     if(rpc==="send_direct_message") return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({sent:true,id:1})});
+    if(rpc==="run_economy"){
+      const turns=Number(body().p_turns||1);
+      const action=String(body().p_action||"NONE");
+      state.realm.turns=Math.max(0,state.realm.turns-turns);
+      if(action==="TAX")state.realm.gold+=turns*500;
+      if(action==="MP_CHARGE")state.realm.mana=Math.min(state.capacities.mana,state.realm.mana+turns*250);
+      return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({turns_spent:turns,action})});
+    }
     if(rpc==="explore"){
       const turns=Number(body().p_turns||1);
       state.realm.turns-=turns;
@@ -761,4 +774,45 @@ test("Personaje ofrece las opciones de evolución del servidor con rareza, y per
   expect(posted).toHaveLength(1);
   expect(posted[0]).toEqual({level:2,option_id:expected[0].id});
   await expect(page.locator(".combat-evolution.pending")).toContainText("EVOLUCIÓN PENDIENTE · NIVEL 3");
+});
+
+
+test("[DOMAIN FOCUS] Dominio concentra navegación, economía, construcción y exploración", async ({page})=>{
+  const errors=[];
+  const mock=await installMocks(page);
+  page.on("pageerror",err=>errors.push(String(err)));
+  page.on("dialog",dialog=>dialog.accept());
+
+  await page.goto("/");
+  await page.locator("#username").fill("E2E_TESTER");
+  await page.locator("#password").fill("prueba-segura");
+  await page.locator("#submit-button").click();
+
+  await expect(page.locator("#game-view")).toBeVisible();
+  await expect(page.locator(".domain-command-center")).toBeVisible();
+  await expect(page.locator("#main-nav button[data-view]")).toHaveCount(1);
+  await expect(page.locator('#main-nav button[data-view="realm"]')).toBeVisible();
+  await expect(page.locator('#main-nav [data-view="character"]')).toHaveCount(0);
+  await expect(page.locator(".domain-ledger-card")).toHaveCount(6);
+
+  await page.locator("#econ-turns").fill("2");
+  await page.locator('[data-domain-econ="TAX"]').click();
+  await expect(page.locator(".toast").last()).toContainText("procesado");
+  expect(mock.calls.some(x=>x.path==="/rest/v1/rpc/run_economy")).toBeTruthy();
+
+  await page.locator('[data-building="farms"]').fill("2");
+  await expect(page.locator("#build-button")).toBeEnabled();
+  await page.locator("#build-button").click();
+  await expect(page.locator(".toast").last()).toContainText("Construcción completada");
+  expect(mock.calls.some(x=>x.path==="/rest/v1/rpc/build")).toBeTruthy();
+
+  await page.locator("#realm-explore-turns").fill("2");
+  await page.locator("#realm-explore-button").click();
+  await expect(page.locator(".toast").last()).toContainText("Exploración completada");
+  expect(mock.calls.some(x=>x.path==="/rest/v1/rpc/explore")).toBeTruthy();
+
+  await page.evaluate(()=>navigate("character"));
+  await expect(page.locator(".domain-command-center")).toBeVisible();
+  await expect(page.locator(".character-brute-layout")).toHaveCount(0);
+  expect(errors).toEqual([]);
 });
