@@ -1,6 +1,6 @@
 {
-  "version": "0.3.30",
+  "version": "0.3.31",
   "channel": "beta",
-  "updated_at": "2026-10-01T15:24:00+02:00",
-  "note": "Corrige los errores de las páginas Clasificación normal y Construcción"
+  "updated_at": "2026-10-01T15:31:00+02:00",
+  "note": "Corrige el error $$$ is not defined en la página Construcción"
 }
