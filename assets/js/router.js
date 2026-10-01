@@ -68,9 +68,27 @@ function toggleMobileNavGroup(group){
 }
 function syncNavigationGroup(view){
   const group=navGroupForView(view);
+  const mainNav=document.getElementById("main-nav");
+  const reinoSection=mainNav?.querySelector('details[data-nav-group="reino"]');
+  const personajeSection=mainNav?.querySelector('details[data-nav-group="arconte"]');
+  if(mainNav&&reinoSection&&personajeSection){
+    mainNav.insertBefore(reinoSection,personajeSection);
+    const title=personajeSection.querySelector("summary span:first-child");
+    if(title)title.textContent="PERSONAJE";
+  }
+  const mobileNav=document.getElementById("mobile-nav");
+  const reinoTrigger=mobileNav?.querySelector('[data-nav-group-trigger="reino"]');
+  const personajeTrigger=mobileNav?.querySelector('[data-nav-group-trigger="arconte"]');
+  if(mobileNav&&reinoTrigger&&personajeTrigger){
+    mobileNav.insertBefore(reinoTrigger,personajeTrigger);
+    const label=personajeTrigger.querySelector("small");
+    if(label)label.textContent="Personaje";
+  }
   document.querySelectorAll("[data-nav-group-trigger]").forEach(btn=>btn.classList.toggle("active",btn.dataset.navGroupTrigger===group));
   document.querySelectorAll("#main-nav details[data-nav-group]").forEach(section=>{section.open=section.dataset.navGroup===group});
 }
+syncNavigationGroup(currentView);
+
 async function navigate(view){
   if(currentView==="tavern" && view!=="tavern" && typeof stopTavern==="function")stopTavern();
   if(currentView==="event" && view!=="event" && typeof stopBossPolling==="function")stopBossPolling();
