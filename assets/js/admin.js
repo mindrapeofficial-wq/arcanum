@@ -1,6 +1,6 @@
 "use strict";
 
-const ADMIN_API="https://smynvbrkgffpepbhrpxt.supabase.co/functions/v1/arcanum-admin";
+const ADMIN_API="https://mrmvmoyysxuopqexbxfk.supabase.co/functions/v1/arcanum-admin";
 let adminReady=false;
 let adminPlayersCache=[];
 let adminModerationCache=null;

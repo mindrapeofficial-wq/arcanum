@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 const SUPABASE_HOST = "mrmvmoyysxuopqexbxfk.supabase.co";
-const COMMUNITY_HOST = "smynvbrkgffpepbhrpxt.supabase.co";
+const COMMUNITY_HOST = "mrmvmoyysxuopqexbxfk.supabase.co";
 
 function corsHeaders(){
   return {
@@ -162,7 +162,7 @@ async function installMocks(page){
     return route.fulfill({status:404,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({error:`Unhandled mock route: ${path}`})});
   });
 
-  await page.route(/^https:\/\/smynvbrkgffpepbhrpxt\.supabase\.co\/functions\/v1\/arcanum-state(?:\/.*)?(?:\?.*)?$/, async route=>{
+  await page.route(/^https:\/\/mrmvmoyysxuopqexbxfk\.supabase\.co\/functions\/v1\/arcanum-state(?:\/.*)?(?:\?.*)?$/, async route=>{
     const req=route.request();
     const url=new URL(req.url());
     const tail=url.pathname.split("/arcanum-state")[1]||"/";
@@ -301,7 +301,7 @@ async function installMocks(page){
     return route.fulfill({status:404,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({error:"UNHANDLED_STATE_MOCK",tail})});
   });
 
-  await page.route(/^https:\/\/smynvbrkgffpepbhrpxt\.supabase\.co\/functions\/v1\/arcanum-community(?:\/.*)?(?:\?.*)?$/, async route=>{
+  await page.route(/^https:\/\/mrmvmoyysxuopqexbxfk\.supabase\.co\/functions\/v1\/arcanum-community(?:\/.*)?(?:\?.*)?$/, async route=>{
     const req=route.request();
     const url=new URL(req.url());
     const tail=url.pathname.split("/arcanum-community")[1]||"/";
@@ -337,7 +337,7 @@ async function installMocks(page){
     return route.fulfill({status:404,contentType:"application/json",headers:corsHeaders(),body:'{"error":"NOT_FOUND"}'});
   });
 
-  await page.route(/^https:\/\/smynvbrkgffpepbhrpxt\.supabase\.co\/functions\/v1\/arcanum-oracle$/, async route=>{
+  await page.route(/^https:\/\/mrmvmoyysxuopqexbxfk\.supabase\.co\/functions\/v1\/arcanum-oracle$/, async route=>{
     const req=route.request();
     calls.push({method:req.method(),path:"oracle"});
     if(req.method()==="OPTIONS") return route.fulfill({status:204,headers:corsHeaders(),body:""});
