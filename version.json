@@ -1,6 +1,6 @@
 {
-  "version": "0.3.38",
+  "version": "0.3.39",
   "channel": "beta",
-  "updated_at": "2026-10-01T18:10:00+02:00",
-  "note": "Capa de pulido visual: profundidad, legibilidad, estados de interacción, barras con brillo y ambiente animado"
+  "updated_at": "2026-10-01T19:00:00+02:00",
+  "note": "Pulido visual: formularios, pestañas, tablas y estados vacíos"
 }
