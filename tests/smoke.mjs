@@ -314,3 +314,35 @@ test("PvP ranking is routed, server-authoritative and shows competitive stats",(
   assert.match(stateFn,/defender_user_id:String\(targetRealm\.player_id\)/);
   assert.match(stateFn,/defenderUpdate\[sim\.won\?"losses":"wins"\]/);
 });
+
+
+test("turn-spending actions require confirmation before execution",()=>{
+  const economy=read("assets/js/economy.js");
+  const construction=read("assets/js/construction.js");
+  const army=read("assets/js/army.js");
+  assert.match(economy,/window\.confirm\([\s\S]*Explorar nuevas tierras gastará/);
+  assert.match(construction,/window\.confirm\([\s\S]*Construir este lote/);
+  assert.match(army,/window\.confirm\([\s\S]*Reclutar/);
+});
+
+test("inactive application roots stay out of the accessibility tree",()=>{
+  assert.match(html,/<main id="auth-view"[^>]*hidden[^>]*aria-hidden="true"[^>]*inert/);
+  assert.match(html,/<main id="create-view"[^>]*hidden[^>]*aria-hidden="true"[^>]*inert/);
+  assert.match(html,/<main id="game-view"[^>]*hidden[^>]*aria-hidden="true"[^>]*inert/);
+  const state=read("assets/js/state.js");
+  assert.match(state,/el\.setAttribute\("hidden",""\)/);
+  assert.match(state,/el\.removeAttribute\("hidden"\)/);
+});
+
+test("Ascendencia is authoritative and not passively interpolated",()=>{
+  const realmState=read("assets/js/realm-state.js");
+  const passiveBlock=realmState.match(/const PASSIVE_RESOURCE_FIELDS=\{([\s\S]*?)\};/)?.[1]||"";
+  assert.doesNotMatch(passiveBlock,/net_power/);
+  assert.match(realmState,/data-live-resource="net_power"/);
+});
+
+test("early economy migration adds land-based subsistence food capacity",()=>{
+  const migration=read("supabase/migrations/20261001142500_add_early_food_headroom.sql");
+  assert.match(migration,/base_food_per_land/);
+  assert.match(migration,/r\.land::bigint/);
+});
