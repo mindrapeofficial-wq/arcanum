@@ -37,6 +37,14 @@ const COMBAT_TRAITS = Object.freeze([
   {id:"second_wind",name:"Segundo Aliento",school:null,desc:"Una vez por combate puede recuperar vida.",mods:{secondWind:true}}
 ]);
 
+const COMBAT_ABILITY_ART=Object.freeze({
+  toxic_spores:"assets/art/drive/skills/toxic-spores.svg",
+  solar_aegis:"assets/art/drive/skills/solar-aegis.svg",
+  flame_break:"assets/art/drive/skills/flame-break.svg",
+  dark_pact:"assets/art/drive/skills/dark-pact.svg",
+  phase_step:"assets/art/drive/skills/phase-step.svg"
+});
+
 const COMBAT_ABILITIES = Object.freeze([
   {id:"roots",name:"Raíces",school:"verdant",desc:"Puede inmovilizar y retrasar al rival."},
   {id:"toxic_spores",name:"Esporas Tóxicas",school:"verdant",desc:"Los impactos pueden aplicar veneno."},
@@ -405,7 +413,7 @@ function renderCombatIdentity(profile,serverDerived=null){
   const c=getCombatProfile(profile),localDerived=combatDerived(profile);
   const d=serverDerived&&Number.isFinite(Number(serverDerived.maxHp))?serverDerived:localDerived;
   const stats=Object.entries(c.stats).map(function(entry){return '<div class="combat-stat"><small>'+esc(COMBAT_STAT_META[entry[0]])+'</small><strong>'+n(entry[1])+'</strong></div>'}).join("");
-  const abilities=c.abilities.map(function(a){return '<div class="combat-ability"><strong>'+combatAbilityTitle(a)+'</strong><span>'+esc(a.desc)+'</span>'+(a.detail?'<em class="combat-ability-detail">'+esc(a.detail)+'</em>':'')+'</div>'}).join("");
+  const abilities=c.abilities.map(function(a){const art=COMBAT_ABILITY_ART[a.id];return '<div class="combat-ability">'+(art?'<img class="combat-ability-art" src="'+art+'" alt="" aria-hidden="true" loading="lazy" decoding="async">':'')+'<div class="combat-ability-copy"><strong>'+combatAbilityTitle(a)+'</strong><span>'+esc(a.desc)+'</span>'+(a.detail?'<em class="combat-ability-detail">'+esc(a.detail)+'</em>':'')+'</div></div>'}).join("");
   const traits=[c.trait].concat(c.bonusTraits||[]).filter(Boolean);
   const traitText=traits.map(function(t){return '<span class="combat-trait-chip"><b>'+esc(t.name)+'</b><small>'+esc(t.desc)+'</small></span>'}).join("");
   return '<section class="combat-identity"><div class="profile-section-title"><span>CARACTERÍSTICAS DE DUELO</span><small>perfil persistente del mismo Arconte</small></div>'+
