@@ -10,10 +10,18 @@ function profileAvatarUrl(path){
 function profileSchoolName(code){
   return typeof schoolName==="function"?schoolName(code):(catalogs.schools.find(s=>s.code===code)?.name_es||code||"Escuela");
 }
+const PROFILE_SCHOOL_PORTRAITS={
+  verdant:{1:"assets/art/characters/verdante/viridia-level-1.png?v=0.3.16"},
+  eradication:{1:"assets/art/characters/eradication/cineria-level-1.png?v=0.3.16"},
+  phantasm:{1:"assets/art/characters/phantasm/oneiria-level-1.png?v=0.3.16"},
+  ascendant:{1:"assets/art/characters/ascendant/aurea-level-1.png?v=0.3.16"}
+};
 function profileDefaultPortraitUrl(profile){
-  if(profile?.school_code==="verdant")return "assets/art/characters/verdante/verdante-level-1.png?v=0.2.11";
-  if(profile?.school_code==="eradication")return "assets/art/characters/eradication/thanitos-level-1.png?v=0.2.35";
-  return "";
+  const school=String(profile?.school_code||"");
+  const portraits=PROFILE_SCHOOL_PORTRAITS[school];
+  if(!portraits)return "";
+  const level=Math.max(1,Number(profile?.archmage_level||profile?.level||1));
+  return portraits[level]||portraits[1]||"";
 }
 function profileAvatarMarkup(profile,large=false){
   const cls=large?"profile-avatar profile-avatar-large":"profile-avatar";
@@ -199,8 +207,9 @@ function renderPlayerProfile(profile,inbox=null,snapshot=null,target=null){
 
   let bioBlock="";
   if(profile.is_self){
-    const genericButton=profile.school_code==="verdant"
-      ?'<button class="profile-action secondary" id="profile-use-school-avatar" type="button">USAR RETRATO VIRIDIA</button>'
+    const schoolPortrait=profileDefaultPortraitUrl(profile);
+    const genericButton=schoolPortrait
+      ?'<button class="profile-action secondary" id="profile-use-school-avatar" type="button">USAR RETRATO '+esc(profileSchoolName(profile.school_code).toUpperCase())+'</button>'
       :"";
     const removeButton=profile.avatar_path
       ?'<button class="profile-action danger" id="profile-remove-avatar" type="button">ELIMINAR FOTO</button>'
@@ -440,11 +449,12 @@ async function removeProfileAvatar(profile){
   await clearProfileAvatar(profile,{deleteStored:true,message:"Foto eliminada. Vuelves al retrato genérico de tu Escuela."});
 }
 async function useSchoolProfileAvatar(profile){
-  if(profile?.school_code!=="verdant")return;
+  if(!profileDefaultPortraitUrl(profile))return;
+  const school=profileSchoolName(profile.school_code);
   if(profile?.avatar_path){
-    await clearProfileAvatar(profile,{deleteStored:true,message:"Retrato genérico de Viridia seleccionado."});
+    await clearProfileAvatar(profile,{deleteStored:true,message:"Retrato genérico de "+school+" seleccionado."});
   }else{
-    toast("Ya estás usando el retrato genérico de Viridia.","success");
+    toast("Ya estás usando el retrato genérico de "+school+".","success");
   }
 }
 
