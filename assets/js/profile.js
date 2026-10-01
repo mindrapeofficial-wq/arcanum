@@ -282,7 +282,7 @@ function renderPlayerProfile(profile,inbox=null,snapshot=null,target=null){
       '<div><small>NIVEL</small><strong>'+n(playerLevel)+'</strong></div>'+
       '<div><small>AMIGOS</small><strong>'+n(friendCount)+'</strong></div>'+
       '<div><small>ALIANZA</small><strong>'+(alliance?'['+esc(alliance.tag)+']':'—')+'</strong></div>'+
-      '<div><small>ESTADO</small><strong>'+esc(profile.status||"—")+'</strong></div>'+
+
     '</div>';
 
   sheetHost.innerHTML=
