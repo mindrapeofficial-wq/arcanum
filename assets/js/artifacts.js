@@ -32,7 +32,7 @@ const ARCANUM_ARTIFACT_CATALOG=Object.freeze([
   {id:"cinder_mask",name:"Máscara de Ceniza",category:"minor",effect:"+4% resistencia al fuego.",lore:"El rostro interior cambia después de cada incendio."},
   {id:"echo_flute",name:"Flauta del Eco",category:"minor",effect:"+3% poder de invocación.",lore:"Repite notas que aún no han sido tocadas."},
 
-  {id:"verdant_crown",name:"Corona del Bosque Primigenio",category:"school",school:"verdant",effect:"+12% regeneración y +8% producción de alimentos.",lore:"Las ramas que la forman siguen creciendo alrededor de su portador."},
+  {id:"verdant_crown",name:"Corona del Bosque Primigenio",category:"school",school:"verdant",art:"assets/art/artifacts/verdant-crown.b64?v=1",effect:"+12% regeneración y +8% producción de alimentos.",lore:"Las ramas que la forman siguen creciendo alrededor de su portador."},
   {id:"verdant_codex",name:"Códice de las Mil Raíces",category:"school",school:"verdant",effect:"+10% conocimiento arcano Viridia.",lore:"Cada página contiene el mapa de un bosque distinto."},
   {id:"verdant_seedheart",name:"Corazón Semilla",category:"school",school:"verdant",effect:"+10% vida del Arconte y +6% defensa.",lore:"Late lentamente bajo una corteza de oro verde."},
 
@@ -75,6 +75,34 @@ function artifactDef(id){return ARCANUM_ARTIFACT_CATALOG.find(x=>x.id===id);}
 function artifactCategoryLabel(c){return ({minor:"Artefacto menor",school:"Reliquia de Escuela",cursed:"Artefacto maldito",unique:"Único mundial"})[c]||c;}
 function artifactSchoolLabel(s){return ({verdant:"Viridia",eradication:"Cineria",ascendant:"Aurea",abyssal:"Nadir",phantasm:"Oneiria"})[s]||"";}
 function artifactOwnedMap(rows){const m=new Map();(rows||[]).forEach(x=>{if(!m.has(x.artifact_id))m.set(x.artifact_id,[]);m.get(x.artifact_id).push(x);});return m;}
+
+const artifactArtCache=new Map();
+function artifactArtHtml(def,extraClass=""){
+  if(!def?.art)return "";
+  return '<div class="artifact-art '+esc(extraClass)+'"><img alt="'+esc(def.name||"Reliquia")+'" data-artifact-art="'+esc(def.art)+'" loading="lazy" decoding="async"></div>';
+}
+async function hydrateArtifactArt(root=document){
+  const nodes=root?.querySelectorAll?root.querySelectorAll("img[data-artifact-art]"):[];
+  await Promise.all([...nodes].map(async img=>{
+    if(img.dataset.artifactHydrated==="1")return;
+    const path=img.dataset.artifactArt;
+    try{
+      if(!artifactArtCache.has(path)){
+        artifactArtCache.set(path,fetch(path,{cache:"force-cache"}).then(r=>{
+          if(!r.ok)throw new Error("artifact art "+r.status);
+          return r.text();
+        }).then(x=>"data:image/webp;base64,"+x.trim()));
+      }
+      img.src=await artifactArtCache.get(path);
+      img.dataset.artifactHydrated="1";
+    }catch(e){
+      img.closest(".artifact-art")?.classList.add("artifact-art-missing");
+      console.warn("No se pudo cargar el arte de la reliquia",e);
+    }
+  }));
+}
+globalThis.artifactArtHtml=artifactArtHtml;
+globalThis.hydrateArtifactArt=hydrateArtifactArt;
 
 async function renderArtifactLibrary(){
   const host=$("#view-host");
@@ -142,10 +170,12 @@ async function loadArtifactLibrary(){
       const historyButton=a.category==="unique"?'<button class="ghost-button" data-artifact-history="'+esc(a.id)+'">HISTORIA</button>':"";
       return '<article class="artifact-card artifact-'+esc(a.category)+' '+(owned.length?'is-owned':'')+'">'+
         '<header><span>'+esc(artifactCategoryLabel(a.category))+'</span>'+school+'</header>'+
+        artifactArtHtml(a,"artifact-card-art")+
         '<h3>'+esc(a.name)+'</h3><p class="artifact-effect">'+esc(a.effect)+'</p>'+
         '<p class="artifact-lore">'+esc(a.lore)+'</p>'+discoveryState+uniqueState+ownState+
         '<div class="artifact-actions">'+equipButton+historyButton+'</div></article>';
     }).join(""):'<div class="empty">No hay reliquias descubiertas en esta categoría.</div>';
+    hydrateArtifactArt(grid);
     grid.querySelectorAll("[data-artifact-equip]").forEach(b=>b.addEventListener("click",()=>equipNamedArtifact(b.dataset.artifactEquip)));
     grid.querySelectorAll("[data-artifact-unequip]").forEach(b=>b.addEventListener("click",()=>unequipNamedArtifact()));
     grid.querySelectorAll("[data-artifact-history]").forEach(b=>b.addEventListener("click",()=>showArtifactHistory(b.dataset.artifactHistory)));
