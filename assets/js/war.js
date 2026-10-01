@@ -149,7 +149,7 @@ async function renderRanking(){
 async function renderBattles(){
   const reports=await rpc("my_battle_reports",{p_limit:50});
   const rows=reports.length?reports.map(r=>`<div class="battle-row"><div><span class="tag ${r.result==="VICTORY"?"win":"loss"}">${r.result==="VICTORY"?"VICTORIA":"DERROTA"}</span></div><div><strong><button class="player-link" data-profile="${esc(r.opponent_mage_name)}">${esc(r.opponent_mage_name)}</button></strong><small>${new Date(r.created_at).toLocaleString("es-ES")} · ${r.mode==="SIEGE"?"Asedio":"Ataque"}</small></div><div><small>TU PÉRDIDA</small><strong>${(Number(r.my_loss_bp)/100).toFixed(2)}%</strong></div><div><small>TIERRA</small><strong>${Number(r.land_change)>=0?"+":""}${n(r.land_change)}</strong></div><button class="small-action report-btn" data-battle="${esc(r.battle_id)}">INFORME</button></div>`).join(""):`<div class="empty">Todavía no has participado en ninguna batalla.</div>`;
-  $("#view-host").innerHTML=`${viewHeader("CRÓNICAS","Informes de batalla","Cada choque queda registrado golpe a golpe.")}<div class="panel"><div class="battle-list">${rows}</div></div>`;
+  $("#view-host").innerHTML=`<div class="panel"><div class="battle-list">${rows}</div></div>`;
   $$(".report-btn").forEach(b=>b.addEventListener("click",()=>openBattleReport(b.dataset.battle)));
 }
 async function openBattleReport(id,silent=false){
