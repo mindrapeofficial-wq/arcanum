@@ -1007,3 +1007,5 @@ button[data-view="ranking"] .nav-icon{filter:drop-shadow(0 0 5px rgba(246,206,11
 .ranking-general-score{color:#f1c86f;text-shadow:0 0 8px rgba(231,171,58,.28)}
 .ranking-panel .rank-me{background:rgba(190,128,37,.08)}
 @media(max-width:720px){.ranking-tabs{grid-template-columns:1fr}.ranking-panel-head{align-items:flex-start;flex-direction:column;gap:5px}.ranking-panel-head p{text-align:left}}
+
+.profile-alliance-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.profile-action.danger{border-color:rgba(165,67,55,.5);background:linear-gradient(180deg,rgba(132,45,34,.22),rgba(49,17,13,.3));color:#d9a39a}.profile-action.danger:hover{border-color:#b95e50;color:#f0b8ae}
