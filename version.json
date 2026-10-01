@@ -1,6 +1,6 @@
 {
-  "version": "0.3.37",
+  "version": "0.3.39",
   "channel": "beta",
-  "updated_at": "2026-10-01T16:55:00+02:00",
-  "note": "Separa Puntuación Reino de Ascendencia y reduce la exploración base a 4-8 acres por turno"
+  "updated_at": "2026-10-01T19:00:00+02:00",
+  "note": "Duelo: grados I-III, 23 habilidades y 21 armas nuevas, probabilidades de evolucion visibles"
 }

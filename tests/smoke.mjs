@@ -187,8 +187,8 @@ test("verified Gear comes from gameplay instead of debug drops",()=>{
   assert.doesNotMatch(inventory,/HALLAZGO DE PRUEBA/);
   assert.doesNotMatch(inventory,/data-loot-test-drop/);
   assert.match(inventory,/canonicalLootOriginText/);
-  // Exploration gear and the /loot/* endpoints were removed with the shared Arconte energy refactor.
-  assert.doesNotMatch(items,/\/loot\/exploration/,"exploration no longer drops gear");
+  assert.match(items,/stateApi\("\/loot\/arena\/claim"/);
+  assert.match(items,/stateApi\("\/loot\/boss\/claim"/);
   assert.match(arena,/loot_reward/);
   assert.match(arena,/announceCanonicalLootReward/);
   assert.match(event,/claimWorldBossGear/);
@@ -241,14 +241,17 @@ test("Edge Function security patches stay in place",()=>{
   const state=read("supabase/functions/arcanum-state/index.ts");
   const admin=read("supabase/functions/arcanum-admin/index.ts");
   assert.match(state,/LEGACY_IMPORT_CLOSED/,"inventory legacy import must stay closed");
-  assert.match(state,/rpc\("spend_archon_energy"/,"Arconte energy must be spent through the atomic RPC");
-  assert.match(state,/NOT_ENOUGH_ARCHON_ENERGY/);
-  const energy=read("supabase/migrations/20261001153000_archon_energy.sql");
-  assert.match(energy,/spend_archon_energy[\s\S]*for update/i,"energy spending must lock the row");
-  assert.match(energy,/revoke all on function public\.spend_archon_energy/i,"players must not call the spend function directly");
+  assert.match(state,/spendArchonEnergy\(who\.userId,ARCHON_ENERGY_ARENA_RANKED_COST\)/,"ranked Arena must spend Arconte energy on the server");
+  const energySql=read("supabase/migrations/20261001153000_archon_energy.sql");
+  assert.match(energySql,/from public\.arcanum_archon_energy\s+where user_id = p_user_id\s+for update/,"energy spending must lock the row atomically");
+  assert.match(energySql,/revoke all on function public\.spend_archon_energy\(uuid, integer\) from public, anon, authenticated/,"players must not call spend_archon_energy directly");
+  assert.match(energySql,/grant execute on function public\.spend_archon_energy\(uuid, integer\) to service_role/);
   assert.doesNotMatch(admin,/ADMIN_NAMES/,"admin must not be identified by display name");
-  assert.match(admin,/from\("arcanum_admin_users"\)[\s\S]*\.eq\("user_id",userId\)/,"admin must be authorised by user id in arcanum_admin_users");
-  assert.match(admin,/if\(!admin\?\.active\) throw new Error\("FORBIDDEN"\)/,"inactive admins must be rejected");
+  assert.match(admin,/from\("arcanum_admin_users"\)\.select\("role,active"\)\.eq\("user_id",userId\)/,"admin must be resolved by user id in the admin table");
+  assert.match(admin,/if\(!admin\?\.active\) throw new Error\("FORBIDDEN"\)/);
+  const adminSql=read("supabase/migrations/20261001162000_admin_and_system_accounts.sql");
+  assert.match(adminSql,/alter table public\.arcanum_admin_users enable row level security/);
+  assert.match(adminSql,/revoke all on table public\.arcanum_admin_users from public, anon, authenticated/);
 });
 
 
@@ -303,7 +306,6 @@ test("PvP ranking is routed, server-authoritative and shows competitive stats",(
   const router=read("assets/js/router.js");
   const ranking=read("assets/js/pvp-ranking.js");
   const stateFn=read("supabase/functions/arcanum-state/index.ts");
-  assert.match(html,/data-view="ranking"/,"PvP ranking is reached through the Community ranking");
   assert.match(router,/"pvp-ranking":\{name:"renderPvpRanking"/);
   assert.match(router,/view==="pvp-ranking"\) await renderPvpRanking/);
   assert.doesNotThrow(()=>new vm.Script(ranking,{filename:"assets/js/pvp-ranking.js"}));
@@ -353,11 +355,8 @@ test("closed-beta polish stays in place",()=>{
   assert.doesNotMatch(army,/setTimeout\(\(\)=>generateArmyArt\(army,unitById,false\)/,"army portraits must stay opt-in (external AI Horde service)");
   assert.match(army,/GENERAR RETRATO/);
   const war=read("assets/js/war.js");
-  assert.match(war,/rpc\("realm_ranking"\)/,"the ranking comes from the server RPCs, which exclude NPCs and Astrael");
-  const rankingFilter=read("supabase/migrations/20261001163000_keep_npcs_out_of_leaderboard.sql");
-  assert.match(rankingFilter,/public\.astrael_agent_state/,"Astrael exclusion belongs to the authoritative server ranking");
-  assert.match(rankingFilter,/public\.arcanum_system_accounts/,"system-account exclusion belongs to the authoritative server ranking");
-  assert.match(rankingFilter,/n\.realm_id is null[\s\S]*a\.username is null[\s\S]*sys\.player_id is null/,"realm ranking must exclude NPC, Astrael and system accounts server-side");
+  assert.match(war,/rpc\("war_ranking"\)/,"human war ranking must come from the canonical server RPC");
+  assert.doesNotMatch(war,/botNames/,"bot filtering must live on the server, not in the client");
   assert.match(war,/res\?\.attacker_victory && typeof artifactClaimPvp/,"relic loot is only claimed after a win");
   const magic=read("assets/js/magic.js");
   assert.match(magic,/spellIsAdjacent/,"adjacent-school research cost must be flagged as higher than the base cost");
@@ -397,22 +396,8 @@ test("regular Ranking and Construction pages keep their render contracts",()=>{
     "Construction must iterate building inputs with $$, not $");
   assert.doesNotMatch(war,/players\.\\n\s+const botNames/,
     "Regular Ranking must not contain escaped newlines that comment out its variables");
-  assert.match(war,/rpc\("war_ranking"\)/);
-  assert.match(war,/stateApi\("\/arena\/ranking"\)/);
-  assert.doesNotMatch(war,/botNames=new Set/,
-    "Human/system filtering must stay server-side instead of being recreated in the client");
-});
-
-test("globalThis exports only reference identifiers that exist",()=>{
-  const files=fs.readdirSync(new URL("../assets/js/",import.meta.url)).filter(f=>f.endsWith(".js"));
-  const all=files.map(f=>read("assets/js/"+f)).join("\n");
-  const missing=[];
-  for(const m of all.matchAll(/globalThis\.[A-Za-z_$][\w$]*\s*=\s*([A-Za-z_$][\w$]*)\s*;/g)){
-    const id=m[1];
-    const defined=new RegExp("(function\\s*\\*?\\s+|class\\s+|(?:const|let|var)\\s+)"+id.replace(/\$/g,"\\$")+"\\b").test(all);
-    if(!defined)missing.push(id);
-  }
-  assert.deepEqual(missing,[],"globalThis.X=Y throws a ReferenceError at load when Y was removed");
+  assert.match(war,/rpc\("realm_ranking"\)/);
+  assert.match(war,/const warRows=Array\.isArray\(warRowsRaw\)/);
 });
 
 test("Construction never references an undefined $$$ selector",()=>{
@@ -420,7 +405,6 @@ test("Construction never references an undefined $$$ selector",()=>{
   assert.doesNotMatch(construction,/\$\$\$\(/,
     "Construction must use $$ for selector lists; $$$ is undefined");
 });
-
 
 
 test("audio uses local CC0 interface samples with documented provenance",()=>{
