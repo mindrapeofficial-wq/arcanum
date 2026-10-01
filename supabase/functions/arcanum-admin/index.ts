@@ -51,9 +51,10 @@ async function summary(){
   return {counts,boss:boss||[],maintenance:maintenance||null,audit:auditRows||[]};
 }
 async function players(){
-  const [presence,arena,combat,inventory,domains,artifacts,pve]=await Promise.all([
+  const [presence,arena,energy,combat,inventory,domains,artifacts,pve]=await Promise.all([
     db.from("arcanum_presence").select("*").order("last_seen",{ascending:false}).limit(300),
     db.from("arcanum_arena_state").select("*").limit(300),
+    db.from("arcanum_archon_energy").select("user_id,energy,energy_updated_at").limit(300),
     db.from("arcanum_combat_profiles").select("user_id,username,school_code,updated_at").limit(300),
     db.from("arcanum_inventory_state").select("user_id,username,state,updated_at").limit(300),
     db.from("arcanum_domains").select("*").limit(300),
@@ -64,6 +65,7 @@ async function players(){
   const ensure=(name:string)=>{const k=String(name||"").trim().toLowerCase();if(!k)return null;if(!map.has(k))map.set(k,{username:name});return map.get(k)};
   for(const r of presence.data||[])Object.assign(ensure(r.username),{user_id:r.user_id,school_code:r.school_code,last_seen:r.last_seen});
   for(const r of arena.data||[])Object.assign(ensure(r.username),{arena:r});
+  for(const r of energy.data||[]){const x=[...map.values()].find((p:any)=>String(p?.user_id||"")===String(r.user_id));if(x)x.energy=r}
   for(const r of combat.data||[])Object.assign(ensure(r.username),{user_id:r.user_id,school_code:r.school_code,combat:r});
   for(const r of inventory.data||[])Object.assign(ensure(r.username),{inventory_count:Array.isArray(r.state?.items)?r.state.items.length:0});
   for(const r of domains.data||[])Object.assign(ensure(r.character_name),{domain_name:r.domain_name});
@@ -88,14 +90,32 @@ async function act(who:any,body:any){
     await db.from("arcanum_admin_settings").upsert({key:"maintenance",value:{enabled,message},updated_at:new Date().toISOString()});
     await audit(who,action,"system","maintenance",{enabled,message}); return {ok:true,maintenance:{enabled,message}};
   }
+  if(action==="boss:create"){
+    const bossName=String(body?.boss_name||"El Devorador del Umbral").trim().slice(0,120);
+    const maxHp=Math.max(1,Math.min(1000000000,Math.floor(Number(body?.max_hp||500000))));
+    const starts=new Date(String(body?.starts_at||new Date().toISOString()));
+    const ends=new Date(String(body?.ends_at||new Date(Date.now()+7*86400000).toISOString()));
+    if(!Number.isFinite(starts.getTime())||!Number.isFinite(ends.getTime())||ends<=starts)throw new Error("INVALID_BOSS_WINDOW");
+    const day=starts.toISOString().slice(0,10).replaceAll("-","");
+    const eventId="umbra-"+day+"-"+crypto.randomUUID().slice(0,6);
+    const row={event_id:eventId,boss_name:bossName||"El Devorador del Umbral",max_hp:maxHp,current_hp:maxHp,status:"active",starts_at:starts.toISOString(),ends_at:ends.toISOString(),defeated_at:null};
+    const {error}=await db.from("arcanum_world_boss_events").insert(row);if(error)throw error;
+    await audit(who,action,"boss",eventId,row);return {ok:true,event_id:eventId,boss:row};
+  }
   if(!target) throw new Error("TARGET_REQUIRED");
   if(action==="arena:update"){
     const patch:any={updated_at:new Date().toISOString()};
     if(body.rating!=null)patch.rating=Math.max(100,Math.floor(Number(body.rating)));
-    if(body.seals!=null)patch.seals_remaining=Math.max(0,Math.min(6,Math.floor(Number(body.seals))));
+    if(body.ranked_used!=null)patch.ranked_used=Math.max(0,Math.min(6,Math.floor(Number(body.ranked_used))));
+    if(body.ranked_used!=null)patch.ranked_day=new Intl.DateTimeFormat("en-CA",{timeZone:"Europe/Madrid"}).format(new Date());
     if(body.wins!=null)patch.wins=Math.max(0,Math.floor(Number(body.wins)));
     if(body.losses!=null)patch.losses=Math.max(0,Math.floor(Number(body.losses)));
-    const {error}=await db.from("arcanum_arena_state").update(patch).ilike("username",target);if(error)throw error;
+    const {data:arenaRow,error}=await db.from("arcanum_arena_state").update(patch).ilike("username",target).select("user_id").maybeSingle();if(error)throw error;
+    if(body.energy!=null&&arenaRow?.user_id){
+      const amount=Math.max(0,Math.min(12,Math.floor(Number(body.energy))));
+      const {error:energyError}=await db.from("arcanum_archon_energy").upsert({user_id:arenaRow.user_id,energy:amount,energy_updated_at:new Date().toISOString(),updated_at:new Date().toISOString()},{onConflict:"user_id"});if(energyError)throw energyError;
+      patch.energy=amount;
+    }
     await audit(who,action,"player",target,patch);return {ok:true};
   }
   if(action==="inventory:clear"){
@@ -134,7 +154,7 @@ async function act(who:any,body:any){
     await audit(who,action,"market",target,{});return {ok:true};
   }
   if(action==="boss:update"){
-    const patch:any={}; if(body.current_hp!=null)patch.current_hp=Math.max(0,Math.floor(Number(body.current_hp))); if(body.status)patch.status=String(body.status);
+    const patch:any={}; if(body.current_hp!=null)patch.current_hp=Math.max(0,Math.floor(Number(body.current_hp))); if(body.status){const status=String(body.status);if(!["active","defeated","closed"].includes(status))throw new Error("INVALID_BOSS_STATUS");patch.status=status;}
     if(patch.current_hp===0&&patch.status==="defeated")patch.defeated_at=new Date().toISOString();
     const {error}=await db.from("arcanum_world_boss_events").update(patch).eq("event_id",target);if(error)throw error;
     await audit(who,action,"boss",target,patch);return {ok:true};
