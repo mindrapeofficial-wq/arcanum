@@ -13,6 +13,10 @@ const DISCORD_INVITE_URL = ""; // pon aquí la invitación pública del Discord 
 let luckSupportState = null;
 let luckSupportTimer = null;
 let luckSupportBooted = false;
+const SUPPORTER_CACHE_MS = 300000;
+const SUPPORTER_BATCH = 150;
+const supporterCache = new Map(); // lower-case mage name -> {tier, at}
+let supporterDecorateTimer = null;
 
 function luckTimeLeftText(seconds) {
   const s = Math.max(0, Math.floor(Number(seconds) || 0));
@@ -126,7 +130,7 @@ function supporterSectionHtml(state) {
     <div class="luck-actions"><a class="support-link" href="https://paypal.me/mindrapecorp" target="_blank" rel="noopener noreferrer">✦ Apoyar el proyecto</a></div>`;
   return `<section class="luck-section"><span class="section-kicker">ESTATUS DE APOYO</span>
     <div class="luck-status"><strong class="${sup.supporter ? "luck-on" : ""}">${esc(supporterTierLabel(sup.tier).toUpperCase())}</strong><small>${n(sup.credit_points || 0)} puntos de apoyo</small></div>
-    <ul class="luck-perks">${list}</ul>${help}</section>`;
+    <ul class="luck-perks">${list}</ul>${sup.supporter ? `<label class="luck-switch"><input id="supporter-badge-visible" type="checkbox" ${sup.badge_visible ? "checked" : ""}> Mostrar mi insignia a los demás jugadores</label>` : ""}${help}</section>`;
 }
 
 function notesSectionHtml(state) {
@@ -177,6 +181,7 @@ function wireLuckSupportModal() {
     try { await rpc("unlink_discord"); await openLuckSupport(); }
     catch (error) { toast(luckSupportError(error), "error"); btn.disabled = false; }
   });
+  $("#supporter-badge-visible")?.addEventListener("change", toggleSupporterBadge);
   $("#support-notes-save")?.addEventListener("click", saveSupportNotes);
   $("#support-notes")?.addEventListener("input", updateNotesCount);
 }
@@ -207,3 +212,80 @@ document.addEventListener("DOMContentLoaded", () => {
   $("#luck-support-button")?.addEventListener("click", openLuckSupport);
   startLuckSupport();
 });
+
+/* ---------- Insignia de apoyo visible para los demás ---------- */
+function supporterBadgeTitle(tier){
+  return tier === "patron" ? "Mecenas de ARCANUM" : "Colaborador de ARCANUM";
+}
+function collectProfileNames(root){
+  const names = new Set();
+  root.querySelectorAll("[data-profile]").forEach(el => {
+    if (el.dataset.supporterChecked) return;
+    const name = String(el.dataset.profile || "").trim();
+    if (name) names.add(name);
+  });
+  return [...names];
+}
+function applySupporterBadges(root, tiers) {
+  root.querySelectorAll("[data-profile]").forEach(el => {
+    if (el.dataset.supporterChecked) return;
+    const tier = tiers.get(String(el.dataset.profile || "").trim().toLowerCase());
+    el.dataset.supporterChecked = "1";
+    if (!tier) return;
+    const badge = document.createElement("span");
+    badge.className = "supporter-badge " + tier;
+    badge.textContent = "✦";
+    badge.title = supporterBadgeTitle(tier);
+    badge.setAttribute("aria-label", supporterBadgeTitle(tier));
+    el.insertAdjacentElement("afterend", badge);
+  });
+}
+async function decorateSupporterBadges(root) {
+  if (!root || !realmState?.realm) return;
+  const names = collectProfileNames(root);
+  if (!names.length) return;
+  const now = Date.now();
+  const tiers = new Map();
+  const missing = [];
+  for (const name of names) {
+    const key = name.toLowerCase();
+    const cached = supporterCache.get(key);
+    if (cached && now - cached.at < SUPPORTER_CACHE_MS) { if (cached.tier) tiers.set(key, cached.tier); }
+    else missing.push(name);
+  }
+  for (let i = 0; i < missing.length; i += SUPPORTER_BATCH) {
+    const batch = missing.slice(i, i + SUPPORTER_BATCH);
+    try {
+      const res = await rpc("supporters_among", { p_names: batch });
+      for (const name of batch) {
+        const tier = res?.[name.toLowerCase()] || null;
+        supporterCache.set(name.toLowerCase(), { tier, at: now });
+        if (tier) tiers.set(name.toLowerCase(), tier);
+      }
+    } catch (_) { return; } // RPC not deployed yet: no badges, no errors
+  }
+  applySupporterBadges(root, tiers);
+}
+function queueSupporterDecoration() {
+  clearTimeout(supporterDecorateTimer);
+  supporterDecorateTimer = setTimeout(() => {
+    for (const id of ["view-host", "modal-content"]) decorateSupporterBadges(document.getElementById(id));
+  }, 400);
+}
+document.addEventListener("DOMContentLoaded", () => {
+  const observer = new MutationObserver(queueSupporterDecoration);
+  for (const id of ["view-host", "modal-content"]) {
+    const el = document.getElementById(id);
+    if (el) observer.observe(el, { subtree: true, childList: true });
+  }
+});
+
+async function toggleSupporterBadge(event) {
+  const box = event.currentTarget; box.disabled = true;
+  try {
+    await rpc("set_supporter_badge_visible", { p_visible: box.checked });
+    supporterCache.clear();
+    toast(box.checked ? "Tu insignia es visible para los demás." : "Tu insignia está oculta.", "success", 2400);
+  } catch (error) { box.checked = !box.checked; toast(luckSupportError(error), "error"); }
+  finally { box.disabled = false; }
+}

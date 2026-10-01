@@ -53,3 +53,6 @@ Migration `20261001200000_pillage.sql`, tests `supabase/tests/pillage.sql` (dry-
 | Client | **SAQUEAR** button in the war list, labels in reports and chronicle |
 
 Not done: pillage does not yet steal or burn gold/mana, and the war ranking counts pillage wins like any other win. Both are open design questions.
+
+## Status: mana crisis and supporter badge (implemented in the repo, NOT deployed)
+Migration `20261001210000_mana_crisis_and_supporter_badge.sql`, tests `supabase/tests/mana_crisis_badge.sql`, doc `MANA_CRISIS.md`. The mana rule ships **OFF** behind `rulesets.config->>'mana_crisis'`; the badge lookup and the client panels are read-only.

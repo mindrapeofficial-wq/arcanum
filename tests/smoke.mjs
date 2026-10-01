@@ -443,7 +443,7 @@ test("planning tools: recruit plan sanitization is bounded and LOCAL_ONLY",()=>{
   assert.equal(out[0].value,90);
   assert.equal(out[1].mode,"count");
   const src=read("assets/js/realm-tools.js");
-  assert.doesNotMatch(src,/rpc\("(?!recruit_units|my_realm_state)/,"Planning tools may only call recruit_units and my_realm_state");
+  assert.doesNotMatch(src,/rpc\("(?!recruit_units|my_realm_state|mana_crisis_preview|my_recent_mana_crisis)/,"Planning tools may only call recruit_units, my_realm_state and the two read-only mana crisis RPCs");
 });
 
 test("planning tools: formation calculator is derived and never invents power",()=>{
@@ -540,7 +540,7 @@ test("Lady Luck client helpers format time, tier and bonuses",()=>{
 test("Lady Luck client only reads server state and never stores it locally",()=>{
   const src=read("assets/js/luck-support.js");
   assert.doesNotMatch(src,/localStorage|sessionStorage/,"luck and supporter state are server canonical");
-  const allowed=new Set(["my_luck_status","my_supporter_status","my_discord_link","create_discord_link_code","unlink_discord","get_my_notes","save_my_notes"]);
+  const allowed=new Set(["my_luck_status","my_supporter_status","my_discord_link","create_discord_link_code","unlink_discord","get_my_notes","save_my_notes","supporters_among","set_supporter_badge_visible"]);
   const used=[...src.matchAll(/rpc\("([a-z_]+)"/g)].map(m=>m[1]);
   assert.ok(used.length>=7);
   for(const name of used)assert.ok(allowed.has(name),"unexpected RPC: "+name);
@@ -652,4 +652,49 @@ test("players table is not writable by signed-in players",()=>{
     const src=read("assets/js/"+f);
     assert.doesNotMatch(src,/\/rest\/v1\/players/,f+" must not write to the players table directly");
   }
+});
+
+test("mana crisis client explains the rule and never decides it",()=>{
+  const context={document:{addEventListener(){}},esc:x=>String(x)};
+  vm.createContext(context);
+  vm.runInContext(read("assets/js/realm-tools.js"),context);
+  assert.equal(vm.runInContext("manaRiskHtml(null)",context),"");
+  assert.equal(vm.runInContext("manaRiskHtml({enabled:false,would_lose_first:[{unit_id:'a',quantity:1,mana_upkeep:1}]})",context),"","a disabled rule must stay invisible");
+  assert.equal(vm.runInContext("manaRiskHtml({enabled:true,would_lose_first:[]})",context),"");
+  const html=vm.runInContext("manaRiskHtml({enabled:true,mana:500,army_mana_upkeep:755,would_lose_first:[{unit_id:'treant',name_es:'Treant',quantity:1000,mana_upkeep:630},{unit_id:'archangel',name_es:'Arcángel',quantity:100,mana_upkeep:125}]})",context);
+  assert.match(html,/Treant/);
+  assert.match(html,/se perdería primero/);
+  assert.match(html,/stacks completos/);
+  assert.match(vm.runInContext("manaCrisisToastText({removed:[{unit_id:'treant',name_es:'Treant',quantity:1000}]})",context),/has perdido 1\.?000 Treant/);
+  assert.match(vm.runInContext("manaCrisisToastText({removed:[]})",context),/no cubría/);
+  const src=read("assets/js/realm-tools.js");
+  assert.match(src,/localStorage\.setItem\(manaCrisisSeenKey\(\),String\(Math\.max/,"crisis notice only stores the last seen event id (UI state)");
+  assert.doesNotMatch(src,/rpc\("(?:run_economy|disband_units|recruit_units)"[^)]*crisis/i,"the client never applies the crisis itself");
+});
+
+test("supporter badge is decorated from one batched read RPC and can be hidden",()=>{
+  const src=read("assets/js/luck-support.js");
+  assert.match(src,/rpc\("supporters_among"/);
+  assert.match(src,/rpc\("set_supporter_badge_visible"/);
+  assert.match(src,/SUPPORTER_BATCH/);
+  assert.match(src,/MutationObserver/);
+  assert.match(src,/supporter-checked|supporterChecked/,"already decorated rows must not be queried again");
+  assert.doesNotMatch(src,/localStorage|sessionStorage/);
+});
+
+test("mana crisis migration is feature-flagged OFF and patches the economy defensively",()=>{
+  const sql=read("supabase/migrations/20261001210000_mana_crisis_and_supporter_badge.sql");
+  assert.match(sql,/coalesce\(rs\.config->>'mana_crisis', 'off'\) = 'on'/,"the rule only runs when the ruleset flag is on");
+  assert.doesNotMatch(sql,/^\s*update public\.rulesets/m,"the migration must not switch the flag on by itself");
+  assert.match(sql,/not found exactly once; not patching/,"the economy patch aborts if the text moved");
+  assert.match(sql,/order by \(a\.quantity::numeric \* u\.upkeep_mana::numeric\) desc/,"largest total drain first");
+  assert.match(sql,/'MANA_CRISIS'/);
+  for(const fn of ["private.mana_crisis_candidates(uuid)","private.resolve_mana_crisis(uuid, bigint)"])
+    assert.ok(sql.includes("revoke all on function "+fn+" from public, anon, authenticated"),fn+" must not be callable by players");
+  for(const fn of ["public.mana_crisis_preview()","public.my_recent_mana_crisis()","public.supporters_among(text[])","public.set_supporter_badge_visible(boolean)"]){
+    assert.ok(sql.includes("revoke all on function "+fn+" from public, anon;"),fn+" must be closed to anon");
+    assert.ok(sql.includes("grant execute on function "+fn+" to authenticated;"),fn+" must be callable by players");
+  }
+  assert.match(sql,/cardinality\(p_names\) > 200/,"the badge lookup is bounded");
+  assert.match(sql,/not sp\.badge_hidden/,"hidden badges are never returned");
 });

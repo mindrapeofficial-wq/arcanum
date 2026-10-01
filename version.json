@@ -1,6 +1,6 @@
 {
-  "version": "0.3.44",
+  "version": "0.3.45",
   "channel": "beta",
-  "updated_at": "2026-10-01T19:55:14+00:00",
-  "note": "Ejército y Guerra: alerta de maná, costes de unidad, plan de reposición, calculadora de formaciones, informe de batalla ampliado y mensajes de guerra opcionales"
+  "updated_at": "2026-10-01T20:10:58+00:00",
+  "note": "Insignia de apoyo visible, aviso de riesgo de maná y notificación de crisis de maná"
 }

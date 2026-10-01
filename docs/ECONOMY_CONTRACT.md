@@ -124,6 +124,10 @@ Lady Luck is a **server-side modifier**, not a resource. While `arcanum_luck.exp
 
 The client may display the status and the bonus list returned by `my_luck_status()`; it must never apply the bonuses to its own estimates. Luck does not stack and is never a spendable amount. See `docs/LUCK_AND_SUPPORT.md`.
 
+## Mana crisis (0.3.45, feature-flagged OFF)
+
+Core can remove whole unit stacks when army mana upkeep cannot be paid. It is a **server rule** controlled by `rulesets.config->>'mana_crisis'` and ships `off`. The client may show the preview and past crises returned by `mana_crisis_preview()` / `my_recent_mana_crisis()`; it must never remove or recompute units itself. Details: `docs/MANA_CRISIS.md`.
+
 ## Economy loop
 
 `Turns -> Economy / Exploration / Research / Recruitment / War`

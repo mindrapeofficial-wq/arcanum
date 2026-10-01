@@ -19,3 +19,11 @@
 .luck-notes{width:100%;min-height:120px;padding:8px;background:#0f0c08;color:var(--text);border:1px solid var(--line);border-radius:0;font:13px/1.5 Arial,sans-serif;resize:vertical}
 .luck-section .tools-note{margin:0;color:#9b8e7e;font:11px/1.55 Arial,sans-serif}
 .luck-section .support-link{display:inline-flex}
+
+/* Insignia de apoyo y riesgo de maná (0.3.45) */
+.supporter-badge{margin-left:5px;color:var(--gold-hot);font:700 11px Arial,sans-serif;cursor:help}
+.supporter-badge.patron{color:#ffe7a6;text-shadow:0 0 6px rgba(255,209,109,.7)}
+.luck-switch{display:flex;gap:8px;align-items:center;color:var(--gold-pale);font:12px Arial,sans-serif}
+.mana-risk-list{margin:8px 0 0;padding-left:18px;color:var(--gold-pale);font:12px/1.7 Arial,sans-serif}
+.mana-risk-list em{color:var(--danger);font-style:normal}
+#mana-risk-panel .tools-note{margin:0 0 6px;color:#9b8e7e;font:11px/1.55 Arial,sans-serif}

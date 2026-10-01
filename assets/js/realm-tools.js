@@ -6,6 +6,9 @@
    - Plan de reposición: preferencia LOCAL_ONLY; ejecutar el plan lanza reclutamientos reales y validados por el Core.
    - Calculadora de formaciones: indicador DERIVED, sin coste ni efecto sobre el estado. */
 
+const MANA_CRISIS_SEEN_PREFIX="arcanum_mana_crisis_seen_v1_";
+const MANA_CRISIS_POLL_MS=120000;
+let manaCrisisTimer=null;
 const RECRUIT_PLAN_PREFIX="arcanum_recruit_plan_v1_";
 const RECRUIT_PLAN_MAX_ENTRIES=8;
 const RECRUIT_PLAN_MAX_PERCENT=90;
@@ -169,7 +172,7 @@ function renderRealmTools(army,unitById,compatible){
   const rows=recruitPlanShortfall(loadRecruitPlan(new Set((compatible||[]).map(u=>u.id))),army);
   const short=rows.filter(r=>r.missing>0).length;
   const calcRows=[...known.values()].map(u=>`<label class="calc-row"><span>${esc(u.name_es)}</span><input type="number" min="0" max="10000000" step="1" value="0" inputmode="numeric" data-calc-unit="${esc(u.id)}" aria-label="Cantidad de ${esc(u.name_es)}" /></label>`).join("");
-  return `<div class="grid-2 realm-tools" style="margin-top:14px">
+  return `<div id="mana-risk-panel" class="panel hidden" style="margin-top:14px"></div><div class="grid-2 realm-tools" style="margin-top:14px">
     <div class="panel" id="recruit-plan-panel">
       <h3>Plan de reposición ${short?`<span class="tag plan-alert">${short} bajo objetivo</span>`:""}</h3>
       <p class="tools-note">Fija cuántas unidades quieres mantener (número fijo o % de tu ejército). El plan se guarda solo en este navegador; al pulsar REPONER se lanzan reclutamientos reales de 1 turno validados por el servidor.</p>
@@ -195,6 +198,7 @@ function renderRealmTools(army,unitById,compatible){
   </div>`;
 }
 function wireRealmTools(army,unitById,compatible){
+  loadManaRisk();
   const allowed=new Set((compatible||[]).map(u=>u.id));
   const rerenderPlan=()=>{
     const rows=recruitPlanShortfall(loadRecruitPlan(allowed),army);
@@ -223,3 +227,53 @@ function recruitUnitInfoHtml(u){
   if(!u)return "";
   return `<small class="recruit-unit-info"><b>Coste por unidad:</b> ${esc(unitCostText(u))}<br><b>Mantenimiento (catálogo):</b> ${esc(unitUpkeepText(u))}</small>`;
 }
+
+/* ---------- Crisis de maná (la regla vive en el Core; esto solo informa) ---------- */
+function manaRiskHtml(preview){
+  if(!preview||!preview.enabled)return "";
+  const list=Array.isArray(preview.would_lose_first)?preview.would_lose_first:[];
+  if(!list.length)return "";
+  const upkeep=Math.max(0,Number(preview.army_mana_upkeep)||0);
+  const first=list[0];
+  const rows=list.slice(0,4).map((s,i)=>`<li><b>${esc(s.name_es||s.unit_id)}</b> × ${toolsNum(s.quantity,0)} · consume ${toolsNum(s.mana_upkeep,0)} maná/turno${i===0?" · <em>se perdería primero</em>":""}</li>`).join("");
+  return `<h3>Riesgo de maná</h3>
+    <p class="tools-note">Si el maná no cubre el mantenimiento de tus tropas (ahora ${toolsNum(upkeep,0)} por turno), el Core retira <b>stacks completos</b>, empezando por el que más maná consume en total, hasta cubrir el déficit. Tienes ${toolsNum(preview.mana,0)} de maná. Primero perderías <b>${esc(first.name_es||first.unit_id)}</b>.</p>
+    <ul class="mana-risk-list">${rows}</ul>`;
+}
+async function loadManaRisk(){
+  const host=$("#mana-risk-panel");
+  if(!host)return;
+  try{
+    const html=manaRiskHtml(await rpc("mana_crisis_preview"));
+    host.innerHTML=html;
+    host.classList.toggle("hidden",!html);
+  }catch(_){host.classList.add("hidden");}
+}
+function manaCrisisToastText(event){
+  const removed=Array.isArray(event?.removed)?event.removed:[];
+  if(!removed.length)return "Tu maná no cubría el mantenimiento de las tropas.";
+  const parts=removed.map(s=>`${toolsNum(s.quantity,0)} ${s.name_es||s.unit_id}`).join(", ");
+  return `Crisis de maná: sin maná para el mantenimiento, has perdido ${parts}.`;
+}
+function manaCrisisSeenKey(){
+  const mage=String(realmState?.realm?.mage_name||"anon").toLowerCase().replace(/[^a-z0-9_-]+/g,"_");
+  return MANA_CRISIS_SEEN_PREFIX+mage;
+}
+async function checkManaCrisisNotice(){
+  if(!realmState?.realm)return;
+  try{
+    const events=await rpc("my_recent_mana_crisis");
+    if(!Array.isArray(events)||!events.length)return;
+    let seen=0;
+    try{seen=Number(localStorage.getItem(manaCrisisSeenKey()))||0;}catch{}
+    const fresh=events.filter(e=>Number(e.id)>seen).sort((a,b)=>Number(a.id)-Number(b.id));
+    for(const event of fresh)toast(manaCrisisToastText(event),"error",9000);
+    if(fresh.length){try{localStorage.setItem(manaCrisisSeenKey(),String(Math.max(...events.map(e=>Number(e.id)))));}catch{}}
+  }catch(_){/* RPC not deployed yet or session expired */}
+}
+function startManaCrisisWatch(){
+  clearInterval(manaCrisisTimer);
+  manaCrisisTimer=setInterval(checkManaCrisisNotice,MANA_CRISIS_POLL_MS);
+  setTimeout(checkManaCrisisNotice,6000);
+}
+if(typeof document!=="undefined")document.addEventListener("DOMContentLoaded",startManaCrisisWatch);

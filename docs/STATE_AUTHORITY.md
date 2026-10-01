@@ -32,6 +32,9 @@ The browser is never allowed to be the source of truth for progression or compet
 | Discord link | Discord id ↔ Arconte, one-time link codes, daily claim day | ARCANUM Supabase (`arcanum_discord_links`) | SERVER_CANONICAL since 0.3.39 |
 | Shields (damage protection, meditation) | 24 h shield after >30% army loss; 3-day opt-in meditation, 14-day cooldown | ARCANUM Supabase (`realm_shields`) | SERVER_CANONICAL since 0.3.40 |
 | Procedural inventory | items, equipment, loot rolls | ARCANUM Supabase / arcanum-state | SERVER_CANONICAL since 0.3.1 |
+| Mana crisis rule and losses | ruleset flag, removed stacks, ledger/event rows | Core Supabase (`rulesets.config`, `economy_ledger`, `realm_events`) | SERVER_CANONICAL since 0.3.45 |
+| Supporter badge visibility | `arcanum_supporters.badge_hidden` | Core Supabase | SERVER_CANONICAL since 0.3.45 |
+| Last seen mana-crisis event id | avoids repeating the toast | Browser localStorage | LOCAL_ONLY |
 | Audio settings | volumes, mute | Browser localStorage | LOCAL_ONLY |
 | Tutorial completed | tutorial marker | Browser localStorage | LOCAL_ONLY |
 | Online panel collapsed | UI preference | Browser localStorage | LOCAL_ONLY |
