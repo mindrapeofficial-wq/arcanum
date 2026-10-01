@@ -7,6 +7,7 @@ const VIEW_RENDERERS={
   market:{name:"renderMarket",src:"assets/js/market.js?v=0.2.60"},
   artifacts:{name:"renderArtifactLibrary",src:"assets/js/artifacts.js?v=0.2.60"},
   arena:{name:"renderArena",src:"assets/js/arena.js?v=0.3.6"},
+  "pvp-ranking":{name:"renderPvpRanking",src:"assets/js/pvp-ranking.js?v=0.3.27"},
   pve:{name:"renderPve",src:"assets/js/pve.js?v=0.3.7"},
   admin:{name:"renderAdminPanel",src:"assets/js/admin.js?v=0.3.22"}
 };
@@ -58,7 +59,7 @@ async function renderView(view){
     if(view==="character") await renderCharacterPage(); else if(view==="realm"){
       renderRealm();
       host.querySelector(".view-header")?.remove();
-    } else if(view==="economy") renderEconomy(); else if(view==="market") await renderMarket(); else if(view==="artifacts") await renderArtifactLibrary(); else if(view==="build") renderBuild(); else if(view==="research") renderResearch(); else if(view==="army") await renderArmy(); else if(view==="war") await renderWar(); else if(view==="arena") await renderArena(); else if(view==="pve") await renderPve(); else if(view==="event") await renderEvent(); else if(view==="ranking") await renderRanking(); else if(view==="battles") await renderBattles(); else if(view==="community") await renderCommunity(); else if(view==="tavern") await renderTavern(); else if(view==="lore") renderLore(); else if(view==="admin") await renderAdminPanel();
+    } else if(view==="economy") renderEconomy(); else if(view==="market") await renderMarket(); else if(view==="artifacts") await renderArtifactLibrary(); else if(view==="build") renderBuild(); else if(view==="research") renderResearch(); else if(view==="army") await renderArmy(); else if(view==="war") await renderWar(); else if(view==="arena") await renderArena(); else if(view==="pvp-ranking") await renderPvpRanking(); else if(view==="pve") await renderPve(); else if(view==="event") await renderEvent(); else if(view==="ranking") await renderRanking(); else if(view==="battles") await renderBattles(); else if(view==="community") await renderCommunity(); else if(view==="tavern") await renderTavern(); else if(view==="lore") renderLore(); else if(view==="admin") await renderAdminPanel();
   }catch(e){ host.innerHTML=`<div class="view-header"><div><span class="section-kicker">ARCANUM</span><h2>Error del grimorio</h2><p>${esc(humanError(e))}</p></div></div>`; }
 }
 function viewHeader(kicker,title,desc){return `<div class="view-header"><div><span class="section-kicker">${esc(kicker)}</span><h2>${esc(title)}</h2><p>${esc(desc)}</p></div></div>`;}
