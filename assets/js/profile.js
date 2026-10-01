@@ -177,7 +177,8 @@ function renderCanonicalHistory(snapshot){
   ).join("")+'</div></section>';
 }
 
-function renderPlayerProfile(profile,inbox=null,snapshot=null){
+function renderPlayerProfile(profile,inbox=null,snapshot=null,target=null){
+  const sheetHost=target||$("#modal-content");
   const alliance=profile.alliance;
   const allianceBadge=alliance?'<span class="profile-alliance-badge">['+esc(alliance.tag)+'] '+esc(alliance.name)+'</span>':"";
   let actions="";
@@ -206,7 +207,7 @@ function renderPlayerProfile(profile,inbox=null,snapshot=null){
   const equipmentPower=Number(snapshot?.inventory?.equipment_power||0);
   const renown=Number(snapshot?.trajectory?.renown?.score||0);
 
-  $("#modal-content").innerHTML=
+  sheetHost.innerHTML=
     '<section class="character-sheet player-character-sheet canonical-archmage-sheet">'+
       '<div class="profile-hero player-sheet-hero">'+profileAvatarMarkup(profile,true)+'<div class="profile-identity"><span class="section-kicker">'+(profile.is_npc?"ARCHIMAGO NPC":"IDENTIDAD CANÓNICA")+'</span><h3>'+esc(profile.mage_name)+'</h3><div class="profile-subline">'+esc(profileSchoolName(profile.school_code))+' · Nivel '+n(playerLevel)+' '+(profile.is_npc?'<span class="tag npc-tag">NPC</span>':"")+' '+allianceBadge+'</div><p class="player-sheet-purpose">Una sola persona detrás del reino: progresión, combate, siete slots de equipo, reliquias, Arena y crónica comparten esta identidad persistente.</p></div><div class="canonical-authority"><small>FUENTE</small><strong>SERVIDOR</strong></div></div>'+
       '<div class="profile-stats player-sheet-kingdom-stats canonical-summary-stats">'+
@@ -234,6 +235,40 @@ function renderPlayerProfile(profile,inbox=null,snapshot=null){
     '</section>';
   wireProfileSheet(profile);
 }
+async function renderCharacterPage(){
+  const host=$("#view-host");
+  const mageName=String(realmState?.realm?.mage_name||ownProfileBadge?.mage_name||"").trim();
+  if(!host)return;
+  if(!mageName){
+    host.innerHTML='<div class="view-header"><div><span class="section-kicker">ARCHIMAGO</span><h2>Personaje</h2><p>No se ha podido identificar a tu Archimago.</p></div></div>';
+    return;
+  }
+  activeProfileName=mageName;
+  host.innerHTML='<div class="profile-loading character-page-loading">Abriendo ficha canónica de '+esc(mageName)+'…</div>';
+  try{
+    let snapshot=typeof loadArchmageSnapshot==="function"
+      ?await loadArchmageSnapshot(mageName,{force:true})
+      :{profile:await rpc("player_profile",{p_mage_name:mageName})};
+    let profile=snapshot.profile;
+    try{
+      if(typeof combatHydrateProfile==="function")await combatHydrateProfile(profile);
+      if(typeof lootHydrateProfile==="function")await lootHydrateProfile(profile);
+      if(typeof loadArchmageSnapshot==="function"){
+        snapshot=await loadArchmageSnapshot(mageName,{force:true});
+        profile=snapshot.profile;
+      }
+    }catch(e){console.warn("Character page migration check failed",e)}
+    const inbox=await rpc("social_inbox");
+    ownProfileBadge=profile;
+    renderOwnProfileBadge();
+    renderPlayerProfile(profile,inbox,snapshot,host);
+    host.querySelector(".canonical-archmage-sheet")?.classList.add("character-page-sheet");
+  }catch(e){
+    host.innerHTML='<div class="view-header"><div><span class="section-kicker">ARCHIMAGO</span><h2>Error de personaje</h2><p>'+esc(humanError(e))+'</p></div></div>';
+  }
+}
+globalThis.renderCharacterPage=renderCharacterPage;
+
 function renderOwnSocial(profile,inbox){
   const friends=inbox?.friends||[];
   const requests=inbox?.friend_requests||[];
