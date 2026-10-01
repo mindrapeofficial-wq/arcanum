@@ -56,7 +56,6 @@ Every newly generated reward carries an `origin` object:
 Visible player labels currently include:
 - Legado inicial
 - Beta anterior
-- Exploración
 - Arena clasificada
 - Boss mundial
 - Evento
@@ -65,29 +64,10 @@ Existing beta inventory without provenance is preserved and marked as legacy rat
 
 ## Exploration
 
-Exploration uses a two-step claim.
+Normal realm Exploration does **not** grant procedural Gear.
 
-### Start
-Before the core `explore` RPC runs, `arcanum-state` snapshots:
-- requested turns,
-- turns before,
-- land before.
+Exploration belongs to the realm strategy layer and rewards territorial progress, discoveries and strategic opportunities. If exploration reveals a personal encounter or ruin, the Arconte may enter that content separately using personal Energy; only that personal activity may grant Gear.
 
-### Complete
-After the core action, `arcanum-state` verifies:
-- land actually increased,
-- the requested turns were actually consumed.
-
-Only then does the reward roll happen.
-
-Drop chance grows with committed turns and verified land gain, capped at 68%.
-
-Reward bands:
-- 1–3 turns: Scouting
-- 4–9 turns: Expedition
-- 10+ turns: Deep Exploration
-
-Deeper exploration shifts rarity weight away from Common and toward Rare/Epic.
 
 ## Ranked Arena
 
@@ -105,7 +85,7 @@ Rarity bands depend on rating after the match:
 - 1200–1499: Arena Veteran
 - 1500+: Arena Elite
 
-This uses the existing daily Seal limit as a natural anti-farm boundary.
+Ranked Arena uses shared Arconte Energy and a hard limit of 6 ranked fights per server day as its anti-farm boundary.
 
 If reward delivery fails after the match is already recorded, the match remains valid and the reward can be reclaimed idempotently.
 
@@ -132,7 +112,7 @@ A full bag never destroys an earned Gear reward.
 
 The item is generated once and stored on the claim with status `pending_inventory`.
 
-After the player frees space, opening canonical inventory or the own Archmage sheet attempts delivery again.
+After the player frees space, opening canonical inventory or the own Arconte sheet attempts delivery again.
 
 ## Debug Gear
 
