@@ -251,8 +251,8 @@ function renderArchmageInventory(profile){
     '<div class="profile-section-title"><span>INVENTARIO DEL ARCHIMAGO</span><small>'+state.items.length+' / '+ARCANUM_INVENTORY_CAP+' huecos</small></div>'+
     '<div class="loot-summary"><div><small>PODER DE EQUIPO</small><strong>'+n(total.power)+'</strong></div><div><small>PODER ARCANO</small><strong>+'+n(total.arcane_power)+'</strong></div><div><small>VIDA</small><strong>+'+n(total.life)+'</strong></div><div><small>MANÁ</small><strong>+'+n(total.mana)+'</strong></div></div>'+
     '<div class="loot-equipment">'+ARCANUM_EQUIP_SLOTS.map(slot=>lootEquipmentCard(slot,state)).join("")+canonicalRelicEquipmentCard()+'</div>'+
-    '<div class="loot-toolbar"><div><strong>Cámara del Arconte</strong><small>El Gear llega de Exploración, Arena y eventos verificados por servidor.</small></div></div>'+
-    '<div class="loot-grid">'+(state.items.length?state.items.map(lootItemCard).join(""):'<div class="empty">Tu Cámara está vacía.</div>')+'</div>'+
+    '<div class="loot-toolbar"><div><strong>Mochila</strong><small>Botín obtenido en Exploración, Arena y eventos verificados por servidor.</small></div></div>'+
+    '<div class="loot-grid">'+(state.items.length?state.items.map(lootItemCard).join(""):'<div class="empty">Tu inventario está vacío.</div>')+'</div>'+
     '<div class="loot-relic-vault"><div class="loot-toolbar"><div><strong>Reliquias custodiadas</strong><small>Objetos con nombre, procedencia e historia. Sólo una puede estar vinculada.</small></div></div><div class="loot-grid relic-inventory-grid">'+canonicalRelicInventoryCards()+'</div></div>'+
     '<p class="loot-beta-note">Gear procedural y Reliquias comparten ahora el mismo modelo de equipamiento. La Biblioteca conserva el catálogo, lore e historia mundial.</p>'+
   '</section>';
@@ -269,6 +269,10 @@ function lootPreferredSlot(item,state){
   return (Number(a?.power)||0)<=(Number(b?.power)||0)?"ring1":"ring2";
 }
 function lootRefreshProfile(profile){
+  if(typeof currentView!=="undefined"&&currentView==="character"&&typeof renderCharacterPage==="function"){
+    renderCharacterPage();
+    return;
+  }
   const host=document.querySelector("[data-loot-root]");
   if(!host)return;
   const wrap=document.createElement("div");
