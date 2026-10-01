@@ -180,6 +180,10 @@ function combatApplyBonus(state,bonus){
     state.stats[effect.stat]=Number(state.stats[effect.stat]||0)+Number(effect.amount||0);
   }else if(effect.type==="stats2"&&Array.isArray(effect.stats)){
     effect.stats.forEach(function(x){if(COMBAT_STAT_META[x?.stat])state.stats[x.stat]=Number(state.stats[x.stat]||0)+Number(x.amount||0)});
+  }else if(effect.type==="familiar"&&effect.familiar){
+    if(!state.familiar)state.familiar=Object.assign(combatClone(effect.familiar),{grade:1});
+  }else if(effect.type==="familiar_upgrade"){
+    if(state.familiar&&state.familiar.id===effect.id)state.familiar.grade=Math.min(3,(Number(state.familiar.grade)||1)+1);
   }else if(effect.type==="ability_upgrade"){
     const owned=state.abilities.find(function(x){return x.id===effect.id});
     if(owned)owned.grade=Math.min(3,(Number(owned.grade)||1)+1);
@@ -193,6 +197,7 @@ function combatApplyBonus(state,bonus){
 }
 function combatEffective(raw,maxLevel=Infinity){
   const state=combatClone(raw);
+  state.familiar=state.familiar||null;
   state.bonusTraits=Array.isArray(state.bonusTraits)?state.bonusTraits:[];
   state.levelBonuses=[];
   (raw.levelBonuses||[]).slice().sort(function(a,b){return a.level-b.level}).forEach(function(bonus){
@@ -210,6 +215,8 @@ function getCombatProfile(profileOrRealm){
     const v=view.find(function(x){return x.id===a.id});
     return Object.assign({},a,{grade:Number(v?.grade||a.grade)||1,detail:v?.detail||""});
   });
+  const fam=combatViewFor(profileOrRealm?.mage_name||realmState?.realm?.mage_name||"")?.familiar||null;
+  if(state.familiar)state.familiar=Object.assign({},state.familiar,{grade:Number(fam?.grade||state.familiar.grade)||1,detail:fam?.detail||""});
   return state;
 }
 function combatTraitMods(c){
@@ -383,6 +390,10 @@ function renderCombatEvolution(profile){
   }).join("")+'</div>':"";
   return choice+historyHtml;
 }
+function combatFamiliarBlock(fam){
+  if(!fam)return "";
+  return '<div class="combat-familiar"><small>FAMILIAR</small><strong>'+esc(fam.name||"Familiar")+(Number(fam.grade)>1?' <small class="combat-grade">Grado '+COMBAT_GRADE_ROMAN[Math.min(3,Number(fam.grade))]+'</small>':"")+'</strong><span>'+esc(fam.desc||"")+'</span>'+(fam.detail?'<em class="combat-ability-detail">'+esc(fam.detail)+'</em>':'')+'</div>';
+}
 function renderCombatIdentity(profile,serverDerived=null){
   const c=getCombatProfile(profile),localDerived=combatDerived(profile);
   const d=serverDerived&&Number.isFinite(Number(serverDerived.maxHp))?serverDerived:localDerived;
@@ -394,6 +405,7 @@ function renderCombatIdentity(profile,serverDerived=null){
     '<div class="combat-summary"><div class="combat-weapon"><small>ARMA DE DUELO</small><strong>'+esc(c.weapon.name)+'</strong><span>'+esc(c.weapon.type)+' · '+c.weapon.min+'–'+c.weapon.max+' daño · '+esc(c.weapon.effect)+'</span></div><div class="combat-trait"><small>RASGOS</small><div class="combat-trait-list">'+traitText+'</div></div></div>'+
     '<div class="combat-stats">'+stats+'</div>'+
     '<div class="combat-derived"><span>❤ '+n(d.maxHp)+'</span><span>⚔ '+n(d.attack)+'</span><span>◆ '+n(d.armor)+'</span><span>⌁ '+d.speed.toFixed(1)+'</span><span>✦ '+Math.round(d.crit*100)+'% crítico</span><span>◌ '+Math.round(d.dodge*100)+'% esquiva</span>'+(d.equipmentPower?'<span class="combat-gear-power">⬡ '+n(d.equipmentPower)+' poder de equipo</span>':'')+'</div>'+
+    combatFamiliarBlock(c.familiar)+
     '<div class="profile-section-title combat-abilities-title"><span>HABILIDADES</span><small>activación automática en combate</small></div><div class="combat-abilities">'+abilities+'</div>'+
     renderCombatEvolution(profile)+'</section>';
 }

@@ -162,6 +162,65 @@ const EXTRA_WEAPONS:any[] = [
   {id:"conclave_halberd",name:"Alabarda del Cónclave",type:"Alabarda",min:10,max:15,speed:-1,block:2,school:null,effect:"Desarme +5%",odds:4,mods:{disarm:.05}}
 ];
 
+
+// ---- Duel spells (abilities with a limited number of charges per duel) and the saboteur talent.
+// Charges per grade live in ABILITY_META[id].uses. They are merged into the evolution-only catalogue.
+const SPELL_ABILITIES:any[] = [
+  {id:"despojo",name:"Despojo",school:"abyssal",desc:"Arrebatas el arma del rival y la usas contra él.",spell:true},
+  {id:"furia_arcana",name:"Furia Arcana",school:"eradication",desc:"Canalizas toda tu rabia en el siguiente golpe.",spell:true},
+  {id:"elixir_tragico",name:"Elixir Trágico",school:"verdant",desc:"Un trago amargo que devuelve parte de tu vida.",spell:true},
+  {id:"red_raices",name:"Red de Raíces",school:"verdant",desc:"Raíces enredan al rival: tu siguiente ataque no se puede esquivar.",spell:true},
+  {id:"orbe_explosivo",name:"Orbe Explosivo",school:"eradication",desc:"Un orbe inestable estalla sobre todos tus rivales.",spell:true},
+  {id:"golpe_aplastante",name:"Golpe Aplastante",school:"eradication",desc:"Un agarre brutal que ni se esquiva ni se bloquea.",spell:true},
+  {id:"diluvio_armas",name:"Diluvio de Armas",school:"abyssal",desc:"Lanzas una lluvia de armas contra tu rival.",spell:true},
+  {id:"vampirismo",name:"Vampirismo",school:"abyssal",desc:"Conviertes tu herida en daño y te curas con él.",spell:true},
+  {id:"prisa_espectral",name:"Prisa Espectral",school:"phantasm",desc:"Embistes a velocidad espectral: tu golpe gana daño según tu velocidad.",spell:true},
+  {id:"eco_onirico",name:"Eco Onírico",school:"phantasm",desc:"Copias el último conjuro que lanzó tu rival.",spell:true},
+  {id:"grito_espectral",name:"Grito Espectral",school:"abyssal",desc:"Un alarido que hace huir a los familiares enemigos.",spell:true},
+  {id:"hipnosis_onirica",name:"Hipnosis Onírica",school:"phantasm",desc:"Tomas el control del familiar rival, o convences al rival de no atacarte.",spell:true},
+  {id:"ofrenda_familiar",name:"Ofrenda al Familiar",school:"verdant",desc:"Reconfortas a tu familiar y recupera la mitad de su vida.",spell:true},
+  {id:"eco_invocado",name:"Eco Invocado",school:"phantasm",desc:"Invocas un eco más débil de ti para que luche a tu lado.",spell:true},
+  {id:"saboteador",name:"Saboteador",school:"eradication",desc:"Al empezar el duelo puedes destrozar el arma de tu rival.",spell:false}
+];
+const SPELL_META:any = {
+  despojo:{odds:3,uses:[2,3,4],p:[1,1,1],fmt:(p:number)=>"roba el arma del rival si es mejor que la tuya"},
+  furia_arcana:{odds:10,uses:[1,2,3],p:[1.5,1.6,1.7],fmt:(p:number)=>"tu siguiente golpe hace x"+String(p).replace(".",",")+" de daño"},
+  elixir_tragico:{odds:8,uses:[1,2,2],p:[.15,.17,.19],fmt:(p:number)=>"curas entre "+pc(p)+" y "+pc(p*2)+" de tu vida cuando bajas de la mitad"},
+  red_raices:{odds:10,uses:[1,2,3],p:[1,1,1],fmt:(p:number)=>"tu siguiente ataque no puede ser esquivado"},
+  orbe_explosivo:{odds:6,uses:[2,3,4],p:[.10,.12,.14],fmt:(p:number)=>"daño igual a ~"+pc(p)+" de la vida máxima de cada rival"},
+  golpe_aplastante:{odds:3,uses:[1,2,3],p:[1.2,1.35,1.5],fmt:(p:number)=>"golpe de x"+String(p).replace(".",",")+" de ataque que ignora esquiva y bloqueo"},
+  diluvio_armas:{odds:3,uses:[1,1,2],p:[.55,.60,.65],fmt:(p:number)=>"tres armas lanzadas, cada una al "+pc(p)+" de tu ataque"},
+  vampirismo:{odds:10,uses:[1,2,2],p:[.15,.17,.19],fmt:(p:number)=>"daño igual al "+pc(p)+" de la vida que te falta y te curas 1,2 veces esa cantidad"},
+  prisa_espectral:{odds:5,uses:[1,2,3],p:[1.0,1.3,1.6],fmt:(p:number)=>"tu siguiente golpe suma velocidad x"+String(p).replace(".",",")+" de daño"},
+  eco_onirico:{odds:5,uses:[1,2,3],p:[1,1,1],fmt:(p:number)=>"copias el último conjuro que lanzó tu rival"},
+  grito_espectral:{odds:4,uses:[2,3,4],p:[.50,.60,.70],fmt:(p:number)=>pc(p)+" de ahuyentar a un familiar enemigo"},
+  hipnosis_onirica:{odds:1,uses:[1,2,3],p:[.90,.90,.90],fmt:(p:number)=>pc(p)+" de controlar al familiar rival o detener al rival un turno"},
+  ofrenda_familiar:{odds:10,uses:[2,3,4],p:[.50,.50,.50],fmt:(p:number)=>"tu familiar recupera "+pc(p)+" de su vida"},
+  eco_invocado:{odds:5,uses:[1,1,2],p:[.50,.60,.70],fmt:(p:number)=>"invocas un eco con ~"+pc(p*.3)+" de tu vida y ~"+pc(p*.35)+" de tu ataque"},
+  saboteador:{odds:3,p:[.35,.50,.65],fmt:(p:number)=>pc(p)+" de destrozar el arma rival al empezar el duelo"}
+};
+SPELL_ABILITIES.forEach((a:any)=>EVOLVE_ABILITIES.push({id:a.id,name:a.name,school:a.school,desc:a.desc}));
+Object.keys(SPELL_META).forEach((k:string)=>{ABILITY_META[k]=SPELL_META[k]});
+
+// ---- Familiars: a combatant that fights next to the Archmage. Stats are fractions of the owner's, per grade.
+const FAMILIARS:any[] = [
+  {id:"root_behemoth",name:"Behemot de Raíz",school:"verdant",desc:"Un coloso de raíces y musgo que combate a tu lado.",odds:1,hp:[.38,.43,.48],atk:[.09,.12,.15],dodge:.03,combo:0,lifesteal:0},
+  {id:"oneiric_panther",name:"Pantera Onírica",school:"phantasm",desc:"Una pantera de humo azul, veloz y escurridiza.",odds:1,hp:[.15,.18,.21],atk:[.08,.11,.14],dodge:.18,combo:.25,lifesteal:0},
+  {id:"ash_spark",name:"Chispa de Ceniza",school:"eradication",desc:"Un can de brasas que no se separa de tu sombra.",odds:20,hp:[.09,.11,.13],atk:[.035,.05,.065],dodge:.05,combo:0,lifesteal:0},
+  {id:"sun_hound",name:"Sabueso Solar",school:"ascendant",desc:"Un sabueso de luz dorada, fiel hasta el final.",odds:8,hp:[.10,.12,.14],atk:[.04,.055,.07],dodge:.06,combo:.05,lifesteal:0},
+  {id:"wandering_shadow",name:"Sombra Errante",school:"abyssal",desc:"Una sombra hambrienta que se alimenta de lo que muerde.",odds:2,hp:[.10,.12,.14],atk:[.045,.06,.075],dodge:.08,combo:0,lifesteal:.10}
+];
+function familiarDef(id:string){return FAMILIARS.find((f:any)=>f.id===id)||null}
+function familiarDetail(id:string,grade:number){
+  const f=familiarDef(id);
+  if(!f||!grade)return "";
+  return "vida "+pc(f.hp[grade-1])+" y ataque "+pc(f.atk[grade-1])+" de los tuyos"+(f.dodge?", "+pc(f.dodge)+" de esquiva":"")+(f.combo?", "+pc(f.combo)+" de golpe doble":"")+(f.lifesteal?", "+pc(f.lifesteal)+" de robo de vida":"");
+}
+function familiarView(fam:any){
+  if(!fam)return null;
+  const grade=Math.max(1,Math.min(MAX_GRADE,Math.floor(Number(fam.grade)||1)));
+  return {id:fam.id,name:fam.name,school:fam.school,desc:fam.desc,grade,max_grade:MAX_GRADE,detail:familiarDetail(fam.id,grade)};
+}
 const HEAVY_TYPES=["Martillo","Hacha","Guadaña"];
 const BLUNT_TYPES=["Martillo"];
 function isHeavy(w:any){return !!w?.heavy||HEAVY_TYPES.includes(w?.type)}
@@ -308,12 +367,15 @@ function applyBonus(state:any,bonus:any){
   else if(e.type==="stats2"&&Array.isArray(e.stats))e.stats.forEach((x:any)=>{if(STAT_META[x?.stat])state.stats[x.stat]=Number(state.stats[x.stat]||0)+Number(x.amount||0)});
   else if(e.type==="ability"&&e.ability&&!state.abilities.some((x:any)=>x.id===e.ability.id))state.abilities.push({...clone(e.ability),grade:1});
   else if(e.type==="ability_upgrade"){const x=state.abilities.find((a:any)=>a.id===e.id);if(x)x.grade=Math.min(abilityMaxGrade(x.id),(Number(x.grade)||1)+1)}
+  else if(e.type==="familiar"&&e.familiar&&!state.familiar)state.familiar={...clone(e.familiar),grade:1};
+  else if(e.type==="familiar_upgrade"&&state.familiar&&state.familiar.id===e.id)state.familiar.grade=Math.min(MAX_GRADE,(Number(state.familiar.grade)||1)+1);
   else if(e.type==="weapon"&&e.weapon)state.weapon=clone(e.weapon);
   else if(e.type==="trait"&&e.trait&&state.trait?.id!==e.trait.id&&!state.bonusTraits.some((x:any)=>x.id===e.trait.id))state.bonusTraits.push(clone(e.trait));
 }
 function effective(raw:any,maxLevel=Infinity){
   const state=clone(raw);state.bonusTraits=Array.isArray(state.bonusTraits)?state.bonusTraits:[];state.levelBonuses=[];
   state.abilities=(Array.isArray(state.abilities)?state.abilities:[]).map((a:any)=>({...a,grade:gradeOf([a],a.id)||1}));
+  state.familiar=raw.familiar&&familiarDef(raw.familiar.id)?{...clone(raw.familiar),grade:Math.max(1,Math.min(MAX_GRADE,Math.floor(Number(raw.familiar.grade)||1)))}:null;
   (raw.levelBonuses||[]).slice().sort((a:any,b:any)=>a.level-b.level).forEach((b:any)=>{if(Number(b.level)<=maxLevel){applyBonus(state,b);state.levelBonuses.push(clone(b))}});
   return state;
 }
@@ -338,7 +400,8 @@ function abilityParam(list:any[],id:string,key:"p"|"q"="p"){
 function abilityDetail(id:string,grade:number){
   const m=ABILITY_META[id];
   if(!m||!grade)return "";
-  return m.fmt(m.p[grade-1],m.q?m.q[grade-1]:undefined);
+  const uses=m.uses?" · "+m.uses[grade-1]+(m.uses[grade-1]===1?" carga":" cargas"):"";
+  return m.fmt(m.p[grade-1],m.q?m.q[grade-1]:undefined)+uses;
 }
 function abilityViews(list:any[]){
   return (list||[]).map((a:any)=>{
@@ -364,12 +427,25 @@ function statEvolution(rng:()=>number,level:number){
   return {id:`L${level}-stat-${stat}-${amount}`,kind:"stat",icon:"＋",title:`+${amount} ${STAT_META[stat]}`,desc:"Tu cuerpo arcano se adapta permanentemente.",effect:{type:"stat",stat,amount}};
 }
 function abilityEvolution(rng:()=>number,raw:any,state:any,level:number){
-  const pool=allAbilities().filter(a=>(!a.school||a.school===raw.school)&&gradeOf(state.abilities,a.id)<abilityMaxGrade(a.id));
-  if(!pool.length)return dualStatEvolution(rng,level);
-  const total=pool.reduce((s:number,a:any)=>s+abilityOdds(a),0);
-  const picked=pickWeighted(rng,pool,abilityOdds),ability={id:picked.id,name:picked.name,school:picked.school,desc:picked.desc};
-  const share=abilityOdds(picked)/total,owned=gradeOf(state.abilities,ability.id);
-  const meta={rarity:rarityLabel(share),chance:Math.round(share*1000)/10};
+  const perks:any[]=allAbilities().filter(a=>(!a.school||a.school===raw.school)&&gradeOf(state.abilities,a.id)<abilityMaxGrade(a.id))
+    .map(a=>({kind:"ability",def:a,weight:abilityOdds(a)}));
+  // One familiar at a time: once owned, only that familiar can show up (to upgrade it). Own-school emblem weighs x3.
+  FAMILIARS.filter(f=>state.familiar?(f.id===state.familiar.id&&(Number(state.familiar.grade)||1)<MAX_GRADE):true)
+    .forEach(f=>perks.push({kind:"familiar",def:f,weight:f.odds*(f.school===raw.school?3:1)}));
+  if(!perks.length)return dualStatEvolution(rng,level);
+  const total=perks.reduce((s:number,p:any)=>s+p.weight,0);
+  const picked=pickWeighted(rng,perks,(p:any)=>p.weight);
+  const share=picked.weight/total,meta={rarity:rarityLabel(share),chance:Math.round(share*1000)/10};
+  if(picked.kind==="familiar"){
+    const f=picked.def,fam={id:f.id,name:f.name,school:f.school,desc:f.desc},owned=state.familiar?(Number(state.familiar.grade)||1):0;
+    if(owned){
+      const next=owned+1;
+      return {id:`L${level}-familiar-${f.id}-g${next}`,kind:"familiar",icon:"❖",title:`${f.name} · Grado ${GRADE_ROMAN[next]}`,
+        desc:`Mejora: ${familiarDetail(f.id,owned)} → ${familiarDetail(f.id,next)}.`,grade:next,...meta,effect:{type:"familiar_upgrade",id:f.id}};
+    }
+    return {id:`L${level}-familiar-${f.id}`,kind:"familiar",icon:"❖",title:f.name,desc:`${f.desc} (${familiarDetail(f.id,1)})`,grade:1,...meta,effect:{type:"familiar",familiar:fam}};
+  }
+  const picked2=picked.def,ability={id:picked2.id,name:picked2.name,school:picked2.school,desc:picked2.desc},owned=gradeOf(state.abilities,ability.id);
   if(owned){
     const next=owned+1;
     return {id:`L${level}-ability-${ability.id}-g${next}`,kind:"ability",icon:"✦",title:`${ability.name} · Grado ${GRADE_ROMAN[next]}`,
@@ -408,7 +484,7 @@ function pendingEvolutionFor(raw:any,currentLevel:number){
   return null;
 }
 function evolutionView(raw:any,level:number){
-  return {abilities:abilityViews(effective(raw).abilities),pending:pendingEvolutionFor(raw,level)};
+  return {abilities:abilityViews(effective(raw).abilities),familiar:familiarView(effective(raw).familiar),pending:pendingEvolutionFor(raw,level)};
 }
 // @duel-engine:end
 async function getStoredCombatByUsername(username:string){
@@ -793,7 +869,7 @@ function combatPublicState(raw:any,inventory:any,relic:any=null){
     trait:clone(c.trait||null),
     bonusTraits:clone(c.bonusTraits||[]),
     abilities:clone(c.abilities||[]),
-    abilities_view:abilityViews(c.abilities||[]),
+    abilities_view:abilityViews(c.abilities||[]),familiar:familiarView(c.familiar||null),
     evolution:clone(c.levelBonuses||[]),
     derived:clone(d)
   };
@@ -1140,6 +1216,9 @@ function fighter(profile:any,raw:any,gear:any={}){
   const f:any={name:String(profile.mage_name),school:String(profile.school_code||"ascendant"),maxHp:d.maxHp,attack:d.attack,armor:d.armor,speed:d.speed,
     crit:d.crit,dodge:d.dodge,block:d.block,regen:d.regen,lifesteal:d.lifesteal,secondWind:d.secondWind,accuracy:d.accuracy||0,
     doubleStrike:d.doubleStrike||0,weaponPoison:d.weaponPoison||0,firstStrike:d.firstStrike||0,weaponDisarm:d.weaponDisarm||0,weapon:c.weapon,trait:c.trait,abilities:c.abilities};
+  f.charges={};
+  (c.abilities||[]).forEach((a:any)=>{const m=ABILITY_META[a.id];if(m?.uses)f.charges[a.id]=m.uses[Math.max(1,Math.min(MAX_GRADE,Number(a.grade)||1))-1]});
+  f.familiar=c.familiar||null;f.pets=[];
   FIGHTER_SRC.set(f,{raw,gear});
   return f;
 }
@@ -1179,10 +1258,11 @@ function prelude(a:any,b:any,round:number,rng:()=>number,events:string[]){
   return true;
 }
 function strike(a:any,b:any,rng:()=>number,events:string[]):"miss"|"hit"{
+  const mods=a.strikeMods||null;a.strikeMods=null;
   if(has(a,"soul_bite")&&rng()<gp(a,"soul_bite")){b.weaken=Math.max(b.weaken||0,1);events.push(a.name+" muerde el alma de "+b.name+" y debilita su próximo ataque.")}
   if(has(b,"veil_dance")&&!b.veilUsed){b.veilUsed=true;if(rng()<gp(b,"veil_dance")){a.streak=0;events.push(b.name+" esquiva el primer ataque de "+a.name+" con la Danza del Velo.");return "miss"}}
   let effectiveDodge=Math.max(0,b.dodge-a.accuracy);if(has(b,"phase_step"))effectiveDodge=Math.min(.48,effectiveDodge+gp(b,"phase_step"));
-  if(rng()<effectiveDodge){
+  if(!(mods&&mods.noDodge)&&rng()<effectiveDodge){
     a.streak=0;events.push(b.name+" evita el ataque de "+a.name+".");
     if(has(b,"sixth_sense")&&b.hp>0&&rng()<gp(b,"sixth_sense")){const reply=Math.max(1,Math.round(b.attack*.35));deal(a,reply,events);events.push(b.name+" responde con Sexto Sentido e inflige "+reply+" de daño.")}
     return "miss";
@@ -1198,7 +1278,7 @@ function strike(a:any,b:any,rng:()=>number,events:string[]):"miss"|"hit"{
   const disarmed=(a.disarmed||0)>0;const weaponRoll=disarmed?0:Math.round(a.weapon.min+rng()*(a.weapon.max-a.weapon.min));
   if(disarmed){a.disarmed--;events.push(a.name+(a.disarmed>50?" combate sin arma.":" combate desarmado temporalmente."))}
   const atk=disarmed&&has(a,"arcane_fist")?a.attack*(1+gp(a,"arcane_fist")):a.attack;
-  let dmg=Math.max(1,Math.round(atk*mult+weaponRoll-b.armor*.55));
+  let dmg=Math.max(1,Math.round(atk*mult*(mods?.mult||1)+weaponRoll-b.armor*.55+(mods?.flat||0)));
   if(isBlunt(a.weapon)&&has(b,"lead_bones"))dmg=Math.max(1,Math.round(dmg*(1-gq(b,"lead_bones"))));
   const absorb=Math.min(Number(b.shield||0),dmg);b.shield=Math.max(0,Number(b.shield||0)-absorb);dmg-=absorb;dmg=deal(b,dmg,events);
   const steal=a.lifesteal+(has(a,"dark_pact")?gp(a,"dark_pact"):0);if(steal>0&&dmg>0)a.hp=Math.min(a.maxHp,a.hp+Math.max(1,Math.round(dmg*steal)));
@@ -1215,12 +1295,138 @@ function strike(a:any,b:any,rng:()=>number,events:string[]):"miss"|"hit"{
   const poisonChance=(has(a,"toxic_spores")?gp(a,"toxic_spores"):0)+a.weaponPoison;if(poisonChance>0&&b.hp>0&&rng()<poisonChance){const poison=Math.max(2,Math.round(a.attack*.12));deal(b,poison,events);events.push("El veneno inflige "+poison+" de daño adicional a "+b.name+".")}
   return "hit";
 }
+function avgW(w:any){return w?((Number(w.min)||0)+(Number(w.max)||0))/2:0}
+function spellParam(a:any,id:string){return abilityParam(a.abilities,id)||Number(ABILITY_META[id]?.p?.[0])||0}
+function livePets(f:any){return (f.pets||[]).filter((p:any)=>p.hp>0)}
+function makePet(owner:any,name:string,hpPct:number,atkPct:number,extra:any={}){
+  const hp=Math.max(1,Math.round(owner.maxHp*hpPct));
+  return {name:name+" de "+owner.name,petName:name,isPet:true,owner,maxHp:hp,hp,attack:Math.max(1,Math.round(owner.attack*atkPct)),armor:Math.round(owner.armor*.3),
+    dodge:Number(extra.dodge)||0,block:0,accuracy:0,crit:.03,combo:Number(extra.combo)||0,lifesteal:Number(extra.lifesteal)||0,shield:0,abilities:[] as any[],slow:0,weaken:0,disarmed:0,reported:false};
+}
+function summonFamiliars(f:any,log:string[]){
+  const def=f.familiar?familiarDef(f.familiar.id):null;
+  if(!def)return;
+  const g=Math.max(1,Math.min(MAX_GRADE,Math.floor(Number(f.familiar.grade)||1)));
+  f.pets.push(makePet(f,def.name,def.hp[g-1],def.atk[g-1],def));
+  log.push(f.name+" invoca a su familiar "+def.name+".");
+}
+function petAttack(p:any,enemy:any,rng:()=>number,events:string[]){
+  if((p.slow||0)>0){p.slow--;events.push(p.name+" queda frenado.");return}
+  if(rng()<Math.max(0,enemy.dodge-p.accuracy)){events.push(enemy.name+" evita el ataque de "+p.name+".");return}
+  if(rng()<enemy.block){events.push(enemy.name+" bloquea el ataque de "+p.name+".");return}
+  const crit=rng()<p.crit;
+  let dmg=Math.max(1,Math.round(p.attack*(.85+rng()*.3)*(crit?1.65:1)*(1-Math.min(.5,enemy.armor/250))));
+  const absorb=Math.min(Number(enemy.shield||0),dmg);enemy.shield=Math.max(0,Number(enemy.shield||0)-absorb);dmg-=absorb;
+  dmg=deal(enemy,dmg,events);
+  if(p.lifesteal>0&&dmg>0)p.hp=Math.min(p.maxHp,p.hp+Math.max(1,Math.round(dmg*p.lifesteal)));
+  events.push(p.name+(crit?" muerde con ferocidad a ":" muerde a ")+enemy.name+": "+dmg+" de daño.");
+  if(p.combo>0&&enemy.hp>0&&rng()<p.combo){const extra=Math.max(1,Math.round(p.attack*.5));deal(enemy,extra,events);events.push(p.name+" repite el ataque: "+extra+" de daño.")}
+}
+function actPets(f:any,enemy:any,rng:()=>number,log:string[]){
+  for(const p of livePets(f)){
+    if(enemy.hp<=0||f.hp<=0)break;
+    const ev:string[]=[];petAttack(p,enemy,rng,ev);ev.forEach(x=>log.push(x));
+  }
+}
+function reportFallen(a:any,b:any,log:string[]){
+  for(const f of [a,b])for(const p of f.pets||[])if(p.hp<=0&&!p.reported){p.reported=true;log.push(p.name+" cae derrotado.")}
+}
+function pickTarget(a:any,b:any,rng:()=>number){
+  const live=livePets(b);
+  if(live.length&&rng()<.10)return live[Math.floor(rng()*live.length)];
+  return b;
+}
+// Each spell: cond(a,b) says whether the AI may cast it now; cast() returns "act" (spends the action) or "attack"
+// (prepares strikeMods and the normal attack follows in the same action).
+const SPELLS:any={
+  despojo:{cond:(a:any,b:any)=>!(b.disarmed>0)&&avgW(b.weapon)>avgW(a.weapon)*1.05,
+    cast:(a:any,b:any,rng:()=>number,ev:string[])=>{
+      if(has(b,"rune_grip")&&rng()<gp(b,"rune_grip")){ev.push(b.name+" conserva su arma gracias al Agarre Rúnico.");return "act"}
+      const src=FIGHTER_SRC.get(a);if(!src)return "act";
+      const stolen=clone(b.weapon);refit(a,src,stolen);b.disarmed=999;
+      ev.push(a.name+" despoja a "+b.name+" de "+stolen.name+" con Despojo.");return "act";
+    }},
+  furia_arcana:{cond:(a:any,b:any)=>true,
+    cast:(a:any,b:any,rng:()=>number,ev:string[])=>{const m=a.strikeMods||(a.strikeMods={});m.mult=(m.mult||1)*spellParam(a,"furia_arcana");ev.push(a.name+" canaliza Furia Arcana.");return "attack"}},
+  elixir_tragico:{cond:(a:any,b:any)=>a.hp<a.maxHp*.5,
+    cast:(a:any,b:any,rng:()=>number,ev:string[])=>{const p=spellParam(a,"elixir_tragico"),heal=Math.max(1,Math.round(a.maxHp*(p+rng()*p)));a.hp=Math.min(a.maxHp,a.hp+heal);ev.push(a.name+" bebe un Elixir Trágico y recupera "+heal+" de vida.");return "act"}},
+  red_raices:{cond:(a:any,b:any)=>b.dodge>.10,
+    cast:(a:any,b:any,rng:()=>number,ev:string[])=>{const m=a.strikeMods||(a.strikeMods={});m.noDodge=true;ev.push(a.name+" lanza una Red de Raíces sobre "+b.name+".");return "attack"}},
+  orbe_explosivo:{cond:(a:any,b:any)=>true,
+    cast:(a:any,b:any,rng:()=>number,ev:string[])=>{
+      const p=spellParam(a,"orbe_explosivo");
+      for(const t of [b].concat(livePets(b))){const dmg=Math.max(1,Math.round(t.maxHp*p*(.9+rng()*.2))),dealt=deal(t,dmg,ev);ev.push(a.name+" lanza un Orbe Explosivo: "+dealt+" de daño a "+t.name+".")}
+      return "act";
+    }},
+  golpe_aplastante:{cond:(a:any,b:any)=>b.hp>b.maxHp*.3,
+    cast:(a:any,b:any,rng:()=>number,ev:string[])=>{const dmg=Math.max(1,Math.round(a.attack*spellParam(a,"golpe_aplastante")*(.9+rng()*.2)-b.armor*.25)),dealt=deal(b,dmg,ev);ev.push(a.name+" aplasta a "+b.name+" con un Golpe Aplastante: "+dealt+" de daño.");return "act"}},
+  diluvio_armas:{cond:(a:any,b:any)=>true,
+    cast:(a:any,b:any,rng:()=>number,ev:string[])=>{
+      const p=spellParam(a,"diluvio_armas");
+      for(let i=0;i<3&&b.hp>0;i++){
+        if(rng()<b.dodge*.5){ev.push(b.name+" esquiva un arma lanzada.");continue}
+        const dmg=Math.max(1,Math.round(a.attack*p*(.85+rng()*.3)-b.armor*.4)),dealt=deal(b,dmg,ev);ev.push(a.name+" lanza un arma a "+b.name+": "+dealt+" de daño.");
+      }
+      return "act";
+    }},
+  vampirismo:{cond:(a:any,b:any)=>a.hp<a.maxHp*.65,
+    cast:(a:any,b:any,rng:()=>number,ev:string[])=>{
+      const dmg=Math.max(1,Math.round((a.maxHp-a.hp)*spellParam(a,"vampirismo"))),dealt=deal(b,dmg,ev),heal=Math.round(dealt*1.2);
+      a.hp=Math.min(a.maxHp,a.hp+heal);ev.push(a.name+" desata Vampirismo: "+dealt+" de daño a "+b.name+" y recupera "+heal+" de vida.");return "act";
+    }},
+  prisa_espectral:{cond:(a:any,b:any)=>true,
+    cast:(a:any,b:any,rng:()=>number,ev:string[])=>{const m=a.strikeMods||(a.strikeMods={});m.flat=(m.flat||0)+Math.round(a.speed*spellParam(a,"prisa_espectral"));ev.push(a.name+" se lanza con Prisa Espectral.");return "attack"}},
+  eco_onirico:{cond:(a:any,b:any)=>!!b.lastSpell&&b.lastSpell!=="eco_onirico"&&!!SPELLS[b.lastSpell]&&SPELLS[b.lastSpell].cond(a,b),
+    cast:(a:any,b:any,rng:()=>number,ev:string[])=>{const id=b.lastSpell;a.lastSpell=id;ev.push(a.name+" copia un conjuro de "+b.name+" con Eco Onírico.");return SPELLS[id].cast(a,b,rng,ev)}},
+  grito_espectral:{cond:(a:any,b:any)=>livePets(b).length>0,
+    cast:(a:any,b:any,rng:()=>number,ev:string[])=>{
+      const t=livePets(b)[0];
+      if(rng()<spellParam(a,"grito_espectral")){t.hp=0;ev.push(a.name+" lanza un Grito Espectral y "+t.name+" huye despavorido.")}else ev.push(t.name+" resiste el Grito Espectral de "+a.name+".");
+      return "act";
+    }},
+  hipnosis_onirica:{cond:(a:any,b:any)=>livePets(b).length>0||b.hp>b.maxHp*.5,
+    cast:(a:any,b:any,rng:()=>number,ev:string[])=>{
+      const p=spellParam(a,"hipnosis_onirica"),live=livePets(b);
+      if(live.length){
+        const pet=live.slice().sort((x:any,y:any)=>y.maxHp-x.maxHp)[0];
+        if(rng()<p){b.pets=b.pets.filter((x:any)=>x!==pet);pet.owner=a;pet.name=pet.petName+" de "+a.name;a.pets.push(pet);ev.push(a.name+" hipnotiza a "+pet.petName+", que ahora lucha a su lado.")}
+        else ev.push(pet.name+" resiste la Hipnosis Onírica de "+a.name+".");
+      }else if(rng()<p){b.slow=Math.max(b.slow||0,1);ev.push(a.name+" convence a "+b.name+" de no atacar con Hipnosis Onírica.")}
+      else ev.push(b.name+" resiste la Hipnosis Onírica de "+a.name+".");
+      return "act";
+    }},
+  ofrenda_familiar:{cond:(a:any,b:any)=>livePets(a).some((p:any)=>p.hp<p.maxHp*.6),
+    cast:(a:any,b:any,rng:()=>number,ev:string[])=>{
+      const pet=livePets(a).slice().sort((x:any,y:any)=>x.hp/x.maxHp-y.hp/y.maxHp)[0],heal=Math.round(pet.maxHp*spellParam(a,"ofrenda_familiar"));
+      pet.hp=Math.min(pet.maxHp,pet.hp+heal);ev.push(a.name+" reconforta a "+pet.name+" con una Ofrenda: recupera "+heal+" de vida.");return "act";
+    }},
+  eco_invocado:{cond:(a:any,b:any)=>livePets(a).length===0,
+    cast:(a:any,b:any,rng:()=>number,ev:string[])=>{
+      const p=spellParam(a,"eco_invocado");
+      a.pets.push(makePet(a,"Eco",p*.3,p*.35,{dodge:.05}));ev.push(a.name+" invoca un Eco a su lado.");return "act";
+    }}
+};
+function chooseSpell(a:any,b:any,rng:()=>number){
+  for(const x of a.abilities||[]){
+    const sp=SPELLS[x.id];
+    if(!sp||(a.charges?.[x.id]||0)<=0)continue;
+    if(sp.cond(a,b)&&rng()<(sp.chance??.35))return x.id;
+  }
+  return null;
+}
+function castSpell(id:string,a:any,b:any,rng:()=>number,events:string[]){
+  a.charges[id]--;a.lastSpell=id;
+  return SPELLS[id].cast(a,b,rng,events);
+}
 function hit(a:any,b:any,round:number,rng:()=>number){
   const events:string[]=[];
   if(!prelude(a,b,round,rng,events)){a.lastHp=a.hp;return events}
   if(has(a,"monk_path")&&round%3===1){events.push(a.name+" medita y aguarda el golpe rival.");a.lastHp=a.hp;return events}
-  const result=strike(a,b,rng,events);
-  if(result==="miss"&&has(a,"determination")&&a.hp>0&&b.hp>0&&rng()<gp(a,"determination")){events.push(a.name+" no se rinde: Determinación lanza otro ataque.");strike(a,b,rng,events)}
+  const spell=chooseSpell(a,b,rng);
+  if(spell&&castSpell(spell,a,b,rng,events)==="act"){a.lastHp=a.hp;return events}
+  const target=pickTarget(a,b,rng);
+  const result=strike(a,target,rng,events);
+  if(result==="miss"&&has(a,"determination")&&a.hp>0&&target.hp>0&&rng()<gp(a,"determination")){events.push(a.name+" no se rinde: Determinación lanza otro ataque.");strike(a,target,rng,events)}
   a.lastHp=a.hp;
   return events;
 }
@@ -1238,19 +1444,28 @@ function swapWeapons(x:any,y:any,log:string[]){
   refit(x,sx,copy);refit(y,sy,clone(mine));
   log.push(x.name+" se equipa con "+theirs.name+" de "+y.name+" gracias a Impostor de Armas ("+y.name+" recibe "+mine.name+").");
 }
-function prepareDuel(a:any,b:any,log:string[]){
+function prepareDuel(a:any,b:any,log:string[],rng:()=>number){
   if(has(a,"weapon_swap"))swapWeapons(a,b,log);
   else if(has(b,"weapon_swap"))swapWeapons(b,a,log);
+  for(const [x,y] of [[a,b],[b,a]])if(has(x,"saboteador")&&!(y.disarmed>0)&&rng()<gp(x,"saboteador")){
+    const ev:string[]=[];breakWeapon(y,ev,rng,"El Saboteador "+x.name);ev.forEach(l=>log.push(l));
+  }
 }
 // Shared round loop for Arena (simulate) and PvE (simulatePersistent).
 function duelRounds(a:any,b:any,rng:()=>number,log:string[]){
-  prepareDuel(a,b,log);
+  prepareDuel(a,b,log,rng);
+  summonFamiliars(a,log);summonFamiliars(b,log);
   for(let round=1;round<=24&&a.hp>0&&b.hp>0;round++){
     log.push("RONDA "+round);
     const ai=a.speed+rng()*3+(round===1?a.firstStrike*10:0)+(a.priority?100:0),bi=b.speed+rng()*3+(round===1?b.firstStrike*10:0)+(b.priority?100:0);
     a.priority=false;b.priority=false;
     const first=ai>=bi?a:b,second=first===a?b:a;
-    hit(first,second,round,rng).forEach(x=>log.push(x));if(second.hp>0)hit(second,first,round,rng).forEach(x=>log.push(x));
+    hit(first,second,round,rng).forEach(x=>log.push(x));reportFallen(a,b,log);
+    if(first.hp>0&&second.hp>0){actPets(first,second,rng,log);reportFallen(a,b,log)}
+    if(second.hp>0){
+      hit(second,first,round,rng).forEach(x=>log.push(x));reportFallen(a,b,log);
+      if(second.hp>0&&first.hp>0){actPets(second,first,rng,log);reportFallen(a,b,log)}
+    }
     [a,b].forEach((f:any)=>{const other=f===a?b:a;if(f.hp<=0&&f.secondWind&&!f.secondWindUsed){f.secondWindUsed=true;f.hp=Math.max(1,Math.round(f.maxHp*.2));log.push(f.name+" activa Segundo Aliento y vuelve al combate.")}
       if(f.hp<=0&&has(f,"last_word")&&!f.lastWordUsed&&other.hp>0&&rng()<gp(f,"last_word")){f.lastWordUsed=true;const last=Math.max(1,Math.round(f.attack*.45));other.hp=Math.max(0,other.hp-last);log.push(f.name+" pronuncia Última Palabra antes de caer: "+last+" de daño.")}});
   }
@@ -1613,7 +1828,7 @@ Deno.serve(async(req:Request)=>{
       if(!target?.mage_name)return json(req,{error:"TARGET_NOT_FOUND"},404);
       const combat=String(target.mage_name).toLowerCase()===who.username.toLowerCase()?await ensureCombat(who):await targetCombat(who.token,target);
       const targetLevel=levelFromProfile(target),isSelf=String(target.mage_name).toLowerCase()===who.username.toLowerCase();
-      return json(req,{combat,level:targetLevel,evolution_view:isSelf?evolutionView(combat,targetLevel):{abilities:abilityViews(effective(combat).abilities),pending:null}});
+      return json(req,{combat,level:targetLevel,evolution_view:isSelf?evolutionView(combat,targetLevel):{abilities:abilityViews(effective(combat).abilities),familiar:familiarView(effective(combat).familiar),pending:null}});
     }
 
     if(req.method==="POST"&&p[0]==="combat"&&p[1]==="import-legacy"){

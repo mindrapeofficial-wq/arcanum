@@ -125,6 +125,8 @@ test("playing 49 random evolutions never breaks the profile (grades <= III, no d
 test("when every ability is exhausted the fallback is +1/+1 on two different stats", () => {
   const raw = E.baseProfile("Maxed", "phantasm");
   raw.abilities = ALL_ABILITIES.filter((a) => !a.school || a.school === "phantasm").map((a) => ({ id: a.id, name: a.name, school: a.school, desc: a.desc, grade: E.ABILITY_META[a.id].maxGrade || 3 }));
+  const fam = E.FAMILIARS[0];
+  raw.familiar = { id: fam.id, name: fam.name, school: fam.school, desc: fam.desc, grade: 3 };
   let seen = 0;
   for (let level = 2; level <= 40; level++) for (const o of E.evolutionOptions(raw, level)) {
     assert.notEqual(o.kind === "ability", true, "no ability should be offered when all are maxed");
