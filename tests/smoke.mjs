@@ -296,3 +296,21 @@ test("Combat migrations and SQL suite are present and keep their safety guards",
   assert.match(o,/battle_choose_target/);
   assert.match(o,/not patching/);
 });
+
+
+test("PvP ranking is routed, server-authoritative and shows competitive stats",()=>{
+  const router=read("assets/js/router.js");
+  const ranking=read("assets/js/pvp-ranking.js");
+  const stateFn=read("supabase/functions/arcanum-state/index.ts");
+  assert.match(html,/data-view="pvp-ranking"/);
+  assert.match(router,/"pvp-ranking":\{name:"renderPvpRanking"/);
+  assert.match(router,/view==="pvp-ranking"\) await renderPvpRanking/);
+  assert.doesNotThrow(()=>new vm.Script(ranking,{filename:"assets/js/pvp-ranking.js"}));
+  assert.match(ranking,/stateApi\("\/arena\/ranking"\)/);
+  assert.match(ranking,/VICTORIAS/);
+  assert.match(ranking,/DERROTAS/);
+  assert.match(ranking,/ELO/);
+  assert.match(stateFn,/p\[0\]==="arena"&&p\[1\]==="ranking"/);
+  assert.match(stateFn,/defender_user_id:String\(targetRealm\.player_id\)/);
+  assert.match(stateFn,/defenderUpdate\[sim\.won\?"losses":"wins"\]/);
+});
