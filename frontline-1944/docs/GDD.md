@@ -1,187 +1,66 @@
-# FRONTLINE 1944 · Game Design Document 0.2
+# FRONTLINE 1944 · Game Design Document 0.3
 
-## Definición
+## Concepto
 
-FRONTLINE 1944 es una estrategia narrativa histórica para un jugador. El jugador ocupa un puesto de mando del Heer y toma decisiones desde la perspectiva limitada de un general alemán durante la Segunda Guerra Mundial.
+FRONTLINE 1944 es una estrategia narrativa histórica para un jugador. La campaña recorre la Segunda Guerra Mundial cronológicamente desde las primeras operaciones militares alemanas, con cada capítulo dedicado a una campaña y construido como un repaso histórico jugable.
 
 **No controlas la guerra. La diriges.**
 
-## Pilar 1 · Realismo histórico y militar extremo
+## Estructura de capítulos
 
-Todo dato presentado como histórico deberá tener procedencia verificable.
+### Capítulo I · Polonia 1939
+Fall Weiss. Heeresgruppe Süd.
 
-El sistema documental abarcará:
+### Capítulos posteriores
+La campaña avanzará cronológicamente por las campañas terrestres relevantes, manteniendo el mismo sistema de documentación, mando, recursos, relaciones de Estado Mayor e información imperfecta.
 
-- cronología;
-- cadena de mando;
-- orden de batalla;
-- plantillas y fuerza efectiva;
-- armamento;
-- munición;
+## Bucle de juego
+
+1. Recibir un informe.
+2. Consultar el mapa y los recursos.
+3. Leer la valoración del Estado Mayor.
+4. Distinguir lo confirmado de lo estimado.
+5. Emitir una orden.
+6. Consumir tiempo, capacidad de mando y recursos.
+7. Recibir consecuencias inmediatas o diferidas.
+8. Continuar hacia el siguiente parte.
+
+## Realismo
+
+El objetivo final es sustituir gradualmente las abstracciones por datos históricos y físicos más concretos:
+
 - combustible;
+- munición por tipo;
+- fuerza nominal y efectiva;
 - vehículos operativos y en reparación;
+- transporte;
 - comunicaciones;
-- ferrocarril y transporte;
+- carreteras y ferrocarriles;
+- artillería;
+- fatiga;
+- bajas y reemplazos;
 - clima;
 - terreno;
-- bajas;
-- reemplazos;
-- disponibilidad de aviación y artillería;
-- inteligencia conocida en ese momento.
+- antigüedad de la inteligencia.
 
-La disponibilidad teórica de una unidad no equivale a su disponibilidad operacional.
+## Perspectiva
 
-## Pilar 2 · Profundidad táctica y operacional
+El jugador solo conoce lo que podría conocer su puesto de mando. Un marcador en el mapa representa una creencia del Estado Mayor, no una verdad omnisciente.
 
-Las decisiones se modelan por sus restricciones reales:
+## Historia y contrafactual
 
-- terreno;
-- reconocimiento;
-- reservas;
-- profundidad defensiva;
-- movilidad;
-- artillería;
-- ingenieros;
-- desgaste;
-- moral;
-- fatiga;
-- tiempo;
-- comunicaciones;
-- abastecimiento;
-- cadena de mando.
-
-No existe una única cifra de poder que resuelva un combate.
-
-## Pilar 3 · Perspectiva del general alemán
-
-El jugador no recibe información omnisciente.
-
-Su realidad está formada por:
-
-- partes de divisiones;
-- llamadas telefónicas;
-- mensajes por radio;
-- informes de inteligencia;
-- mapas actualizados a mano;
-- órdenes superiores;
-- peticiones de subordinados;
-- rumores;
-- información incompleta o contradictoria.
-
-El juego debe distinguir siempre entre lo que **ocurre** y lo que el personaje **cree que ocurre**.
-
-## Pilar 4 · Información imperfecta
-
-Todo contacto enemigo puede tener:
-
-- hora del informe;
-- fuente;
-- fiabilidad;
-- posición estimada;
-- tamaño estimado;
-- antigüedad;
-- nivel de confirmación.
-
-Un marcador puede seguir apareciendo en el mapa aunque la formación enemiga ya no esté allí.
-
-## Historia y divergencia
-
-La campaña comienza dentro de la cronología real.
-
-Las decisiones del jugador pueden crear divergencias, pero las consecuencias deben permanecer plausibles y proporcionales. Una decisión táctica no reescribe mágicamente la guerra.
-
-El juego identificará:
+Cada escena distingue:
 
 - HECHO HISTÓRICO;
 - RECONSTRUCCIÓN NARRATIVA;
-- DIVERGENCIA DEL JUGADOR.
+- DECISIÓN DEL JUGADOR.
 
-## Personajes
+Las divergencias deben ser proporcionales. Una orden táctica puede cambiar una batalla o conservar una unidad, pero no reescribe por sí sola el resultado global de la guerra.
 
-Se mezclarán figuras históricas documentadas con personajes ficticios.
+## Presentación
 
-Los ficticios existirán para dar continuidad narrativa a:
+La interfaz representa un cuartel general de campaña mediante mapas, partes de situación, fichas de formación, archivos y comunicaciones. El contexto histórico del régimen nazi se presenta de forma documental, no propagandística ni celebratoria.
 
-- Estado Mayor;
-- oficiales de enlace;
-- comandantes de regimiento o batallón;
-- personal logístico;
-- comunicaciones;
-- médicos y servicios.
+## Persistencia
 
-Siempre se marcarán como ficticios en el archivo del juego.
-
-## Primer escenario
-
-**Normandía · 6 de junio de 1944**
-
-Primer rol jugable:
-
-**General der Artillerie Erich Marcks**  
-**LXXXIV Armeekorps**
-
-El escenario inicial se construye alrededor de los informes alemanes de las primeras horas de la invasión y de la incertidumbre existente antes y durante los desembarcos anfibios.
-
-## Simulación de recursos
-
-Variables iniciales del prototipo:
-
-- capacidad de mando;
-- comunicaciones;
-- logística;
-- combustible;
-- munición;
-- reservas;
-- moral;
-- inteligencia.
-
-En versiones posteriores estas abstracciones se descompondrán en datos físicos: toneladas, vehículos, existencias, rutas, capacidad de transporte y estados de unidad.
-
-## Arquitectura narrativa
-
-Cada nodo contiene:
-
-1. hora y fecha;
-2. procedencia;
-3. urgencia;
-4. información disponible;
-5. hechos documentados;
-6. recomendaciones del Estado Mayor;
-7. decisiones posibles;
-8. coste inmediato;
-9. consecuencia visible;
-10. consecuencias diferidas.
-
-Las consecuencias futuras podrán activarse muchas escenas después.
-
-## Línea estética
-
-El juego debe recordar a una sala de operaciones militar de 1944:
-
-- mapas;
-- chinchetas;
-- documentos;
-- mecanografía;
-- telegramas;
-- teléfonos;
-- fichas de unidad;
-- fotografías de reconocimiento.
-
-La estética histórica no debe convertirse en glorificación ideológica.
-
-## Roadmap
-
-### Fase A
-Vertical slice narrativo del 6 de junio.
-
-### Fase B
-Cronología completa del Día D desde el puesto de mando del LXXXIV Cuerpo.
-
-### Fase C
-Simulación militar profunda: unidades, suministro, comunicaciones, fatiga y bajas.
-
-### Fase D
-Campaña de Normandía completa.
-
-### Fase E
-Campañas terrestres adicionales, manteniendo la misma disciplina documental.
+En el prototipo 0.3, cuentas y progreso se almacenan localmente por usuario. La versión pública requerirá autenticación y persistencia de servidor.
