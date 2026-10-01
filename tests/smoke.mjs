@@ -421,3 +421,24 @@ test("Construction never references an undefined $$$ selector",()=>{
     "Construction must use $$ for selector lists; $$$ is undefined");
 });
 
+
+
+test("audio uses local CC0 interface samples with documented provenance",()=>{
+  const audio=read("assets/js/audio.js");
+  const sources=read("assets/audio/SOURCES.md");
+  assert.match(audio,/assets\/audio\/sfx\/ui-select\.wav\.b64/);
+  assert.match(audio,/assets\/audio\/sfx\/ui-confirm-1\.wav\.b64/);
+  assert.match(audio,/assets\/audio\/sfx\/ui-error\.wav\.b64/);
+  assert.match(audio,/b64ToBlobUrl/);
+  assert.match(sources,/Kenney Interface Sounds/);
+  assert.match(sources,/CC0 1\.0/);
+  for(const name of [
+    "ui-select.wav.b64",
+    "ui-confirm-1.wav.b64",
+    "ui-confirm-2.wav.b64",
+    "ui-open.wav.b64",
+    "ui-error.wav.b64"
+  ]){
+    assert.ok(read("assets/audio/sfx/"+name).length>1000,name+" should contain an imported audio payload");
+  }
+});
