@@ -5,8 +5,7 @@ const PASSIVE_RESOURCE_FIELDS={
   gold:{label:"Oro",aliases:["gold","oro"]},
   mana:{label:"Maná",aliases:["mana"]},
   population:{label:"Población",aliases:["population","poblacion","population_gain"]},
-  land:{label:"Tierras",aliases:["land","tierras"]},
-  net_power:{label:"Ascendencia",aliases:["net_power","poder_neto","power"]}
+  land:{label:"Tierras",aliases:["land","tierras"]}
 };
 let passiveResourceFlow=null;
 
