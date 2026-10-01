@@ -101,3 +101,43 @@ test("stats2 fallback and new ability effects are applied by the client for disp
   assert.equal(c.stats.strength, before.strength + 1);
   assert.equal(c.stats.will, before.will + 1);
 });
+
+test("the familiar and its grade are rebuilt locally and rendered with the server numbers", async () => {
+  const raw = serverState();
+  const fam = E.FAMILIARS[0];
+  raw.levelBonuses = [
+    { level: 2, id: "f", kind: "familiar", title: fam.name, desc: "", effect: { type: "familiar", familiar: { id: fam.id, name: fam.name, school: fam.school, desc: fam.desc } } },
+    { level: 3, id: "g", kind: "familiar", title: fam.name, desc: "", effect: { type: "familiar_upgrade", id: fam.id } },
+  ];
+  const view = { abilities: [], familiars: E.familiarViews(E.effective(raw).familiars), pending: null };
+  const { ctx } = sandbox(async () => ({ combat: raw, evolution_view: view }));
+  await ctx.combatHydrateProfile({ ...profile, archmage_level: 3 });
+  const c = ctx.getCombatProfile(profile);
+  assert.equal(c.familiars[0].id, fam.id);
+  assert.equal(c.familiars[0].grade, 2);
+  const html = ctx.renderCombatIdentity({ ...profile, archmage_level: 3 });
+  assert.match(html, /FAMILIAR/);
+  assert.ok(html.includes(ctx.esc(fam.name)));
+  assert.match(html, /Grado II/);
+  assert.ok(html.includes(ctx.esc(view.familiars[0].detail)));
+});
+
+test("an Archmage without a familiar shows no familiar block", async () => {
+  const raw = serverState();
+  const { ctx } = sandbox(async () => ({ combat: raw, evolution_view: { abilities: [], familiars: [], pending: null } }));
+  await ctx.combatHydrateProfile({ ...profile, archmage_level: 1 });
+  assert.doesNotMatch(ctx.renderCombatIdentity({ ...profile, archmage_level: 1 }), /combat-familiar/);
+});
+
+test("several familiars are listed, capped at three", async () => {
+  const raw = serverState();
+  const add = (level, f) => ({ level, id: "f" + level, kind: "familiar", title: f.name, desc: "", effect: { type: "familiar", familiar: { id: f.id, name: f.name, school: f.school, desc: f.desc } } });
+  raw.levelBonuses = E.FAMILIARS.map((f, i) => add(i + 2, f));
+  const view = { abilities: [], familiars: E.familiarViews(E.effective(raw).familiars), pending: null };
+  const { ctx } = sandbox(async () => ({ combat: raw, evolution_view: view }));
+  await ctx.combatHydrateProfile({ ...profile, archmage_level: 6 });
+  const c = ctx.getCombatProfile(profile);
+  assert.equal(c.familiars.length, 3);
+  const html = ctx.renderCombatIdentity({ ...profile, archmage_level: 6 });
+  assert.equal((html.match(/class="combat-familiar"/g) || []).length, 3);
+});
