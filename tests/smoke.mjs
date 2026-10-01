@@ -397,6 +397,18 @@ test("regular Ranking and Construction pages keep their render contracts",()=>{
   assert.match(war,/stateApi\("\/arena\/ranking"\)/);
 });
 
+test("globalThis exports only reference identifiers that exist",()=>{
+  const files=fs.readdirSync(new URL("../assets/js/",import.meta.url)).filter(f=>f.endsWith(".js"));
+  const all=files.map(f=>read("assets/js/"+f)).join("\n");
+  const missing=[];
+  for(const m of all.matchAll(/globalThis\.[A-Za-z_$][\w$]*\s*=\s*([A-Za-z_$][\w$]*)\s*;/g)){
+    const id=m[1];
+    const defined=new RegExp("(function\\s*\\*?\\s+|class\\s+|(?:const|let|var)\\s+)"+id.replace(/\$/g,"\\$")+"\\b").test(all);
+    if(!defined)missing.push(id);
+  }
+  assert.deepEqual(missing,[],"globalThis.X=Y throws a ReferenceError at load when Y was removed");
+});
+
 test("Construction never references an undefined $$$ selector",()=>{
   const construction=read("assets/js/construction.js");
   assert.doesNotMatch(construction,/\$\$\$\(/,
