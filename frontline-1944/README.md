@@ -1,68 +1,37 @@
 # FRONTLINE 1944
 
-Juego de estrategia narrativa histórica para navegador, centrado en **Tierra** y vivido desde el puesto de mando de un general alemán del **Heer** durante la Segunda Guerra Mundial.
+Juego de estrategia narrativa histórica para navegador, centrado en campañas terrestres de la Segunda Guerra Mundial desde el punto de vista de un general alemán del Heer.
 
-## Dirección oficial
+## Versión 0.3
 
-FRONTLINE 1944 se apoya en cuatro principios:
+La web ya incluye:
 
-1. **Realismo histórico, militar y armamentístico extremo.**
-2. **Profundidad táctica, operacional y logística.**
-3. **La guerra vista desde el conocimiento limitado de un general alemán del Heer.**
-4. **Información imperfecta:** el mapa representa lo que el Estado Mayor cree que ocurre, no una visión omnisciente del campo de batalla.
+- pantalla de entrada con usuario, contraseña y registro;
+- menú principal con nueva campaña, continuar y archivo histórico;
+- guardado separado por usuario en el navegador;
+- logo oficial adaptado a la interfaz web;
+- Capítulo I reconstruido desde el inicio de la guerra: **Polonia 1939 · Fall Weiss**;
+- Gerd von Rundstedt como comandante de Heeresgruppe Süd;
+- Estado Mayor, ejércitos subordinados y recursos operacionales;
+- decisiones narrativas con consecuencias persistentes;
+- mapa de situación basado en información imperfecta;
+- fuentes históricas accesibles desde el propio juego;
+- separación visible entre hechos documentados y simulación contrafactual.
 
-El jugador no controla unidades como piezas de un RTS. Recibe informes, consulta a su Estado Mayor, estudia el mapa, emite órdenes y vive sus consecuencias horas o días después.
+## Principios
 
-## Modo
+1. Realismo histórico, militar y armamentístico.
+2. Profundidad táctica, operacional y logística.
+3. Perspectiva limitada de un general alemán del Heer.
+4. Información imperfecta.
+5. Consecuencias que sobreviven a la escena en la que fueron provocadas.
 
-- un solo jugador;
-- campaña narrativa;
-- decisiones ramificadas;
-- personajes históricos y ficticios claramente diferenciados;
-- hechos históricos separados de la simulación contrafactual;
-- recursos, mando, comunicaciones y logística persistentes;
-- referencias documentales accesibles desde el juego.
+## Capítulo I
 
-## Vertical slice 0.2
+La campaña comienza el 1 de septiembre de 1939 con Heeresgruppe Süd. El jugador atraviesa varios hitos de la campaña polaca hasta el cierre de las operaciones principales en octubre.
 
-La primera prueba jugable se sitúa en la madrugada del **6 de junio de 1944** en Normandía.
+Los hechos históricos se apoyan en fuentes documentales. Las decisiones alternativas del jugador no sustituyen la cronología real, sino que construyen una línea contrafactual plausible alrededor de ella.
 
-El jugador asume el puesto del **General der Artillerie Erich Marcks**, comandante del LXXXIV Armeekorps, y recibe informes sobre la operación aerotransportada y el comienzo de los desembarcos aliados.
+## Autenticación
 
-La versión 0.2 incluye tres decisiones consecutivas y un registro de sus efectos sobre:
-
-- mando;
-- comunicaciones;
-- logística;
-- combustible;
-- munición;
-- reservas;
-- moral;
-- inteligencia.
-
-## Regla documental
-
-Cada escena se clasifica como:
-
-- **hecho histórico**;
-- **reconstrucción narrativa**;
-- **decisión del jugador / divergencia**.
-
-No se presentarán cifras, órdenes de batalla, armamento, disponibilidad o cronologías como hechos sin incorporarlas antes al sistema de fuentes del proyecto.
-
-## Presentación
-
-La estética será la de un cuartel general de campaña: mapas, partes de situación, teléfonos, informes, archivos y documentación militar. No se utilizará propaganda totalitaria como recompensa estética ni como elemento de glorificación.
-
-## Próximos hitos
-
-1. Cronología documental completa del 6 de junio.
-2. Orden de batalla real del LXXXIV Armeekorps.
-3. Sistema de mensajes de oficiales y subordinados.
-4. Comunicaciones con retrasos y fallos.
-5. Logística por combustible, munición, transporte y estado de carreteras.
-6. Estado operacional realista de cada formación.
-7. Mapa de situación con antigüedad y fiabilidad de inteligencia.
-8. Consecuencias diferidas.
-9. Campaña completa de Normandía.
-10. Extensión posterior a otras campañas terrestres.
+La autenticación actual es de prototipo y se almacena localmente en el navegador. Antes de una beta pública deberá migrarse a un backend con autenticación real y persistencia remota.
