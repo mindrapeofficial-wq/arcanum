@@ -83,30 +83,18 @@ function battleNarrative(b,units,events){
 }
 
 async function renderRanking(){
-  const [rows,npcs,pvpData,warRowsRaw]=await Promise.all([
-    rpc("leaderboard",{p_limit:100}),
-    rpc("npc_directory"),
+  const [realmRowsRaw,pvpData,warRowsRaw]=await Promise.all([
+    rpc("realm_ranking").catch(()=>[]),
     stateApi("/arena/ranking").catch(()=>({ranking:[]})),
     rpc("war_ranking").catch(()=>[])
   ]);
   const mine=String(realmState.realm.mage_name||"").trim().toLowerCase();
-  const npcNames=new Set((npcs||[]).map(x=>String(x.mage_name||"").trim().toLowerCase()));
-  const botNames=new Set(["astrael"]);
-  const humanRows=(rows||[]).filter(x=>{
-    const key=String(x.mage_name||"").trim().toLowerCase();
-    return key&&!npcNames.has(key)&&!botNames.has(key);
-  });
-  const warRows=(warRowsRaw||[]).filter(x=>{
-    const key=String(x.username||x.mage_name||"").trim().toLowerCase();
-    return key&&!npcNames.has(key)&&!botNames.has(key);
-  });
-  const pvpRows=(Array.isArray(pvpData?.ranking)?pvpData.ranking:[]).filter(x=>{
-    const key=String(x.username||x.mage_name||"").trim().toLowerCase();
-    return key&&!npcNames.has(key)&&!botNames.has(key);
-  });
+  const realmRows=Array.isArray(realmRowsRaw)?realmRowsRaw:[];
+  const warRows=Array.isArray(warRowsRaw)?warRowsRaw:[];
+  const pvpRows=Array.isArray(pvpData?.ranking)?pvpData.ranking:[];
   const schoolName=code=>catalogs.schools.find(s=>s.code===code)?.name_es||code||"—";
 
-  const realmBody=humanRows.length?humanRows.map((x,index)=>`<tr class="${String(x.mage_name).trim().toLowerCase()===mine?"rank-me":""}"><td>${n(index+1)}</td><td><strong><button class="player-link" data-profile="${esc(x.mage_name)}">${esc(x.mage_name)}</button></strong></td><td><span class="school-dot ${esc(x.school_code)}"></span>${esc(schoolName(x.school_code))}</td><td>${n(x.land)}</td><td>${n(x.net_power)}</td></tr>`).join(""):`<tr><td colspan="5"><div class="empty">Todavía no hay reinos humanos clasificados.</div></td></tr>`;
+  const realmBody=realmRows.length?realmRows.map((x,index)=>`<tr class="${String(x.username).trim().toLowerCase()===mine?"rank-me":""}"><td>${n(index+1)}</td><td><strong><button class="player-link" data-profile="${esc(x.username)}">${esc(x.username)}</button></strong></td><td><span class="school-dot ${esc(x.school_code)}"></span>${esc(schoolName(x.school_code))}</td><td>${n(x.land)}</td><td><strong>${n(x.realm_score)}</strong></td></tr>`).join(""):`<tr><td colspan="5"><div class="empty">Todavía no hay reinos humanos clasificados.</div></td></tr>`;
 
   const warBody=warRows.length?warRows.map((x,index)=>{
     const name=String(x.username||x.mage_name||"");
@@ -127,8 +115,8 @@ async function renderRanking(){
       <button class="ranking-tab" type="button" data-rank-tab="arena">Arena</button>
     </div>
     <section class="ranking-panel active" data-rank-panel="realm">
-      <div class="ranking-panel-head"><div><span class="section-kicker">DOMINIOS</span><h3>Ranking de Reino</h3></div><p>Progreso estratégico de los dominios humanos de la Era.</p></div>
-      <div class="table-wrap"><table><thead><tr><th>#</th><th>Arconte</th><th>Escuela</th><th>Tierras</th><th>Ascendencia</th></tr></thead><tbody>${realmBody}</tbody></table></div>
+      <div class="ranking-panel-head"><div><span class="section-kicker">DOMINIOS</span><h3>Ranking de Reino</h3></div><p>Puntuación estratégica de territorio, infraestructura, ejército y desarrollo mágico. No equivale al Poder Neto.</p></div>
+      <div class="table-wrap"><table><thead><tr><th>#</th><th>Arconte</th><th>Escuela</th><th>Tierras</th><th>Puntuación Reino</th></tr></thead><tbody>${realmBody}</tbody></table></div>
     </section>
     <section class="ranking-panel" data-rank-panel="war">
       <div class="ranking-panel-head"><div><span class="section-kicker">CAMPAÑAS</span><h3>Ranking de Guerra</h3></div><p>Victorias militares. En empate cuentan el balance territorial, las derrotas y la actividad.</p></div>
