@@ -79,8 +79,8 @@ test("art project UI icons are present and wired",()=>{
   for(const file of uiAssets) assert.ok(fs.existsSync(new URL("../"+file,import.meta.url)),`Missing art asset: ${file}`);
   assert.match(html,/assets\/ui\/nav\/reino\.png/);
   assert.match(read("assets/js/realm-state.js"),/assets\/ui\/resources\/oro\.png/);
-  assert.ok(fs.existsSync(new URL("../assets/art/characters/verdante/verdante-level-1.png",import.meta.url)),"Missing Verdante level 1 portrait");
-  assert.match(read("assets/js/profile.js"),/verdante-level-1\.png/);
+  assert.ok(fs.existsSync(new URL("../assets/art/characters/verdante/viridia-level-1.webp",import.meta.url)),"Missing Verdante level 1 portrait");
+  assert.match(read("assets/js/profile.js"),/viridia-level-1\.webp/);
 });
 
 
@@ -118,7 +118,7 @@ test("canonical Archmage identity uses one snapshot",()=>{
   const arena=read("assets/js/arena.js");
   assert.match(sheet,/stateApi\("\/archmage\/"\+encodeURIComponent/);
   assert.match(profile,/loadArchmageSnapshot\(activeProfileName/);
-  assert.match(profile,/IDENTIDAD CANÓNICA/);
+  assert.match(profile,/identidad canónica/i);
   assert.match(profile,/APTITUDES DEL ARCHIMAGO/);
   assert.match(profile,/CRÓNICA PERSONAL/);
   assert.match(profile,/RENOMBRE/);
