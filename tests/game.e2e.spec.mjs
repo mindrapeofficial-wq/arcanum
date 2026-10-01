@@ -12,6 +12,35 @@ function corsHeaders(){
   };
 }
 
+const E2E_NAV_GROUP=Object.freeze({
+  character:"arconte",research:"arconte",artifacts:"arconte",arena:"arconte",pve:"arconte",event:"arconte",
+  realm:"reino",build:"reino",economy:"reino",market:"reino",army:"reino",war:"reino",battles:"reino",
+  tavern:"comunidad",community:"comunidad",ranking:"comunidad",admin:"comunidad"
+});
+
+async function openDesktopNavGroup(page,group){
+  const details=page.locator(`#main-nav details[data-nav-group="${group}"]`);
+  if(!(await details.evaluate(el=>el.open))) await details.locator("summary").click();
+  await expect(details).toHaveAttribute("open","");
+  return details;
+}
+
+async function navigateDesktop(page,view){
+  const group=E2E_NAV_GROUP[view];
+  if(!group)throw new Error("Unknown navigation view: "+view);
+  const details=await openDesktopNavGroup(page,group);
+  await details.locator(`button[data-view="${view}"]`).click();
+}
+
+async function navigateMobile(page,view){
+  const group=E2E_NAV_GROUP[view];
+  if(!group)throw new Error("Unknown navigation view: "+view);
+  await page.locator(`#mobile-nav [data-nav-group-trigger="${group}"]`).click();
+  const button=page.locator(`#mobile-nav-menu [data-mobile-nav-group="${group}"] button[data-view="${view}"]`);
+  await expect(button).toBeVisible();
+  await button.click();
+}
+
 function freshState(){
   return {
     season:{name:"Temporada de Pruebas",status:"active",ruleset_version:"test"},
@@ -379,34 +408,34 @@ test("flujo crítico completo: login, reino, explorar, construir, investigar, re
   await expect(page.locator("#mage-school")).toContainText("Nivel 4");
 
   // Personaje is the landing page (CLAUDE.md sec.2); exploring lives in Dominio.
-  await page.locator('#main-nav button[data-view="realm"]').click();
+  await navigateDesktop(page,"realm");
   await page.locator("#realm-explore-turns").fill("2");
   await page.locator("#realm-explore-button").click();
   await expect(page.locator(".toast").last()).toContainText("Exploración completada");
 
-  await page.locator('#main-nav button[data-view="build"]').click();
+  await navigateDesktop(page,"build");
   await expect(page.getByRole("heading",{name:"Diseña el crecimiento de tu dominio"})).toBeVisible();
   await page.locator('[data-building="farms"]').fill("2");
   await page.locator("#build-button").click();
   await expect(page.locator(".toast").last()).toContainText("Construcción completada");
 
-  await page.locator('#main-nav button[data-view="research"]').click();
+  await navigateDesktop(page,"research");
   await expect(page.getByRole("heading",{name:"Conocimiento Arcano",exact:true})).toBeVisible();
   await page.locator("#research-turns").fill("1");
   await page.locator("#research-button").click();
   await expect(page.locator(".toast").last()).toContainText("Conocimiento Arcano avanzado");
 
-  await page.locator('#main-nav button[data-view="army"]').click();
+  await navigateDesktop(page,"army");
   await expect(page.getByRole("heading",{name:"Formaciones"})).toBeVisible();
   await page.locator("#recruit-turns").fill("1");
   await page.locator("#recruit-button").click();
   await expect(page.locator(".toast").last()).toContainText("Reclutadas 5 unidades");
 
-  await page.locator('#main-nav button[data-view="war"]').click();
+  await navigateDesktop(page,"war");
   await expect(page.getByRole("heading",{name:"Guerra"})).toBeVisible();
   await expect(page.getByText("RIVAL_TEST")).toBeVisible();
 
-  await page.locator('#main-nav button[data-view="community"]').click();
+  await navigateDesktop(page,"community");
   await expect(page.getByRole("heading",{name:"Comunidad"})).toBeVisible();
   await page.locator("#chat-input").fill("Saludos desde el reino de pruebas");
   await page.locator("#chat-send").click();
@@ -450,9 +479,7 @@ test("la navegación móvil abre Comunidad sin errores", async ({page})=>{
   await expect(page.locator("#game-view")).toBeVisible();
   await expect(page.locator("#mage-title")).toHaveText("E2E_TESTER");
 
-  const community=page.locator('#mobile-nav button[data-view="community"]');
-  await community.scrollIntoViewIfNeeded();
-  await community.click();
+  await navigateMobile(page,"community");
   await expect(page.getByRole("heading",{name:"Comunidad"})).toBeVisible();
   expect(errors).toEqual([]);
 });
@@ -517,9 +544,9 @@ test("cambiar de sección mientras Personaje aún carga no deja contenido de Per
       document.querySelector("#view-host").innerHTML='<div id="stale-character">PERSONAJE TARDÍO</div>';
     };
   });
-  await page.locator('#main-nav button[data-view="realm"]').click();
-  await page.locator('#main-nav button[data-view="character"]').click();
-  await page.locator('#main-nav button[data-view="economy"]').click();
+  await navigateDesktop(page,"realm");
+  await navigateDesktop(page,"character");
+  await navigateDesktop(page,"economy");
   await expect(page.locator("#stale-character")).toHaveCount(0,{timeout:3000});
   await page.waitForTimeout(1500);
   await expect(page.locator("#stale-character")).toHaveCount(0);
@@ -555,6 +582,7 @@ test("los iconos artísticos de navegación y recursos cargan", async ({page})=>
   await page.locator("#submit-button").click();
   await expect(page.locator("#game-view")).toBeVisible();
   await expect(page.locator("#mage-title")).toHaveText("E2E_TESTER");
+  await openDesktopNavGroup(page,"reino");
   const navIcon=page.locator('#main-nav button[data-view="realm"] img.nav-icon');
   await expect(navIcon).toBeVisible();
   await expect.poll(()=>navIcon.evaluate(img=>img.naturalWidth)).toBeGreaterThan(0);
@@ -574,7 +602,7 @@ test("atacar abre siempre la crónica de batalla", async ({page})=>{
   // Wait for boot to finish: it lands on Personaje and would override an earlier navigation.
   await expect(page.locator("#game-view")).toBeVisible();
   await expect(page.locator("#mage-title")).toHaveText("E2E_TESTER");
-  await page.locator('#main-nav button[data-view="war"]').click();
+  await navigateDesktop(page,"war");
   await page.locator('.attack-btn[data-mode="REGULAR"]').click();
   await expect(page.locator("#modal")).toBeVisible();
   await expect(page.locator("#modal-content")).toContainText("CRÓNICA DEL COMBATE");
@@ -661,7 +689,7 @@ test("Expediciones inicia una incursión persistente y arrastra vida entre salas
   await page.locator("#submit-button").click();
   await expect(page.locator("#game-view")).toBeVisible();
 
-  await page.locator('#main-nav button[data-view="pve"]').click();
+  await navigateDesktop(page,"pve");
   await expect(page.getByRole("heading",{name:"Expediciones",exact:true})).toBeVisible();
   await expect(page.getByText("Ruinas del Umbral",{exact:true})).toBeVisible();
   await page.locator('[data-pve-start="ruins_threshold"][data-pve-difficulty="1"]').click();
