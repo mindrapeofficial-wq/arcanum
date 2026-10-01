@@ -346,3 +346,41 @@ test("early economy migration adds land-based subsistence food capacity",()=>{
   assert.match(migration,/base_food_per_land/);
   assert.match(migration,/r\.land::bigint/);
 });
+
+test("closed-beta polish stays in place",()=>{
+  const army=read("assets/js/army.js");
+  assert.doesNotMatch(army,/setTimeout\(\(\)=>generateArmyArt\(army,unitById,false\)/,"army portraits must stay opt-in (external AI Horde service)");
+  assert.match(army,/GENERAR RETRATO/);
+  const war=read("assets/js/war.js");
+  assert.match(war,/botNames=new Set\(\["astrael"\]\)/,"Astrael is not a human and must stay out of the human ranking");
+  assert.match(war,/res\?\.attacker_victory && typeof artifactClaimPvp/,"relic loot is only claimed after a win");
+  const magic=read("assets/js/magic.js");
+  assert.match(magic,/spellIsAdjacent/,"adjacent-school research cost must be flagged as higher than the base cost");
+  assert.match(read("assets/js/economy.js"),/Se \$\{turns===1\?"ha":"han"\} procesado/);
+  assert.match(read("assets/js/construction.js"),/coste base ≈/);
+  assert.match(read("assets/js/tutorial.js"),/Equípate antes de combatir/);
+  const reg=read("supabase/functions/register/index.ts");
+  assert.match(reg,/reservedExact/);
+  assert.match(reg,/"galante", "astrael"/);
+});
+
+test("boss attack and relic swap database functions are restored and not callable by players",()=>{
+  const m=read("supabase/migrations/20261001140000_restore_boss_attack_and_artifact_swap.sql");
+  assert.match(m,/function public\.arcanum_world_boss_apply_attack/);
+  assert.match(m,/function public\.arcanum_artifact_swap/);
+  assert.match(m,/revoke all on function public\.arcanum_world_boss_apply_attack[^;]+from public, anon, authenticated/);
+  assert.match(m,/revoke all on function public\.arcanum_artifact_swap[^;]+from public, anon, authenticated/);
+  assert.match(m,/to service_role/);
+  assert.match(m,/setval\(pg_get_serial_sequence/,"identity counters must be repaired");
+  // every RPC the Edge Functions call must exist in a migration in this repo
+  const fnDir="supabase/functions/";
+  for(const name of ["arcanum-boss","arcanum-community","arcanum-state","arcanum-oracle"]){
+    const src=read(fnDir+name+"/index.ts");
+    for(const match of src.matchAll(/\.rpc\(\s*"([a-z_0-9]+)"/g)){
+      const rpc=match[1];
+      const all=fs.readdirSync(new URL("../supabase/migrations/",import.meta.url)).map(f=>read("supabase/migrations/"+f)).join("\n");
+      if(rpc==="arena_pvp_ranking")continue; // created directly in the project, not in this repo yet
+      assert.match(all,new RegExp("function public\\."+rpc+"\\b"),"Edge Function "+name+" calls rpc "+rpc+" but no migration defines it");
+    }
+  }
+});

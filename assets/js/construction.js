@@ -57,24 +57,27 @@ function buildCard(key,meta,buildings){
   </article>`;
 }
 function refreshBuildPlan(){
-  let total=0,types=0,hasBarriers=false,hasOthers=false;
-  $$("[data-building]").forEach(input=>{
+  let total=0,types=0,hasBarriers=false,hasOthers=false,baseCost=0;
+  const plan={};
+  $("[data-building]").forEach(input=>{
     const q=Math.max(0,Math.floor(Number(input.value)||0));
     const key=input.dataset.building;
     input.closest(".building-card")?.classList.toggle("selected",q>0);
     if(q>0){
-      total+=q; types+=1;
+      total+=q; types+=1; plan[key]=q;
+      baseCost+=q*(parseInt(buildMeta[key]?.[2],10)||1);
       if(key==="barriers") hasBarriers=true;
       else hasOthers=true;
     }
   });
   const mixed=hasBarriers&&hasOthers;
+  const estimatedTurns=mixed?0:estimateBuildTurns(plan);
   const summary=$("#build-plan-summary");
   const warning=$("#build-plan-warning");
   const button=$("#build-button");
   if(summary){
     summary.innerHTML=total
-      ? `<span>LOTE PREPARADO</span><strong>${n(total)} unidades</strong><small>${n(types)} ${types===1?"tipo seleccionado":"tipos seleccionados"}</small>`
+      ? `<span>LOTE PREPARADO</span><strong>${n(total)} unidades</strong><small>${n(types)} ${types===1?"tipo seleccionado":"tipos seleccionados"} · coste base ≈ ${n(baseCost)} turnos${mixed?"":` · coste estimado ${n(estimatedTurns)} con Talleres`}</small>`
       : `<span>LOTE PREPARADO</span><strong>Sin selección</strong><small>Indica cuántos edificios quieres levantar.</small>`;
   }
   warning?.classList.toggle("hidden",!mixed);
