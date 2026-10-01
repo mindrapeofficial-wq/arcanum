@@ -1,6 +1,6 @@
 {
-  "version": "0.3.41",
+  "version": "0.3.42",
   "channel": "beta",
-  "updated_at": "2026-10-01T16:23:08+00:00",
-  "note": "Saqueo, protección y meditación + duelo avanzado con conjuros, armas arrojadizas, Vendaje y hasta 3 familiares"
+  "updated_at": "2026-10-01T19:30:00+02:00",
+  "note": "Corrige un error del audio de la interfaz que rompía la navegación con el ratón"
 }

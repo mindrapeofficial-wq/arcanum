@@ -186,7 +186,7 @@ const ArcanumAudio=(()=>{
     },true);
     document.addEventListener("pointerout",e=>{
       const el=e.target.closest?.("button,a,[role='button'],.school-card,[data-view]");
-      if(el===lastHover&&!el.contains(e.relatedTarget))lastHover=null;
+      if(el&&el===lastHover&&!el.contains(e.relatedTarget))lastHover=null;
     },true);
     document.addEventListener("click",e=>{
       const b=e.target.closest("button,a,.school-card,[data-view]");

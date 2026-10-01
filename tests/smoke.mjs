@@ -510,8 +510,8 @@ test("war view exposes shield/meditation state from the server and keeps version
     assert.match(state, new RegExp(code), `${code} needs a human message`);
   }
   assert.match(html, /war\.js\?v=0\.3\.41/);
-  assert.match(html, /state\.js\?v=0\.3\.41/);
-  assert.match(state, /BUILD_VERSION = "0\.3\.41"/);
+  assert.match(html, /state\.js\?v=0\.3\.42/);
+  assert.match(state, /BUILD_VERSION = "0\.3\.42"/);
 });
 
 test("Pillage is a third attack mode, server-driven and never a land grab", () => {
