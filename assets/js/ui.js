@@ -109,13 +109,36 @@ async function checkForUpdate(){
   }catch{return false;}
 }
 
+function bootTimeout(promise,ms=10000,label="BOOT_TIMEOUT"){
+  let timer;
+  return Promise.race([
+    promise,
+    new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error(label)),ms);})
+  ]).finally(()=>clearTimeout(timer));
+}
+
 async function init(){
-  if(await checkForUpdate())return;
-  wireStaticEvents();
-  setInterval(checkForUpdate,VERSION_CHECK_INTERVAL_MS);
-  document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")checkForUpdate();});
-  const session=await validSession();
-  if(typeof enforceMaintenance==="function" && await enforceMaintenance()) return;
-  if(session)await bootGame(); else showAuth();
+  try{
+    if(await bootTimeout(checkForUpdate(),8000,"VERSION_CHECK_TIMEOUT"))return;
+    wireStaticEvents();
+    setInterval(checkForUpdate,VERSION_CHECK_INTERVAL_MS);
+    document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")checkForUpdate();});
+    let session=null;
+    try{ session=await bootTimeout(validSession(),10000,"SESSION_CHECK_TIMEOUT"); }
+    catch(error){
+      showAuth();
+      setNotice($("#auth-notice"),"No se pudo validar la sesión a tiempo. Puedes volver a entrar sin que la pantalla quede bloqueada.");
+      return;
+    }
+    if(typeof enforceMaintenance==="function"){
+      try{ if(await bootTimeout(enforceMaintenance(),10000,"MAINTENANCE_CHECK_TIMEOUT")) return; }
+      catch{}
+    }
+    if(session)await bootTimeout(bootGame(),15000,"GAME_BOOT_TIMEOUT"); else showAuth();
+  }catch(error){
+    console.error("ARCANUM boot failure",error);
+    showAuth();
+    setNotice($("#auth-notice"),"ARCANUM no pudo completar el arranque. Recarga la página o vuelve a iniciar sesión.");
+  }
 }
 window.addEventListener("DOMContentLoaded",init);
