@@ -173,6 +173,21 @@ function lootSchoolLabel(code){
 function lootSlotLabel(slot){
   return ({weapon:"Arma",robe:"Túnica",amulet:"Amuleto",ring:"Anillo",focus:"Foco Arcano"})[slot]||slot;
 }
+const LOOT_VISUAL_ASSETS=Object.freeze({
+  weapon:"assets/art/drive/items/demonic-sword.png",
+  robe:"assets/art/drive/items/demonic-chestplate.png",
+  amulet:"assets/art/drive/items/demonic-amulet.png",
+  ring:"assets/art/drive/items/demonic-ring.png",
+  focus:"assets/art/drive/items/forbidden-grimoire.png"
+});
+function lootVisualAsset(item){
+  return LOOT_VISUAL_ASSETS[item?.slot]||LOOT_VISUAL_ASSETS.focus;
+}
+function lootVisualHtml(item,cls="loot-item-art"){
+  const src=lootVisualAsset(item);
+  return src?'<div class="'+cls+'"><img src="'+src+'" alt="" loading="lazy" decoding="async"></div>':"";
+}
+
 function lootItemStats(item){
   const rows=[];
   (item.implicit||[]).forEach(x=>rows.push({label:LOOT_STAT_LABELS[x.stat]||x.stat,value:x.value,implicit:true}));
@@ -193,6 +208,7 @@ function lootItemCard(item,state=null){
     ?'<button class="small-action" type="button" data-loot-unequip="'+esc(equippedSlot)+'">DESEQUIPAR</button>'
     :'<button class="small-action" type="button" data-loot-equip="'+esc(item.id)+'">EQUIPAR</button><button class="ghost-button" type="button" data-loot-destroy="'+esc(item.id)+'">DESTRUIR</button>';
   return '<article class="loot-item rarity-'+esc(item.rarity)+(equipped?' is-equipped':'')+'" data-loot-id="'+esc(item.id)+'">'+
+    lootVisualHtml(item)+
     '<header><span class="loot-rarity">'+esc(item.rarityLabel)+'</span><b>'+(equipped?'EQUIPADO · ':'')+'iP '+n(item.power)+'</b></header>'+
     '<h4>'+esc(item.name)+'</h4><div class="loot-meta">'+esc(lootSlotLabel(item.slot))+' · Nv. '+n(item.level)+' · '+esc(lootSchoolLabel(item.affinity))+'</div>'+
     '<div class="loot-origin"><small>ORIGEN</small><span>'+esc(origin)+'</span></div>'+
@@ -231,7 +247,7 @@ function lootCombatBonuses(profile){
 function lootEquipmentCard(slot,state){
   const itemId=state.equipment[slot.key],item=state.items.find(x=>x.id===itemId);
   if(!item)return '<div class="loot-equip-slot"><small>'+esc(slot.label)+'</small><span>Vacío</span></div>';
-  return '<div class="loot-equip-slot filled rarity-'+esc(item.rarity)+'"><small>'+esc(slot.label)+'</small><strong>'+esc(item.name)+'</strong><span>iP '+n(item.power)+'</span><button class="loot-unequip" type="button" data-loot-unequip="'+esc(slot.key)+'">×</button></div>';
+  return '<div class="loot-equip-slot filled rarity-'+esc(item.rarity)+'">'+lootVisualHtml(item,"loot-slot-art")+'<small>'+esc(slot.label)+'</small><strong>'+esc(item.name)+'</strong><span>iP '+n(item.power)+'</span><button class="loot-unequip" type="button" data-loot-unequip="'+esc(slot.key)+'">×</button></div>';
 }
 function canonicalRelicEquipmentCard(){
   const rawRelic=typeof canonicalEquippedRelic==="function"?canonicalEquippedRelic():null;
