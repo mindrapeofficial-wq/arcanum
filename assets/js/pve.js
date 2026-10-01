@@ -48,6 +48,25 @@ function pveCatalogHtml(catalog){
     '</article>'
   ).join("");
 }
+
+function pveDecisionHtml(run){
+  const decision=run?.pending_decision;
+  if(!decision?.options?.length)return "";
+  const room=decision.options[0]?.next_room||run.current_room||{};
+  return '<section class="pve-decision-shell">'+
+    '<div class="pve-decision-head"><div><span class="section-kicker">DECISIÓN DEL UMBRAL</span><h3>El siguiente paso es tuyo</h3>'+
+      '<p>Has superado la cámara. Antes de entrar en <strong>'+esc(room.name||"la siguiente cámara")+'</strong>, puedes protegerte, mantener el rumbo o forzar el riesgo.</p></div>'+
+      '<span class="pve-decision-lock">SIN COSTE DE TURNO</span></div>'+
+    '<div class="pve-choice-grid">'+decision.options.map(option=>
+      '<button class="pve-choice" data-pve-choice="'+esc(option.id)+'">'+
+        '<span class="pve-choice-icon">'+esc(option.icon||"◇")+'</span>'+
+        '<span class="pve-choice-body"><strong>'+esc(option.title)+'</strong><small>'+esc(option.subtitle)+'</small><em>'+esc(option.description)+'</em>'+
+          '<i class="pve-choice-target">PRÓXIMO · '+esc(option.next_room?.name||"—")+'</i></span>'+
+      '</button>'
+    ).join("")+'</div>'+
+  '</section>';
+}
+
 function pveActiveHtml(run,turnCost){
   const room=run.current_room||{},pct=pveHpPct(run),busy=run.status==="fighting";
   return '<section class="pve-active-shell">'+
@@ -57,16 +76,19 @@ function pveActiveHtml(run,turnCost){
     '<div class="pve-vitals"><div class="pve-hp-head"><span>VIDA DEL ARCHIMAGO</span><strong>'+n(run.player_hp)+' / '+n(run.player_max_hp)+'</strong></div>'+
       '<div class="pve-hp"><i style="width:'+pct.toFixed(2)+'%"></i></div></div>'+
     pveRoomTrack(run)+
-    '<article class="pve-encounter '+(room.boss?"boss":"")+'">'+
-      '<div class="pve-enemy-mark">'+(room.boss?"◆":"◇")+'</div>'+
-      '<div><span class="section-kicker">'+(room.boss?"JEFE DE EXPEDICIÓN":"ENCUENTRO "+(Number(run.stage)+1))+'</span>'+
-        '<h3>'+esc(room.name||"Cámara despejada")+'</h3><small>'+esc(pveSchoolName(room.school))+'</small><p>'+esc(room.desc||"")+'</p></div>'+
-      '<div class="pve-actions">'+
-        '<button class="primary-action" id="pve-fight" '+(busy||!room.id?"disabled":"")+'>'+(busy?"RESOLVIENDO…":"⚔ ENFRENTARSE · "+n(turnCost)+" TURNO")+'</button>'+
-        '<button class="ghost-button" id="pve-retreat" '+(busy?"disabled":"")+'>RETIRARSE</button>'+
-      '</div>'+
-    '</article>'+
-    (run.last_enemy?'<div class="pve-last-result"><span>ÚLTIMO ENCUENTRO</span><strong>'+esc(run.last_enemy.name||"")+'</strong><small>Terminaste con '+n(run.player_hp)+' de '+n(run.player_max_hp)+' de vida.</small></div>':"")+
+    (run.pending_decision
+      ?pveDecisionHtml(run)
+      :'<article class="pve-encounter '+(room.boss?"boss":"")+'>'+
+        '<div class="pve-enemy-mark">'+(room.boss?"◆":"◇")+'</div>'+
+        '<div><span class="section-kicker">'+(room.boss?"JEFE DE EXPEDICIÓN":"ENCUENTRO "+(Number(run.stage)+1))+'</span>'+
+          '<h3>'+esc(room.name||"Cámara despejada")+'</h3><small>'+esc(pveSchoolName(room.school))+'</small><p>'+esc(room.desc||"")+'</p></div>'+
+        '<div class="pve-actions">'+
+          '<button class="primary-action" id="pve-fight" '+(busy||!room.id?"disabled":"")+'>'+(busy?"RESOLVIENDO…":"⚔ ENFRENTARSE · "+n(turnCost)+" TURNO")+'</button>'+
+          '<button class="ghost-button" id="pve-retreat" '+(busy?"disabled":"")+'>RETIRARSE</button>'+
+        '</div>'+
+      '</article>')+
+    (!run.pending_decision&&run.last_enemy?'<div class="pve-last-result"><span>ÚLTIMO ENCUENTRO</span><strong>'+esc(run.last_enemy.name||"")+'</strong><small>Terminaste con '+n(run.player_hp)+' de '+n(run.player_max_hp)+' de vida.</small></div>':"")+
+    '<div class="pve-retreat-row"><button class="ghost-button" id="pve-retreat-bottom" '+(busy?"disabled":"")+'>'+ (run.pending_decision?"RETIRARSE DE LA EXPEDICIÓN":"ABANDONAR EXPEDICIÓN") +'</button></div>'+
   '</section>';
 }
 function pveFightModal(data){
@@ -108,6 +130,22 @@ async function pveFight(){
     pveFightModal(data);
   }catch(e){toast(humanError(e),"error");await renderPve().catch(()=>{})}
 }
+
+async function pveChoose(choiceId,btn){
+  $(".pve-choice").forEach(x=>x.disabled=true);
+  try{
+    const data=await stateApi("/pve/choose",{method:"POST",body:{choice_id:String(choiceId)}});
+    const choice=data?.choice;
+    if(choice?.hp_after>choice?.hp_before)toast("El santuario restaura parte de tu vida.","success");
+    else if(choice?.choice_id==="forbidden")toast("Has forzado el Umbral. La próxima cámara será más peligrosa.","success");
+    else toast("Mantienes el rumbo hacia la siguiente cámara.","success");
+    await renderPve();
+  }catch(e){
+    toast(humanError(e),"error");
+    await renderPve().catch(()=>{});
+  }
+}
+
 async function pveRetreat(){
   if(!confirm("¿Retirarte de la expedición? Conservarás el Gear ya obtenido, pero esta incursión terminará."))return;
   try{
@@ -128,6 +166,8 @@ async function renderPve(){
   $$(".pve-start").forEach(btn=>btn.addEventListener("click",()=>pveStart(btn.dataset.pveStart,btn.dataset.pveDifficulty,btn)));
   $("#pve-fight")?.addEventListener("click",pveFight);
   $("#pve-retreat")?.addEventListener("click",pveRetreat);
+  $("#pve-retreat-bottom")?.addEventListener("click",pveRetreat);
+  $(".pve-choice").forEach(btn=>btn.addEventListener("click",()=>pveChoose(btn.dataset.pveChoice,btn)));
 }
 
 globalThis.renderPve=renderPve;
