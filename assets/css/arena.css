@@ -109,3 +109,27 @@
 @media(prefers-reduced-motion:reduce){.arena-life-track i{transition:none}.arena-float,.arena-duelist.is-attacking .arena-fighter-shell,.arena-duelist.is-hit .arena-fighter-shell,.arena-duelist.is-blocking .arena-fighter-shell,.arena-duelist.is-missing .arena-fighter-shell,.arena-duelist.is-healing .arena-fighter-shell,.arena-duelist.is-ko .arena-fighter-shell,.arena-duel-stage.is-impact .arena-battlefield{animation:none!important}#arena-result-panel,#arena-log-panel{opacity:1;transform:none;pointer-events:auto}}
 
 .arena-result .arena-loot-reward{display:block;margin-top:8px;padding-top:8px;border-top:1px solid rgba(218,151,57,.12);color:#cfad75;font:800 8px/1.4 Arial,sans-serif;letter-spacing:.05em;font-style:normal}
+
+
+/* PvP ranking */
+.pvp-ranking-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(360px,.7fr);gap:14px;margin-bottom:14px}
+.pvp-ranking-hero>div{border:1px solid rgba(218,151,57,.16);background:linear-gradient(145deg,rgba(18,12,8,.96),rgba(3,3,3,.98));padding:22px}
+.pvp-ranking-hero h3{margin:5px 0 8px;color:#ead4ac;font-size:30px;font-weight:500}
+.pvp-ranking-hero p{max-width:720px;margin:0;color:#8d806e;font:11px/1.6 Arial,sans-serif}
+.pvp-ranking-summary{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-content:center}
+.pvp-ranking-summary span{padding:10px;border:1px solid rgba(218,151,57,.1);background:rgba(0,0,0,.18)}
+.pvp-ranking-summary small,.pvp-ranking-summary b{display:block}.pvp-ranking-summary small{color:#735f45;font:800 7px Arial,sans-serif;letter-spacing:.08em}.pvp-ranking-summary b{margin-top:5px;color:#e0c492;font-size:14px}
+.pvp-ranking-panel{padding:0;overflow:hidden}
+.pvp-ranking-head,.pvp-rank-row{display:grid;grid-template-columns:54px minmax(200px,1fr) 86px 86px 92px 96px;align-items:center}
+.pvp-ranking-head{padding:10px 12px;border-bottom:1px solid rgba(218,151,57,.14);background:rgba(218,151,57,.035);color:#705d45;font:800 7px Arial,sans-serif;letter-spacing:.11em}
+.pvp-ranking-head>div:nth-child(n+3){text-align:center}
+.pvp-ranking-list{display:grid}
+.pvp-rank-row{min-height:66px;padding:8px 12px;border-bottom:1px solid rgba(218,151,57,.07);background:rgba(255,255,255,.008)}
+.pvp-rank-row:hover{background:rgba(218,151,57,.025)}
+.pvp-rank-row.is-self{background:linear-gradient(90deg,rgba(170,106,31,.12),rgba(170,106,31,.025));box-shadow:inset 2px 0 0 rgba(218,151,57,.5)}
+.pvp-rank-pos{display:grid;place-items:center}.pvp-rank-pos b{display:grid;place-items:center;width:28px;height:28px;border:1px solid rgba(218,151,57,.2);transform:rotate(45deg);color:#c99c5a;font:700 9px Arial,sans-serif}.pvp-rank-pos b::first-line{transform:rotate(-45deg)}
+.pvp-rank-player{display:flex;align-items:center;gap:10px;min-width:0}.pvp-school-mark{display:grid;place-items:center;flex:0 0 32px;width:32px;height:32px;border:1px solid rgba(218,151,57,.17);border-radius:50%;color:#d7b374;background:rgba(0,0,0,.24)}.pvp-rank-player>div{min-width:0}.pvp-rank-player .player-link{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pvp-rank-player small{display:block;margin-top:4px;color:#746654;font:8px Arial,sans-serif}
+.pvp-rank-stat,.pvp-rank-elo{text-align:center}.pvp-rank-stat small,.pvp-rank-elo small{display:none}.pvp-rank-stat b{color:#bba47e;font:700 12px Arial,sans-serif}.pvp-rank-stat.win b{color:#c6ad7e}.pvp-rank-stat.loss b{color:#9e7868}.pvp-rank-stat.rate b{color:#8f806a}.pvp-rank-elo b{color:#e5c68f;font-size:16px}
+@media(max-width:900px){.pvp-ranking-hero{grid-template-columns:1fr}}
+@media(max-width:720px){.pvp-ranking-head{display:none}.pvp-rank-row{grid-template-columns:42px minmax(0,1fr) 58px 58px 74px;gap:4px;padding:10px}.pvp-rank-stat.rate{display:none}.pvp-rank-stat small,.pvp-rank-elo small{display:block;margin-bottom:3px;color:#675845;font:700 6px Arial,sans-serif}.pvp-rank-elo{grid-column:5}.pvp-ranking-summary{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.pvp-ranking-hero>div{padding:16px}.pvp-ranking-hero h3{font-size:24px}.pvp-rank-row{grid-template-columns:34px minmax(0,1fr) 46px 46px 62px}.pvp-school-mark{display:none}.pvp-rank-player{gap:0}.pvp-rank-stat b{font-size:11px}.pvp-rank-elo b{font-size:14px}}
