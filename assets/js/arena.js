@@ -16,14 +16,32 @@ let arenaReplayToken=0;
 function arenaSpriteHtml(code,cls){var school=ARENA_SPRITE_FILES[code]?code:"ascendant";return '<span class="arena-sprite school-'+school+' '+(cls||"")+'" data-school="'+school+'" aria-hidden="true"></span>'}
 async function arenaHydrateSprites(root){var host=root||document,nodes=host.querySelectorAll?host.querySelectorAll(".arena-sprite[data-school]"):[];for(var i=0;i<nodes.length;i++){var el=nodes[i],school=el.dataset.school||"ascendant",path=ARENA_SPRITE_FILES[school]||ARENA_SPRITE_FILES.ascendant;try{if(!ARENA_SPRITE_CACHE[school])ARENA_SPRITE_CACHE[school]=fetch(path,{cache:"force-cache"}).then(function(r){if(!r.ok)throw new Error("sprite "+r.status);return r.text()}).then(function(x){return "url(data:image/webp;base64,"+x.trim()+")"});el.style.backgroundImage=await ARENA_SPRITE_CACHE[school]}catch(e){el.classList.add("arena-sprite--fallback")}}}
 function arenaDivision(v){return v>=1700?"Leyenda Arcana":v>=1500?"Arconte":v>=1350?"Gran Mago":v>=1200?"Maestro":v>=1050?"Adepto":v>=900?"Aprendiz":"Iniciado"}
-function arenaTargets(rows){
+function arenaTargets(rows,selfRating){
   const me=String(realmState?.realm?.mage_name||"").toLowerCase();
-  const power=Math.max(1,Number(realmState?.realm?.net_power||1));
+  const rating=Math.max(100,Number(selfRating||1000));
   return (rows||[])
-    .filter(x=>String(x.mage_name||"").toLowerCase()!==me)
-    .map(x=>({...x,_d:Math.abs(Math.log10(Math.max(1,Number(x.net_power||1)))-Math.log10(power))}))
-    .sort((a,b)=>a._d-b._d)
+    .filter(x=>String(x.username||x.mage_name||"").toLowerCase()!==me)
+    .map(x=>({...x,mage_name:String(x.username||x.mage_name||""),_d:Math.abs(Number(x.rating||1000)-rating)}))
+    .sort((a,b)=>a._d-b._d||Math.abs(Number(a.rating||1000)-1000)-Math.abs(Number(b.rating||1000)-1000))
     .slice(0,8);
+}
+function arenaSearchRows(rows,q){
+  const me=String(realmState?.realm?.mage_name||"").toLowerCase(),needle=String(q||"").trim().toLowerCase();
+  if(!needle)return [];
+  return (rows||[]).filter(x=>String(x.mage_name||"").toLowerCase()!==me&&String(x.mage_name||"").toLowerCase().includes(needle)).slice(0,8);
+}
+function arenaFightRow(t,ranked,energy,showRating=false){
+  const tr=arenaTrait(t.school_code),rating=Number(t.rating||0);
+  return '<article class="arena-row">'+arenaSpriteHtml(t.school_code,"arena-sprite--mini")+'<div><strong><button class="player-link" data-profile="'+esc(t.mage_name)+'">'+esc(t.mage_name)+'</button></strong>'+
+    '<small>'+esc(tr.name)+(showRating&&rating?' · ELO '+n(rating):'')+'</small></div><div>'+
+    '<button class="small-action arena-fight" data-target="'+esc(t.mage_name)+'" data-school="'+esc(t.school_code||"ascendant")+'" data-mode="ranked" '+((Number(ranked.remaining)<=0||Number(energy.current)<2)?"disabled":"")+'>DUELO</button>'+
+    '<button class="small-action arena-fight alt" data-target="'+esc(t.mage_name)+'" data-school="'+esc(t.school_code||"ascendant")+'" data-mode="friendly">AMISTOSO</button></div></article>';
+}
+function arenaWireFightButtons(root=document){
+  (root.querySelectorAll?root.querySelectorAll(".arena-fight:not([data-arena-wired])"):[]).forEach(btn=>{
+    btn.dataset.arenaWired="1";
+    btn.addEventListener("click",()=>arenaFight(btn.dataset.target,btn.dataset.mode,btn,btn.dataset.school));
+  });
 }
 function arenaHistoryRecord(row){
   return {
@@ -219,11 +237,12 @@ function arenaOpen(rec){
 }
 
 async function renderArena(){
-  const [snapshot,arenaData,rows]=await Promise.all([
+  const [snapshot,arenaData,arenaRank,directory]=await Promise.all([
     typeof loadArchmageSnapshot==="function"
       ?loadArchmageSnapshot(realmState.realm.mage_name,{force:true})
       :rpc("player_profile",{p_mage_name:realmState.realm.mage_name}).then(profile=>({profile})),
     stateApi("/arena"),
+    stateApi("/arena/ranking").catch(()=>({ranking:[]})),
     rpc("leaderboard",{p_limit:100}).catch(()=>[])
   ]);
   const selfProfile=snapshot.profile;
@@ -231,7 +250,7 @@ async function renderArena(){
   const energy=arenaData?.energy||snapshot?.energy||{current:0,max:12};
   const ranked=arenaData?.ranked_daily||{used:Number(data.ranked_used||0),limit:ARENA_DAILY_RANKED_LIMIT,remaining:Math.max(0,ARENA_DAILY_RANKED_LIMIT-Number(data.ranked_used||0))};
   const history=(arenaData?.history||[]).map(arenaHistoryRecord);
-  const targets=arenaTargets(rows);
+  const targets=arenaTargets(arenaRank?.ranking||[],data.rating);
   const combat=typeof getCombatProfile==="function"?getCombatProfile(selfProfile):null;
   const gear=typeof lootCombatBonuses==="function"?lootCombatBonuses(selfProfile):{equipmentPower:Number(snapshot?.inventory?.equipment_power||0)};
   const trait=arenaTrait(selfProfile.school_code);
@@ -239,7 +258,7 @@ async function renderArena(){
 
   $("#view-host").innerHTML=
     '<section class="arena-hero"><div><span class="section-kicker">CÍRCULO DE DUELO</span><h3>'+esc(selfProfile.mage_name)+'</h3>'+
-      '<p>Seis combates clasificatorios al día según reloj del servidor. Los amistosos son ilimitados. Perfil, equipo, Sellos, rating y resultado se validan en backend.</p>'+
+      '<p>Seis combates clasificatorios al día según reloj del servidor. Los amistosos son ilimitados. Energía, equipo, ELO y resultado se validan en backend.</p>'+
       '<div class="arena-meta">'+
         '<span><small>ENERGÍA</small><b>'+n(energy.current)+' / '+n(energy.max||12)+'</b></span>'+
         '<span><small>CLASIFICATORIAS</small><b>'+n(ranked.remaining)+' / '+n(ranked.limit||ARENA_DAILY_RANKED_LIMIT)+'</b></span>'+
@@ -250,22 +269,30 @@ async function renderArena(){
       '</div></div>'+
       '<aside><div class="arena-hero-avatar">'+arenaSpriteHtml(selfProfile.school_code,"arena-sprite--hero")+'<i>'+trait.mark+'</i></div><strong>Nivel de Arena '+n(level)+'</strong><small>'+esc(trait.name)+' · '+esc(trait.skill)+'</small></aside>'+
     '</section>'+
-    '<div class="arena-grid"><section class="panel"><div class="arena-title"><span class="section-kicker">RIVALES</span><h3>Contrincantes cercanos</h3></div>'+
-      '<div class="arena-list">'+(targets.length?targets.map(function(t){
-        const tr=arenaTrait(t.school_code);
-        return '<article class="arena-row">'+arenaSpriteHtml(t.school_code,"arena-sprite--mini")+'<div><strong><button class="player-link" data-profile="'+esc(t.mage_name)+'">'+esc(t.mage_name)+'</button></strong>'+
-          '<small>'+esc(tr.name)+' · Poder '+n(t.net_power)+'</small></div><div>'+
-          '<button class="small-action arena-fight" data-target="'+esc(t.mage_name)+'" data-school="'+esc(t.school_code||"ascendant")+'" data-mode="ranked" '+((Number(ranked.remaining)<=0||Number(energy.current)<2)?"disabled":"")+'>DUELO</button>'+
-          '<button class="small-action arena-fight alt" data-target="'+esc(t.mage_name)+'" data-school="'+esc(t.school_code||"ascendant")+'" data-mode="friendly">AMISTOSO</button></div></article>';
-      }).join(""):'<div class="empty">No hay rivales disponibles.</div>')+'</div></section>'+
+    '<div class="arena-grid"><section class="panel"><div class="arena-title"><span class="section-kicker">RIVALES</span><h3>Contrincantes por ELO</h3></div>'+
+      '<div class="arena-rival-search"><input id="arena-rival-search" type="search" maxlength="40" autocomplete="off" placeholder="Buscar Arconte por nombre…"><button class="small-action" id="arena-rival-search-button" type="button">BUSCAR</button></div>'+
+      '<div class="arena-list" id="arena-search-results"></div>'+
+      '<div class="arena-title arena-title-secondary"><span class="section-kicker">RECOMENDADOS</span><h3>ELO más cercano</h3></div>'+
+      '<div class="arena-list">'+(targets.length?targets.map(t=>arenaFightRow(t,ranked,energy,true)).join(""):'<div class="empty">Todavía no hay suficientes rivales clasificados.</div>')+'</div></section>'+
       '<section class="panel"><div class="arena-title"><span class="section-kicker">CRÓNICAS</span><h3>Últimos duelos</h3></div>'+
       '<div class="arena-history">'+(history.length?history.slice(0,8).map(function(h){
         return '<button class="arena-history-row" data-id="'+esc(h.id)+'"><span class="tag '+(h.won?"win":"loss")+'">'+(h.won?"VICTORIA":"DERROTA")+'</span>'+
           '<span><strong>'+esc(h.opponent)+'</strong><small>'+new Date(h.at).toLocaleString("es-ES")+'</small></span><b>'+(h.delta>0?"+":"")+h.delta+'</b></button>';
       }).join(""):'<div class="empty">Aún no has combatido en la Arena.</div>')+'</div></section></div>';
 
-  $$(".arena-fight").forEach(btn=>btn.addEventListener("click",()=>arenaFight(btn.dataset.target,btn.dataset.mode,btn,btn.dataset.school)));
-  $$(".arena-history-row").forEach(btn=>btn.addEventListener("click",()=>{
+  const renderArenaSearch=()=>{
+    const host=$("#arena-search-results"),q=String($("#arena-rival-search")?.value||"").trim();
+    if(!host)return;
+    const rows=arenaSearchRows(directory,q);
+    host.innerHTML=q?(rows.length?rows.map(t=>arenaFightRow(t,ranked,energy,false)).join(""):'<div class="empty">No se encontró ningún Arconte.</div>'):'<div class="empty">Escribe un nombre para buscar un rival concreto.</div>';
+    arenaWireFightButtons(host);
+    arenaHydrateSprites(host);
+  };
+  $("#arena-rival-search")?.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();renderArenaSearch()}});
+  $("#arena-rival-search-button")?.addEventListener("click",renderArenaSearch);
+  renderArenaSearch();
+  arenaWireFightButtons($("#view-host"));
+  $(".arena-history-row").forEach(btn=>btn.addEventListener("click",()=>{
     const rec=history.find(x=>x.id===btn.dataset.id);if(rec)arenaOpen(rec);
   }));
   arenaHydrateSprites($("#view-host"));
