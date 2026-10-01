@@ -1089,12 +1089,15 @@ function pveEnemyProfile(run:any,room:any){
   const enemyLevel=Math.max(1,Math.min(50,baseLevel+Number(diff.enemyOffset||0)+Math.floor(stage/2)+(room.boss?2:0)));
   const raw=baseProfile("PVE|"+String(run.seed)+"|"+String(room.id),String(room.school));
   const statBoost=Math.floor((enemyLevel-1)*.62)+(Number(run.difficulty||1)-1)+(room.boss?3:0);
-  Object.keys(raw.stats||{}).forEach(k=>raw.stats[k]=Math.max(1,Math.round((Number(raw.stats[k]||0)+statBoost)*Math.max(.5,Number(modifiers?.enemy_mult||1)))));
+  Object.keys(raw.stats||{}).forEach(k=>raw.stats[k]=Math.max(1,Number(raw.stats[k]||0)+statBoost));
   if(room.boss){
     raw.stats.vitality=Number(raw.stats.vitality||0)+3;
     raw.stats.endurance=Number(raw.stats.endurance||0)+2;
     raw.stats.will=Number(raw.stats.will||0)+2;
   }
+  const onboardingMult=Number(run.difficulty||1)===1?(baseLevel<=1?.80:baseLevel===2?.90:1):1;
+  const encounterMult=Math.max(.5,Number(modifiers?.enemy_mult||1))*onboardingMult;
+  Object.keys(raw.stats||{}).forEach(k=>raw.stats[k]=Math.max(1,Math.round(Number(raw.stats[k]||0)*encounterMult)));
   raw.name=room.name;raw.school=room.school;
   return {raw,level:enemyLevel,profile:{mage_name:room.name,school_code:room.school}};
 }
