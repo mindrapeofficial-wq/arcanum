@@ -241,9 +241,17 @@ test("Edge Function security patches stay in place",()=>{
   const state=read("supabase/functions/arcanum-state/index.ts");
   const admin=read("supabase/functions/arcanum-admin/index.ts");
   assert.match(state,/LEGACY_IMPORT_CLOSED/,"inventory legacy import must stay closed");
-  assert.match(state,/\.eq\("seals_remaining",arena\.seals_remaining\)/,"arena seals must be reserved atomically");
+  assert.match(state,/spendArchonEnergy\(who\.userId,ARCHON_ENERGY_ARENA_RANKED_COST\)/,"ranked Arena must spend Arconte energy on the server");
+  const energySql=read("supabase/migrations/20261001153000_archon_energy.sql");
+  assert.match(energySql,/from public\.arcanum_archon_energy\s+where user_id = p_user_id\s+for update/,"energy spending must lock the row atomically");
+  assert.match(energySql,/revoke all on function public\.spend_archon_energy\(uuid, integer\) from public, anon, authenticated/,"players must not call spend_archon_energy directly");
+  assert.match(energySql,/grant execute on function public\.spend_archon_energy\(uuid, integer\) to service_role/);
   assert.doesNotMatch(admin,/ADMIN_NAMES/,"admin must not be identified by display name");
-  assert.match(admin,/ADMIN_USER_IDS\.has\(userId\)/);
+  assert.match(admin,/from\("arcanum_admin_users"\)\.select\("role,active"\)\.eq\("user_id",userId\)/,"admin must be resolved by user id in the admin table");
+  assert.match(admin,/if\(!admin\?\.active\) throw new Error\("FORBIDDEN"\)/);
+  const adminSql=read("supabase/migrations/20261001162000_admin_and_system_accounts.sql");
+  assert.match(adminSql,/alter table public\.arcanum_admin_users enable row level security/);
+  assert.match(adminSql,/revoke all on table public\.arcanum_admin_users from public, anon, authenticated/);
 });
 
 
