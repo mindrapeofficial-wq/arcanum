@@ -142,7 +142,7 @@
 .social-profile-hero .profile-avatar-large{width:132px;height:132px;flex:0 0 132px}
 .social-profile-hero .profile-identity h3{font-size:30px;margin:3px 0 7px}
 .social-profile-hero .player-sheet-purpose{max-width:720px;color:#8f806b;line-height:1.55}
-.social-profile-summary{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:12px 0}
+.social-profile-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0}
 .social-profile-summary>div{min-height:72px;padding:13px 15px;border:1px solid rgba(218,151,57,.11);background:rgba(0,0,0,.2);display:flex;flex-direction:column;justify-content:center}
 .social-profile-summary small{color:#81705a;font:800 8px Arial,sans-serif;letter-spacing:.08em}
 .social-profile-summary strong{margin-top:7px;color:#e1c98e;font:500 16px Georgia,serif;overflow:hidden;text-overflow:ellipsis}
