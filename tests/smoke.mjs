@@ -79,8 +79,8 @@ test("art project UI icons are present and wired",()=>{
   for(const file of uiAssets) assert.ok(fs.existsSync(new URL("../"+file,import.meta.url)),`Missing art asset: ${file}`);
   assert.match(html,/assets\/ui\/nav\/reino\.png/);
   assert.match(read("assets/js/realm-state.js"),/assets\/ui\/resources\/oro\.png/);
-  assert.ok(fs.existsSync(new URL("../assets/art/characters/verdante/verdante-level-1.png",import.meta.url)),"Missing Verdante level 1 portrait");
-  assert.match(read("assets/js/profile.js"),/verdante-level-1\.png/);
+  assert.ok(fs.existsSync(new URL("../assets/art/characters/verdante/viridia-level-1.webp",import.meta.url)),"Missing Verdante level 1 portrait");
+  assert.match(read("assets/js/profile.js"),/viridia-level-1\.webp/);
 });
 
 
@@ -118,7 +118,7 @@ test("canonical Archmage identity uses one snapshot",()=>{
   const arena=read("assets/js/arena.js");
   assert.match(sheet,/stateApi\("\/archmage\/"\+encodeURIComponent/);
   assert.match(profile,/loadArchmageSnapshot\(activeProfileName/);
-  assert.match(profile,/IDENTIDAD CANÓNICA/);
+  assert.match(profile,/identidad canónica/i);
   assert.match(profile,/APTITUDES DEL ARCHIMAGO/);
   assert.match(profile,/CRÓNICA PERSONAL/);
   assert.match(profile,/RENOMBRE/);
@@ -238,4 +238,44 @@ test("PvE between-room choices are explicit and consequential",()=>{
   assert.match(pve,/DECISIÓN DEL UMBRAL/);
   assert.match(pve,/data-pve-choice/);
   assert.match(pve,/SIN COSTE DE TURNO/);
+});
+
+
+test("Edge Function security patches stay in place",()=>{
+  const state=read("supabase/functions/arcanum-state/index.ts");
+  const admin=read("supabase/functions/arcanum-admin/index.ts");
+  assert.match(state,/LEGACY_IMPORT_CLOSED/,"inventory legacy import must stay closed");
+  assert.match(state,/\.eq\("seals_remaining",arena\.seals_remaining\)/,"arena seals must be reserved atomically");
+  assert.doesNotMatch(admin,/ADMIN_NAMES/,"admin must not be identified by display name");
+  assert.match(admin,/ADMIN_USER_IDS\.has\(userId\)/);
+});
+
+
+test("Community function keeps relic claims safe",()=>{
+  const c=read("supabase/functions/arcanum-community/index.ts");
+  assert.doesNotMatch(c,/beta_discovery/,"QA discovery must not grant relics");
+  assert.match(c,/DISCOVERY_CLOSED/);
+  assert.match(c,/\.is\("completed_at",\s*null\)/,"exploration claims must be locked atomically");
+  assert.match(c,/claimInsertError/,"pvp claim insert result must be checked");
+});
+
+
+test("Oracle model calls are capped per user",()=>{
+  const o=read("supabase/functions/arcanum-oracle/index.ts");
+  const m=read("supabase/migrations/20261001120000_oracle_daily_quota.sql");
+  assert.match(o,/arcanum_oracle_consume/);
+  assert.match(o,/withinQuota/);
+  assert.match(m,/revoke all on function public\.arcanum_oracle_consume/);
+  assert.match(m,/to service_role/);
+});
+
+
+test("AI features use a configurable free-tier provider, not paid OpenAI",()=>{
+  for(const name of ["arcanum-oracle","astrael-player"]){
+    const src=read("supabase/functions/"+name+"/index.ts");
+    assert.doesNotMatch(src,/api\.openai\.com/,name+" must not call OpenAI directly");
+    assert.doesNotMatch(src,/OPENAI_API_KEY/,name+" must not read the OpenAI key");
+    assert.match(src,/ORACLE_BASE_URL/);
+    assert.match(src,/ORACLE_API_KEY/);
+  }
 });
