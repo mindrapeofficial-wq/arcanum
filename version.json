@@ -1,6 +1,6 @@
 {
-  "version": "0.3.21",
+  "version": "0.3.22",
   "channel": "beta",
-  "updated_at": "2026-10-01T10:55:00+02:00",
-  "note": "Corregida la foto de personaje en la tarjeta lateral del Arconte"
+  "updated_at": "2026-10-01T11:26:00+02:00",
+  "note": "Panel de administración avanzado, auditoría y modo mantenimiento"
 }
