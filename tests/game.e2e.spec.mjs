@@ -639,7 +639,20 @@ test("Bandeja Arcana muestra solicitudes, mensajes y permite aceptar amistad", a
 });
 
 
-test("Astrael no aparece como IA en la interfaz del jugador", async ({page})=>{\n  await installMocks(page);\n  await page.goto("/");\n  await page.locator("#username").fill("E2E_TESTER");\n  await page.locator("#password").fill("prueba-segura");\n  await page.locator("#submit-button").click();\n  await expect(page.locator("#game-view")).toBeVisible();\n\n  await expect(page.locator("#sidebar-online-list")).not.toContainText("Astrael");\n  await expect(page.locator("[data-oracle-chat]")).toHaveCount(0);\n});\n\n\ntest("Expediciones inicia una incursión persistente y arrastra vida entre salas", async ({page})=>{
+test("Astrael no aparece como IA en la interfaz del jugador", async ({page})=>{
+  await installMocks(page);
+  await page.goto("/");
+  await page.locator("#username").fill("E2E_TESTER");
+  await page.locator("#password").fill("prueba-segura");
+  await page.locator("#submit-button").click();
+  await expect(page.locator("#game-view")).toBeVisible();
+
+  await expect(page.locator("#sidebar-online-list")).not.toContainText("Astrael");
+  await expect(page.locator("[data-oracle-chat]")).toHaveCount(0);
+});
+
+
+test("Expediciones inicia una incursión persistente y arrastra vida entre salas", async ({page})=>{
   const errors=[];
   page.on("pageerror",err=>errors.push(String(err)));
   const mock=await installMocks(page);
