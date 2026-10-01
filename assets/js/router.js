@@ -49,7 +49,7 @@ const NAV_GROUP_BY_VIEW=Object.freeze({
   realm:"reino",build:"reino",economy:"reino",market:"reino",army:"reino",war:"reino",battles:"reino",
   tavern:"comunidad",community:"comunidad",ranking:"comunidad",admin:"comunidad"
 });
-const NAV_GROUP_LABELS=Object.freeze({arconte:"Arconte",reino:"Reino",comunidad:"Comunidad"});
+const NAV_GROUP_LABELS=Object.freeze({arconte:"Personaje",reino:"Reino",comunidad:"Comunidad"});
 function navGroupForView(view){return NAV_GROUP_BY_VIEW[view]||"arconte"}
 function closeMobileNavMenu(){
   const menu=document.getElementById("mobile-nav-menu");if(!menu)return;
