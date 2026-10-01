@@ -3,10 +3,11 @@
 async function renderWar(){
   const [targets,npcs,shield]=await Promise.all([rpc("attack_targets",{p_limit:100}),rpc("npc_directory"),rpc("my_shield_status").catch(()=>null)]);
   const npcMap=new Map((npcs||[]).map(x=>[String(x.mage_name).toLowerCase(),x]));
-  const rows=targets.length?targets.map(t=>{const npc=npcMap.get(String(t.mage_name).toLowerCase());return `<div class="target-row"><div><strong><span class="school-dot ${esc(t.school_code)}"></span><button class="player-link" data-profile="${esc(t.mage_name)}">${esc(t.mage_name)}</button> ${npc?'<span class="tag npc-tag">NPC</span>':''}</strong><small>${esc(catalogs.schools.find(s=>s.code===t.school_code)?.name_es||t.school_code)}${npc?` · ${esc(npc.archetype)}`:''}</small></div><div><small>TIERRAS</small><strong>${n(t.land)}</strong></div><div><small>ASCENDENCIA</small><strong>${n(t.net_power)}</strong></div><div class="action-buttons">${t.can_attack?`<button class="small-action attack-btn" data-target="${esc(t.mage_name)}" data-mode="REGULAR">ATACAR</button><button class="small-action attack-btn" data-target="${esc(t.mage_name)}" data-mode="SIEGE">ASEDIO</button><button class="small-action attack-btn" data-target="${esc(t.mage_name)}" data-mode="PILLAGE" title="No conquista tierra: quema parte de los edificios productivos del rival">SAQUEAR</button>`:`<span class="tag">NO ATACABLE</span>`}</div></div>`}).join(""):`<div class="empty">Aún no hay otros Arcontes en esta temporada.</div>`;
-  $("#view-host").innerHTML=`<div class="view-header"><div><span class="section-kicker">CONFLICTO ENTRE DOMINIOS</span><h2>Guerra</h2><p>Cada ataque consume 2 turnos.</p></div></div>${shieldPanelHtml(shield)}<div class="panel"><div class="target-list">${rows}</div></div>`;
+  const rows=targets.length?targets.map(t=>{const npc=npcMap.get(String(t.mage_name).toLowerCase());return `<div class="target-row"><div><strong><span class="school-dot ${esc(t.school_code)}"></span><button class="player-link" data-profile="${esc(t.mage_name)}">${esc(t.mage_name)}</button> ${npc?'<span class="tag npc-tag">NPC</span>':''}</strong><small>${esc(catalogs.schools.find(s=>s.code===t.school_code)?.name_es||t.school_code)}${npc?` · ${esc(npc.archetype)}`:''}</small></div><div><small>TIERRAS</small><strong>${n(t.land)}</strong></div><div><small>ASCENDENCIA</small><strong>${n(t.net_power)}</strong></div><div class="action-buttons">${t.can_attack?`<button class="small-action attack-btn" data-target="${esc(t.mage_name)}" data-mode="REGULAR" data-npc="${npc?1:0}">ATACAR</button><button class="small-action attack-btn" data-target="${esc(t.mage_name)}" data-mode="SIEGE" data-npc="${npc?1:0}">ASEDIO</button><button class="small-action attack-btn" data-target="${esc(t.mage_name)}" data-mode="PILLAGE" data-npc="${npc?1:0}" title="No conquista tierra: quema parte de los edificios productivos del rival">SAQUEAR</button>`:`<span class="tag">NO ATACABLE</span>`}</div></div>`}).join(""):`<div class="empty">Aún no hay otros Arcontes en esta temporada.</div>`;
+  $("#view-host").innerHTML=`<div class="view-header"><div><span class="section-kicker">CONFLICTO ENTRE DOMINIOS</span><h2>Guerra</h2><p>Cada ataque consume 2 turnos.</p></div></div>${shieldPanelHtml(shield)}<div class="panel"><div class="target-list">${rows}</div></div>${warPhrasesPanelHtml()}`;
   $("#meditate-btn")?.addEventListener("click",e=>confirmMeditation(e.currentTarget));
   $$(".attack-btn").forEach(b=>b.addEventListener("click",()=>confirmAttack(b.dataset.target,b.dataset.mode,b)));
+  wireWarPhrases();
 }
 function battleModeLabel(mode){return mode==="SIEGE"?"Asedio":mode==="PILLAGE"?"Saqueo":"Ataque regular";}
 function shieldPanelHtml(s){
@@ -22,10 +23,66 @@ async function confirmMeditation(btn){
   if(!confirm("Meditar durante 3 días: no podrás atacar ni ser atacado, y no podrás volver a meditar en 14 días. Tus turnos seguirán acumulándose. ¿Continuar?"))return;
   try{await actionCall(btn,()=>rpc("start_meditation"),null,()=>"Tu Arconte entra en meditación.");await renderWar();}catch(e){toast(humanError(e),"error");}
 }
+/* ---------- Mensajes de guerra (LOCAL_ONLY) ----------
+   attack_mage no admite texto: la frase elegida se envía como mensaje directo (send_direct_message)
+   solo cuando el jugador la selecciona, tras confirmar el ataque. Los NPC no reciben mensajes. */
+const WAR_PHRASES_PREFIX="arcanum_war_phrases_v1_";
+const WAR_PHRASES_MAX=10;
+const WAR_PHRASE_MAX_CHARS=140;
+let warPhraseSelected="";
+function sanitizeWarPhrases(raw){
+  if(!Array.isArray(raw))return [];
+  const out=[];
+  for(const item of raw){
+    const text=String(item??"").replace(/\s+/g," ").trim().slice(0,WAR_PHRASE_MAX_CHARS);
+    if(text&&!out.includes(text))out.push(text);
+    if(out.length>=WAR_PHRASES_MAX)break;
+  }
+  return out;
+}
+function warPhrasesKey(){
+  const mage=String(realmState?.realm?.mage_name||"anon").toLowerCase().replace(/[^a-z0-9_-]+/g,"_");
+  return WAR_PHRASES_PREFIX+mage;
+}
+function loadWarPhrases(){try{return sanitizeWarPhrases(JSON.parse(localStorage.getItem(warPhrasesKey())||"[]"));}catch{return [];}}
+function saveWarPhrases(list){try{localStorage.setItem(warPhrasesKey(),JSON.stringify(sanitizeWarPhrases(list)));}catch{}}
+function warPhrasesPanelHtml(){
+  const phrases=loadWarPhrases();
+  if(!phrases.includes(warPhraseSelected))warPhraseSelected="";
+  const list=phrases.length?phrases.map((p,i)=>`<div class="war-phrase-row"><span>${esc(p)}</span><button class="small-action" type="button" data-war-phrase-remove="${i}" aria-label="Quitar mensaje">✕</button></div>`).join(""):`<div class="empty">Sin mensajes guardados.</div>`;
+  const options=phrases.map((p,i)=>`<option value="${i}" ${p===warPhraseSelected?"selected":""}>${esc(p.length>60?p.slice(0,57)+"…":p)}</option>`).join("");
+  return `<div class="panel war-phrases" style="margin-top:14px"><h3>Frases para tus ataques</h3><p class="tools-note">Guarda frases (máx. ${WAR_PHRASES_MAX}, ${WAR_PHRASE_MAX_CHARS} caracteres) en este navegador. Si eliges una, se enviará como mensaje directo al rival después de atacar; el rival no recibe nada si no la seleccionas. Los NPC no reciben mensajes.</p><div class="war-phrase-form"><input id="war-phrase-input" type="text" maxlength="${WAR_PHRASE_MAX_CHARS}" placeholder="Escribe un mensaje" aria-label="Nuevo mensaje de guerra" /><button id="war-phrase-add" class="small-action" type="button">GUARDAR</button></div><div class="war-phrase-list">${list}</div><label class="field-caption">Enviar tras el próximo ataque<select id="war-phrase-select"><option value="">Ninguno</option>${options}</select></label></div>`;
+}
+function wireWarPhrases(){
+  const rerender=()=>{const host=$(".war-phrases");if(!host)return;host.outerHTML=warPhrasesPanelHtml();wireWarPhrases();};
+  $("#war-phrase-add")?.addEventListener("click",()=>{
+    const text=String($("#war-phrase-input")?.value||"").replace(/\s+/g," ").trim();
+    if(!text){toast("Escribe un mensaje.","error");return;}
+    const list=loadWarPhrases();
+    if(list.length>=WAR_PHRASES_MAX&&!list.includes(text)){toast(`Máximo ${WAR_PHRASES_MAX} mensajes.`,"error");return;}
+    saveWarPhrases([...list.filter(p=>p!==text),text]);rerender();
+  });
+  $$("[data-war-phrase-remove]").forEach(b=>b.addEventListener("click",()=>{
+    const index=Number(b.dataset.warPhraseRemove);
+    const list=loadWarPhrases();const removed=list[index];
+    saveWarPhrases(list.filter((_,i)=>i!==index));
+    if(removed===warPhraseSelected)warPhraseSelected="";
+    rerender();
+  }));
+  $("#war-phrase-select")?.addEventListener("change",e=>{warPhraseSelected=e.target.value===""?"":(loadWarPhrases()[Number(e.target.value)]||"");});
+}
+async function sendWarPhrase(target,phrase){
+  try{await rpc("send_direct_message",{p_mage_name:target,p_body:phrase});toast(`Mensaje de guerra enviado a ${target}.`,"success",3000);}
+  catch(e){toast(`El ataque se completó, pero el mensaje no se pudo enviar: ${humanError(e)}`,"error",6000);}
+}
 async function confirmAttack(target,mode,btn){
-  if(!confirm(`${mode==="SIEGE"?"Asediar":mode==="PILLAGE"?"Saquear":"Atacar"} a ${target}? Las bajas y el gasto de guerra serán permanentes.`))return;
+  const isNpc=btn?.dataset?.npc==="1";
+  const phrase=(!isNpc&&loadWarPhrases().includes(warPhraseSelected))?warPhraseSelected:"";
+  const phraseNote=phrase?`\n\nTras el ataque se enviará a ${target} este mensaje: «${phrase}»`:"";
+  if(!confirm(`${mode==="SIEGE"?"Asediar":mode==="PILLAGE"?"Saquear":"Atacar"} a ${target}? Las bajas y el gasto de guerra serán permanentes.${phraseNote}`))return;
   try{
     const res=await actionCall(btn,()=>rpc("attack_mage",{p_target_mage_name:target,p_mode:mode}),null,res=>res.attacker_victory?(mode==="PILLAGE"?`Saqueo exitoso. Edificios productivos destruidos: ${n(res.pillage?.total||0)}.`:`Victoria. Has conquistado ${n(res.land_gained)} acres.`):`El ataque no ha logrado la victoria. Pérdidas: ${(Number(res.attacker_loss_bp)/100).toFixed(2)}%.`);
+    if(phrase)await sendWarPhrase(target,phrase);
     openImmediateBattleResult(target,mode,res);
     let battleId=res?.battle_id;
     if(!battleId){
@@ -156,13 +213,53 @@ async function renderBattles(){
   $("#view-host").innerHTML=`<div class="panel"><div class="battle-list">${rows}</div></div>`;
   $$(".report-btn").forEach(b=>b.addEventListener("click",()=>openBattleReport(b.dataset.battle)));
 }
+const BATTLE_EVENT_LABELS={PRIMARY:"Ataque",COUNTER:"Contraataque"};
+function battleUnitNames(units){const names={};for(const u of units||[])names[u.unit_id]=u.name_es;return names;}
+function battleWarExpenseRows(expense){
+  const labels={gold:"Oro",mana:"Maná",population:"Población"};
+  return Object.entries(labels).map(([key,label])=>({key,label,value:Math.max(0,Math.floor(Number(expense?.[key])||0))})).filter(r=>r.value>0);
+}
+function battleSideTotals(units,side){
+  const rows=(units||[]).filter(u=>u.side===side);
+  const initial=rows.reduce((sum,u)=>sum+Math.max(0,Number(u.initial_quantity)||0),0);
+  const final=rows.reduce((sum,u)=>sum+Math.max(0,Number(u.final_quantity)||0),0);
+  const recovered=rows.reduce((sum,u)=>sum+Math.max(0,Number(u.recovered)||0),0);
+  return {initial,final,recovered,lost:Math.max(0,initial-final)};
+}
+function battleAggregateEvents(events,units){
+  const names=battleUnitNames(units);
+  const groups=new Map();
+  for(const e of events||[]){
+    const key=[e.type,e.actor_side,e.actor_unit_id,e.target_side,e.target_unit_id].join("|");
+    const current=groups.get(key)||{type:e.type,actor_side:e.actor_side,actor:names[e.actor_unit_id]||e.actor_unit_id||"—",target:names[e.target_unit_id]||e.target_unit_id||"",kills:0,hits:0,first:Number(e.sequence)||0};
+    current.kills+=Math.max(0,Number(e.kills)||0);
+    current.hits+=1;
+    groups.set(key,current);
+  }
+  return [...groups.values()].sort((a,z)=>z.kills-a.kills||a.first-z.first);
+}
+function battleSideLabel(side){return side==="attacker"?"Atacante":"Defensor";}
+function battleReportHtml(d){
+  const b=d.battle||{},units=d.units||[],events=d.events||[];
+  const names=battleUnitNames(units);
+  const chronicle=battleNarrative(b,units,events);
+  const unitRows=units.map(u=>{const lost=Math.max(0,Number(u.initial_quantity||0)-Number(u.final_quantity||0));return `<tr><td>${esc(battleSideLabel(u.side))}</td><td>${esc(u.name_es)}</td><td>${n(u.initial_quantity)}</td><td>${n(u.final_quantity)}</td><td>${n(lost)}</td><td>${n(u.recovered)}</td></tr>`;}).join("");
+  const totals=["attacker","defender"].map(side=>({side,t:battleSideTotals(units,side)})).filter(x=>x.t.initial>0).map(({side,t})=>`<tr class="battle-total"><td>${esc(battleSideLabel(side))}</td><td><b>Total</b></td><td>${n(t.initial)}</td><td>${n(t.final)}</td><td>${n(t.lost)}</td><td>${n(t.recovered)}</td></tr>`).join("");
+  const summary=battleAggregateEvents(events,units).slice(0,12).map(g=>`<div class="battle-event wide"><span>${esc(BATTLE_EVENT_LABELS[g.type]||g.type)}</span><div><b>${esc(g.actor)}</b> (${esc(battleSideLabel(g.actor_side))}) ${g.target?`→ ${esc(g.target)}`:""}</div><span>${g.kills?`${n(g.kills)} bajas`:"sin bajas"} · ${n(g.hits)} ${g.hits===1?"golpe":"golpes"}</span></div>`).join("");
+  const sequence=events.map(e=>`<div class="battle-event"><span>#${n(e.sequence)}</span><div><b>${esc(names[e.actor_unit_id]||e.actor_unit_id||e.type)}</b> ${e.target_unit_id?`→ ${esc(names[e.target_unit_id]||e.target_unit_id)}`:""}</div><span>${e.kills?`${n(e.kills)} bajas`:esc(BATTLE_EVENT_LABELS[e.type]||e.type)}</span></div>`).join("");
+  const expense=battleWarExpenseRows(b.war_expense);
+  const extra=[];
+  if(Number(b.land_destroyed)>0)extra.push(`<div class="stat-card"><small>Tierra destruida</small><strong>${n(b.land_destroyed)}</strong></div>`);
+  if(Number(b.fortresses_destroyed)>0)extra.push(`<div class="stat-card"><small>Fortalezas destruidas</small><strong>${n(b.fortresses_destroyed)}</strong></div>`);
+  if(Number(b.fortresses_captured)>0)extra.push(`<div class="stat-card"><small>Fortalezas capturadas</small><strong>${n(b.fortresses_captured)}</strong></div>`);
+  if(expense.length)extra.push(`<div class="stat-card"><small>Gasto de guerra (atacante)</small><strong>${expense.map(r=>`${n(r.value)} ${esc(r.label.toLowerCase())}`).join(" · ")}</strong></div>`);
+  if(Number(b.attacker_initial_np)>0||Number(b.defender_initial_np)>0)extra.push(`<div class="stat-card"><small>Poder atacante</small><strong>${n(b.attacker_initial_np)} → ${n(b.attacker_final_np)}</strong></div><div class="stat-card"><small>Poder defensor</small><strong>${n(b.defender_initial_np)} → ${n(b.defender_final_np)}</strong></div>`);
+  return `<span class="section-kicker">INFORME COMPLETO</span><h3>${battleModeLabel(b.mode)} · ${b.attacker_victory?"Victoria atacante":"Defensa exitosa"}</h3><div class="battle-chronicle"><div class="battle-chronicle-head"><span>✦</span><div><small>CRÓNICA DEL COMBATE</small><strong>${b.attacker_victory?"El campo cedió ante la ofensiva":"La línea defensiva no se quebró"}</strong></div></div><p>${esc(chronicle.opening)}</p><p>${esc(chronicle.middle)}</p><p>${esc(chronicle.ending)}</p><div class="battle-verdict"><small>CLAVES DEL DESENLACE</small><ul>${chronicle.keys.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div></div><div class="grid-3"><div class="stat-card"><small>Pérdidas atacante</small><strong>${(Number(b.attacker_loss_bp)/100).toFixed(2)}%</strong></div><div class="stat-card"><small>Pérdidas defensor</small><strong>${(Number(b.defender_loss_bp)/100).toFixed(2)}%</strong></div><div class="stat-card"><small>Tierra conquistada</small><strong>${n(b.land_gained)}</strong></div>${extra.join("")}</div><h3>Formaciones</h3><div class="table-wrap"><table><thead><tr><th>Bando</th><th>Unidad</th><th>Inicio</th><th>Final</th><th>Bajas</th><th>Recuperadas</th></tr></thead><tbody>${unitRows}${totals}</tbody></table></div><h3>Golpes principales</h3><div>${summary||'<div class="empty">Sin eventos.</div>'}</div><details class="battle-sequence"><summary>Secuencia completa (${n(events.length)} eventos)</summary><div>${sequence||'<div class="empty">Sin eventos.</div>'}</div></details>`;
+}
 async function openBattleReport(id,silent=false){
   try{
-    const d=await rpc("battle_report_detail",{p_battle_id:id}); const b=d.battle;
-    const unitRows=(d.units||[]).map(u=>`<tr><td>${esc(u.side==="attacker"?"Atacante":"Defensor")}</td><td>${esc(u.name_es)}</td><td>${n(u.initial_quantity)}</td><td>${n(u.final_quantity)}</td><td>${n(u.recovered)}</td></tr>`).join("");
-    const events=(d.events||[]).map(e=>`<div class="battle-event"><span>#${n(e.sequence)}</span><div><b>${esc(e.actor_unit_id||e.type)}</b> ${e.target_unit_id?`→ ${esc(e.target_unit_id)}`:""}</div><span>${e.kills?`${n(e.kills)} bajas`:esc(e.type)}</span></div>`).join("");
-    const chronicle=battleNarrative(b,d.units||[],d.events||[]);
-    $("#modal-content").innerHTML=`<span class="section-kicker">INFORME COMPLETO</span><h3>${battleModeLabel(b.mode)} · ${b.attacker_victory?"Victoria atacante":"Defensa exitosa"}</h3><div class="battle-chronicle"><div class="battle-chronicle-head"><span>✦</span><div><small>CRÓNICA DEL COMBATE</small><strong>${b.attacker_victory?"El campo cedió ante la ofensiva":"La línea defensiva no se quebró"}</strong></div></div><p>${esc(chronicle.opening)}</p><p>${esc(chronicle.middle)}</p><p>${esc(chronicle.ending)}</p><div class="battle-verdict"><small>CLAVES DEL DESENLACE</small><ul>${chronicle.keys.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div></div><div class="grid-3"><div class="stat-card"><small>Pérdidas atacante</small><strong>${(Number(b.attacker_loss_bp)/100).toFixed(2)}%</strong></div><div class="stat-card"><small>Pérdidas defensor</small><strong>${(Number(b.defender_loss_bp)/100).toFixed(2)}%</strong></div><div class="stat-card"><small>Tierra conquistada</small><strong>${n(b.land_gained)}</strong></div></div><h3>Formaciones</h3><div class="table-wrap"><table><thead><tr><th>Bando</th><th>Unidad</th><th>Inicio</th><th>Final</th><th>Recuperadas</th></tr></thead><tbody>${unitRows}</tbody></table></div><h3>Secuencia</h3><div>${events||'<div class="empty">Sin eventos.</div>'}</div>`;
+    const d=await rpc("battle_report_detail",{p_battle_id:id});
+    $("#modal-content").innerHTML=battleReportHtml(d);
     show($("#modal"));
   }catch(e){if(!silent)toast(humanError(e),"error"); throw e;}
 }

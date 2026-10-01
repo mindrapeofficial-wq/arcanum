@@ -9,7 +9,7 @@ const version=JSON.parse(read("version.json"));
 const jsFiles=[
   "assets/js/immersive.js","assets/js/state.js","assets/js/auth.js","assets/js/archmage.js","assets/js/combat-profile.js","assets/js/items.js","assets/js/inventory.js","assets/js/archmage-sheet.js","assets/js/profile.js","assets/js/realm-state.js","assets/js/router.js",
   "assets/js/community.js","assets/js/realm.js","assets/js/economy.js","assets/js/construction.js",
-  "assets/js/magic.js","assets/js/army.js","assets/js/luck-support.js","assets/js/war.js","assets/js/arena.js","assets/js/pve.js","assets/js/tutorial.js","assets/js/ui.js"
+  "assets/js/magic.js","assets/js/army.js","assets/js/realm-tools.js","assets/js/luck-support.js","assets/js/war.js","assets/js/arena.js","assets/js/pve.js","assets/js/tutorial.js","assets/js/ui.js"
 ];
 const js=jsFiles.map(read).join("\n");
 const uiAssets=[
@@ -406,6 +406,99 @@ test("Construction never references an undefined $$$ selector",()=>{
     "Construction must use $$ for selector lists; $$$ is undefined");
 });
 
+test("planning tools: mana alert only reacts to a negative known flow",()=>{
+  const context={};
+  vm.createContext(context);
+  vm.runInContext(read("assets/js/realm-tools.js"),context);
+  assert.equal(vm.runInContext("manaFlowAlert(1000,0)",context),null);
+  assert.equal(vm.runInContext("manaFlowAlert(1000,60)",context),null);
+  assert.equal(vm.runInContext("manaFlowAlert(1000,undefined)",context),null);
+  assert.equal(vm.runInContext("manaFlowAlert(1000,NaN)",context),null);
+  assert.equal(vm.runInContext("manaFlowAlert(10532,-700).turnsLeft",context),15);
+  assert.equal(vm.runInContext("manaFlowAlert(10532,-700).critical",context),false);
+  assert.equal(vm.runInContext("manaFlowAlert(2432,-241).critical",context),true);
+  assert.equal(vm.runInContext("manaFlowAlert(0,-5).turnsLeft",context),0);
+});
+
+test("planning tools: recruit plan shortfall for fixed and percentage targets",()=>{
+  const context={};
+  vm.createContext(context);
+  vm.runInContext(read("assets/js/realm-tools.js"),context);
+  context.army=[{unit_id:"a",quantity:300},{unit_id:"b",quantity:700}];
+  context.plan=[{unit_id:"a",mode:"count",value:500},{unit_id:"b",mode:"count",value:100},{unit_id:"c",mode:"percent",value:20}];
+  const rows=JSON.parse(vm.runInContext("JSON.stringify(recruitPlanShortfall(plan,army))",context));
+  assert.equal(rows[0].missing,200);
+  assert.equal(rows[1].missing,0);
+  // 20% de 1000 + c: c=0.2*(1000)/(0.8)=250 y 250/1250=20%
+  assert.equal(rows[2].goal,250);
+  assert.equal(rows[2].missing,250);
+});
+
+test("planning tools: recruit plan sanitization is bounded and LOCAL_ONLY",()=>{
+  const context={};
+  vm.createContext(context);
+  vm.runInContext(read("assets/js/realm-tools.js"),context);
+  const out=vm.runInContext("sanitizeRecruitPlan([{unit_id:\"a\",mode:\"percent\",value:500},{unit_id:\"a\",mode:\"count\",value:3},{unit_id:\"\",value:3},{unit_id:\"b\",value:0},{unit_id:\"c\",mode:\"bogus\",value:7}])",context);
+  assert.equal(out.length,2);
+  assert.equal(out[0].value,90);
+  assert.equal(out[1].mode,"count");
+  const src=read("assets/js/realm-tools.js");
+  assert.doesNotMatch(src,/rpc\("(?!recruit_units|my_realm_state)/,"Planning tools may only call recruit_units and my_realm_state");
+});
+
+test("planning tools: formation calculator is derived and never invents power",()=>{
+  const context={};
+  vm.createContext(context);
+  vm.runInContext(read("assets/js/realm-tools.js"),context);
+  context.units={a:{recruit_gold:10,recruit_mana:1,recruit_population:1,upkeep_gold:0.5,upkeep_mana:0.25,upkeep_population:0,natural_flying:true},b:{recruit_gold:20,recruit_mana:0,recruit_population:2,upkeep_gold:1,upkeep_mana:0,upkeep_population:0,natural_ranged:true}};
+  context.rows=[{unit_id:"a",quantity:100},{unit_id:"b",quantity:50},{unit_id:"x",quantity:99},{unit_id:"a",quantity:-5}];
+  const t=JSON.parse(vm.runInContext("JSON.stringify(formationTotals(rows,units))",context));
+  assert.equal(t.units,150);
+  assert.equal(t.flying,100);
+  assert.equal(t.ranged,50);
+  assert.equal(t.recruit_gold,2000);
+  assert.equal(t.upkeep_gold,100);
+  assert.equal(t.upkeep_mana,25);
+  assert.equal(Object.keys(t).some(k=>/power|np|ascend/i.test(k)),false);
+});
+
+test("war: battle report aggregates events and war expense without inventing data",()=>{
+  const context={n:x=>String(x),esc:x=>String(x)};
+  vm.createContext(context);
+  vm.runInContext(read("assets/js/war.js"),context);
+  context.units=[{side:"attacker",unit_id:"a",name_es:"Gorila",initial_quantity:100,final_quantity:90,recovered:2},{side:"defender",unit_id:"d",name_es:"Milicia",initial_quantity:500,final_quantity:200,recovered:0}];
+  context.events=[{sequence:1,type:"PRIMARY",actor_side:"attacker",actor_unit_id:"a",target_side:"defender",target_unit_id:"d",kills:100},{sequence:2,type:"COUNTER",actor_side:"defender",actor_unit_id:"d",target_side:"attacker",target_unit_id:"a",kills:5},{sequence:3,type:"PRIMARY",actor_side:"attacker",actor_unit_id:"a",target_side:"defender",target_unit_id:"d",kills:50}];
+  const groups=JSON.parse(vm.runInContext("JSON.stringify(battleAggregateEvents(events,units))",context));
+  assert.equal(groups.length,2);
+  assert.equal(groups[0].kills,150);
+  assert.equal(groups[0].hits,2);
+  assert.equal(groups[0].actor,"Gorila");
+  assert.equal(groups[0].target,"Milicia");
+  const totals=JSON.parse(vm.runInContext("JSON.stringify(battleSideTotals(units,'defender'))",context));
+  assert.equal(totals.lost,300);
+  const expense=JSON.parse(vm.runInContext("JSON.stringify(battleWarExpenseRows({gold:6986,mana:242,population:0,junk:9}))",context));
+  assert.deepEqual(expense.map(r=>r.key),["gold","mana"]);
+  assert.equal(vm.runInContext("battleWarExpenseRows(null).length",context),0);
+  const html=vm.runInContext("battleReportHtml({battle:{mode:'SIEGE',attacker_victory:true,attacker_loss_bp:70,defender_loss_bp:7300,land_gained:42,land_destroyed:84,war_expense:{gold:6986,mana:242}},units,events})",context);
+  assert.match(html,/Tierra destruida/);
+  assert.match(html,/Gasto de guerra/);
+  assert.match(html,/Golpes principales/);
+});
+
+test("war: war phrases are LOCAL_ONLY, bounded and sent only through send_direct_message",()=>{
+  const context={};
+  vm.createContext(context);
+  vm.runInContext(read("assets/js/war.js"),context);
+  const out=JSON.parse(vm.runInContext("JSON.stringify(sanitizeWarPhrases(['  hola   mundo ','hola mundo','',null,'x'.repeat(500),...Array.from({length:20},(_,i)=>'f'+i)]))",context));
+  assert.equal(out.length,10);
+  assert.equal(out[0],"hola mundo");
+  assert.equal(out[1].length,140);
+  const src=read("assets/js/war.js");
+  assert.match(src,/rpc\("send_direct_message"/);
+  assert.match(src,/data-npc/,"NPC targets must be flagged so no message is sent to them");
+  assert.match(src,/Tras el ataque se enviará/,"the player must see the message in the attack confirmation");
+  assert.doesNotMatch(src,/attack_mage",\{[^}]*p_message/,"attack_mage has no message parameter");
+});
 
 test("audio uses local CC0 interface samples with documented provenance",()=>{
   const audio=read("assets/js/audio.js");

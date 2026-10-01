@@ -107,6 +107,15 @@ There is no fallback formula based on Ascendancy or any other proxy.
 
 If production is unknown, the correct visual fallback is **zero interpolation**, not a guessed income.
 
+## Planning aids (0.3.44)
+
+These client helpers never create resources, never guess production and never replace a Core result.
+
+- **Negative mana alert.** The Mana HUD item shows a warning only when the per-turn mana flow already known to the client (server-provided or observed delta, see Passive display rule) is **negative**. The estimate of turns left is `floor(mana / -flow)`. With unknown or zero flow nothing is shown.
+- **Unit cost and upkeep.** The recruitment panel displays `recruit_*` and `upkeep_*` straight from the unit catalogue, labelled as catalogue values. Core charges army upkeep (gold/mana/population) and fortress gold upkeep every processed turn (`run_economy_impl`); the client still does not compute net income from it and relies on the server flow.
+- **Replenishment plan (LOCAL_ONLY).** The player stores per-unit targets (fixed number, or percentage of the army, max 90%). The client computes the shortfall against `my_army` and, only when the player presses REPONER, issues real `recruit_units` calls of 1 turn each, up to a turn cap chosen by the player (max 50) and after an explicit confirmation. It stops on the first error or when a call recruits nothing. It never runs in the background.
+- **Formation calculator (DERIVED).** Sums catalogue costs and upkeep for a hypothetical composition. It deliberately does **not** compute Ascendancy or battle outcomes.
+
 ## Lady Luck modifiers (0.3.39)
 
 Lady Luck is a **server-side modifier**, not a resource. While `arcanum_luck.expires_at > now()`:

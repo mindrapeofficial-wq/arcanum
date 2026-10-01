@@ -316,6 +316,7 @@ function renderResourceStrip(){
     <div class="resource-item has-icon resource-land"><img class="resource-icon" src="assets/ui/resources/tierras.png?v=0.2.35" alt="" aria-hidden="true" decoding="async" /><span class="resource-copy"><small>Tierras</small><strong data-live-resource="land">${n(r.land)}</strong></span></div>
     <div class="resource-item has-icon resource-power"><img class="resource-icon" src="assets/ui/resources/poder-neto.png?v=0.2.35" alt="" aria-hidden="true" decoding="async" /><span class="resource-copy"><small>Ascendencia</small><strong data-live-resource="net_power">${n(r.net_power)}</strong></span></div>`;
   updatePassiveResourceDisplay();
+  if(typeof applyManaAlert==="function")applyManaAlert();
 }
 function updateTurnCountdown(){
   updatePassiveResourceDisplay();

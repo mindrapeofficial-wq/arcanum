@@ -1009,3 +1009,41 @@ button[data-view="ranking"] .nav-icon{filter:drop-shadow(0 0 5px rgba(246,206,11
 @media(max-width:720px){.ranking-tabs{grid-template-columns:1fr}.ranking-panel-head{align-items:flex-start;flex-direction:column;gap:5px}.ranking-panel-head p{text-align:left}}
 
 .profile-alliance-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.profile-action.danger{border-color:rgba(165,67,55,.5);background:linear-gradient(180deg,rgba(132,45,34,.22),rgba(49,17,13,.3));color:#d9a39a}.profile-action.danger:hover{border-color:#b95e50;color:#f0b8ae}
+
+/* Herramientas de planificación (0.3.38) */
+#resource-strip .resource-mana.resource-warning{--resource-accent:217,130,109;border-color:rgba(217,130,109,.55)}
+#resource-strip .resource-mana.resource-critical{animation:manaAlertPulse 1.6s ease-in-out infinite}
+.resource-alert{display:block;margin-top:2px;color:var(--danger);font:800 8px Arial,sans-serif;letter-spacing:.06em;white-space:nowrap}
+@keyframes manaAlertPulse{50%{box-shadow:0 0 14px rgba(217,130,109,.45)}}
+@media(prefers-reduced-motion:reduce){#resource-strip .resource-mana.resource-critical{animation:none}}
+.recruit-unit-info{display:block;margin-top:10px;color:#9b8e7e;font:11px/1.6 Arial,sans-serif}
+.recruit-unit-info b{color:var(--gold-pale);font-weight:700}
+.tools-note{margin:0 0 12px;color:#9b8e7e;font:11px/1.55 Arial,sans-serif}
+.recruit-plan-form{display:grid;grid-template-columns:minmax(0,1fr) 90px auto;gap:8px;margin-bottom:12px}
+.recruit-plan-form #plan-unit{grid-column:1/-1}
+.recruit-plan-form select,.recruit-plan-form input,.recruit-plan-run input,.calc-row input{min-height:38px;padding:6px 8px;background:#0f0c08;color:var(--text);border:1px solid var(--line);border-radius:0}
+.recruit-plan-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:9px 10px;border:1px solid var(--line);margin-bottom:8px}
+.recruit-plan-row small{display:block;margin-top:3px;color:#9b8e7e;font:10px Arial,sans-serif}
+.recruit-plan-row.short{border-color:rgba(217,130,109,.5)}
+.recruit-plan-row.short .tag,.plan-alert{color:var(--danger);border-color:rgba(217,130,109,.5)}
+.recruit-plan-row.ok .tag{color:var(--green)}
+.recruit-plan-run{display:grid;grid-template-columns:130px 1fr;gap:10px;align-items:end;margin-top:12px}
+.calc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;max-height:260px;overflow:auto;margin-bottom:10px}
+.calc-row{display:grid;gap:4px;color:var(--gold-pale);font:11px Arial,sans-serif}
+.calc-actions{display:flex;gap:8px;margin-bottom:12px}
+.formation-totals{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.formation-totals>div{padding:10px;border:1px solid var(--line);background:rgba(15,12,8,.7)}
+.formation-totals small{display:block;color:#9b8e7e;font:800 8px Arial,sans-serif;letter-spacing:.1em}
+.formation-totals strong{display:block;margin:4px 0;color:var(--gold-hot);font-size:18px}
+.formation-totals span{color:#9b8e7e;font:10px Arial,sans-serif}
+@media(max-width:760px){.recruit-plan-run{grid-template-columns:1fr}}
+
+/* Guerra: mensajes y informe (0.3.38) */
+.war-phrase-form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;margin-bottom:10px}
+.war-phrase-form input,.war-phrases select{min-height:38px;padding:6px 8px;background:#0f0c08;color:var(--text);border:1px solid var(--line);border-radius:0;width:100%}
+.war-phrase-list{display:grid;gap:6px;margin-bottom:12px}
+.war-phrase-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--line);font:12px/1.4 Arial,sans-serif;color:var(--gold-pale)}
+.battle-total td{border-top:1px solid var(--line);color:var(--gold-hot)}
+.battle-sequence{margin-top:12px}
+.battle-sequence summary{cursor:pointer;color:var(--gold-pale);font:800 10px Arial,sans-serif;letter-spacing:.1em;text-transform:uppercase;padding:8px 0}
+.battle-event.wide{grid-template-columns:96px 1fr auto}
