@@ -1,6 +1,6 @@
 {
-  "version": "0.3.17",
+  "version": "0.3.18",
   "channel": "beta",
-  "updated_at": "2026-10-01T10:40:00+02:00",
-  "note": "Personaje pasa a ser la página principal al entrar en ARCANUM"
+  "updated_at": "2026-10-01T10:48:00+02:00",
+  "note": "Retratos de perfil fijos por Escuela: Viridia, Cineria, Oneiria, Aurea y Nadir"
 }
