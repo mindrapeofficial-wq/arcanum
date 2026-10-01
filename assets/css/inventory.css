@@ -30,3 +30,9 @@
 .loot-origin{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:8px 0 2px;padding:6px 7px;border:1px solid rgba(218,151,57,.08);background:rgba(255,255,255,.015)}
 .loot-origin small{color:#695d50;font:800 7px Arial,sans-serif;letter-spacing:.09em}
 .loot-origin span{color:#9d8b72;font:8px Arial,sans-serif;text-align:right}
+
+.relic-inventory-art{height:132px;margin:8px 0 10px;border:1px solid rgba(120,166,91,.16);background:radial-gradient(circle at 50% 55%,rgba(76,137,62,.14),transparent 62%),rgba(0,0,0,.16)}
+.relic-equip-art{position:absolute;right:30px;top:5px;width:54px;height:54px;opacity:.9;pointer-events:none}
+.relic-equip-art img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 5px 8px rgba(0,0,0,.48))}
+.loot-equip-slot.relic-slot.filled{padding-right:86px;min-height:72px}
+.relic-inventory-card .artifact-art img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 8px 14px rgba(0,0,0,.45))}
