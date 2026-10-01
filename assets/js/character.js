@@ -85,7 +85,7 @@ function characterInventory(profile){
   const items=state.items?.length&&typeof lootItemCard==="function"?state.items.map(lootItemCard).join(""):'<div class="character-empty">Tu inventario está vacío.</div>';
   const relics=typeof canonicalRelicInventoryCards==="function"?canonicalRelicInventoryCards():'<div class="character-empty">No hay reliquias disponibles.</div>';
   return '<section class="character-bottom-panel" data-loot-root>'+
-    '<div class="character-bottom-head"><div><span class="section-kicker">INVENTARIO</span><h3>Mochila y reliquias</h3></div><small>'+n(state.items?.length||0)+' / '+n(cap)+' objetos</small></div>'+
+    '<div class="character-bottom-head"><div><span class="section-kicker">OBJETOS</span><h3>Inventario</h3></div><small>'+n(state.items?.length||0)+' / '+n(cap)+' objetos</small></div>'+
     '<div class="loot-grid character-inventory-grid">'+items+'</div>'+
     '<div class="character-relic-divider"></div>'+
     '<div class="character-bottom-head compact"><div><span class="section-kicker">RELIQUIAS</span><h3>Reliquias disponibles</h3></div><small>Una puede permanecer vinculada.</small></div>'+
