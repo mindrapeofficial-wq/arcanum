@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" shape-rendering="crispEdges">
+<defs>
+  <filter id="g" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.4"/></filter>
+</defs>
+<g fill="none">
+  <circle cx="32" cy="32" r="27" fill="#0c1b11" opacity=".35"/>
+  <circle cx="32" cy="32" r="22" fill="#1f5f32" opacity=".18" filter="url(#g)"/>
+</g>
+<g>
+  <path d="M19 29 21 18 28 11 38 12 45 20 46 30 42 42 33 48 24 43Z" fill="#d9a775"/>
+  <path d="M18 29 17 19 22 19 21 14 27 16 28 9 33 13 38 8 39 14 46 12 43 18 49 19 44 24 47 28 41 28 39 20 31 17 25 21 24 29Z" fill="#5b3a22"/>
+  <path d="M20 21 24 16 29 14 27 21 35 15 33 22 42 17 39 25 46 22 42 30 39 25 31 23 25 27Z" fill="#7b4d28"/>
+  <path d="M20 39 25 46 32 51 40 46 45 39 47 55 17 55Z" fill="#173d25"/>
+  <path d="M18 46 24 40 30 46 34 46 40 40 47 47 43 60 21 60Z" fill="#245b31"/>
+  <path d="M18 46 24 42 28 48 24 57 18 55Z" fill="#2e7340"/>
+  <path d="M46 46 40 42 36 48 40 57 46 55Z" fill="#2e7340"/>
+  <path d="M22 48 32 55 42 48" stroke="#d5ae58" stroke-width="2"/>
+  <path d="M29 30h-5l2-2 4 1Zm6 0h5l-2-2-4 1Z" fill="#183f2c"/>
+  <rect x="26" y="30" width="3" height="2" fill="#5bf08b"/>
+  <rect x="35" y="30" width="3" height="2" fill="#5bf08b"/>
+  <path d="M29 38q3 2 6 0" stroke="#9b5f48" stroke-width="1.5"/>
+  <path d="M21 13 24 8 27 13 24 16Z" fill="#4f9d38"/>
+  <path d="M39 12 43 8 44 14 41 17Z" fill="#69b945"/>
+  <path d="M18 42 14 38 18 37 20 40Z" fill="#4e9f3a"/>
+  <path d="M45 40 50 37 49 42 46 44Z" fill="#63b74a"/>
+  <circle cx="32" cy="50" r="3" fill="#d5ae58"/>
+  <rect x="31" y="48" width="2" height="4" fill="#54e984"/>
+</g>
+</svg>
