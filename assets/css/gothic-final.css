@@ -1,0 +1,547 @@
+/* ==========================================================================
+   ARCANUM — Gothic Final Pass
+   Final visual harmonisation layer loaded after all feature styles.
+   Visual-only: no gameplay or data behaviour.
+   ========================================================================== */
+
+:root{
+  --gf-bg:#050505;
+  --gf-panel:rgba(14,12,9,.9);
+  --gf-panel-deep:rgba(5,5,5,.95);
+  --gf-line:rgba(190,155,91,.17);
+  --gf-line-hot:rgba(221,181,101,.42);
+  --gf-gold:#d8b66c;
+  --gf-gold-soft:#aa8249;
+  --gf-text:#e9d8b8;
+  --gf-muted:#847665;
+  --gf-shadow:inset 0 1px rgba(255,255,255,.02),inset 0 -1px rgba(0,0,0,.82),0 10px 28px rgba(0,0,0,.14);
+}
+
+/* Shared physical surface language */
+.economy-section,
+.economy-ledger,
+.economy-building-section,
+.market-hero,
+.market-status,
+.market-layout>.panel,
+.construction-shell,
+.army-art-panel,
+.community-social-grid>.panel,
+.online-panel,
+.ranking-panel,
+.profile-bio-block,
+.profile-panel,
+.profile-conversation,
+.combat-summary,
+.combat-derived,
+.combat-evolution,
+.player-sheet-main,
+.player-sheet-side,
+.admin-section,
+.admin-boss-card,
+.audio-panel,
+.lore-hero,
+.lore-index-card,
+.lore-school,
+.lore-era-body{
+  border-radius:1px!important;
+  border-color:var(--gf-line)!important;
+  background:
+    linear-gradient(180deg,var(--gf-panel),var(--gf-panel-deep)),
+    repeating-linear-gradient(135deg,rgba(255,255,255,.006) 0 1px,transparent 1px 5px)!important;
+  box-shadow:var(--gf-shadow)!important;
+}
+
+/* Construction: royal architect's desk */
+.construction-hero{
+  border-radius:2px!important;
+  border-color:rgba(204,161,82,.28)!important;
+  box-shadow:inset 0 0 0 5px rgba(0,0,0,.2),inset 0 0 0 6px rgba(190,155,91,.045),0 18px 50px rgba(0,0,0,.2)!important;
+}
+.construction-hero-art{
+  border-left-color:rgba(190,155,91,.14)!important;
+}
+.construction-metrics>div,
+.building-card{
+  border-radius:1px!important;
+  border-color:rgba(190,155,91,.15)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.018),inset 0 -1px rgba(0,0,0,.72)!important;
+}
+.construction-metrics>div{
+  background:linear-gradient(180deg,rgba(17,14,11,.76),rgba(5,5,5,.84))!important;
+}
+.building-card{
+  background:
+    radial-gradient(circle at 8% 18%,rgba(154,91,27,.09),transparent 30%),
+    linear-gradient(180deg,rgba(12,10,7,.9),rgba(3,3,3,.96))!important;
+}
+.building-card:hover{
+  border-color:rgba(221,181,101,.3)!important;
+  transform:translateY(-1px);
+}
+.building-card.selected{
+  border-color:rgba(229,187,105,.52)!important;
+  box-shadow:inset 0 0 26px rgba(185,130,52,.045),0 12px 30px rgba(0,0,0,.2)!important;
+}
+.construction-section-mark{
+  border-radius:1px!important;
+  border-color:rgba(221,181,101,.28)!important;
+  background:linear-gradient(180deg,rgba(35,27,18,.76),rgba(6,6,6,.9))!important;
+  box-shadow:inset 0 0 0 4px rgba(185,130,52,.02);
+}
+
+/* Economy: illuminated ledger, not dashboard software */
+.economy-contract-banner{
+  position:relative;
+  overflow:hidden;
+  border-radius:1px!important;
+  border-color:rgba(204,161,82,.24)!important;
+  background:
+    radial-gradient(circle at 12% 50%,rgba(172,104,32,.09),transparent 36%),
+    linear-gradient(180deg,rgba(18,14,10,.92),rgba(5,5,5,.96))!important;
+  box-shadow:inset 0 0 0 5px rgba(0,0,0,.18),inset 0 0 0 6px rgba(190,155,91,.04)!important;
+}
+.economy-contract-banner:before{
+  content:"";
+  position:absolute;
+  inset:7px;
+  border:1px solid rgba(221,181,101,.045);
+  pointer-events:none;
+}
+.economy-contract-seal{
+  border-radius:1px!important;
+  border-color:rgba(221,181,101,.3)!important;
+  background:linear-gradient(180deg,rgba(50,35,19,.44),rgba(8,7,6,.82))!important;
+}
+.economy-resource-card,
+.economy-action-card,
+.economy-explore-card,
+.economy-ledger-grid>div,
+.economy-health,
+.economy-building-card{
+  border-radius:1px!important;
+  border-color:rgba(190,155,91,.14)!important;
+  background:
+    radial-gradient(circle at 8% 35%,rgba(185,130,52,.045),transparent 36%),
+    linear-gradient(180deg,rgba(16,13,10,.84),rgba(5,5,5,.91))!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.016)!important;
+}
+.economy-action-card:hover{
+  border-color:rgba(221,181,101,.3)!important;
+  background:
+    radial-gradient(circle at 8% 35%,rgba(185,130,52,.08),transparent 38%),
+    linear-gradient(180deg,rgba(24,18,12,.86),rgba(6,6,6,.93))!important;
+}
+.economy-ledger-grid>div{
+  position:relative;
+}
+.economy-ledger-grid>div:after{
+  content:"";
+  position:absolute;
+  left:25%;right:25%;bottom:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(221,181,101,.22),transparent);
+}
+
+/* Market: merchant ledger and exchange board */
+.market-hero{
+  position:relative;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 90% 30%,rgba(185,130,52,.09),transparent 30%),
+    linear-gradient(135deg,rgba(18,14,10,.94),rgba(4,4,4,.98))!important;
+  box-shadow:inset 0 0 0 5px rgba(0,0,0,.18),inset 0 0 0 6px rgba(190,155,91,.04),0 14px 34px rgba(0,0,0,.15)!important;
+}
+.market-hero:after{
+  content:"";
+  position:absolute;
+  right:26px;top:50%;
+  width:64px;height:64px;
+  translate:0 -50%;
+  background:url("../vendor/game-icons/chest.svg") center/contain no-repeat;
+  opacity:.1;
+  pointer-events:none;
+}
+.market-status{
+  position:relative;
+}
+.market-status:before{
+  content:"";
+  position:absolute;
+  inset:5px;
+  border:1px solid rgba(190,155,91,.035);
+  pointer-events:none;
+}
+.market-form input,
+.market-form select,
+.market-form textarea,
+.market-filter{
+  border-radius:1px!important;
+  border-color:rgba(190,155,91,.18)!important;
+  background:linear-gradient(180deg,rgba(5,5,5,.95),rgba(11,9,7,.95))!important;
+  box-shadow:inset 0 1px 7px rgba(0,0,0,.58);
+}
+.market-offer{
+  position:relative;
+  border-radius:1px!important;
+  border-color:rgba(190,155,91,.13)!important;
+  background:linear-gradient(180deg,rgba(14,12,9,.78),rgba(5,5,5,.87))!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.014);
+}
+.market-offer:hover{border-color:rgba(207,165,89,.23)!important}
+.market-chip{
+  border-radius:1px!important;
+  border-color:rgba(190,155,91,.2)!important;
+  background:rgba(0,0,0,.2);
+}
+.market-warning{
+  border-radius:1px!important;
+  border-color:rgba(190,155,91,.13)!important;
+}
+
+/* Army: command chamber */
+.army-art-panel{
+  border-radius:2px!important;
+  border-color:rgba(204,161,82,.26)!important;
+  box-shadow:inset 0 0 0 5px rgba(0,0,0,.2),inset 0 0 0 6px rgba(190,155,91,.04),0 16px 42px rgba(0,0,0,.17)!important;
+}
+.army-art-copy{
+  background:
+    radial-gradient(circle at 0 0,rgba(174,102,25,.1),transparent 42%),
+    linear-gradient(180deg,rgba(10,9,7,.18),rgba(0,0,0,.08))!important;
+}
+.army-art-chips span{
+  border-radius:1px!important;
+  border-color:rgba(190,155,91,.14)!important;
+  background:linear-gradient(180deg,rgba(17,14,11,.74),rgba(5,5,5,.82))!important;
+}
+.army-art-visual{
+  border-left-color:rgba(190,155,91,.13)!important;
+}
+.army-row{
+  border-color:rgba(190,155,91,.13)!important;
+  background:linear-gradient(90deg,rgba(16,13,10,.74),rgba(5,5,5,.83))!important;
+}
+
+/* War and reports: tactical archive */
+.target-row,
+.battle-row{
+  border-radius:1px!important;
+  border-color:rgba(190,155,91,.13)!important;
+  background:linear-gradient(90deg,rgba(15,12,9,.78),rgba(5,5,5,.86))!important;
+}
+.target-row:hover,
+.battle-row:hover{
+  border-color:rgba(207,165,89,.24)!important;
+}
+.battle-chronicle{
+  border-radius:1px!important;
+  border-color:rgba(204,161,82,.25)!important;
+  background:
+    radial-gradient(circle at 15% 0,rgba(151,91,26,.11),transparent 36%),
+    linear-gradient(180deg,rgba(17,13,9,.95),rgba(4,4,4,.97))!important;
+  box-shadow:inset 0 0 0 5px rgba(0,0,0,.18),inset 0 0 0 6px rgba(190,155,91,.04)!important;
+}
+.battle-chronicle-head>span{
+  border-radius:1px!important;
+  background:
+    url("../vendor/game-icons/crossed-swords.svg") center/20px 20px no-repeat,
+    linear-gradient(180deg,rgba(31,24,17,.82),rgba(6,6,6,.9))!important;
+  color:transparent!important;
+}
+.battle-verdict{
+  border-left-color:#aa7736!important;
+  background:linear-gradient(90deg,rgba(109,66,20,.08),transparent)!important;
+}
+
+/* Research / spellbook */
+.spell-card{
+  position:relative;
+  border-radius:1px!important;
+  border-color:rgba(190,155,91,.13)!important;
+  background:linear-gradient(180deg,rgba(15,12,9,.81),rgba(5,5,5,.9))!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.014);
+}
+.spell-card:after{
+  content:"";
+  position:absolute;
+  inset:4px;
+  border:1px solid rgba(190,155,91,.028);
+  pointer-events:none;
+}
+.spell-card.known{
+  border-color:rgba(211,171,93,.28)!important;
+  background:
+    radial-gradient(circle at 100% 0,rgba(185,130,52,.055),transparent 36%),
+    linear-gradient(180deg,rgba(18,14,9,.84),rgba(5,5,5,.92))!important;
+}
+.research-progress{
+  height:6px!important;
+  border-color:rgba(190,155,91,.14)!important;
+  background:#060606!important;
+  box-shadow:inset 0 2px 4px rgba(0,0,0,.7);
+}
+.research-progress span{
+  background:linear-gradient(90deg,#654019,#b77c2d 58%,#ddb05a)!important;
+  box-shadow:0 0 8px rgba(185,130,52,.12);
+}
+
+/* Community: guild hall */
+.community-tabs{
+  position:relative;
+  padding-bottom:2px;
+}
+.community-tab{
+  border-radius:1px!important;
+  border-color:rgba(190,155,91,.16)!important;
+  background:linear-gradient(180deg,rgba(17,14,11,.85),rgba(5,5,5,.92))!important;
+}
+.community-tab.active{
+  border-color:rgba(221,181,101,.38)!important;
+  color:#efd7aa!important;
+  background:linear-gradient(180deg,rgba(58,41,22,.37),rgba(10,8,6,.9))!important;
+  box-shadow:inset 0 0 16px rgba(185,130,52,.035);
+}
+.school-room-sigil{
+  border-radius:1px!important;
+  border-color:rgba(221,181,101,.28)!important;
+  background:linear-gradient(180deg,rgba(26,21,16,.82),rgba(6,6,6,.91))!important;
+}
+.online-head>strong{
+  border-radius:1px!important;
+  background:linear-gradient(180deg,rgba(24,39,25,.42),rgba(5,7,5,.8))!important;
+}
+.online-player,
+.player-directory-row,
+.chat-message,
+.board-post{
+  border-radius:1px!important;
+  border-color:rgba(190,155,91,.09)!important;
+  background:linear-gradient(180deg,rgba(12,10,8,.68),rgba(5,5,5,.77))!important;
+}
+.online-player:hover,
+.player-directory-row:hover{
+  border-color:rgba(207,165,89,.2)!important;
+  background:linear-gradient(180deg,rgba(25,19,13,.66),rgba(6,6,6,.82))!important;
+}
+.chat-messages{
+  border-color:rgba(190,155,91,.13)!important;
+  background:
+    repeating-linear-gradient(180deg,rgba(255,255,255,.004) 0 1px,transparent 1px 28px),
+    rgba(3,3,3,.34)!important;
+}
+.presence-dot{
+  box-shadow:0 0 9px rgba(118,180,124,.4)!important;
+}
+
+/* Rankings: hall of records */
+.ranking-tabs{gap:6px!important}
+.ranking-tab{
+  border-radius:1px!important;
+  border-color:rgba(190,155,91,.16)!important;
+  background:linear-gradient(180deg,rgba(15,12,9,.9),rgba(5,5,5,.95))!important;
+}
+.ranking-tab.active{
+  border-color:rgba(229,187,105,.42)!important;
+  background:
+    radial-gradient(circle at 50% 100%,rgba(185,130,52,.08),transparent 55%),
+    linear-gradient(180deg,rgba(45,32,18,.48),rgba(8,7,6,.93))!important;
+  box-shadow:inset 0 0 18px rgba(227,161,49,.035),0 0 14px rgba(207,139,35,.04)!important;
+}
+.ranking-panel{
+  position:relative;
+}
+.ranking-panel:before{
+  content:"";
+  position:absolute;
+  inset:5px;
+  border:1px solid rgba(190,155,91,.03);
+  pointer-events:none;
+}
+
+/* Social profile and combat sheet */
+.profile-avatar,
+.combat-identity .profile-avatar{
+  border-color:rgba(221,181,101,.32)!important;
+  background:linear-gradient(180deg,#15110c,#070605)!important;
+  box-shadow:inset 0 0 0 4px rgba(185,130,52,.025),0 0 16px rgba(185,130,52,.035);
+}
+.profile-stats>div,
+.combat-stat,
+.combat-ability,
+.combat-trait-chip,
+.canonical-equipment-slot,
+.player-sheet-kingdom-stats>div{
+  border-radius:1px!important;
+  border-color:rgba(190,155,91,.12)!important;
+  background:linear-gradient(180deg,rgba(15,12,9,.73),rgba(5,5,5,.82))!important;
+}
+.profile-action,
+.profile-file-label{
+  border-radius:1px!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.02),inset 0 -1px rgba(0,0,0,.72);
+}
+.dm-message{
+  border-radius:1px!important;
+  background:linear-gradient(180deg,rgba(13,11,9,.8),rgba(5,5,5,.88))!important;
+}
+.dm-message.mine{
+  background:linear-gradient(180deg,rgba(42,29,16,.52),rgba(9,7,6,.88))!important;
+}
+.combat-choice{
+  border-radius:1px!important;
+  border-color:rgba(190,155,91,.14)!important;
+  background:linear-gradient(180deg,rgba(14,12,9,.8),rgba(5,5,5,.9))!important;
+}
+.combat-choice:hover:not(:disabled){
+  border-color:rgba(221,181,101,.3)!important;
+}
+
+/* Admin: austere command console, same world but less decorative */
+.admin-tabs button,
+.admin-row,
+.admin-kpis>div,
+.admin-status,
+.admin-field input,
+.admin-field select,
+.admin-field textarea{
+  border-radius:1px!important;
+}
+.admin-tabs button{
+  border-color:rgba(190,155,91,.15)!important;
+  background:linear-gradient(180deg,rgba(15,13,11,.9),rgba(5,5,5,.95))!important;
+}
+.admin-tabs button.active{
+  border-color:rgba(221,181,101,.38)!important;
+  color:#efd8ad!important;
+}
+.admin-kpis>div,
+.admin-row{
+  border-color:rgba(190,155,91,.11)!important;
+  background:linear-gradient(180deg,rgba(13,11,9,.72),rgba(5,5,5,.82))!important;
+}
+.admin-danger-zone{
+  border-radius:1px!important;
+  background:linear-gradient(180deg,rgba(65,22,18,.13),rgba(8,5,5,.4))!important;
+}
+
+/* Audio / utility popovers */
+.audio-button,
+.audio-panel-close,
+.audio-mute{
+  border-radius:1px!important;
+}
+.audio-panel{
+  border-color:rgba(190,155,91,.22)!important;
+  background:linear-gradient(180deg,rgba(17,14,11,.98),rgba(5,5,5,.99))!important;
+  box-shadow:inset 0 0 0 4px rgba(0,0,0,.22),inset 0 0 0 5px rgba(190,155,91,.045),0 22px 60px rgba(0,0,0,.42)!important;
+}
+.audio-track,
+.audio-toggle-row{
+  border-radius:1px!important;
+  border-color:rgba(190,155,91,.1)!important;
+  background:rgba(0,0,0,.2)!important;
+}
+
+/* Support and sidebar presence */
+.support-link{
+  border-radius:1px!important;
+}
+.support-link-gate,
+.support-link-sidebar{
+  background:linear-gradient(180deg,rgba(31,24,17,.88),rgba(7,7,7,.94))!important;
+  border-color:rgba(190,155,91,.2)!important;
+}
+.sidebar-online-panel{
+  border-top-color:rgba(190,155,91,.16)!important;
+}
+.sidebar-online-collapse-button{
+  border-radius:1px!important;
+  background:linear-gradient(180deg,rgba(17,14,11,.88),rgba(5,5,5,.94))!important;
+}
+
+/* Lore / manual surfaces */
+.lore-seal,
+.lore-era-mark,
+.lore-school-sigil{
+  border-radius:1px!important;
+  border-color:rgba(221,181,101,.26)!important;
+  background:linear-gradient(180deg,rgba(28,22,16,.82),rgba(6,6,6,.92))!important;
+}
+.lore-tabs button{
+  border-radius:1px!important;
+  border-color:rgba(190,155,91,.15)!important;
+  background:linear-gradient(180deg,rgba(15,12,9,.88),rgba(5,5,5,.94))!important;
+}
+.lore-tabs button.active{
+  border-color:rgba(221,181,101,.38)!important;
+}
+.lore-warning{
+  border-radius:1px!important;
+}
+
+/* Inbox and floating communications */
+.inbox-request-row,
+.inbox-message-row,
+.direct-chat-window{
+  border-radius:1px!important;
+  border-color:rgba(190,155,91,.14)!important;
+  background:linear-gradient(180deg,rgba(15,12,9,.96),rgba(5,5,5,.98))!important;
+}
+.direct-chat-form textarea{
+  border-radius:1px!important;
+  background:linear-gradient(180deg,rgba(5,5,5,.96),rgba(11,9,7,.96))!important;
+}
+
+/* Empty/loading states belong to the same world */
+.empty,
+.profile-loading,
+.character-page-loading,
+.army-art-loading{
+  border-radius:1px!important;
+  border-color:rgba(190,155,91,.12)!important;
+  background:
+    radial-gradient(circle at center,rgba(185,130,52,.035),transparent 42%),
+    linear-gradient(180deg,rgba(10,9,7,.84),rgba(4,4,4,.92))!important;
+}
+
+/* Remove residual SaaS softness from interactive surfaces */
+.market-offer,
+.economy-resource-card,
+.economy-action-card,
+.economy-explore-card,
+.economy-building-card,
+.building-card,
+.army-art-panel,
+.player-directory-row,
+.online-player,
+.ranking-tab,
+.ranking-panel,
+.profile-panel,
+.profile-bio-block,
+.combat-choice,
+.admin-section,
+.audio-panel,
+.lore-hero{
+  border-radius:1px!important;
+}
+
+/* Accessibility and mobile polish */
+@media (prefers-reduced-motion:reduce){
+  .building-card,
+  .economy-action-card,
+  .market-offer,
+  .online-player,
+  .player-directory-row,
+  .combat-choice{
+    transition:none!important;
+    transform:none!important;
+  }
+}
+@media(max-width:760px){
+  .market-hero:after{width:46px;height:46px;right:14px;top:18px;translate:0 0}
+  .construction-hero,
+  .army-art-panel,
+  .economy-contract-banner{box-shadow:inset 0 0 0 3px rgba(0,0,0,.18),inset 0 0 0 4px rgba(190,155,91,.035)!important}
+  .ranking-panel:before,
+  .market-status:before{display:none}
+}
