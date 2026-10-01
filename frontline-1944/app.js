@@ -7,11 +7,13 @@ const SESSION_KEY="frontline_session_v1";
 let authMode="login";
 let currentUser=null;
 let state=null;
+let armoryFilter="all";
 
 function clone(v){return JSON.parse(JSON.stringify(v));}
 function clamp(v,min=0,max=100){return Math.max(min,Math.min(max,Math.round(Number(v)||0)));}
 function normalizeUser(v){return String(v||"").trim().toLowerCase().replace(/[^a-z0-9._-]/g,"");}
-function stateKey(user){return "frontline_campaign_v03_"+normalizeUser(user);}
+function stateKey(user){return "frontline_campaign_v05_"+normalizeUser(user);}
+function getCampaign(id=state?.chapter||"ch0"){return FRONTLINE_DATA.campaigns[id]||FRONTLINE_DATA.campaigns.ch0;}
 
 async function hashPassword(value){
   const data=new TextEncoder().encode(String(value));
@@ -23,20 +25,34 @@ function saveAccounts(v){localStorage.setItem(ACCOUNTS_KEY,JSON.stringify(v))}
 function setSession(user){if(user)localStorage.setItem(SESSION_KEY,user);else localStorage.removeItem(SESSION_KEY)}
 function getSession(){return localStorage.getItem(SESSION_KEY)}
 
-function freshState(){
+function freshState(chapter="ch0"){
+  const campaign=getCampaign(chapter);
   return{
-    chapter:"ch1",
+    chapter,
     stage:"dossier",
-    sceneId:"briefing",
-    resources:clone(FRONTLINE_DATA.chapter1.resources),
-    formations:clone(FRONTLINE_DATA.chapter1.formations),
+    sceneId:campaign.startScene,
+    resources:clone(campaign.resources),
+    formations:clone(campaign.formations),
     log:[],
     decisionResult:null,
     nextScene:null,
     path:[]
   };
 }
-function loadGame(user){try{return JSON.parse(localStorage.getItem(stateKey(user)))||freshState()}catch{return freshState()}}
+function switchChapter(chapter){
+  const meta=FRONTLINE_DATA.chapters.find(c=>c.id===chapter);
+  if(!meta||meta.status!=="available"||!FRONTLINE_DATA.campaigns[chapter])return;
+  state=freshState(chapter);
+  $("#chapters-dialog")?.close();
+  renderGame();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function loadGame(user){
+  try{
+    const saved=JSON.parse(localStorage.getItem(stateKey(user)))||freshState();
+    return FRONTLINE_DATA.campaigns[saved.chapter]?saved:freshState();
+  }catch{return freshState()}
+}
 function saveGame(){if(currentUser&&state)localStorage.setItem(stateKey(currentUser),JSON.stringify(state))}
 
 function showAuth(){
@@ -101,17 +117,60 @@ async function handleAuth(event){
   showGame();
 }
 
+function ensureCampaignStyles(){
+  if(document.querySelector('link[data-frontline-campaign-styles]'))return;
+  const link=document.createElement("link");
+  link.rel="stylesheet";
+  link.href="campaign-1938.css?v=0.5.0";
+  link.dataset.frontlineCampaignStyles="true";
+  document.head.appendChild(link);
+}
+function assetUrl(file){return FRONTLINE_DATA.assetBase+encodeURIComponent(file);}
+function visualSrc(v){return v.url||assetUrl(v.file);}
+function campaignAsset(campaign,key){
+  return campaign.assets?.[key+"Url"]||assetUrl(campaign.assets?.[key+"File"]||"");
+}
 function applyAssets(){
-  $(".auth-photo").style.backgroundImage='url("'+FRONTLINE_DATA.assets.heroPhoto+'")';
-  $("#dossier-map").src=FRONTLINE_DATA.assets.campaignMap;
-  $("#archive-tank-photo").src=FRONTLINE_DATA.assets.heroPhoto;
-  $("#archive-staff-photo").src=FRONTLINE_DATA.assets.staffPhoto;
+  const campaign=getCampaign(state?.chapter||"ch0");
+  $(".auth-photo").style.backgroundImage='url("'+campaignAsset(getCampaign("ch0"),"hero")+'")';
+  $("#dossier-map").src=campaignAsset(campaign,"campaignMap");
 
   const logo=window.FRONTLINE_OFFICIAL_LOGO;
   if(logo){
-    $("[data-official-logo]").forEach(img=>{img.src=logo;});
+    $$("[data-official-logo]").forEach(img=>{img.src=logo;});
     const favicon=$("#game-favicon");
     if(favicon)favicon.href=logo;
+  }
+}
+
+function renderVisualList(visuals){
+  const panel=$(".archive-visuals");
+  const grid=$("#archive-grid");
+  if(!panel||!grid)return;
+  if(!visuals?.length){panel.classList.add("hidden");grid.innerHTML="";return;}
+  panel.classList.remove("hidden");
+  grid.innerHTML=visuals.map(v=>{
+    const badge=v.chronology&&v.chronology!=="contemporary"
+      ? '<span class="archive-badge">'+(v.chronology==="retrospective-archive"?"ARCHIVO POSTERIOR":"ARCHIVO DE REFERENCIA")+'</span>'
+      : '<span class="archive-badge">DOCUMENTO DE ÉPOCA</span>';
+    return '<figure>'+badge+
+      '<img loading="lazy" src="'+visualSrc(v)+'" alt="'+v.caption.replace(/"/g,"&quot;")+'">'+
+      '<figcaption><strong>'+v.caption+'</strong><span>'+v.usage+'</span></figcaption></figure>';
+  }).join("");
+}
+function renderSceneVisuals(scene){renderVisualList(scene.visuals||[]);}
+function renderDossierVisuals(){
+  const campaign=getCampaign();
+  if(state.chapter==="ch0"){
+    renderVisualList([
+      {file:campaign.assets.heroFile,caption:"Kriegsakademie, Berlín.",usage:"Introduce la formación del Estado Mayor y la reorganización de 1938.",chronology:"contemporary"},
+      {file:campaign.assets.staffFile,caption:"Kriegsakademie, Berlín.",usage:"Segundo documento de referencia para el dossier inicial.",chronology:"contemporary"}
+    ]);
+  }else{
+    renderVisualList([
+      {url:campaign.assets.heroUrl,caption:"Panzer I e infantería alemana en Polonia.",usage:"Documento visual de apertura de FALL WEISS.",chronology:"contemporary"},
+      {url:campaign.assets.staffUrl,caption:"Oficiales alemanes ante un mapa de situación.",usage:"Dossier visual del Estado Mayor durante la campaña de 1939.",chronology:"contemporary"}
+    ]);
   }
 }
 
@@ -124,15 +183,25 @@ function renderGame(){
   renderJournal();
   renderSources();
   renderChapters();
+  renderArmory();
   renderStage();
   saveGame();
 }
 function renderChapterChrome(){
-  const c=FRONTLINE_DATA.chapter1;
+  const c=getCampaign();
   $("#chapter-title").textContent=c.title;
   $("#chapter-subtitle").textContent=c.subtitle;
+  $("#chapter-header").textContent=c.title;
   $("#commander-name").textContent=c.protagonist;
   $("#commander-command").textContent=c.command;
+  $(".command-seal strong").textContent=state.chapter==="ch0"?"OKH":"4. ARMEE";
+  $(".command-seal small").textContent=state.chapter==="ch0"?"HEER · 1938":"HEERESGRUPPE NORD";
+  $(".formations-panel .panel-title span").textContent=state.chapter==="ch0"?"ÁREAS DE REORGANIZACIÓN":"FORMACIONES DEL CUERPO";
+  $(".formations-panel .panel-title b").textContent=state.chapter==="ch0"?"1938":"1 SEP 1939";
+  $(".staff-panel .panel-title b").textContent=state.chapter==="ch0"?"OKH":"XIX AK";
+  $(".dossier-stamp").innerHTML=state.chapter==="ch0"?"HEER<br>1938":"FALL WEISS<br>1939";
+  $(".dossier-content h2").textContent=state.chapter==="ch0"?"Un ejército en transformación":"Europa entra en guerra";
+  $("#dossier-map").src=campaignAsset(c,"campaignMap");
 }
 function renderResources(){
   const r=state.resources;
@@ -157,7 +226,7 @@ function renderFormations(){
   ).join("");
 }
 function renderStaff(){
-  $("#staff-list").innerHTML=FRONTLINE_DATA.chapter1.staff.map(s=>{
+  $("#staff-list").innerHTML=getCampaign().staff.map(s=>{
     let note=s.note;
     if(state.resources.cohesion<72&&s.id==="ia")note="Las diferencias de ritmo entre las columnas empiezan a preocupar a Operaciones. Keller pide reducir órdenes simultáneas.";
     if(state.resources.reconnaissance>60&&s.id==="ic")note="La imagen táctica está mejorando. Weber recuerda que un informe correcto hace treinta minutos puede ser falso ahora.";
@@ -168,11 +237,8 @@ function renderStaff(){
 function renderIntel(){
   const v=clamp(state.resources.reconnaissance);
   $("#intel-reliability").textContent=v+"%";
-  let txt="La información disponible antes del cruce de frontera es incompleta y pierde valor rápidamente con el movimiento.";
-  if(state.sceneId==="fog")txt="La niebla reduce la observación directa. Partes de vanguardia y radio no llegan siempre en el mismo orden en que ocurrieron los hechos.";
-  if(state.sceneId==="chojnice")txt="El frente se mueve con rapidez. La posición exacta de unidades polacas puede quedar obsoleta antes de que un parte llegue al cuerpo.";
-  if(state.sceneId==="brda")txt="El balance del primer día depende tanto de lo que sabes como de lo que aún ignoras sobre fuerzas polacas intentando retirarse o contraatacar.";
-  $("#intel-text").textContent=txt;
+  const scene=getCampaign().scenes[state.sceneId];
+  $("#intel-text").textContent=scene?.intel||"El Estado Mayor trabaja con información incompleta, de calidad desigual y con retrasos.";
 }
 function renderJournal(){
   const host=$("#decision-log");
@@ -182,14 +248,45 @@ function renderJournal(){
   ).join("");
 }
 function renderSources(){
-  $("#sources-list").innerHTML=FRONTLINE_DATA.sources.map(s=>
+  $("#sources-list").innerHTML=getCampaign().sources.map(s=>
     '<a class="source-card" href="'+s.url+'" target="_blank" rel="noopener noreferrer"><strong>'+s.short+'</strong><small>'+s.title+' · '+s.publisher+'</small></a>'
   ).join("");
 }
+function currentCampaignYear(){
+  const campaign=getCampaign();
+  const scene=campaign.scenes[state?.sceneId];
+  const source=scene?.date||campaign.startDate||"1938";
+  const match=String(source).match(/(19\d{2})/);
+  return match?Number(match[1]):1938;
+}
+function renderArmory(){
+  const grid=$("#armory-grid"),summary=$("#armory-summary");
+  if(!grid||!summary||!FRONTLINE_DATA.armory)return;
+  const year=currentCampaignYear();
+  const all=FRONTLINE_DATA.armory;
+  const current=all.filter(x=>x.year<=year);
+  const future=all.filter(x=>x.year>year);
+  let items=all;
+  if(armoryFilter==="current")items=current;
+  if(armoryFilter==="future")items=future;
+  if(armoryFilter==="ammo")items=all.filter(x=>x.kind==="ammo");
+  summary.innerHTML="<strong>"+current.length+"</strong> referencias disponibles en "+year+
+    " · <strong>"+future.length+"</strong> bloqueadas por cronología · <strong>"+all.filter(x=>x.kind==="ammo").length+"</strong> fichas de munición";
+  grid.innerHTML=items.map(item=>{
+    const available=item.year<=year;
+    const status=available?"DISPONIBLE · "+item.year:"BLOQUEADO · "+item.year;
+    return '<article class="armory-card '+(available?"available":"locked")+' '+(item.kind==="ammo"?"ammo":"")+'">'+
+      '<div class="armory-image"><img loading="lazy" src="'+assetUrl(item.file)+'" alt="'+item.name.replace(/"/g,"&quot;")+'"><span>'+status+'</span></div>'+
+      '<div class="armory-copy"><small>'+item.type+'</small><strong>'+item.name+'</strong><p><b>Munición / sistema:</b> '+item.ammo+'</p><p>'+item.note+'</p></div>'+
+    '</article>';
+  }).join("");
+  $(".armory-filter").forEach(b=>b.classList.toggle("active",b.dataset.armoryFilter===armoryFilter));
+}
 function renderChapters(){
   $("#chapters-list").innerHTML=FRONTLINE_DATA.chapters.map(c=>
-    '<article class="chapter-card '+(c.status==="locked"?"locked":"")+'"><div class="number">'+c.number+'</div><div><strong>'+c.year+' · '+c.title+'</strong><small>'+c.subtitle+'</small></div><em>'+(c.status==="available"?"DISPONIBLE":"EN DESARROLLO")+'</em></article>'
+    '<article class="chapter-card '+(c.status==="locked"?"locked":"")+(state.chapter===c.id?" active":"")+'" data-chapter="'+c.id+'"><div class="number">'+c.number+'</div><div><strong>'+c.year+' · '+c.title+'</strong><small>'+c.subtitle+'</small></div><em>'+(state.chapter===c.id?"EN CURSO":c.status==="available"?"JUGAR":"EN DESARROLLO")+'</em></article>'
   ).join("");
+  $(".chapter-card[data-chapter]").forEach(card=>card.addEventListener("click",()=>switchChapter(card.dataset.chapter)));
 }
 
 function renderStage(){
@@ -197,9 +294,11 @@ function renderStage(){
   if(state.stage==="dossier"){
     dossier.classList.remove("hidden");
     situation.classList.add("hidden");
-    $("#dossier-text").innerHTML=FRONTLINE_DATA.chapter1.dossier.map(p=>"<p>"+p+"</p>").join("");
-    $("#scene-date").textContent="31 AGO 1939";
-    $("#scene-time").textContent="23:35";
+    const campaign=getCampaign();
+    $("#dossier-text").innerHTML=campaign.dossier.map(p=>"<p>"+p+"</p>").join("");
+    $("#scene-date").textContent=campaign.startDate;
+    $("#scene-time").textContent=campaign.startTime;
+    renderDossierVisuals();
     return;
   }
   dossier.classList.add("hidden");
@@ -208,7 +307,7 @@ function renderStage(){
 }
 
 function renderScene(){
-  const scene=FRONTLINE_DATA.scenes[state.sceneId];
+  const scene=getCampaign().scenes[state.sceneId];
   if(!scene)return;
   $("#scene-date").textContent=scene.date;
   $("#scene-time").textContent=scene.time;
@@ -220,6 +319,7 @@ function renderScene(){
   $("#scene-classification").textContent=scene.classification;
   $("#scene-body").innerHTML=scene.body.map(p=>"<p>"+p+"</p>").join("");
   $("#historical-facts").innerHTML=scene.historical.map(p=>"<p>"+p+"</p>").join("");
+  renderSceneVisuals(scene);
 
   const choices=$("#choices"),result=$("#decision-result");
   if(state.decisionResult){
@@ -233,7 +333,7 @@ function renderScene(){
   result.classList.add("hidden");
   result.innerHTML="";
   if(!scene.choices.length){
-    choices.innerHTML='<div class="decision-result"><strong>FIN DEL CAPÍTULO I · PROTOTIPO 0.3</strong><br>El siguiente tramo cubrirá los combates en los bosques de Tuchola y el cierre del Corredor Polaco.</div>';
+    choices.innerHTML='<div class="decision-result"><strong>FIN DEL CAPÍTULO I</strong><br>'+String(scene.endText||"Capítulo completado.").replace(/\n/g,"<br>")+'</div>';
   }else{
     choices.innerHTML=scene.choices.map(c=>
       '<button class="choice" data-choice="'+c.id+'"><div><strong>'+c.title+'</strong><p>'+c.desc+'</p></div><em>'+c.tag+'</em></button>'
@@ -243,7 +343,7 @@ function renderScene(){
 }
 
 function choose(id){
-  const scene=FRONTLINE_DATA.scenes[state.sceneId];
+  const scene=getCampaign().scenes[state.sceneId];
   const choice=scene.choices.find(c=>c.id===id);
   if(!choice)return;
   const before=clone(state.resources);
@@ -291,6 +391,10 @@ $("#login-tab").addEventListener("click",()=>setAuthMode("login"));
 $("#register-tab").addEventListener("click",()=>setAuthMode("register"));
 $("#auth-form").addEventListener("submit",handleAuth);
 $("#start-chapter").addEventListener("click",()=>{state.stage="scene";renderGame();window.scrollTo({top:0,behavior:"smooth"});});
+$("#armory-button").addEventListener("click",()=>{$("#armory-dialog").showModal();renderArmory();});
+$("#close-armory").addEventListener("click",()=>$("#armory-dialog").close());
+$("#armory-dialog").addEventListener("click",e=>{if(e.target===$("#armory-dialog"))$("#armory-dialog").close()});
+$(".armory-filter").forEach(b=>b.addEventListener("click",()=>{armoryFilter=b.dataset.armoryFilter;renderArmory();}));
 $("#sources-button").addEventListener("click",()=>$("#sources-dialog").showModal());
 $("#close-sources").addEventListener("click",()=>$("#sources-dialog").close());
 $("#chapters-button").addEventListener("click",()=>$("#chapters-dialog").showModal());
@@ -299,6 +403,7 @@ $("#sources-dialog").addEventListener("click",e=>{if(e.target===$("#sources-dial
 $("#chapters-dialog").addEventListener("click",e=>{if(e.target===$("#chapters-dialog"))$("#chapters-dialog").close()});
 $("#logout-button").addEventListener("click",()=>{setSession(null);currentUser=null;state=null;showAuth()});
 
+ensureCampaignStyles();
 applyAssets();
 setAuthMode("login");
 const existing=getSession();
