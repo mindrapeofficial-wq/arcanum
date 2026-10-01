@@ -131,13 +131,27 @@ function renderBuild(){
   $("#build-button").addEventListener("click",()=>doBuild($("#build-button")));
   refreshBuildPlan();
 }
+function estimateBuildTurns(plan){
+  if(Number(plan?.barriers||0)>0)return Math.max(0,Math.floor(Number(plan.barriers)||0));
+  const costs={farms:5,barracks:5,workshops:10,guilds:20,towns:30,nodes:30,fortresses:300};
+  let capacityCost=0;
+  for(const [key,qty] of Object.entries(plan||{}))capacityCost+=(costs[key]||0)*Math.max(0,Math.floor(Number(qty)||0));
+  const workshops=Math.max(0,Math.floor(Number(realmState?.buildings?.workshops)||0));
+  return capacityCost>0?Math.ceil(capacityCost/(workshops+1)):0;
+}
 async function doBuild(btn){
   const plan={};
-  $$("[data-building]").forEach(input=>{
+  $("[data-building]").forEach(input=>{
     const q=Math.max(0,Math.floor(Number(input.value)||0));
     if(q) plan[input.dataset.building]=q;
   });
   if(!Object.keys(plan).length){toast("Indica al menos un edificio.","error");return;}
   if(plan.barriers && Object.keys(plan).some(key=>key!=="barriers")){toast("Las Barreras deben construirse en una orden separada.","error");return;}
+  const turns=estimateBuildTurns(plan);
+  const available=Math.max(0,Math.floor(Number(realmState?.realm?.turns)||0));
+  if(turns>available){toast(`Este lote requiere ${n(turns)} turnos y tienes ${n(available)}.`,"error");return;}
+  const units=Object.values(plan).reduce((sum,value)=>sum+Math.max(0,Number(value)||0),0);
+  const turnWord=turns===1?"turno":"turnos";
+  if(!window.confirm(`Construir este lote de ${n(units)} unidades gastará ${n(turns)} ${turnWord}. ¿Quieres continuar?`))return;
   await actionCall(btn,()=>rpc("build",{p_plan:plan}),null,res=>`Construcción completada. ${n(res.turns_spent)} turnos consumidos.`);
 }
