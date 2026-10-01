@@ -315,7 +315,10 @@ function renderOwnSocial(profile,inbox){
   ).join(""):'<span class="muted">Aún no has agregado amigos.</span>';
   let allianceHtml="";
   if(alliance){
-    allianceHtml='<div class="alliance-current"><strong>['+esc(alliance.tag)+'] '+esc(alliance.name)+'</strong><small>Rango: '+esc(alliance.role)+'</small></div>';
+    allianceHtml='<div class="alliance-current"><strong>['+esc(alliance.tag)+'] '+esc(alliance.name)+'</strong><small>Rango: '+esc(alliance.role)+'</small></div>'+
+      '<div class="profile-alliance-actions">'+
+      (alliance.role==="leader"?'<button class="profile-action" id="profile-alliance-transfer" type="button">TRANSFERIR LIDERAZGO</button>':"")+
+      '<button class="profile-action danger" id="profile-alliance-leave" type="button">'+(alliance.role==="leader"?"ABANDONAR / DISOLVER":"ABANDONAR ALIANZA")+'</button></div>';
   }else{
     allianceHtml='<form id="profile-alliance-create" class="alliance-create-form"><p class="muted">No perteneces a ninguna alianza. Puedes fundar una desde aquí.</p><input id="alliance-name" maxlength="40" placeholder="Nombre de la alianza" required /><input id="alliance-tag" maxlength="6" placeholder="TAG" required /><button class="profile-action" type="submit">FUNDAR ALIANZA</button></form>';
   }
@@ -339,6 +342,8 @@ function wireProfileSheet(profile){
   $$("[data-alliance-accept]").forEach(b=>b.addEventListener("click",()=>profileAllianceRespond(b.dataset.allianceAccept,true)));
   $$("[data-alliance-reject]").forEach(b=>b.addEventListener("click",()=>profileAllianceRespond(b.dataset.allianceReject,false)));
   $("#profile-alliance-create")?.addEventListener("submit",createProfileAlliance);
+  $("#profile-alliance-leave")?.addEventListener("click",profileAllianceLeave);
+  $("#profile-alliance-transfer")?.addEventListener("click",profileAllianceTransfer);
 }
 async function refreshOwnCharacterSurface(profile){
   if(typeof currentView!=="undefined"&&currentView==="character"&&typeof renderCharacterPage==="function"){
@@ -582,4 +587,21 @@ async function profileAllianceInvite(name){
 }
 async function profileAllianceRespond(id,accept){
   try{await rpc("respond_alliance_invite",{p_alliance_id:id,p_accept:accept});toast(accept?"Te has unido a la alianza.":"Invitación rechazada.","success");await openPlayerProfile(realmState.realm.mage_name);}catch(e){toast(humanError(e),"error");}
+}
+async function profileAllianceLeave(){
+  if(!window.confirm("¿Seguro que quieres abandonar tu alianza? Si eres el único líder y no quedan miembros, la alianza se disolverá."))return;
+  try{
+    const result=await rpc("leave_alliance",{});
+    toast(result?.status==="disbanded"?"Alianza disuelta.":"Has abandonado la alianza.","success");
+    await openPlayerProfile(realmState.realm.mage_name);
+  }catch(e){toast(humanError(e),"error");}
+}
+async function profileAllianceTransfer(){
+  const target=window.prompt("Nombre del Arconte miembro que recibirá el liderazgo:");
+  if(!target?.trim())return;
+  try{
+    const result=await rpc("transfer_alliance_leadership",{p_mage_name:target.trim()});
+    toast("Liderazgo transferido a "+(result?.new_leader||target.trim())+".","success");
+    await openPlayerProfile(realmState.realm.mage_name);
+  }catch(e){toast(humanError(e),"error");}
 }
