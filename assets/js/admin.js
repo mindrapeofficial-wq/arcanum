@@ -14,6 +14,25 @@ function adminSchool(code){return schoolName(code||"plain")}
 function adminDate(v){try{return new Date(v).toLocaleString("es-ES")}catch{return "—"}}
 function adminEsc(v){return esc(v??"")}
 function adminConfirm(text){return window.confirm(text)}
+async function adminPublicStatus(){
+  try{
+    const r=await fetch(ADMIN_API+"/public-status",{cache:"no-store"});
+    return r.ok?await r.json():{maintenance:{enabled:false}};
+  }catch{return {maintenance:{enabled:false}}}
+}
+async function enforceMaintenance(){
+  const data=await adminPublicStatus();
+  const maintenance=data?.maintenance||{enabled:false};
+  if(!maintenance.enabled)return false;
+  const session=getSession();
+  if(session?.access_token){
+    try{const me=await adminApi("/me");if(me?.admin){adminReady=true;document.querySelectorAll(".admin-nav-button").forEach(x=>x.classList.remove("hidden"));return false}}catch{}
+  }
+  hide($("#game-view"));hide($("#create-view"));show($("#auth-view"));
+  switchAuthMode("login");
+  setNotice($("#auth-notice"),String(maintenance.message||"ARCANUM está en mantenimiento. Vuelve en unos minutos."),"error");
+  return true;
+}
 async function adminAction(payload,success="Acción completada"){
   await adminApi("/action",{method:"POST",body:payload}); toast(success,"success"); await renderAdminPanel();
 }
@@ -146,3 +165,4 @@ async function adminAudit(content){
 }
 setInterval(()=>{if(!adminReady&&!$("#game-view")?.classList.contains("hidden"))probeAdmin()},2500);
 globalThis.renderAdminPanel=renderAdminPanel;
+globalThis.enforceMaintenance=enforceMaintenance;
