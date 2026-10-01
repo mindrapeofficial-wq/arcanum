@@ -181,61 +181,63 @@ function renderPlayerProfile(profile,inbox=null,snapshot=null,target=null){
   const sheetHost=target||$("#modal-content");
   const alliance=profile.alliance;
   const allianceBadge=alliance?'<span class="profile-alliance-badge">['+esc(alliance.tag)+'] '+esc(alliance.name)+'</span>':"";
+  const playerLevel=Number(snapshot?.identity?.level||(typeof combatCurrentLevel==="function"?combatCurrentLevel(profile):(profile.archmage_level||1)));
+  const friends=inbox?.friends||[];
+  const requests=inbox?.friend_requests||[];
+  const invites=inbox?.alliance_invites||[];
+
   let actions="";
   if(!profile.is_self&&!profile.is_npc){
     const friendshipAccepted=profile.friendship?.status==="accepted";
-    actions='<div class="profile-actions">'+friendshipActions(profile)+
+    actions='<div class="profile-actions social-profile-actions">'+friendshipActions(profile)+
       (friendshipAccepted
         ?'<button class="profile-action" data-direct-chat="'+esc(profile.mage_name)+'">✉ CHAT PRIVADO</button>'
-        :'<span class="profile-chat-locked">CHAT PRIVADO · SE ACTIVA AL ACEPTAR LA AMISTAD</span>')+
+        :'<span class="profile-chat-locked">CHAT PRIVADO · DISPONIBLE AL ACEPTAR LA AMISTAD</span>')+
       (profile.can_invite_to_alliance?'<button class="profile-action" data-profile-alliance-invite="'+esc(profile.mage_name)+'">♜ INVITAR A '+esc(profile.my_alliance?.tag||"ALIANZA")+'</button>':"")+
       '</div>';
   }
+
   let bioBlock="";
   if(profile.is_self){
-    bioBlock='<textarea id="profile-bio-input" maxlength="500" placeholder="Escribe la historia, carácter o ambiciones de tu Archimago…">'+esc(profile.bio||"")+'</textarea>'+
-      '<div class="profile-edit-row"><label class="profile-action secondary profile-file-label">CAMBIAR IMAGEN<input id="profile-avatar-file" type="file" accept="image/png,image/jpeg,image/webp" hidden /></label><button class="profile-action" id="profile-save-bio">GUARDAR FICHA</button></div>'+
-      '<small class="profile-upload-note">Avatar: JPG, PNG o WebP · máximo 2 MB.</small>';
+    const genericButton=profile.school_code==="verdant"
+      ?'<button class="profile-action secondary" id="profile-use-school-avatar" type="button">USAR RETRATO VIRIDIA</button>'
+      :"";
+    const removeButton=profile.avatar_path
+      ?'<button class="profile-action danger" id="profile-remove-avatar" type="button">ELIMINAR FOTO</button>'
+      :"";
+    bioBlock='<textarea id="profile-bio-input" maxlength="500" placeholder="Cuenta quién eres en ARCANUM, qué buscas o cómo quieres que te conozcan otros jugadores…">'+esc(profile.bio||"")+'</textarea>'+
+      '<div class="profile-edit-row social-avatar-actions"><label class="profile-action secondary profile-file-label">CAMBIAR FOTO<input id="profile-avatar-file" type="file" accept="image/png,image/jpeg,image/webp" hidden /></label>'+genericButton+removeButton+'<button class="profile-action" id="profile-save-bio">GUARDAR PERFIL</button></div>'+
+      '<small class="profile-upload-note">Foto: JPG, PNG o WebP · máximo 2 MB. Puedes volver en cualquier momento al retrato genérico de tu Escuela.</small>';
   }else{
-    bioBlock='<p>'+(profile.bio?esc(profile.bio):'<span class="muted">Este Archimago aún no ha escrito su biografía.</span>')+'</p>';
+    bioBlock='<p>'+(profile.bio?esc(profile.bio):'<span class="muted">Este jugador aún no ha escrito su presentación.</span>')+'</p>';
   }
-  const playerLevel=Number(snapshot?.identity?.level||(typeof combatCurrentLevel==="function"?combatCurrentLevel(profile):(profile.archmage_level||1)));
-  const combat=(typeof renderCombatIdentity==="function"?renderCombatIdentity(profile,snapshot?.combat?.derived||null):"");
-  const equipment=renderCanonicalEquipment(snapshot,profile);
-  const arena=snapshot?.arena||{};
-  const relicCount=Number(snapshot?.artifacts?.count||0);
-  const equipmentPower=Number(snapshot?.inventory?.equipment_power||0);
-  const renown=Number(snapshot?.trajectory?.renown?.score||0);
+
+  const friendCount=profile.is_self?friends.length:Number(profile.friend_count||0);
+  const socialSummary=
+    '<div class="social-profile-summary">'+
+      '<div><small>ESCUELA</small><strong>'+esc(profileSchoolName(profile.school_code))+'</strong></div>'+
+      '<div><small>NIVEL</small><strong>'+n(playerLevel)+'</strong></div>'+
+      '<div><small>AMIGOS</small><strong>'+n(friendCount)+'</strong></div>'+
+      '<div><small>ALIANZA</small><strong>'+(alliance?'['+esc(alliance.tag)+']':'—')+'</strong></div>'+
+      '<div><small>ESTADO</small><strong>'+esc(profile.status||"—")+'</strong></div>'+
+    '</div>';
 
   sheetHost.innerHTML=
-    '<section class="character-sheet player-character-sheet canonical-archmage-sheet">'+
-      '<div class="profile-hero player-sheet-hero">'+profileAvatarMarkup(profile,true)+'<div class="profile-identity"><span class="section-kicker">'+(profile.is_npc?"ARCHIMAGO NPC":"IDENTIDAD CANÓNICA")+'</span><h3>'+esc(profile.mage_name)+'</h3><div class="profile-subline">'+esc(profileSchoolName(profile.school_code))+' · Nivel '+n(playerLevel)+' '+(profile.is_npc?'<span class="tag npc-tag">NPC</span>':"")+' '+allianceBadge+'</div><p class="player-sheet-purpose">Una sola persona detrás del reino: progresión, combate, siete slots de equipo, reliquias, Arena y crónica comparten esta identidad persistente.</p></div><div class="canonical-authority"><small>FUENTE</small><strong>SERVIDOR</strong></div></div>'+
-      '<div class="profile-stats player-sheet-kingdom-stats canonical-summary-stats">'+
-        '<div><small>ASCENDENCIA DEL REINO</small><strong>'+n(profile.net_power)+'</strong></div>'+
-        '<div><small>TIERRAS</small><strong>'+n(profile.land)+'</strong></div>'+
-        '<div><small>RATING ARENA</small><strong>'+n(arena.rating||1000)+'</strong></div>'+
-        '<div><small>RENOMBRE</small><strong>'+n(renown)+'</strong></div>'+
-        '<div><small>RELIQUIAS</small><strong>'+n(relicCount)+'</strong></div>'+
-        '<div><small>ESTADO</small><strong>'+esc(profile.status)+'</strong></div>'+
+    '<section class="character-sheet player-character-sheet social-character-sheet">'+
+      '<div class="profile-hero player-sheet-hero social-profile-hero">'+profileAvatarMarkup(profile,true)+
+        '<div class="profile-identity"><span class="section-kicker">'+(profile.is_npc?"JUGADOR NPC":"PERFIL SOCIAL")+'</span><h3>'+esc(profile.mage_name)+'</h3>'+
+        '<div class="profile-subline">'+esc(profileSchoolName(profile.school_code))+' · Nivel '+n(playerLevel)+' '+(profile.is_npc?'<span class="tag npc-tag">NPC</span>':"")+' '+allianceBadge+'</div>'+
+        '<p class="player-sheet-purpose">Tu identidad pública dentro de ARCANUM: foto, biografía, amistades y alianza. El combate y la gestión del reino viven en sus propias secciones.</p></div>'+
       '</div>'+
-      '<nav class="player-sheet-nav canonical-sheet-nav" aria-label="Secciones de la ficha"><span>IDENTIDAD</span><span>APTITUDES</span><span>COMBATE</span><span>EQUIPO</span><span>RELIQUIAS</span><span>CRÓNICA</span></nav>'+
-      '<div class="player-sheet-development"><div class="player-sheet-block-title"><b>PROGRESIÓN Y APTITUDES</b><small>Nivel, experiencia y desarrollo personal del Archimago</small></div>'+renderArchmageProgression(profile)+'</div>'+
-      '<div class="player-sheet-layout">'+
-        '<div class="player-sheet-main"><div class="player-sheet-block-title"><b>CARACTERÍSTICAS DE COMBATE</b><small>La forma en que este mismo Archimago pelea</small></div>'+combat+'</div>'+
-        '<div class="player-sheet-side"><div class="player-sheet-block-title"><b>EQUIPO'+(profile.is_self?' E INVENTARIO':' ACTIVO')+'</b><small>'+(profile.is_self?'Inventario privado y objetos equipados':'Sólo equipamiento público')+'</small></div>'+equipment+'</div>'+
-      '</div>'+
-      renderCanonicalArtifacts(snapshot)+
-      renderCanonicalTrajectory(snapshot)+
-      renderCanonicalHistory(snapshot)+
-      '<div class="profile-bio-block"><div class="profile-section-title"><span>BIOGRAFÍA</span>'+(profile.is_self?'<small>máx. 500 caracteres</small>':"")+'</div>'+bioBlock+'</div>'+
+      socialSummary+
+      '<div class="profile-bio-block social-bio-block"><div class="profile-section-title"><span>SOBRE MÍ</span>'+(profile.is_self?'<small>máx. 500 caracteres</small>':"")+'</div>'+bioBlock+'</div>'+
       actions+
-      (profile.is_npc?'<div class="profile-system-note">Este dominio está controlado por ARCANUM. Las acciones sociales están desactivadas para NPC.</div>':"")+
+      (profile.is_npc?'<div class="profile-system-note">Este perfil está controlado por ARCANUM. Las acciones sociales están desactivadas para NPC.</div>':"")+
       (profile.is_self?renderOwnSocial(profile,inbox):"")+
       '<div id="profile-social-detail"></div>'+
     '</section>';
   wireProfileSheet(profile);
 }
-
 
 function renderOwnSocial(profile,inbox){
   const friends=inbox?.friends||[];
@@ -266,7 +268,7 @@ function wireProfileSheet(profile){
   if(typeof wireCombatEvolution==="function")wireCombatEvolution(profile);
   document.querySelectorAll("[data-archmage-attribute]").forEach(b=>b.addEventListener("click",()=>spendArchmageAttribute(b.dataset.archmageAttribute,profile)));
   $("#profile-save-bio")?.addEventListener("click",()=>saveOwnProfile(profile));
-  $("#profile-avatar-file")?.addEventListener("change",e=>startProfileAvatarCrop(e.target.files?.[0],profile));
+  $("#profile-avatar-file")?.addEventListener("change",e=>startProfileAvatarCrop(e.target.files?.[0],profile));\n  $("#profile-remove-avatar")?.addEventListener("click",()=>removeProfileAvatar(profile));\n  $("#profile-use-school-avatar")?.addEventListener("click",()=>useSchoolProfileAvatar(profile));
   $$("[data-profile-friend-add]").forEach(b=>b.addEventListener("click",()=>profileFriendRequest(b.dataset.profileFriendAdd)));
   $$("[data-profile-friend-accept]").forEach(b=>b.addEventListener("click",()=>profileFriendRespond(b.dataset.profileFriendAccept,true)));
   $$("[data-profile-friend-reject]").forEach(b=>b.addEventListener("click",()=>profileFriendRespond(b.dataset.profileFriendReject,false)));
@@ -281,7 +283,9 @@ async function refreshOwnCharacterSurface(profile){
     await renderCharacterPage();
     return;
   }
-  await refreshOwnCharacterSurface(profile);
+  if(activeProfileName&&typeof openPlayerProfile==="function"){
+    await openPlayerProfile(activeProfileName);
+  }
 }
 
 async function spendArchmageAttribute(key,profile){
@@ -408,6 +412,38 @@ function startProfileAvatarCrop(file,profile){
     }
   });
   window.addEventListener("resize",resetScale,{once:true});
+}
+
+async function clearProfileAvatar(profile,{deleteStored=true,message="Foto de perfil eliminada."}={}){
+  const session=await validSession();
+  if(!session?.access_token){toast("Tu sesión ha caducado.","error");return;}
+  const oldPath=profile?.avatar_path||null;
+  try{
+    await rpc("update_my_profile",{p_bio:$("#profile-bio-input")?.value||profile?.bio||"",p_avatar_path:null});
+    if(deleteStored&&oldPath){
+      fetch(SUPABASE_URL+"/storage/v1/object/avatars/"+oldPath.split("/").map(encodeURIComponent).join("/"),{
+        method:"DELETE",
+        headers:{apikey:SUPABASE_KEY,Authorization:"Bearer "+session.access_token}
+      }).catch(()=>{});
+    }
+    toast(message,"success");
+    await refreshOwnProfileBadge(true);
+    if(typeof currentView!=="undefined"&&currentView==="character"&&typeof renderCharacterPage==="function")await renderCharacterPage();
+    else if(activeProfileName)await openPlayerProfile(activeProfileName);
+  }catch(e){toast(humanError(e),"error");}
+}
+async function removeProfileAvatar(profile){
+  if(!profile?.avatar_path)return;
+  if(!confirm("¿Eliminar tu foto personalizada? Se mostrará el retrato genérico de tu Escuela."))return;
+  await clearProfileAvatar(profile,{deleteStored:true,message:"Foto eliminada. Vuelves al retrato genérico de tu Escuela."});
+}
+async function useSchoolProfileAvatar(profile){
+  if(profile?.school_code!=="verdant")return;
+  if(profile?.avatar_path){
+    await clearProfileAvatar(profile,{deleteStored:true,message:"Retrato genérico de Viridia seleccionado."});
+  }else{
+    toast("Ya estás usando el retrato genérico de Viridia.","success");
+  }
 }
 
 async function uploadProfileAvatar(file,profile){
