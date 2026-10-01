@@ -1,6 +1,6 @@
 "use strict";
 
-const ARENA_DAILY_SEALS=6;
+const ARENA_DAILY_RANKED_LIMIT=6;
 const ARENA_TRAITS={
   verdant:{name:"Viridia",mark:"♧",skill:"Savia Ancestral"},
   ascendant:{name:"Aurea",mark:"✦",skill:"Égida Solar"},
@@ -56,7 +56,7 @@ function arenaSideForName(name,rec){
 }
 function arenaCombatTimeline(rec){
   var out=[],log=Array.isArray(rec.log)?rec.log:[];
-  var me=String(rec.playerName||rec.player?.name||realmState?.realm?.mage_name||"Archimago");
+  var me=String(rec.playerName||rec.player?.name||realmState?.realm?.mage_name||"Arconte");
   var foe=String(rec.opponent||rec.opponent_state?.name||"Rival");
   function other(side){return side==="player"?"enemy":"player"}
   log.forEach(function(line){
@@ -189,7 +189,7 @@ function arenaLifeHud(side,name,school,maxHp){
 function arenaOpen(rec){
   var ps=String(rec.playerSchool||rec.player?.school||realmState?.realm?.school_code||"ascendant");
   var os=String(rec.opponentSchool||rec.opponent_state?.school||"ascendant");
-  var playerName=String(rec.playerName||rec.player?.name||realmState?.realm?.mage_name||"Archimago");
+  var playerName=String(rec.playerName||rec.player?.name||realmState?.realm?.mage_name||"Arconte");
   var stats=arenaCombatStats(rec);
   $("#modal-content").innerHTML=
     '<span class="section-kicker">ARENA ARCANA</span>'+
@@ -227,7 +227,9 @@ async function renderArena(){
     rpc("leaderboard",{p_limit:100}).catch(()=>[])
   ]);
   const selfProfile=snapshot.profile;
-  const data=arenaData?.arena||snapshot?.arena||{rating:1000,wins:0,losses:0,seals_remaining:0};
+  const data=arenaData?.arena||snapshot?.arena||{rating:1000,wins:0,losses:0,ranked_used:0};
+  const energy=arenaData?.energy||snapshot?.energy||{current:0,max:12};
+  const ranked=arenaData?.ranked_daily||{used:Number(data.ranked_used||0),limit:ARENA_DAILY_RANKED_LIMIT,remaining:Math.max(0,ARENA_DAILY_RANKED_LIMIT-Number(data.ranked_used||0))};
   const history=(arenaData?.history||[]).map(arenaHistoryRecord);
   const targets=arenaTargets(rows);
   const combat=typeof getCombatProfile==="function"?getCombatProfile(selfProfile):null;
@@ -239,7 +241,8 @@ async function renderArena(){
     '<section class="arena-hero"><div><span class="section-kicker">CÍRCULO DE DUELO</span><h3>'+esc(selfProfile.mage_name)+'</h3>'+
       '<p>Seis combates clasificatorios al día según reloj del servidor. Los amistosos son ilimitados. Perfil, equipo, Sellos, rating y resultado se validan en backend.</p>'+
       '<div class="arena-meta">'+
-        '<span><small>SELLOS</small><b>'+n(data.seals_remaining)+' / '+ARENA_DAILY_SEALS+'</b></span>'+
+        '<span><small>ENERGÍA</small><b>'+n(energy.current)+' / '+n(energy.max||12)+'</b></span>'+
+        '<span><small>CLASIFICATORIAS</small><b>'+n(ranked.remaining)+' / '+n(ranked.limit||ARENA_DAILY_RANKED_LIMIT)+'</b></span>'+
         '<span><small>RATING</small><b>'+n(data.rating)+'</b></span>'+
         '<span><small>DIVISIÓN</small><b>'+esc(arenaDivision(Number(data.rating)))+'</b></span>'+
         '<span><small>RÉCORD</small><b>'+n(data.wins)+'V · '+n(data.losses)+'D</b></span>'+
@@ -252,7 +255,7 @@ async function renderArena(){
         const tr=arenaTrait(t.school_code);
         return '<article class="arena-row">'+arenaSpriteHtml(t.school_code,"arena-sprite--mini")+'<div><strong><button class="player-link" data-profile="'+esc(t.mage_name)+'">'+esc(t.mage_name)+'</button></strong>'+
           '<small>'+esc(tr.name)+' · Poder '+n(t.net_power)+'</small></div><div>'+
-          '<button class="small-action arena-fight" data-target="'+esc(t.mage_name)+'" data-school="'+esc(t.school_code||"ascendant")+'" data-mode="ranked" '+(Number(data.seals_remaining)<=0?"disabled":"")+'>DUELO</button>'+
+          '<button class="small-action arena-fight" data-target="'+esc(t.mage_name)+'" data-school="'+esc(t.school_code||"ascendant")+'" data-mode="ranked" '+((Number(ranked.remaining)<=0||Number(energy.current)<2)?"disabled":"")+'>DUELO</button>'+
           '<button class="small-action arena-fight alt" data-target="'+esc(t.mage_name)+'" data-school="'+esc(t.school_code||"ascendant")+'" data-mode="friendly">AMISTOSO</button></div></article>';
       }).join(""):'<div class="empty">No hay rivales disponibles.</div>')+'</div></section>'+
       '<section class="panel"><div class="arena-title"><span class="section-kicker">CRÓNICAS</span><h3>Últimos duelos</h3></div>'+
@@ -276,7 +279,7 @@ async function arenaFight(name,mode,btn,opponentSchool){
     const data=await stateApi("/arena/fight",{method:"POST",body:{target:name,mode:mode}});
     const rec=data?.match;
     if(!rec)throw new Error("ARENA_RESULT_MISSING");
-    rec.playerName=String(rec.player?.name||realmState?.realm?.mage_name||"Archimago");
+    rec.playerName=String(rec.player?.name||realmState?.realm?.mage_name||"Arconte");
     rec.playerSchool=String(rec.player?.school||realmState?.realm?.school_code||"ascendant");
     rec.opponentSchool=String(rec.opponent_state?.school||opponentSchool||"ascendant");
     let lootReward=data?.loot_reward||null;

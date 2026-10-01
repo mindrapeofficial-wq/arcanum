@@ -355,7 +355,7 @@ function renderCombatIdentity(profile,serverDerived=null){
   const abilities=c.abilities.map(function(a){return '<div class="combat-ability"><strong>'+esc(a.name)+'</strong><span>'+esc(a.desc)+'</span></div>'}).join("");
   const traits=[c.trait].concat(c.bonusTraits||[]).filter(Boolean);
   const traitText=traits.map(function(t){return '<span class="combat-trait-chip"><b>'+esc(t.name)+'</b><small>'+esc(t.desc)+'</small></span>'}).join("");
-  return '<section class="combat-identity"><div class="profile-section-title"><span>CARACTERÍSTICAS DE DUELO</span><small>perfil persistente del mismo Archimago</small></div>'+
+  return '<section class="combat-identity"><div class="profile-section-title"><span>CARACTERÍSTICAS DE DUELO</span><small>perfil persistente del mismo Arconte</small></div>'+
     '<div class="combat-summary"><div class="combat-weapon"><small>ARMA DE DUELO</small><strong>'+esc(c.weapon.name)+'</strong><span>'+esc(c.weapon.type)+' · '+c.weapon.min+'–'+c.weapon.max+' daño · '+esc(c.weapon.effect)+'</span></div><div class="combat-trait"><small>RASGOS</small><div class="combat-trait-list">'+traitText+'</div></div></div>'+
     '<div class="combat-stats">'+stats+'</div>'+
     '<div class="combat-derived"><span>❤ '+n(d.maxHp)+'</span><span>⚔ '+n(d.attack)+'</span><span>◆ '+n(d.armor)+'</span><span>⌁ '+d.speed.toFixed(1)+'</span><span>✦ '+Math.round(d.crit*100)+'% crítico</span><span>◌ '+Math.round(d.dodge*100)+'% esquiva</span>'+(d.equipmentPower?'<span class="combat-gear-power">⬡ '+n(d.equipmentPower)+' poder de equipo</span>':'')+'</div>'+

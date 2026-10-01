@@ -15,8 +15,8 @@ function characterSchoolLabel(code){
 function characterRankTitle(progression){
   try{
     const identity=progression&&typeof archmageIdentityFromProgression==="function"?archmageIdentityFromProgression(progression):null;
-    return identity?.title||"Archimago";
-  }catch{return "Archimago"}
+    return identity?.title||"Arconte";
+  }catch{return "Arconte"}
 }
 function characterPortraitUrl(profile){
   const code=String(profile?.school_code||"").toLowerCase();
@@ -173,7 +173,7 @@ function renderCharacterLayout(profile,snapshot){
           '<div class="character-development-grid">'+characterDevelopmentStats(profile,progression)+'</div>'+
         '</section>'+
         '<section class="character-brute-panel character-events-panel">'+
-          '<div class="character-brute-title"><span>HISTORIAL DEL ARCHIMAGO</span><small>últimos acontecimientos</small></div>'+
+          '<div class="character-brute-title"><span>HISTORIAL DEL ARCONTE</span><small>últimos acontecimientos</small></div>'+
           '<div class="character-event-list">'+characterHistory(snapshot)+'</div>'+
         '</section>'+
       '</aside>'+
@@ -193,8 +193,8 @@ function wireCharacterPage(profile){
 async function renderCharacterPage(){
   const host=$("#view-host"),mageName=String(realmState?.realm?.mage_name||ownProfileBadge?.mage_name||"").trim();
   if(!host)return;
-  if(!mageName){host.innerHTML='<div class="view-header"><div><span class="section-kicker">ARCHIMAGO</span><h2>Personaje</h2><p>No se ha podido identificar al Archimago.</p></div></div>';return}
-  host.innerHTML='<div class="character-page-loading"><span class="section-kicker">ARCHIMAGO</span><strong>Preparando ficha de personaje…</strong></div>';
+  if(!mageName){host.innerHTML='<div class="view-header"><div><span class="section-kicker">ARCONTE</span><h2>Personaje</h2><p>No se ha podido identificar al Arconte.</p></div></div>';return}
+  host.innerHTML='<div class="character-page-loading"><span class="section-kicker">ARCONTE</span><strong>Preparando ficha de personaje…</strong></div>';
   try{
     let snapshot=typeof loadArchmageSnapshot==="function"?await loadArchmageSnapshot(mageName,{force:true}):{profile:await rpc("player_profile",{p_mage_name:mageName})};
     let profile=snapshot.profile;
@@ -207,7 +207,7 @@ async function renderCharacterPage(){
     host.innerHTML=renderCharacterLayout(profile,snapshot);wireCharacterPage(profile);
     if(typeof arenaHydrateSprites==="function")arenaHydrateSprites(host);
   }catch(e){
-    host.innerHTML='<div class="view-header"><div><span class="section-kicker">ARCHIMAGO</span><h2>Error de personaje</h2><p>'+esc(humanError(e))+'</p></div></div>';
+    host.innerHTML='<div class="view-header"><div><span class="section-kicker">ARCONTE</span><h2>Error de personaje</h2><p>'+esc(humanError(e))+'</p></div></div>';
   }
 }
 globalThis.renderCharacterPage=renderCharacterPage;

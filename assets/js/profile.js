@@ -182,10 +182,10 @@ function renderArchmageProgression(profile){
   const pct=Math.round(progression.xpRatio*100);
   const pointsLabel=progression.attributePoints===1?"1 punto disponible":n(progression.attributePoints)+" puntos disponibles";
   const xpText=progression.level>=ARCHMAGE_LEVEL_CAP?"NIVEL MÁXIMO":n(progression.xp)+" / "+n(progression.xpNext);
-  return '<section class="archmage-progression"><div class="profile-section-title"><span>PROGRESIÓN DEL ARCHIMAGO</span><small>'+pointsLabel+'</small></div>'+
+  return '<section class="archmage-progression"><div class="profile-section-title"><span>PROGRESIÓN DEL ARCONTE</span><small>'+pointsLabel+'</small></div>'+
     '<div class="archmage-level-row"><div><small>NIVEL</small><strong>'+n(progression.level)+'</strong></div><div class="archmage-xp"><div><span>EXPERIENCIA</span><b>'+xpText+'</b></div><div class="archmage-xp-track"><i style="width:'+pct+'%"></i></div></div></div>'+
     (identity?'<div class="archmage-identity-card" data-archmage-identity="'+esc(identity.key)+'"><small>PERFIL ARCANO</small><strong>'+esc(identity.title)+'</strong><span>'+esc(identity.description)+'</span><em>Identidad narrativa · sin bonificación mecánica por ahora.</em></div>':"")+
-    '<div class="archmage-aptitude-label"><b>APTITUDES DEL ARCHIMAGO</b><span>Definen cómo se desarrolla en el mundo; no son las estadísticas de duelo.</span></div><div class="archmage-attributes">'+stats+'</div>'+
+    '<div class="archmage-aptitude-label"><b>APTITUDES DEL ARCONTE</b><span>Definen cómo se desarrolla en el mundo; no son las estadísticas de duelo.</span></div><div class="archmage-attributes">'+stats+'</div>'+
     renderArchmageXpGuide()+
     '</section>';
 }
@@ -219,14 +219,14 @@ function renderCanonicalEquipment(snapshot,profile){
 function renderCanonicalArtifacts(snapshot){
   const data=snapshot?.artifacts||{},items=data.items||[];
   const equipped=new Set((data.equipped||[]).map(x=>String(x.id)));
-  if(!items.length)return '<section class="canonical-relics"><div class="profile-section-title"><span>RELIQUIAS</span><small>0 vinculadas</small></div><div class="empty">Este Archimago todavía no custodia reliquias.</div></section>';
+  if(!items.length)return '<section class="canonical-relics"><div class="profile-section-title"><span>RELIQUIAS</span><small>0 vinculadas</small></div><div class="empty">Este Arconte todavía no custodia reliquias.</div></section>';
   return '<section class="canonical-relics"><div class="profile-section-title"><span>RELIQUIAS</span><small>'+n(data.count||items.length)+' vinculadas</small></div><div class="canonical-relic-grid">'+items.slice(0,12).map(x=>
     '<article class="canonical-relic '+(equipped.has(String(x.id))?'equipped':'')+'"><small>'+esc(archmageArtifactCategoryLabel(x.category))+'</small><strong>'+esc(archmageArtifactDisplayName(x.artifact_id))+'</strong><span>'+esc(x.source||"origen desconocido")+(equipped.has(String(x.id))?' · VINCULADA':'')+'</span></article>'
   ).join("")+'</div></section>';
 }
 function renderCanonicalTrajectory(snapshot){
   const t=snapshot?.trajectory||{},a=snapshot?.arena||{},renown=t.renown||{score:0,title:"Desconocido"};
-  return '<section class="canonical-trajectory"><div class="profile-section-title"><span>TRAYECTORIA</span><small>historial del mismo Archimago</small></div>'+
+  return '<section class="canonical-trajectory"><div class="profile-section-title"><span>TRAYECTORIA</span><small>historial del mismo Arconte</small></div>'+
     '<div class="canonical-renown"><div><small>RENOMBRE</small><strong>'+n(renown.score||0)+'</strong></div><span>'+esc(renown.title||"Desconocido")+' · indicador derivado, sin efecto mecánico</span></div>'+
     '<div class="canonical-trajectory-grid">'+
       '<div><small>RATING ARENA</small><strong>'+n(a.rating||1000)+'</strong></div>'+

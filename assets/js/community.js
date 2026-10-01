@@ -47,7 +47,7 @@ async function renderCommunity(){
     <div class="community-tabs">
       <button class="community-tab ${communityMode==="chat"?"active":""}" data-community-tab="chat">CHAT GLOBAL</button>
       <button class="community-tab ${communityMode==="school"?"active":""}" data-community-tab="school">MI ESCUELA</button>
-      <button class="community-tab ${communityMode==="players"?"active":""}" data-community-tab="players">ARCHIMAGOS</button>
+      <button class="community-tab ${communityMode==="players"?"active":""}" data-community-tab="players">ARCONTES</button>
       <button class="community-tab ${communityMode==="board"?"active":""}" data-community-tab="board">TABLÓN</button>
     </div>
     <div id="community-content"></div>`;

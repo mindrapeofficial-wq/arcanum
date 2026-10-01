@@ -468,50 +468,6 @@ async function deliverPendingLoot(who:any){
   }
   return delivered;
 }
-async function startExplorationLootClaim(who:any,turns:number){
-  const cutoff=new Date(Date.now()-10*60*1000).toISOString();
-  const {data:active,error:activeError}=await supabase.from("arcanum_loot_claims")
-    .select("claim_key,status,created_at")
-    .eq("user_id",who.userId).eq("source","exploration").in("status",["started","processing"])
-    .gte("created_at",cutoff).order("created_at",{ascending:false}).limit(1).maybeSingle();
-  if(activeError)throw activeError;
-  if(active)return {claim_key:String(active.claim_key),reused:true};
-  const id=crypto.randomUUID(),claimKey="exploration:"+id;
-  const claim=await ensureLootClaim(who,claimKey,"exploration",id,{
-    requested_turns:turns,
-    turns_before:Number(who.realm?.turns||0),
-    land_before:Number(who.realm?.land||0)
-  });
-  return {claim_key:String(claim.claim_key),reused:false};
-}
-async function completeExplorationLootClaim(who:any,claimKey:string){
-  const claim=await getLootClaim(claimKey);
-  if(!claim||claim.user_id!==who.userId||claim.source!=="exploration")throw new Error("INVALID_LOOT_CLAIM");
-  if(Date.now()-new Date(claim.created_at).getTime()>10*60*1000){
-    await updateLootClaim(claimKey,{status:"rejected",metadata:{...(claim.metadata||{}),reason:"expired"},completed_at:new Date().toISOString()});
-    throw new Error("LOOT_CLAIM_EXPIRED");
-  }
-  const turns=Math.max(1,Math.min(50,Math.floor(Number(claim.metadata?.requested_turns||1))));
-  const landBefore=Number(claim.metadata?.land_before||0),landAfter=Number(who.realm?.land||0);
-  const turnsBefore=Number(claim.metadata?.turns_before||0),turnsAfter=Number(who.realm?.turns||0);
-  const landGain=Math.max(0,landAfter-landBefore),turnsSpent=Math.max(0,turnsBefore-turnsAfter);
-  if(landGain<=0||turnsSpent+1<turns){
-    await updateLootClaim(claimKey,{status:"rejected",metadata:{...(claim.metadata||{}),reason:"exploration_not_verified",land_gain:landGain,turns_spent:turnsSpent},completed_at:new Date().toISOString()});
-    throw new Error("EXPLORATION_NOT_VERIFIED");
-  }
-  const deep=turns>=10,expedition=turns>=4;
-  const rewardTier=deep?"deep_exploration":expedition?"expedition":"scouting";
-  const chance=Math.min(.68,.10+turns*.035+Math.min(landGain,80)*.002);
-  const rarityWeights=deep
-    ?{common:25,uncommon:38,rare:27,epic:8.5,legendary:1.4,arcane:.1}
-    :expedition
-      ?{common:40,uncommon:38,rare:18,epic:3.6,legendary:.4,arcane:0}
-      :{common:58,uncommon:31,rare:9.5,epic:1.4,legendary:.1,arcane:0};
-  return await resolveLootReward(who,{
-    claimKey,source:"exploration",sourceRef:String(claim.source_ref),rewardTier,chance,rarityWeights,
-    metadata:{land_gain:landGain,turns_spent:turnsSpent,requested_turns:turns}
-  });
-}
 async function claimArenaLoot(who:any,matchId:string){
   const {data:match,error}=await supabase.from("arcanum_arena_matches")
     .select("id,attacker_user_id,mode,attacker_won,rating_after,rating_delta,defender_username,created_at")
@@ -716,7 +672,7 @@ async function recentArenaEvents(username:string){
     return {
       id:String(m.id),type:"arena",created_at:m.created_at,outcome:won?"win":"loss",
       title:(won?"Victoria":"Derrota")+" en Arena",
-      detail:(m.mode==="ranked"?"Clasificatorio":"Amistoso")+" contra "+String(opponent||"Archimago"),
+      detail:(m.mode==="ranked"?"Clasificatorio":"Amistoso")+" contra "+String(opponent||"Arconte"),
       opponent:String(opponent||""),mode:String(m.mode||"friendly"),
       rating_delta:attacking?Number(m.rating_delta||0):null,rating_after:attacking?Number(m.rating_after||0):null
     };
@@ -788,7 +744,7 @@ async function unifiedArchmageSnapshot(who:any,target:any){
   const battleEvents=(battles||[]).map((b:any)=>({
     id:"battle-"+String(b.battle_id||crypto.randomUUID()),type:"war",created_at:b.created_at,outcome:b.result==="VICTORY"?"win":"loss",
     title:b.result==="VICTORY"?"Victoria militar":"Derrota militar",
-    detail:(b.mode==="SIEGE"?"Asedio":"Ataque")+" contra "+String(b.opponent_mage_name||"Archimago"),
+    detail:(b.mode==="SIEGE"?"Asedio":"Ataque")+" contra "+String(b.opponent_mage_name||"Arconte"),
     opponent:String(b.opponent_mage_name||""),mode:String(b.mode||""),land_change:Number(b.land_change||0),battle_id:b.battle_id||null
   }));
   const history=[...arenaEvents,...artifacts.history,...battleEvents]
@@ -905,12 +861,44 @@ function serverDay(){
   const values=Object.fromEntries(parts.map(x=>[x.type,x.value]));
   return values.year+"-"+values.month+"-"+values.day;
 }
+const ARCHON_ENERGY_MAX=12;
+const ARCHON_ENERGY_REGEN_MS=2*60*60*1000;
+const ARCHON_ENERGY_PVE_COST=1;
+const ARCHON_ENERGY_ARENA_RANKED_COST=2;
+const ARENA_DAILY_RANKED_LIMIT=6;
+
+async function archonEnergy(userId:string){
+  const {data,error}=await supabase.rpc("get_archon_energy",{p_user_id:userId});
+  if(error)throw error;
+  const row=Array.isArray(data)?data[0]:data;
+  return {
+    current:Math.max(0,Number(row?.energy??ARCHON_ENERGY_MAX)),
+    max:ARCHON_ENERGY_MAX,
+    next_at:row?.next_energy_at||null,
+    regen_hours:2
+  };
+}
+async function spendArchonEnergy(userId:string,amount:number){
+  const {data,error}=await supabase.rpc("spend_archon_energy",{p_user_id:userId,p_amount:Math.max(1,Math.floor(amount))});
+  if(error)throw error;
+  const row=Array.isArray(data)?data[0]:data;
+  if(!row?.spent)throw new Error("NOT_ENOUGH_ARCHON_ENERGY");
+  return {
+    current:Math.max(0,Number(row.energy||0)),
+    max:ARCHON_ENERGY_MAX,
+    next_at:row.next_energy_at||null,
+    regen_hours:2
+  };
+}
+
 async function ensureArenaIdentity(userId:string,username:string){
   const day=serverDay();
   const {data,error}=await supabase.from("arcanum_arena_state").select("*").eq("user_id",userId).maybeSingle();
   if(error)throw error;
-  let state=data||{user_id:userId,username,rating:1000,wins:0,losses:0,seal_day:day,seals_remaining:6};
-  if(String(state.seal_day)!==day){state.seal_day=day;state.seals_remaining=6}
+  let state=data||{user_id:userId,username,rating:1000,wins:0,losses:0,ranked_day:day,ranked_used:0};
+  if(String(state.ranked_day||state.seal_day)!==day){state.ranked_day=day;state.ranked_used=0}
+  state.ranked_day=day;
+  state.ranked_used=Math.max(0,Math.min(ARENA_DAILY_RANKED_LIMIT,Number(state.ranked_used||0)));
   state.username=username;state.updated_at=new Date().toISOString();
   const {data:saved,error:saveError}=await supabase.from("arcanum_arena_state").upsert(state,{onConflict:"user_id"}).select("*").single();
   if(saveError)throw saveError; return saved;
@@ -920,7 +908,7 @@ async function arenaRanking(who:any){
   const {data,error}=await supabase.rpc("arena_pvp_ranking");
   if(error)throw error;
   const rows=(data||[]).map((x:any)=>({
-    username:String(x.username||"Archimago"),
+    username:String(x.username||"Arconte"),
     school_code:String(x.school_code||"ascendant"),
     rating:Math.max(100,Number(x.rating||1000)),
     wins:Math.max(0,Number(x.wins||0)),
@@ -1203,9 +1191,8 @@ async function startPveRun(who:any,expeditionId:string,difficulty:number){
   if(error)throw error;
   return {run:pveRunPublic(data),resumed:false};
 }
-async function spendPveTurn(who:any){
-  if(Number(who.realm?.turns||0)<1)throw new Error("NOT_ENOUGH_TURNS");
-  await coreRpc(who.token,"run_economy",{p_action:"NONE",p_turns:1});
+async function spendPveEnergy(who:any){
+  return await spendArchonEnergy(who.userId,ARCHON_ENERGY_PVE_COST);
 }
 async function fightPveRoom(who:any){
   let run=await pveRecoverLiveRun(who);
@@ -1223,7 +1210,7 @@ async function fightPveRoom(who:any){
   run=locked;
 
   try{
-    await spendPveTurn(who);
+    const energy=await spendPveEnergy(who);
     const enemy=pveEnemyProfile(run,room);
     const playerProfile={mage_name:String(run.profile_snapshot?.mage_name||who.username),school_code:String(run.profile_snapshot?.school_code||who.schoolCode)};
     const sim=simulatePersistent(
@@ -1242,7 +1229,7 @@ async function fightPveRoom(who:any){
           updated_at:new Date().toISOString(),completed_at:new Date().toISOString()
         }).eq("id",run.id).select("*").single();
       if(defeatError)throw defeatError;
-      return {run:pveRunPublic(defeated),fight:{won:false,log:sim.log,enemy:enemySummary,player:{max_hp:sim.a.maxHp,hp:0}},loot_reward:null};
+      return {run:pveRunPublic(defeated),fight:{won:false,log:sim.log,enemy:enemySummary,player:{max_hp:sim.a.maxHp,hp:0}},loot_reward:null,energy};
     }
 
     const rule=pveApplyDecisionToLoot(pveLootRule(Number(run.difficulty||1),stage,Boolean(room.boss)),run.next_modifiers||{},Boolean(room.boss));
@@ -1275,7 +1262,8 @@ async function fightPveRoom(who:any){
     return {
       run:pveRunPublic(updated),
       fight:{won:true,log:sim.log,enemy:enemySummary,player:{max_hp:sim.a.maxHp,hp:sim.a.hp}},
-      loot_reward:lootReward
+      loot_reward:lootReward,
+      energy
     };
   }catch(error){
     await supabase.from("arcanum_pve_runs")
@@ -1335,7 +1323,7 @@ async function pveOverview(who:any){
     .order("started_at",{ascending:false}).limit(8);
   if(error)throw error;
   const liveRun=live&&["active","fighting"].includes(String(live.status))?pveRunPublic(live):null;
-  return {catalog:pveCatalog(levelFromProfile(who.profile)),run:liveRun,history:(history||[]).map(pveRunPublic),turn_cost_per_fight:1};
+  return {catalog:pveCatalog(levelFromProfile(who.profile)),run:liveRun,history:(history||[]).map(pveRunPublic),energy:await archonEnergy(who.userId),energy_cost_per_fight:ARCHON_ENERGY_PVE_COST};
 }
 
 Deno.serve(async(req:Request)=>{
@@ -1353,9 +1341,9 @@ Deno.serve(async(req:Request)=>{
     }
 
     if(req.method==="GET"&&p[0]==="snapshot"){
-      const [combat,arena]=await Promise.all([ensureCombat(who),ensureArena(who)]);
+      const [combat,arena,energy]=await Promise.all([ensureCombat(who),ensureArena(who),archonEnergy(who.userId)]);
       const {data:matches}=await supabase.from("arcanum_arena_matches").select("id,defender_username,mode,attacker_won,rating_delta,rating_after,combat_log,created_at").eq("attacker_user_id",who.userId).order("created_at",{ascending:false}).limit(30);
-      return json(req,{combat,arena,history:matches||[],server_day:serverDay()});
+      return json(req,{combat,arena,energy,history:matches||[],server_day:serverDay()});
     }
 
     if(req.method==="GET"&&p[0]==="combat"&&p[1]){
@@ -1469,16 +1457,6 @@ Deno.serve(async(req:Request)=>{
       return json(req,{ok:true,slot,inventory:state,items:canonicalItemsState(state,relics,true)});
     }
 
-    if(req.method==="POST"&&p[0]==="loot"&&p[1]==="exploration"&&p[2]==="start"){
-      const body=await req.json().catch(()=>({})),turns=Math.max(1,Math.min(50,Math.floor(Number(body?.turns||1))));
-      return json(req,await startExplorationLootClaim(who,turns),201);
-    }
-
-    if(req.method==="POST"&&p[0]==="loot"&&p[1]==="exploration"&&p[2]==="complete"){
-      const body=await req.json().catch(()=>({})),claimKey=String(body?.claim_key||"");
-      if(!claimKey)return json(req,{error:"LOOT_CLAIM_REQUIRED"},400);
-      return json(req,await completeExplorationLootClaim(who,claimKey));
-    }
 
     if(req.method==="POST"&&p[0]==="loot"&&p[1]==="arena"&&p[2]==="claim"){
       const body=await req.json().catch(()=>({})),matchId=String(body?.match_id||"");
@@ -1561,7 +1539,9 @@ Deno.serve(async(req:Request)=>{
     if(req.method==="GET"&&p[0]==="arena"&&p.length===1){
       const arena=await ensureArena(who);
       const {data:history,error}=await supabase.from("arcanum_arena_matches").select("id,defender_username,mode,attacker_won,rating_delta,rating_after,combat_log,created_at").eq("attacker_user_id",who.userId).order("created_at",{ascending:false}).limit(30);
-      if(error)throw error;return json(req,{arena,history:history||[],server_day:serverDay()});
+      if(error)throw error;
+      const energy=await archonEnergy(who.userId);
+      return json(req,{arena,energy,ranked_daily:{used:Number(arena.ranked_used||0),limit:ARENA_DAILY_RANKED_LIMIT,remaining:Math.max(0,ARENA_DAILY_RANKED_LIMIT-Number(arena.ranked_used||0))},history:history||[],server_day:serverDay()});
     }
 
     if(req.method==="POST"&&p[0]==="arena"&&p[1]==="fight"){
@@ -1577,12 +1557,16 @@ Deno.serve(async(req:Request)=>{
         ensureArena(who),
         ensureArenaIdentity(String(targetRealm.player_id),String(target.mage_name))
       ]);
-      if(mode==="ranked"&&Number(arena.seals_remaining)<=0)return json(req,{error:"ARENA_NO_SEALS"},409);
+      if(mode==="ranked"&&Number(arena.ranked_used||0)>=ARENA_DAILY_RANKED_LIMIT)return json(req,{error:"ARENA_DAILY_LIMIT"},409);
       const [myRaw,targetRaw,myInventory,targetInventory,myRelics,targetRelics]=await Promise.all([ensureCombat(who),targetCombat(who.token,target),ensureInventory(who),inventoryByUsername(String(target.mage_name)),relicsByUsername(who.username),relicsByUsername(String(target.mage_name))]);
       const myItems=mergeCombatBonuses(inventoryCombatBonuses(myInventory),relicCombatBonuses(myRelics.find((x:any)=>x.equipped)));
       const targetItems=mergeCombatBonuses(inventoryCombatBonuses(targetInventory),relicCombatBonuses(targetRelics.find((x:any)=>x.equipped)));
+      let energy:any=null;
       if(mode==="ranked"){
-        const {data:reserved,error:reserveError}=await supabase.from("arcanum_arena_state").update({seals_remaining:Number(arena.seals_remaining)-1,updated_at:new Date().toISOString()}).eq("user_id",who.userId).eq("seals_remaining",arena.seals_remaining).select("user_id");
+        energy=await spendArchonEnergy(who.userId,ARCHON_ENERGY_ARENA_RANKED_COST);
+        const {data:reserved,error:reserveError}=await supabase.from("arcanum_arena_state")
+          .update({ranked_used:Number(arena.ranked_used||0)+1,ranked_day:serverDay(),updated_at:new Date().toISOString()})
+          .eq("user_id",who.userId).eq("ranked_used",Number(arena.ranked_used||0)).select("user_id");
         if(reserveError)throw reserveError;
         if(!reserved?.length)return json(req,{error:"ARENA_BUSY"},409);
       }
@@ -1613,7 +1597,7 @@ Deno.serve(async(req:Request)=>{
       if(mode==="ranked"&&sim.won){
         try{lootReward=await claimArenaLoot(who,matchId);}catch(error){console.error("ARENA_LOOT",error);}
       }
-      return json(req,{match:{id:matchId,opponent:String(target.mage_name),won:sim.won,mode,delta,rating:ratingAfter,log:sim.log,created_at:new Date().toISOString(),player:{name:sim.a.name,school:sim.a.school,maxHp:sim.a.maxHp,hp:sim.a.hp},opponent_state:{name:sim.b.name,school:sim.b.school,maxHp:sim.b.maxHp,hp:sim.b.hp}},arena:fresh,loot_reward:lootReward},201);
+      return json(req,{match:{id:matchId,opponent:String(target.mage_name),won:sim.won,mode,delta,rating:ratingAfter,log:sim.log,created_at:new Date().toISOString(),player:{name:sim.a.name,school:sim.a.school,maxHp:sim.a.maxHp,hp:sim.a.hp},opponent_state:{name:sim.b.name,school:sim.b.school,maxHp:sim.b.maxHp,hp:sim.b.hp}},arena:fresh,energy:energy||await archonEnergy(who.userId),ranked_daily:{used:Number(fresh.ranked_used||0),limit:ARENA_DAILY_RANKED_LIMIT,remaining:Math.max(0,ARENA_DAILY_RANKED_LIMIT-Number(fresh.ranked_used||0))},loot_reward:lootReward},201);
     }
 
     return json(req,{error:"NOT_FOUND"},404);
@@ -1622,7 +1606,7 @@ Deno.serve(async(req:Request)=>{
     const msg=String((error as any)?.message||error||"SERVER_ERROR");
     if(msg.includes("UNAUTHORIZED"))return json(req,{error:"UNAUTHORIZED"},401);
     if(msg.includes("REALM_REQUIRED"))return json(req,{error:"REALM_REQUIRED"},403);
-    const known=["INVALID_LOOT_CLAIM","LOOT_CLAIM_EXPIRED","EXPLORATION_NOT_VERIFIED","ARENA_MATCH_NOT_VERIFIED","BOSS_NOT_DEFEATED","BOSS_PARTICIPATION_REQUIRED","PVE_EXPEDITION_NOT_FOUND","PVE_DIFFICULTY_LOCKED","PVE_RUN_REQUIRED","PVE_RUN_FINISHED","PVE_FIGHT_IN_PROGRESS","NOT_ENOUGH_TURNS"];
+    const known=["INVALID_LOOT_CLAIM","LOOT_CLAIM_EXPIRED","EXPLORATION_NOT_VERIFIED","ARENA_MATCH_NOT_VERIFIED","BOSS_NOT_DEFEATED","BOSS_PARTICIPATION_REQUIRED","PVE_EXPEDITION_NOT_FOUND","PVE_DIFFICULTY_LOCKED","PVE_RUN_REQUIRED","PVE_RUN_FINISHED","PVE_FIGHT_IN_PROGRESS","NOT_ENOUGH_ARCHON_ENERGY","ARENA_DAILY_LIMIT"];
     const hit=known.find(code=>msg.includes(code));
     if(hit)return json(req,{error:hit},409);
     return json(req,{error:"SERVER_ERROR"},500);

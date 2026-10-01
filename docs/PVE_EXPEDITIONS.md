@@ -4,7 +4,7 @@ Status: beta 0.3.7.
 
 ## Purpose
 
-Expeditions are the repeatable personal PvE loop for the Archmage.
+Expeditions are the repeatable personal PvE loop for the Arconte.
 
 They use the same canonical identity as Arena:
 - intrinsic combat profile,
@@ -55,7 +55,7 @@ When a run starts, the server snapshots:
 - combat evolution,
 - Gear combat bonuses,
 - compatible active Relic bonus,
-- Archmage level.
+- Arconte level.
 
 Changing equipment outside the expedition does not alter a run already in progress.
 
@@ -81,11 +81,11 @@ Defeat ends the run.
 
 Retreat ends the run voluntarily and preserves all Gear already earned.
 
-## Turn cost
+## Arconte Energy cost
 
-Every room attempt costs exactly 1 Turn.
+Every room attempt costs exactly 1 Arconte Energy.
 
-Starting or retreating does not cost a Turn.
+Starting or retreating does not cost Arconte Energy.
 
 The Turn is spent server-side only after the room has been locked for combat.
 
@@ -97,7 +97,7 @@ A live run can be:
 
 Before combat, the server atomically changes the run from `active` to `fighting`.
 
-Only the request that obtains this lock may spend the Turn and simulate the encounter.
+Only the request that obtains this lock may spend the Energy and simulate the encounter.
 
 This protects against:
 - double clicks,
@@ -186,7 +186,7 @@ Server responsibilities:
 - loadout snapshot,
 - persistent HP,
 - room sequence,
-- Turn spending,
+- Arconte Energy spending,
 - fight lock,
 - enemy construction,
 - combat result,
@@ -233,7 +233,7 @@ The server offers exactly three explicit choices:
 - next room Gear chance +18 percentage points;
 - rarity weights shift upward.
 
-Choosing does not consume a Turn.
+Choosing does not consume Arconte Energy.
 
 The chosen modifier is stored server-side and consumed by the next room. It cannot be edited by the browser.
 
@@ -250,3 +250,14 @@ The next room is previewed before the choice. This makes the trade-off legible w
 The boss is still mandatory. The final boss has guaranteed Gear; the risk choice before it affects rarity rather than the already-guaranteed drop chance.
 
 Design rule: the options are intentionally incomparable. Recovery sacrifices loot quality, aggression increases danger for better loot, and steady descent preserves both at baseline.
+
+
+## Shared personal action budget
+
+Expeditions use the same personal Energy budget as ranked Arena.
+
+- Maximum Energy: 12.
+- Regeneration: +1 every 2 hours.
+- Room attempt: 1 Energy.
+- Starting, retreating and between-room decisions: 0 Energy.
+- Realm Turns are never spent by personal PvE.

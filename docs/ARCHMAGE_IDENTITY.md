@@ -1,14 +1,14 @@
-# ARCANUM — Canonical Archmage Identity
+# ARCANUM — Canonical Arconte Identity
 
 Status: Consolidation 0.3.3 / Point 3.
 
 ## Core principle
 
-The player **is the Archmage**. The realm is the Archmage's domain, not a separate protagonist.
+The player **is the Arconte**. The realm is the Arconte's domain, not a separate protagonist.
 
 Every system that needs to describe the player character must resolve the same canonical identity.
 
-## Archmage Snapshot
+## Arconte Snapshot
 
 Authenticated endpoint:
 
@@ -17,7 +17,7 @@ Authenticated endpoint:
 The snapshot aggregates server-authoritative state into one read model:
 
 - Core public player profile and realm identity.
-- Archmage level, XP and four personal aptitudes.
+- Arconte level, XP and four personal aptitudes.
 - Persistent duel characteristics.
 - Duel weapon, traits, abilities and evolution choices.
 - Verified inventory and equipped items.
@@ -26,13 +26,13 @@ The snapshot aggregates server-authoritative state into one read model:
 - Recent personal chronicle assembled from Arena, relic history and, for the owner, strategic battle reports.
 - Source/authority metadata.
 
-The UI must not reconstruct a second Archmage independently when this snapshot is available.
+The UI must not reconstruct a second Arconte independently when this snapshot is available.
 
 ## Two stat layers
 
 ARCANUM currently has two legitimate character layers. They are not synonyms.
 
-### Aptitudes of the Archmage
+### Aptitudes of the Arconte
 Persistent development in the wider world:
 - Arcane Power
 - Knowledge
@@ -52,7 +52,7 @@ Persistent fighting identity:
 - Will
 - Fortune
 
-These describe how the same Archmage performs in automated personal combat.
+These describe how the same Arconte performs in automated personal combat.
 
 The UI names the layers explicitly to avoid presenting two different systems as competing "attributes".
 
@@ -65,11 +65,11 @@ Other players receive only:
 - the equipped item records required to render those slots,
 - total item count/equipment power metadata where appropriate.
 
-The contents of another player's unequipped inventory are not exposed by the Archmage Snapshot.
+The contents of another player's unequipped inventory are not exposed by the Arconte Snapshot.
 
 ## Relics
 
-Named relic ownership is part of the Archmage identity and is visible in the character sheet.
+Named relic ownership is part of the Arconte identity and is visible in the character sheet.
 
 Relics remain mechanically distinct from procedural inventory until Consolidation Point 4. The character sheet may display both, but must not pretend they are already one equipment model.
 
@@ -90,7 +90,7 @@ The UI must never call both simply "equipped weapon".
 Renown is a derived summary of persistent accomplishments, not a currency and not a source of combat power.
 
 Current inputs include:
-- Archmage level,
+- Arconte level,
 - Arena victories,
 - Arena rating above the baseline,
 - owned relics,
@@ -112,10 +112,10 @@ Future PvE and Era events should add canonical event records to the same concept
 ## Consumers
 
 ### Player profile
-Uses Archmage Snapshot as its primary identity payload.
+Uses Arconte Snapshot as its primary identity payload.
 
 ### Arena
-Uses the same Archmage Snapshot for player identity, level, combat profile and verified equipment. Arena-specific detailed history may still use its dedicated endpoint.
+Uses the same Arconte Snapshot for player identity, level, combat profile and verified equipment. Arena-specific detailed history may still use its dedicated endpoint.
 
 ### Social surfaces
 Profile links resolve into the same canonical character sheet.
@@ -124,7 +124,12 @@ Profile links resolve into the same canonical character sheet.
 
 The canonical item model is now defined in `docs/ITEM_MODEL.md`.
 
-The Archmage identity consumes seven equipment slots:
+The Arconte identity consumes seven equipment slots:
 Weapon, Robe, Amulet, Ring I, Ring II, Focus and Relic.
 
 The Duel Weapon remains an intrinsic combat identity rather than a physical inventory item.
+
+
+## Strategic boundary
+
+The Arconte changes personal play style and unlocks tactical options, but personal level, Gear and Relics do not directly generate realm resources or act as general multipliers for realm economy or army strength.
