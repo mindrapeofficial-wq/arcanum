@@ -384,3 +384,14 @@ test("boss attack and relic swap database functions are restored and not callabl
     }
   }
 });
+
+test("regular Ranking and Construction pages keep their render contracts",()=>{
+  const construction=read("assets/js/construction.js");
+  const war=read("assets/js/war.js");
+  assert.doesNotMatch(construction,/(^|[^$])\$\("\[data-building\]"\)\.forEach/m,
+    "Construction must iterate building inputs with $$, not $");
+  assert.doesNotMatch(war,/players\.\\n\s+const botNames/,
+    "Regular Ranking must not contain escaped newlines that comment out its variables");
+  assert.match(war,/const botNames=new Set\(\["astrael"\]\);\s+const humanRows=/);
+});
+
