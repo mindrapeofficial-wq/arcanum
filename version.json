@@ -1,6 +1,6 @@
 {
-  "version": "0.3.44",
+  "version": "0.3.45",
   "channel": "beta",
-  "updated_at": "2026-10-01T19:55:14+00:00",
-  "note": "Ejército y Guerra: alerta de maná, costes de unidad, plan de reposición, calculadora de formaciones, informe de batalla ampliado y mensajes de guerra opcionales"
+  "updated_at": "2026-10-01T20:12:00+00:00",
+  "note": "Hotfix de arranque: evita que la pantalla de carga quede bloqueada si falla o se demora la validación de sesión"
 }
