@@ -43,7 +43,12 @@ function characterSpriteMarkup(profile){
   const arenaFallback=typeof arenaSpriteHtml==="function"
     ?arenaSpriteHtml(profile.school_code,"character-sheet-sprite character-portrait-fallback")
     :'<div class="character-symbol-fallback character-portrait-fallback">'+esc(fallback)+'</div>';
-  if(portrait)return '<img class="character-level-portrait" src="'+esc(portrait)+'" alt="'+esc(characterSchoolLabel(profile.school_code))+' · personaje nivel '+n(profile?.archmage_level||1)+'" onerror="this.style.display=\'none\';this.parentElement.classList.add(\'portrait-load-failed\');" />'+arenaFallback;
+  if(portrait){
+    const hiddenFallback=arenaFallback.includes('aria-hidden="true"')
+      ?arenaFallback.replace('aria-hidden="true"','style="display:none" aria-hidden="true"')
+      :arenaFallback.replace('character-portrait-fallback"','character-portrait-fallback" style="display:none"');
+    return '<img class="character-level-portrait" src="'+esc(portrait)+'" alt="'+esc(characterSchoolLabel(profile.school_code))+' · personaje nivel '+n(profile?.archmage_level||1)+'" onerror="this.style.display=\'none\';if(this.nextElementSibling)this.nextElementSibling.style.display=\'block\';" />'+hiddenFallback;
+  }
   return arenaFallback;
 }
 function characterPercent(v){return Number.isFinite(Number(v))?Math.round(Number(v)*100)+"%":"—"}
