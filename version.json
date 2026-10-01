@@ -1,6 +1,6 @@
 {
-  "version": "0.3.33",
+  "version": "0.3.34",
   "channel": "beta",
-  "updated_at": "2026-10-01T15:42:00+02:00",
-  "note": "Hotfix definitivo de Construcción: todos los campos usan el selector de lista $$"
+  "updated_at": "2026-10-01T15:48:00+02:00",
+  "note": "Corrige la carga de Economía restaurando doExplore y eliminando un error de sintaxis"
 }

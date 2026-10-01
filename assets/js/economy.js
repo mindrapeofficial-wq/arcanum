@@ -136,9 +136,12 @@ async function doExplore(btn,inputId="explore-turns"){
   const turns=Math.max(1,Math.min(50,Number($("#"+inputId).value)||1));
   const turnWord=turns===1?"turno":"turnos";
   if(!window.confirm(`Explorar nuevas tierras gastará ${turns} ${turnWord}. ¿Quieres continuar?`))return null;
+
   const artifactClaim=typeof artifactStartExplorationClaim==="function"
     ?await artifactStartExplorationClaim(turns).catch(()=>null)
     :null;
+  const gearClaim=typeof startLootExplorationClaim==="function"
+    ?await startLootExplorationClaim(turns).catch(error=>{console.warn("Gear exploration claim start failed",error);return null})
     :null;
 
   const res=await actionCall(btn,()=>rpc("explore",{p_turns:turns}),null,(result)=>`Exploración completada: +${n(result.land_gained)} acres.`);
@@ -146,6 +149,8 @@ async function doExplore(btn,inputId="explore-turns"){
   if(artifactClaim&&typeof artifactCompleteExplorationClaim==="function"){
     await artifactCompleteExplorationClaim(artifactClaim).catch(error=>console.warn("Relic exploration claim failed",error));
   }
+  if(gearClaim?.claim_key&&typeof completeLootExplorationClaim==="function"){
+    await completeLootExplorationClaim(gearClaim.claim_key).catch(error=>console.warn("Gear exploration claim failed",error));
   }
   return res;
 }
