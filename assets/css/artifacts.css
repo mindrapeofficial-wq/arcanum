@@ -29,3 +29,11 @@
 .market-artifact-link{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:14px;padding:14px 16px;border:1px solid rgba(204,160,74,.18);background:linear-gradient(90deg,rgba(127,83,27,.09),rgba(0,0,0,.16))}
 .market-artifact-link strong{display:block;margin:4px 0;color:#d8bd90;font-size:13px}.market-artifact-link p{margin:0;color:#6f6354;font:9px/1.45 Arial,sans-serif}
 @media(max-width:680px){.market-artifact-link{align-items:stretch;flex-direction:column}.market-artifact-link .profile-action{width:100%}}
+
+.artifact-art{display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.artifact-card-art{height:190px;margin:10px -2px 12px;border:1px solid rgba(129,174,92,.18);background:radial-gradient(circle at 50% 55%,rgba(88,139,70,.16),transparent 58%),rgba(0,0,0,.18)}
+.artifact-card-art:after{content:"";position:absolute;inset:auto 12% 6px;height:14px;border-radius:50%;background:rgba(28,62,27,.28);filter:blur(8px)}
+.artifact-art img{display:block;position:relative;z-index:1;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 10px 18px rgba(0,0,0,.5))}
+.artifact-art-missing{display:none}
+.artifact-card.artifact-school .artifact-card-art{box-shadow:inset 0 0 32px rgba(76,133,62,.06)}
+@media(max-width:700px){.artifact-card-art{height:158px}}
