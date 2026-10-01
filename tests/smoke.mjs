@@ -279,3 +279,20 @@ test("AI features use a configurable free-tier provider, not paid OpenAI",()=>{
     assert.match(src,/ORACLE_API_KEY/);
   }
 });
+
+
+test("Combat migrations and SQL suite are present and keep their safety guards",()=>{
+  const suite=read("supabase/tests/combat_core.sql");
+  assert.match(suite,/raise exception E'ARCANUM COMBAT TESTS/,"the SQL suite must always end by rolling back");
+  assert.doesNotMatch(suite,/\bcommit\b/i);
+  const t=read("supabase/migrations/20261001130000_combat_victory_threshold.sql");
+  assert.match(t,/v_threshold_bp:=1000;/);
+  assert.match(t,/not patching/,"must abort on unexpected function text");
+  const c=read("supabase/migrations/20261001130100_combat_accuracy_curve.sql");
+  assert.match(c,/accuracy_apply_curve/);
+  assert.match(c,/revoke all on function private\.accuracy_apply_curve/);
+  assert.match(c,/not patching/);
+  const o=read("supabase/migrations/20261001130200_combat_target_order.sql");
+  assert.match(o,/battle_choose_target/);
+  assert.match(o,/not patching/);
+});
