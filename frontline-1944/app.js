@@ -1,32 +1,294 @@
 "use strict";
-const clone=v=>JSON.parse(JSON.stringify(v)), $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const SAVE_KEY="frontline_1944_proto_v01";
-const doctrineText={combined:"Bonificación moderada al atacar con apoyo blindado y artillero.",aggressive:"Más potencia ofensiva, pero aumenta el riesgo de pérdidas y consumo.",cautious:"Reduce pérdidas y consumo, a costa de una menor capacidad de ruptura.",defensive:"Mejora la defensa y el atrincheramiento, pero penaliza el ataque."};
-let state=loadState()||freshState();
-function freshState(){return{side:"allies",phase:1,hour:6,day:12,command:8,resources:{allies:{supply:420,fuel:260,manpower:180,intel:35,morale:72},axis:{supply:360,fuel:210,manpower:160,intel:31,morale:69}},provinces:clone(FRONTLINE_DATA.provinces),units:clone(FRONTLINE_DATA.units),selectedUnitId:null,selectedProvinceId:"saintlo",doctrine:"combined",log:[{kind:"good",text:"Cuartel General operativo. La red logística está disponible."},{kind:"",text:"Selecciona una formación para comenzar a emitir órdenes."}]}}
-function loadState(){try{const r=localStorage.getItem(SAVE_KEY);return r?JSON.parse(r):null}catch{return null}} function saveState(){localStorage.setItem(SAVE_KEY,JSON.stringify(state))}
-function enemySide(){return state.side==="allies"?"axis":"allies"} function province(id){return state.provinces.find(p=>p.id===id)} function unit(id){return[...state.units.allies,...state.units.axis].find(u=>u.id===id)}
-function ownUnits(){return state.units[state.side]} function enemyUnits(){return state.units[enemySide()]} function routesOf(id){return FRONTLINE_DATA.routes.filter(r=>r.includes(id)).map(r=>r[0]===id?r[1]:r[0])} function isAdjacent(a,b){return FRONTLINE_DATA.routes.some(r=>r.includes(a)&&r.includes(b))} function pct(v){return Math.max(0,Math.min(100,Math.round(v)))}
-function render(){renderTop();renderUnits();renderMap();renderProvince();renderOrders();renderResources();renderLog();renderDoctrine();saveState()}
-function renderTop(){$("#campaign-date").textContent=`${String(state.day).padStart(2,"0")} JUN 1944 · ${String(state.hour).padStart(2,"0")}:00`;$("#phase-label").textContent=`FASE ${state.phase}`;$$(".side-btn").forEach(b=>b.classList.toggle("active",b.dataset.side===state.side))}
-function renderResources(){const r=state.resources[state.side];$("#command-points").textContent=state.command;$("#supply").textContent=Math.round(r.supply);$("#fuel").textContent=Math.round(r.fuel);$("#manpower").textContent=Math.round(r.manpower);$("#intel").textContent=`${pct(r.intel)}%`;$("#morale").textContent=`${pct(r.morale)}%`}
-function renderUnits(){const list=$("#unit-list");$("#unit-count").textContent=ownUnits().length;list.innerHTML=ownUnits().map(u=>`<article class="unit-card ${state.selectedUnitId===u.id?"selected":""}" data-unit="${u.id}"><div class="unit-head"><b>${u.name}</b><small>${u.type}</small></div><small>${province(u.province)?.name||"En tránsito"}</small><div class="bars"><div class="bar"><i style="width:${pct(u.strength)}%"></i></div><div class="bar"><i style="width:${pct(u.readiness)}%"></i></div></div><div class="unit-stats"><span>ATQ ${u.attack}</span><span>DEF ${u.defense}</span><span>MOV ${u.mobility}</span></div><div class="unit-stats"><span>SUM ${pct(u.supply)}%</span><span>COMB ${pct(u.fuel)}%</span><span>FUER ${pct(u.strength)}%</span></div></article>`).join("");$$(".unit-card").forEach(c=>c.addEventListener("click",()=>{state.selectedUnitId=c.dataset.unit;state.selectedProvinceId=unit(c.dataset.unit).province;render()}))}
-function renderMap(){const rl=$("#route-layer"),pl=$("#province-layer"),ul=$("#unit-layer");rl.innerHTML=FRONTLINE_DATA.routes.map(([a,b])=>{const p1=province(a),p2=province(b);return`<line class="route" x1="${p1.x}" y1="${p1.y}" x2="${p2.x}" y2="${p2.y}"></line>`}).join("");pl.innerHTML=state.provinces.map(p=>`<g class="province-node ${p.owner} ${p.id===state.selectedProvinceId?"selected":""}" data-province="${p.id}" transform="translate(${p.x},${p.y})"><circle r="37"></circle><text y="-4">${p.name}</text><text class="sub" y="14">LOG ${p.logistics} · DEF ${p.defense}</text></g>`).join("");
-const all=[...state.units.allies.map(u=>({...u,side:"allies"})),...state.units.axis.map(u=>({...u,side:"axis"}))], grouped={};all.forEach(u=>(grouped[u.province]??=[]).push(u));ul.innerHTML=Object.entries(grouped).flatMap(([pid,us])=>{const p=province(pid);return us.map((u,i)=>{const ox=(i%2)*56-28,oy=Math.floor(i/2)*38+42;return`<g class="unit-token ${u.side} ${state.selectedUnitId===u.id?"selected":""}" data-unit="${u.id}" transform="translate(${p.x+ox},${p.y+oy})"><rect x="-23" y="-12" width="46" height="24" rx="2"></rect><text y="4">${u.type.slice(0,4).toUpperCase()}</text></g>`})}).join("");
-$$(".province-node").forEach(n=>n.addEventListener("click",()=>{state.selectedProvinceId=n.dataset.province;render()}));$$(".unit-token").forEach(t=>t.addEventListener("click",e=>{e.stopPropagation();const x=unit(t.dataset.unit);if(state.units[state.side].some(u=>u.id===x.id)){state.selectedUnitId=x.id;state.selectedProvinceId=x.province;render()}else{state.selectedProvinceId=x.province;addLog(`Contacto enemigo detectado cerca de ${province(x.province).name}. Identificación parcial.`);render()}}))}
-function renderProvince(){const p=province(state.selectedProvinceId)||state.provinces[0];$("#province-name").textContent=p.name;$("#province-owner").textContent=`CONTROL: ${p.owner==="allies"?"ALIADOS":p.owner==="axis"?"ALEMANIA":"EN DISPUTA"}`;$("#province-terrain").textContent=`TERRENO: ${p.terrain.toUpperCase()}`;$("#province-logistics").textContent=p.logistics;$("#province-defense").textContent=p.defense;$("#province-rail").textContent=p.rail?"OPERATIVO":"DAÑADO";$("#province-visibility").textContent=p.visibility.toUpperCase()}
-function renderOrders(){const u=unit(state.selectedUnitId),t=province(state.selectedProvinceId);$("#selected-unit-label").textContent=u?u.name.toUpperCase():"SIN UNIDAD";if(!u){$("#order-summary").textContent="Selecciona una unidad para emitir órdenes.";return}const rel=u.province===t.id?"posición actual":isAdjacent(u.province,t.id)?"sector adyacente":"fuera de alcance inmediato";$("#order-summary").innerHTML=`<b>${u.name}</b><br>Posición: ${province(u.province).name}. Objetivo: ${t.name} (${rel}).`}
-function renderLog(){$("#battle-log").innerHTML=state.log.slice(-40).reverse().map((e,i)=>`<div class="log-entry ${e.kind||""}"><b>${String(state.phase).padStart(2,"0")}.${String(Math.max(1,state.log.length-i)).padStart(3,"0")}</b> · ${e.text}</div>`).join("")}
-function renderDoctrine(){$("#doctrine-select").value=state.doctrine;$("#doctrine-name").textContent=$("#doctrine-select").selectedOptions[0].textContent.toUpperCase();$("#doctrine-copy").textContent=doctrineText[state.doctrine]}
-function addLog(text,kind=""){state.log.push({text,kind})} function spendCommand(c){if(state.command<c){addLog("Orden rechazada: no quedan suficientes puntos de mando.","bad");return false}state.command-=c;return true}
-function issueOrder(type){const u=unit(state.selectedUnitId),t=province(state.selectedProvinceId);if(type==="cancel"){addLog("Orden pendiente cancelada.");return render()}if(!u){addLog("No hay una formación seleccionada.","bad");return render()}
-if(type==="recon"){if(!spendCommand(1))return render();const r=state.resources[state.side];r.intel=Math.min(100,r.intel+8);const c=enemyUnits().filter(e=>e.province===t.id),est=c.length?`${c.length} formación(es) enemigas estimadas`:"sin concentraciones importantes detectadas";$("#intel-report").textContent=`Reconocimiento de ${t.name}: ${est}. Fiabilidad aproximada: ${Math.min(95,55+r.intel/2).toFixed(0)}%.`;addLog(`Reconocimiento completado sobre ${t.name}: ${est}.`,"good");return render()}
-if(type==="entrench"){if(u.province!==t.id){addLog("Solo puedes atrincherar una unidad en su posición actual.","bad");return render()}if(!spendCommand(1))return render();u.defense=Math.min(95,u.defense+6);u.readiness=Math.max(0,u.readiness-3);addLog(`${u.name} mejora posiciones defensivas en ${t.name}.`,"good");return render()}
-if(type==="resupply"){if(u.province!==t.id){addLog("El reabastecimiento debe hacerse en la posición de la unidad.","bad");return render()}if(!spendCommand(1))return render();const r=state.resources[state.side],cost=Math.min(40,r.supply);if(cost<10){addLog("La reserva logística es insuficiente.","bad");return render()}r.supply-=cost;u.supply=Math.min(100,u.supply+28);u.readiness=Math.min(100,u.readiness+12);if(u.fuel>0&&r.fuel>=15){r.fuel-=15;u.fuel=Math.min(100,u.fuel+24)}addLog(`${u.name} ha sido reabastecida.`,"good");return render()}
-if(!isAdjacent(u.province,t.id)){addLog(`${t.name} no es adyacente a ${province(u.province).name}.`,"bad");return render()}
-if(type==="move"){if(t.owner!==state.side){addLog("No puedes mover sin combatir a un sector controlado por el enemigo.","bad");return render()}if(!spendCommand(1))return render();const fc=["Blindados","Mecanizada"].includes(u.type)?18:4;if(state.resources[state.side].fuel<fc){addLog("Combustible insuficiente.","bad");return render()}state.resources[state.side].fuel-=fc;u.fuel=Math.max(0,u.fuel-8);u.supply=Math.max(0,u.supply-5);u.province=t.id;u.readiness=Math.max(0,u.readiness-4);addLog(`${u.name} se desplaza a ${t.name}.`,"good");return render()}
-if(type==="attack"){if(t.owner===state.side){addLog("El sector objetivo ya está bajo control propio.","bad");return render()}if(!spendCommand(2))return render();resolveCombat(u,t);return render()}}
-function resolveCombat(a,t){const r=state.resources[state.side],ds=enemyUnits().filter(e=>e.province===t.id),fc=["Blindados","Mecanizada"].includes(a.type)?28:7;if(r.supply<28||r.fuel<fc){state.command+=2;addLog("La ofensiva se cancela: combustible o suministros insuficientes.","bad");return}r.supply-=28;r.fuel-=fc;const dm={combined:1.08,aggressive:1.18,cautious:.96,defensive:.88},as=a.attack*(a.strength/100)*(a.readiness/100)*(a.supply/100)*dm[state.doctrine],db=ds.length?ds.reduce((s,d)=>s+d.defense*(d.strength/100)*(d.readiness/100),0)/ds.length:t.defense*.7,tm={Urbano:1.2,Bocage:1.18,Colinas:1.14,Marismas:1.1,Puerto:1.05,Llanura:.96}[t.terrain]||1,ratio=(as*(.88+Math.random()*.24))/Math.max(1,db*tm),al=Math.round(Math.max(3,Math.min(24,12/Math.max(.55,ratio)))),dl=Math.round(Math.max(4,Math.min(30,10*Math.max(.65,ratio))));a.strength=pct(a.strength-al);a.readiness=pct(a.readiness-10);a.supply=pct(a.supply-14);a.fuel=pct(a.fuel-10);ds.forEach(d=>{d.strength=pct(d.strength-dl);d.readiness=pct(d.readiness-12)});if(ratio>=1.02||!ds.length){t.owner=state.side;a.province=t.id;r.morale=Math.min(100,r.morale+3);addLog(`OFENSIVA EXITOSA en ${t.name}. ${a.name} ocupa el sector. Pérdidas propias estimadas: ${al}%.`,"good")}else{r.morale=Math.max(0,r.morale-2);addLog(`ATAQUE DETENIDO en ${t.name}. Pérdidas propias estimadas: ${al}%.`,"bad")}state.selectedProvinceId=a.province}
-function endPhase(){state.phase++;state.command=8;state.hour++;if(state.hour>=24){state.hour=0;state.day++}for(const side of["allies","axis"]){const r=state.resources[side];r.supply=Math.min(600,r.supply+35);r.fuel=Math.min(450,r.fuel+22);r.manpower=Math.min(300,r.manpower+8);state.units[side].forEach(u=>{u.readiness=pct(u.readiness+4);if(province(u.province)?.owner===side)u.supply=pct(u.supply+4)})}simulateEnemyActivity();addLog(`Comienza la fase ${state.phase}. Se han distribuido suministros y combustible.`,"good");render()}
-function simulateEnemyActivity(){const e=enemySide(),cs=state.units[e].filter(u=>u.strength>35);if(!cs.length)return;const a=cs[Math.floor(Math.random()*cs.length)],ns=routesOf(a.province).filter(id=>province(id).owner===e);if(ns.length&&Math.random()<.45){const d=ns[Math.floor(Math.random()*ns.length)];a.province=d;a.readiness=pct(a.readiness-3);addLog(`Inteligencia informa de movimiento enemigo en el área de ${province(d).name}.`)}else addLog("Intercepciones de radio sugieren reorganización enemiga detrás del frente.")}
-$$(".side-btn").forEach(b=>b.addEventListener("click",()=>{state.side=b.dataset.side;state.selectedUnitId=null;state.selectedProvinceId=state.side==="allies"?"saintlo":"caen";addLog(`Vista de mando cambiada a ${state.side==="allies"?"Fuerzas Aliadas":"Fuerzas Alemanas"}.`);render()}));$$("[data-order]").forEach(b=>b.addEventListener("click",()=>issueOrder(b.dataset.order)));$("#end-phase").addEventListener("click",endPhase);$("#doctrine-select").addEventListener("change",e=>{state.doctrine=e.target.value;render()});$("#reset-game").addEventListener("click",()=>{if(confirm("¿Reiniciar completamente este prototipo local?")){localStorage.removeItem(SAVE_KEY);state=freshState();render()}});render();
+
+const $ = (s, root=document) => root.querySelector(s);
+const $$ = (s, root=document) => [...root.querySelectorAll(s)];
+const SAVE_KEY = "frontline_1944_narrative_v02";
+
+function clone(v){ return JSON.parse(JSON.stringify(v)); }
+function clamp(v,min=0,max=100){ return Math.max(min,Math.min(max,Math.round(v))); }
+
+function freshState(){
+  return {
+    sceneId:"airborne_reports",
+    resources:clone(FRONTLINE_DATA.resources),
+    formations:clone(FRONTLINE_DATA.formations),
+    log:[],
+    decisionResult:null,
+    nextScene:null,
+    path:[]
+  };
+}
+
+function loadState(){
+  try{
+    const raw=localStorage.getItem(SAVE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  }catch{
+    return null;
+  }
+}
+function saveState(){ localStorage.setItem(SAVE_KEY, JSON.stringify(state)); }
+
+let state = loadState() || freshState();
+
+function render(){
+  renderCampaign();
+  renderResources();
+  renderFormations();
+  renderScene();
+  renderMap();
+  renderStaff();
+  renderIntel();
+  renderLog();
+  renderSources();
+  saveState();
+}
+
+function renderCampaign(){
+  const c=FRONTLINE_DATA.campaign;
+  $("#commander-name").textContent=c.commander;
+  $("#commander-command").textContent=c.subtitle;
+  $("#theater-label").textContent=c.title;
+  $("#campaign-mode").textContent=c.mode;
+}
+
+function renderResources(){
+  const r=state.resources;
+  $("#res-command").textContent=clamp(r.command,0,9);
+  $("#res-communications").textContent=clamp(r.communications)+"%";
+  $("#res-logistics").textContent=clamp(r.logistics)+"%";
+  $("#res-fuel").textContent=clamp(r.fuel)+"%";
+  $("#res-ammunition").textContent=clamp(r.ammunition)+"%";
+  $("#res-reserves").textContent=clamp(r.reserves)+"%";
+  $("#res-morale").textContent=clamp(r.morale)+"%";
+  $("#res-intelligence").textContent=clamp(r.intelligence)+"%";
+}
+
+function renderFormations(){
+  $("#formations-list").innerHTML=state.formations.map(f=>{
+    return '<article class="formation">'+
+      '<div class="formation-head"><strong>'+f.name+'</strong><span>'+f.certainty.toUpperCase()+'</span></div>'+
+      '<small>'+f.sector+'</small>'+
+      '<small>'+f.status+'</small>'+
+      '<div class="formation-bars">'+
+        '<div class="mini-bar" title="Preparación"><i style="width:'+clamp(f.readiness)+'%"></i></div>'+
+        '<div class="mini-bar" title="Abastecimiento"><i style="width:'+clamp(f.supply)+'%"></i></div>'+
+      '</div>'+
+    '</article>';
+  }).join("");
+}
+
+function renderScene(){
+  const scene=FRONTLINE_DATA.scenes[state.sceneId];
+  if(!scene) return;
+
+  $("#campaign-date").textContent=scene.date+" · "+scene.time;
+  $("#scene-title").textContent=scene.title;
+  $("#scene-date").textContent=scene.date;
+  $("#scene-time").textContent=scene.time;
+  $("#scene-from").textContent=scene.from;
+  $("#scene-urgency").textContent=scene.urgency;
+  $("#scene-classification").textContent=scene.classification;
+
+  $("#scene-body").innerHTML=scene.body.map(p=>"<p>"+p+"</p>").join("");
+  $("#historical-facts").innerHTML=scene.historical.map(p=>"<p>"+p+"</p>").join("");
+
+  const result=$("#decision-result");
+  const choices=$("#choices");
+
+  if(state.decisionResult){
+    choices.innerHTML="";
+    result.classList.remove("hidden");
+    result.innerHTML=
+      "<strong>ORDEN EMITIDA</strong><br>"+
+      state.decisionResult+
+      (state.nextScene ? '<button id="continue-button" class="continue-button">CONTINUAR LA CAMPAÑA</button>' : "");
+    $("#continue-button")?.addEventListener("click", continueScene);
+  }else{
+    result.classList.add("hidden");
+    result.innerHTML="";
+    if(!scene.choices.length){
+      choices.innerHTML='<div class="decision-result">Fin del vertical slice histórico 0.2. Tus decisiones han quedado registradas.</div>';
+    }else{
+      choices.innerHTML=scene.choices.map(c=>
+        '<button class="choice" data-choice="'+c.id+'">'+
+          '<div><strong>'+c.title+'</strong><p>'+c.desc+'</p></div>'+
+          '<em>'+c.tag+'</em>'+
+        '</button>'
+      ).join("");
+      $$(".choice").forEach(btn=>btn.addEventListener("click",()=>choose(btn.dataset.choice)));
+    }
+  }
+}
+
+function choose(choiceId){
+  const scene=FRONTLINE_DATA.scenes[state.sceneId];
+  const choice=scene.choices.find(c=>c.id===choiceId);
+  if(!choice) return;
+
+  const before=clone(state.resources);
+  applyEffects(choice.effects||{});
+  applyFormationConsequences(choiceId);
+
+  const changes=describeEffects(before,state.resources);
+  state.path.push({scene:scene.id,choice:choice.id,title:choice.title,time:scene.time});
+  state.log.push({
+    time:scene.time,
+    date:scene.date,
+    title:choice.title,
+    text:choice.result,
+    effects:changes
+  });
+
+  state.decisionResult=choice.result+(changes ? "<br><br><span class=\"effects\">"+changes+"</span>" : "");
+  state.nextScene=choice.next||null;
+  render();
+}
+
+function continueScene(){
+  if(!state.nextScene) return;
+  state.sceneId=state.nextScene;
+  state.nextScene=null;
+  state.decisionResult=null;
+  render();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function applyEffects(effects){
+  for(const [key,value] of Object.entries(effects)){
+    if(!(key in state.resources)) continue;
+    const max=key==="command" ? 9 : 100;
+    state.resources[key]=clamp(Number(state.resources[key]||0)+Number(value||0),0,max);
+  }
+}
+
+function applyFormationConsequences(choiceId){
+  const byId=id=>state.formations.find(f=>f.id===id);
+  if(choiceId==="historical_carentan"){
+    const r=byId("915"); if(r){r.sector="En marcha hacia Carentan";r.status="Comprometido por orden del cuerpo";r.readiness=76;r.supply=72;}
+  }
+  if(choiceId==="hold_reserve"){
+    const r=byId("915"); if(r){r.status="Reserva retenida a la espera de confirmación";r.readiness=84;}
+  }
+  if(choiceId==="split_reserve"){
+    const r=byId("915"); if(r){r.sector="Destacamentos hacia Carentan y Bayeux";r.status="Cohesión reducida";r.readiness=69;r.supply=68;}
+  }
+  if(choiceId==="full_alert"){
+    state.formations.forEach(f=>{f.readiness=clamp(f.readiness+5);f.supply=clamp(f.supply-2);});
+  }
+  if(choiceId==="protect_network"){
+    state.formations.forEach(f=>{f.supply=clamp(f.supply+3);});
+  }
+  if(choiceId==="cotentin_priority"){
+    ["709","243","91","915"].forEach(id=>{const f=byId(id);if(f)f.readiness=clamp(f.readiness+4);});
+  }
+  if(choiceId==="caen_priority"){
+    ["352","716"].forEach(id=>{const f=byId(id);if(f)f.readiness=clamp(f.readiness+5);});
+  }
+  if(choiceId==="elastic_defense"){
+    state.formations.forEach(f=>{f.readiness=clamp(f.readiness+2);});
+  }
+}
+
+function describeEffects(before,after){
+  const labels={
+    command:"Mando",communications:"Comunicaciones",logistics:"Logística",fuel:"Combustible",
+    ammunition:"Munición",reserves:"Reservas",morale:"Moral",intelligence:"Inteligencia"
+  };
+  const parts=[];
+  Object.keys(labels).forEach(k=>{
+    const delta=Math.round(after[k]-before[k]);
+    if(delta) parts.push(labels[k]+" "+(delta>0?"+":"")+delta);
+  });
+  return parts.join(" · ");
+}
+
+function renderMap(){
+  const links=$("#map-links");
+  const points=$("#map-points");
+  const pointById=Object.fromEntries(FRONTLINE_DATA.map.map(p=>[p.id,p]));
+  links.innerHTML=FRONTLINE_DATA.links.map(([a,b])=>{
+    const p1=pointById[a],p2=pointById[b];
+    return '<line class="map-link" x1="'+p1.x+'" y1="'+p1.y+'" x2="'+p2.x+'" y2="'+p2.y+'"></line>';
+  }).join("");
+
+  const current=state.sceneId;
+  points.innerHTML=FRONTLINE_DATA.map.map(p=>{
+    let pulse="";
+    if(current==="airborne_reports" && (p.id==="sme"||p.id==="caen")) pulse=" pulse";
+    if(current==="naval_reports" && (p.id==="cherbourg"||p.id==="caen")) pulse=" pulse";
+    if(current==="landings" && (p.id==="omaha"||p.id==="caen"||p.id==="carentan")) pulse=" pulse";
+    const intelLabel={
+      airborne:"AEROTRANSPORTADO",
+      critical:"NODO CRÍTICO",
+      coastal:"COSTA",
+      uncertain:"INCIERTO",
+      quiet:"SIN NOVEDAD",
+      hq:"CUARTEL GENERAL"
+    }[p.intel]||"";
+    return '<g class="map-point '+p.state+pulse+'" transform="translate('+p.x+','+p.y+')">'+
+      '<circle r="29"></circle>'+
+      '<text y="-2">'+p.name+'</text>'+
+      '<text class="intel" y="13">'+intelLabel+'</text>'+
+    '</g>';
+  }).join("");
+}
+
+function renderStaff(){
+  const res=state.resources;
+  $("#staff-list").innerHTML=FRONTLINE_DATA.staff.map(s=>{
+    let note=s.note;
+    if(s.id==="ops" && res.reserves<50) note="La reserva se está reduciendo. Keller insiste en que cualquier nuevo compromiso debe tener un objetivo preciso.";
+    if(s.id==="intel" && res.intelligence>50) note="La imagen de inteligencia empieza a aclararse, aunque Brenner sigue advirtiendo contra las cifras demasiado exactas.";
+    if(s.id==="log" && res.logistics<60) note="Reimann informa de creciente fricción en carreteras y abastecimiento. Recomienda reducir movimientos simultáneos.";
+    return '<article class="staff-card">'+
+      '<span>'+s.rank+' · '+s.role+'</span>'+
+      '<strong>'+s.name+(s.fictional?' <small>· personaje ficticio</small>':'')+'</strong>'+
+      '<p>'+note+'</p>'+
+      '<div class="staff-trust">Confianza profesional: '+s.trust+'/100</div>'+
+    '</article>';
+  }).join("");
+}
+
+function renderIntel(){
+  const v=clamp(state.resources.intelligence);
+  $("#intel-reliability").textContent=v+"%";
+  let text="Los informes son fragmentarios. No existe todavía una imagen fiable de la magnitud del ataque.";
+  if(state.sceneId==="naval_reports") text="Hay indicios claros de una operación marítima de gran escala, pero la distribución y fuerza exacta de los desembarcos siguen sin estar confirmadas.";
+  if(state.sceneId==="landings") text="Los desembarcos anfibios están confirmados. La cuestión ya no es si existe una invasión, sino dónde está su esfuerzo principal y qué reservas puede comprometer el cuerpo.";
+  if(state.sceneId==="demo_end") text="El sistema conservará informes con hora, procedencia, fiabilidad y obsolescencia. Una posición enemiga conocida puede dejar de ser cierta minutos después.";
+  $("#intel-text").textContent=text;
+}
+
+function renderLog(){
+  const host=$("#decision-log");
+  if(!state.log.length){
+    host.innerHTML='<div class="log-entry">Todavía no has emitido ninguna orden operacional.</div>';
+    return;
+  }
+  host.innerHTML=state.log.slice().reverse().map(item=>
+    '<div class="log-entry"><b>'+item.date+' · '+item.time+'</b><br>'+item.title+
+    '<span class="effects">'+item.effects+'</span></div>'
+  ).join("");
+}
+
+function renderSources(){
+  $("#sources-list").innerHTML=FRONTLINE_DATA.sources.map(s=>
+    '<a class="source-card" href="'+s.url+'" target="_blank" rel="noopener noreferrer">'+
+      '<strong>'+s.short+'</strong><small>'+s.title+' · '+s.publisher+'</small>'+
+    '</a>'
+  ).join("");
+}
+
+$("#sources-button").addEventListener("click",()=>$("#sources-dialog").showModal());
+$("#close-sources").addEventListener("click",()=>$("#sources-dialog").close());
+$("#sources-dialog").addEventListener("click",e=>{ if(e.target===$("#sources-dialog")) $("#sources-dialog").close(); });
+$("#reset-game").addEventListener("click",()=>{
+  if(confirm("¿Reiniciar la campaña narrativa desde el primer informe?")){
+    localStorage.removeItem(SAVE_KEY);
+    state=freshState();
+    render();
+  }
+});
+
+render();
