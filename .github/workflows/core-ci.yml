@@ -19,3 +19,46 @@ jobs:
           node-version: 24
       - name: Core smoke tests
         run: npm test
+
+  edge-deno:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Type-check arcanum-state
+        run: deno check supabase/functions/arcanum-state/index.ts
+
+      - name: Edge runtime smoke test
+        shell: bash
+        env:
+          SUPABASE_URL: http://127.0.0.1:54321
+          SUPABASE_SERVICE_ROLE_KEY: local-test-service-role-key
+        run: |
+          set -euo pipefail
+          deno run --allow-env --allow-net supabase/functions/arcanum-state/index.ts >/tmp/arcanum-state.log 2>&1 &
+          PID=$!
+          trap 'kill "$PID" 2>/dev/null || true' EXIT
+
+          for _ in {1..20}; do
+            if curl -fsS http://127.0.0.1:8000/arcanum-state/health >/tmp/health.json; then
+              break
+            fi
+            sleep 0.5
+          done
+
+          grep -q '"ok":true' /tmp/health.json
+          grep -q '"service":"arcanum-state"' /tmp/health.json
+
+          options_code="$(curl -sS -o /dev/null -w '%{http_code}' -X OPTIONS http://127.0.0.1:8000/arcanum-state/snapshot)"
+          test "$options_code" = "204"
+
+          unauth_code="$(curl -sS -o /tmp/unauth.json -w '%{http_code}' http://127.0.0.1:8000/arcanum-state/snapshot)"
+          test "$unauth_code" = "401"
+          grep -q '"error":"UNAUTHORIZED"' /tmp/unauth.json
