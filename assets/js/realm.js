@@ -44,6 +44,58 @@ function realmProgressLabel(land){
   return {name:"Imperio arcano",next:3500,level:4};
 }
 
+/* Primeros pasos: a guided path to the first victory. Every check is derived from canonical
+   server state (my_realm_state and the arena record); nothing here grants rewards. */
+let onboardingArenaWins=null;
+function onboardingSteps(){
+  const r=realmState?.realm||{}, b=realmState?.buildings||{};
+  const hasArmy=(realmState?.army||[]).some(u=>Number(u.quantity||0)>0);
+  return [
+    {done:Number(b.farms||0)>0&&Number(b.towns||0)>0,view:"build",title:"Construye una Granja y un Pueblo",text:"Las Granjas alimentan y los Pueblos alojan a tu población: sin ellos el dominio no crece."},
+    {done:Number(b.guilds||0)>0,view:"build",title:"Levanta tu primer Gremio",text:"Los Gremios producen la investigación con la que aprenderás hechizos."},
+    {done:(realmState?.known_spells||[]).length>0,view:"research",title:"Aprende tu primer hechizo",text:"Dedica turnos a investigar en el Grimorio hasta completar un hechizo de tu Escuela."},
+    {done:Number(b.barracks||0)>0,view:"build",title:"Construye Cuarteles",text:"Sin Cuarteles no puedes reclutar tropas."},
+    {done:hasArmy,view:"army",title:"Recluta tu primer ejército",text:"Un dominio sin tropas es un blanco fácil."},
+    {done:Number(r.land||0)>200,view:"realm",title:"Explora nuevas tierras",text:"Gasta algunos turnos en explorar para ganar acres donde seguir construyendo."},
+    {done:Number(onboardingArenaWins||0)>0,view:"arena",title:"Gana tu primer duelo en la Arena",text:"Prepara a tu Arconte y vence a un rival. ¡Tu primera victoria!"}
+  ];
+}
+function onboardingPanelHtml(){
+  const steps=onboardingSteps(), done=steps.filter(s=>s.done).length;
+  if(done===steps.length)return "";
+  const next=steps.findIndex(s=>!s.done);
+  return `<section class="panel onboarding-panel" id="onboarding-panel" aria-label="Primeros pasos">
+    <div class="panel-title-row"><div><span class="section-kicker">PRIMEROS PASOS</span><h3>Tu camino hacia la primera victoria</h3></div><strong class="onboarding-count">${done} / ${steps.length}</strong></div>
+    <div class="growth-track onboarding-track"><span style="width:${Math.round(done/steps.length*100)}%"></span></div>
+    <ol class="onboarding-steps">${steps.map((s,i)=>`<li class="${s.done?"done":i===next?"next":""}">
+      <button type="button" data-onboarding-view="${esc(s.view)}" ${s.done?'aria-disabled="true"':""}>
+        <span class="onboarding-mark" aria-hidden="true">${s.done?"✓":i+1}</span>
+        <span><strong>${esc(s.title)}</strong>${i===next?`<small>${esc(s.text)}</small>`:""}</span>
+      </button></li>`).join("")}</ol>
+  </section>`;
+}
+function wireOnboardingPanel(){
+  document.querySelectorAll("[data-onboarding-view]").forEach(btn=>btn.addEventListener("click",()=>{
+    if(btn.getAttribute("aria-disabled")==="true")return;
+    const view=btn.dataset.onboardingView;
+    if(view==="realm"){$("#realm-explore-turns")?.focus();$("#realm-explore-button")?.scrollIntoView({behavior:"smooth",block:"center"});return;}
+    navigate(view);
+  }));
+}
+async function refreshOnboardingArena(){
+  if(Number(onboardingArenaWins||0)>0||typeof stateApi!=="function")return;
+  if(!onboardingSteps().slice(0,6).every(s=>s.done))return;
+  try{
+    const data=await stateApi("/arena");
+    onboardingArenaWins=Number(data?.wins||0);
+  }catch{return;}
+  const panel=$("#onboarding-panel");
+  if(panel&&currentView==="realm"){
+    const html=onboardingPanelHtml();
+    if(html){panel.outerHTML=html;wireOnboardingPanel();}else panel.remove();
+  }
+}
+
 let realmDomainRecord=null;
 let realmDomainLoad=null;
 
@@ -121,6 +173,8 @@ function renderRealm(){
     </section>
   </div>
 
+  ${onboardingPanelHtml()}
+
   <div class="realm-vitals">
     <div class="realm-vital-card"><small>Ascendencia</small><strong>${n(r.net_power)}</strong><em>Fuerza global del dominio</em></div>
     <div class="realm-vital-card"><small>Turnos</small><strong>${n(r.turns)} / ${n(r.max_turns)}</strong><div class="mini-track"><span style="width:${turnPct}%"></span></div></div>
@@ -163,6 +217,8 @@ function renderRealm(){
   document.querySelectorAll("[data-quick]").forEach(btn=>btn.addEventListener("click",()=>navigate(btn.dataset.quick)));
   $("#realm-explore-button").addEventListener("click",()=>doExplore($("#realm-explore-button"),"realm-explore-turns"));
   $("#realm-domain-edit")?.addEventListener("click",editRealmDomainName);
+  wireOnboardingPanel();
+  refreshOnboardingArena();
   loadRealmDomain().then(()=>{
     if(currentView==="realm")paintRealmDomainIdentity();
   }).catch(()=>{});

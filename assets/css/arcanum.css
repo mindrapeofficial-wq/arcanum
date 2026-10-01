@@ -1047,3 +1047,20 @@ button[data-view="ranking"] .nav-icon{filter:drop-shadow(0 0 5px rgba(246,206,11
 .battle-sequence{margin-top:12px}
 .battle-sequence summary{cursor:pointer;color:var(--gold-pale);font:800 10px Arial,sans-serif;letter-spacing:.1em;text-transform:uppercase;padding:8px 0}
 .battle-event.wide{grid-template-columns:96px 1fr auto}
+
+/* Primeros pasos (onboarding) */
+.onboarding-panel{margin-bottom:14px;border-color:rgba(232,173,84,.32);background:linear-gradient(135deg,rgba(175,104,27,.12),rgba(5,4,3,.82))}
+.onboarding-count{color:var(--gold-hot);font:800 13px Arial,sans-serif;letter-spacing:.08em}
+.onboarding-steps{list-style:none;margin:12px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px}
+.onboarding-steps button{width:100%;min-height:52px;display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;align-items:center;text-align:left;border:1px solid rgba(218,151,57,.14);background:rgba(0,0,0,.24);color:#9b8c78;padding:9px 11px;font:11px/1.4 Arial,sans-serif}
+.onboarding-steps button:hover:not([aria-disabled="true"]){border-color:#b77b32;color:#ead9ba}
+.onboarding-steps strong{display:block;color:inherit;font-weight:700}
+.onboarding-steps small{display:block;margin-top:3px;color:#a8977f;font:10px/1.45 Arial,sans-serif}
+.onboarding-mark{width:26px;height:26px;display:grid;place-items:center;border:1px solid rgba(218,151,57,.3);border-radius:50%;color:#a87839;font:800 11px Arial,sans-serif}
+.onboarding-steps li.done button{cursor:default;opacity:.55}
+.onboarding-steps li.done .onboarding-mark{background:rgba(126,166,115,.18);border-color:rgba(126,166,115,.5);color:#a9c49f}
+.onboarding-steps li.next button{border-color:rgba(255,209,109,.55);color:#f2dfbb;box-shadow:0 0 22px rgba(204,119,26,.14)}
+.onboarding-steps li.next .onboarding-mark{background:linear-gradient(180deg,#e6ad54,#8d511e);border-color:#e6ad54;color:#160c04;animation:onboardingPulse 1.8s ease-in-out infinite}
+.onboarding-steps li.next{grid-column:1/-1}
+@keyframes onboardingPulse{50%{box-shadow:0 0 0 6px rgba(230,173,84,.12)}}
+@media(prefers-reduced-motion:reduce){.onboarding-steps li.next .onboarding-mark{animation:none}}
