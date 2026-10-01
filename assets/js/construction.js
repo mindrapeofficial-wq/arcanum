@@ -59,7 +59,7 @@ function buildCard(key,meta,buildings){
 function refreshBuildPlan(){
   let total=0,types=0,hasBarriers=false,hasOthers=false,baseCost=0;
   const plan={};
-  $("[data-building]").forEach(input=>{
+  $$("[data-building]").forEach(input=>{
     const q=Math.max(0,Math.floor(Number(input.value)||0));
     const key=input.dataset.building;
     input.closest(".building-card")?.classList.toggle("selected",q>0);
@@ -130,7 +130,7 @@ function renderBuild(){
     </div>
   </section>`;
 
-  $$("[data-building]").forEach(input=>input.addEventListener("input",refreshBuildPlan));
+  $$$("[data-building]").forEach(input=>input.addEventListener("input",refreshBuildPlan));
   $("#build-button").addEventListener("click",()=>doBuild($("#build-button")));
   refreshBuildPlan();
 }
@@ -144,7 +144,7 @@ function estimateBuildTurns(plan){
 }
 async function doBuild(btn){
   const plan={};
-  $("[data-building]").forEach(input=>{
+  $$("[data-building]").forEach(input=>{
     const q=Math.max(0,Math.floor(Number(input.value)||0));
     if(q) plan[input.dataset.building]=q;
   });
