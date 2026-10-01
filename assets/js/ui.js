@@ -61,6 +61,8 @@ function wireStaticEvents(){
     const username=$("#username").value.trim(),password=$("#password").value,btn=$("#submit-button");
     const registering=mode==="register";
     if(username.length<3||username.length>24){setNotice($("#auth-notice"),"El nombre de usuario debe tener entre 3 y 24 caracteres.");return;}
+    // New accounts need 8+ characters; logging in keeps the old 4+ so existing short passwords still work.
+    if(registering&&password.length<8){setNotice($("#auth-notice"),"La contraseña debe tener al menos 8 caracteres.");return;}
     if(password.length<4){setNotice($("#auth-notice"),"La contraseña debe tener al menos 4 caracteres.");return;}
     btn.disabled=true; $("#submit-label").textContent=registering?"CREANDO CUENTA...":"ENTRANDO...";
     try{
