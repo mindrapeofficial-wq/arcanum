@@ -354,6 +354,10 @@ test("closed-beta polish stays in place",()=>{
   assert.match(army,/GENERAR RETRATO/);
   const war=read("assets/js/war.js");
   assert.match(war,/rpc\("realm_ranking"\)/,"the ranking comes from the server RPCs, which exclude NPCs and Astrael");
+  const rankingFilter=read("supabase/migrations/20261001163000_keep_npcs_out_of_leaderboard.sql");
+  assert.match(rankingFilter,/public\.astrael_agent_state/,"Astrael exclusion belongs to the authoritative server ranking");
+  assert.match(rankingFilter,/public\.arcanum_system_accounts/,"system-account exclusion belongs to the authoritative server ranking");
+  assert.match(rankingFilter,/n\.realm_id is null[\s\S]*a\.username is null[\s\S]*sys\.player_id is null/,"realm ranking must exclude NPC, Astrael and system accounts server-side");
   assert.match(war,/res\?\.attacker_victory && typeof artifactClaimPvp/,"relic loot is only claimed after a win");
   const magic=read("assets/js/magic.js");
   assert.match(magic,/spellIsAdjacent/,"adjacent-school research cost must be flagged as higher than the base cost");
@@ -395,6 +399,8 @@ test("regular Ranking and Construction pages keep their render contracts",()=>{
     "Regular Ranking must not contain escaped newlines that comment out its variables");
   assert.match(war,/rpc\("war_ranking"\)/);
   assert.match(war,/stateApi\("\/arena\/ranking"\)/);
+  assert.doesNotMatch(war,/botNames=new Set/,
+    "Human/system filtering must stay server-side instead of being recreated in the client");
 });
 
 test("globalThis exports only reference identifiers that exist",()=>{
