@@ -1,6 +1,6 @@
 {
-  "version": "0.3.46",
+  "version": "0.3.47",
   "channel": "beta",
   "updated_at": "2026-10-02T09:00:00+00:00",
-  "note": "Carga mucho más rápida: iconos, objetos y paisaje del Dominio optimizados (~22 MB menos)"
+  "note": "Mensajes de error claros en español, botón Reintentar si una sección falla y límites del chat y el tablón a prueba de envíos dobles"
 }

@@ -653,3 +653,36 @@ test("players table is not writable by signed-in players",()=>{
     assert.doesNotMatch(src,/\/rest\/v1\/players/,f+" must not write to the players table directly");
   }
 });
+
+test("lazy view loader versions match index.html", () => {
+  const router = read("assets/js/router.js");
+  for (const m of router.matchAll(/src:"(assets\/js\/[\w-]+\.js)\?v=([^"]+)"/g)) {
+    const inIndex = html.match(new RegExp(m[1].replaceAll(".", "\\.") + "\\?v=([^\"]+)"));
+    if (inIndex) assert.equal(m[2], inIndex[1], `${m[1]} lazy-load version is stale`);
+  }
+  assert.match(router, /id="view-retry"/, "failed views offer a retry");
+});
+
+test("players never see raw server error codes or network errors in English", () => {
+  const state = read("assets/js/state.js");
+  const start = state.indexOf("function humanError");
+  const end = state.slice(start).search(/\r?\n\}\r?\n/);
+  const src = state.slice(start, start + end) + "\n}\n";
+  const ctx = { console: { warn() {} } };
+  vm.runInNewContext(src + ";globalThis.h=humanError;", ctx);
+  for (const code of ["INVALID_TURN_COUNT", "RATE_LIMIT", "POST_LIMIT", "SERVER_ERROR", "SOME_FUTURE_CODE"]) {
+    assert.doesNotMatch(ctx.h(new Error(code)), /^[A-Z_]+$/, code);
+  }
+  assert.match(ctx.h(new Error("Failed to fetch")), /conexión/);
+  assert.match(ctx.h(new Error('invalid input syntax for type integer: "abc"')), /no es válido/);
+});
+
+test("chat and board limits are enforced atomically in the database", () => {
+  const sql = read("supabase/migrations/20261002090000_atomic_social_limits.sql");
+  assert.match(sql, /pg_advisory_xact_lock/);
+  assert.match(sql, /before insert on public\.arcanum_chat_messages/);
+  assert.match(sql, /before insert on public\.arcanum_board_posts/);
+  const fn = read("supabase/functions/arcanum-community/index.ts");
+  assert.match(fn, /includes\("POST_LIMIT"\)/);
+  assert.match(fn, /UUID_RE\.test\(id\)/);
+});

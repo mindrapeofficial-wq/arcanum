@@ -26,6 +26,8 @@ function cors(req: Request) {
   };
 }
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 function json(req: Request, data: unknown, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
@@ -345,6 +347,7 @@ Deno.serve(async (req: Request) => {
           .insert({ user_id: who.userId, username: who.username, message, channel, school_code: channel === "school" ? who.schoolCode : null })
           .select("id,user_id,username,message,created_at,channel,school_code")
           .single();
+        if (error && String(error.message || "").includes("RATE_LIMIT")) return json(req, { error: "RATE_LIMIT" }, 429);
         if (error) throw error;
 
         await supabase
@@ -357,6 +360,7 @@ Deno.serve(async (req: Request) => {
 
       if (req.method === "DELETE" && parts[1]) {
         const id = parts[1];
+        if (!UUID_RE.test(id)) return json(req, { error: "NOT_FOUND" }, 404);
         const { data: row, error: findError } = await supabase
           .from("arcanum_chat_messages")
           .select("id,user_id")
@@ -428,12 +432,15 @@ Deno.serve(async (req: Request) => {
           .insert({ user_id: who.userId, username: who.username, category, title, body: postBody })
           .select("id,user_id,username,category,title,body,created_at,expires_at")
           .single();
+        if (error && String(error.message || "").includes("RATE_LIMIT")) return json(req, { error: "RATE_LIMIT" }, 429);
+        if (error && String(error.message || "").includes("POST_LIMIT")) return json(req, { error: "POST_LIMIT" }, 400);
         if (error) throw error;
         return json(req, { post: data, me: who.userId }, 201);
       }
 
       if (req.method === "DELETE" && parts[1]) {
         const id = parts[1];
+        if (!UUID_RE.test(id)) return json(req, { error: "NOT_FOUND" }, 404);
         const { data: row, error: findError } = await supabase
           .from("arcanum_board_posts")
           .select("id,user_id")
