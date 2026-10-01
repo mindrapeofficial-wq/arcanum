@@ -117,7 +117,8 @@ const ArcanumAudio=(()=>{
   function buildMusic(){
     if(music)return music;
     music=new Audio("assets/audio/Dungeon%20Lobby.mp3");
-    music.loop=true;music.preload="auto";
+    // "none": the 8 MB track streams on first play instead of downloading at startup (or when music is off).
+    music.loop=true;music.preload="none";
     music.addEventListener("error",()=>document.documentElement.classList.add("audio-music-missing"));
     return music;
   }

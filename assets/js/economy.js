@@ -48,23 +48,23 @@ function renderEconomy(){
 
     <div class="economy-resource-grid">
       <div class="economy-resource-card">
-        <img src="assets/ui/resources/oro.png?v=${BUILD_VERSION}" alt="" aria-hidden="true">
+        <img src="assets/ui/resources/oro.png?v=0.3.46" alt="" aria-hidden="true">
         <div><small>ORO · RESERVA</small><strong><span data-live-resource="gold">${n(r.gold)}</span></strong><span>Liquidez para reclutamiento, mercado y costes económicos o militares. No define por sí sola tu crecimiento.</span></div>
       </div>
       <div class="economy-resource-card">
-        <img src="assets/ui/resources/mana.png?v=${BUILD_VERSION}" alt="" aria-hidden="true">
+        <img src="assets/ui/resources/mana.png?v=0.3.46" alt="" aria-hidden="true">
         <div><small>MANÁ · RESERVA</small><strong><span data-live-resource="mana">${n(r.mana)}</span> <em>/ ${n(c.mana)}</em></strong><span>Reserva arcana limitada por tus Nodos. Se emplea en invocaciones, unidades mágicas, comercio y otros costes arcanos.</span></div>
       </div>
       <div class="economy-resource-card">
-        <img src="assets/ui/resources/poblacion.png?v=${BUILD_VERSION}" alt="" aria-hidden="true">
+        <img src="assets/ui/resources/poblacion.png?v=0.3.46" alt="" aria-hidden="true">
         <div><small>POBLACIÓN · RESERVA</small><strong><span data-live-resource="population">${n(r.population)}</span> <em>/ ${n(popCap)}</em></strong><span>Habitantes disponibles. El máximo siempre es el menor entre capacidad alimentaria y residencial.</span></div>
       </div>
       <div class="economy-resource-card" title="${esc(food.title)}">
-        <img src="assets/ui/resources/poblacion.png?v=${BUILD_VERSION}" alt="" aria-hidden="true">
+        <img src="assets/ui/resources/poblacion.png?v=0.3.46" alt="" aria-hidden="true">
         <div><small>ALIMENTO · CAPACIDAD</small><strong>${food.text}</strong><span>${food.stored?"Reserva alimentaria reportada por el servidor.":"No se almacena ni se gasta como una moneda: marca cuánta población pueden sostener tus Granjas."}</span></div>
       </div>
       <div class="economy-resource-card" title="${esc(research.title)}">
-        <img src="assets/ui/nav/investigacion.png?v=${BUILD_VERSION}" alt="" aria-hidden="true">
+        <img src="assets/ui/nav/investigacion.png?v=0.3.46" alt="" aria-hidden="true">
         <div><small>INVESTIGACIÓN · FLUJO</small><strong>${research.text}</strong><span>${research.stored?"Puntos de Investigación reportados por el servidor.":"Tus Gremios determinan los RP producidos por cada turno que dedicas a investigar. No se acumulan estando inactivo."}</span></div>
       </div>
     </div>
@@ -88,9 +88,9 @@ function renderEconomy(){
         <label class="economy-turn-picker">TURNOS<input id="econ-turns" type="number" min="1" max="50" value="1" inputmode="numeric"></label>
       </div>
       <div class="economy-action-grid">
-        ${economyActionCard("NONE","Desarrollo equilibrado","Procesa turnos sin forzar una prioridad extraordinaria. Úsalo cuando no necesites concentrar la economía.","assets/ui/resources/poblacion.png?v="+BUILD_VERSION,"NORMAL")}
-        ${economyActionCard("TAX","Recaudar impuestos","Orienta la acción económica hacia el Oro. Útil antes de reclutar, comerciar o afrontar gastos militares.","assets/ui/resources/oro.png?v="+BUILD_VERSION,"RECAUDAR")}
-        ${economyActionCard("MP_CHARGE","Cargar maná","Orienta la acción económica hacia la reserva de Maná para invocaciones, unidades mágicas y comercio.","assets/ui/resources/mana.png?v="+BUILD_VERSION,"CARGAR MANÁ")}
+        ${economyActionCard("NONE","Desarrollo equilibrado","Procesa turnos sin forzar una prioridad extraordinaria. Úsalo cuando no necesites concentrar la economía.","assets/ui/resources/poblacion.png?v=0.3.46","NORMAL")}
+        ${economyActionCard("TAX","Recaudar impuestos","Orienta la acción económica hacia el Oro. Útil antes de reclutar, comerciar o afrontar gastos militares.","assets/ui/resources/oro.png?v=0.3.46","RECAUDAR")}
+        ${economyActionCard("MP_CHARGE","Cargar maná","Orienta la acción económica hacia la reserva de Maná para invocaciones, unidades mágicas y comercio.","assets/ui/resources/mana.png?v=0.3.46","CARGAR MANÁ")}
       </div>
     </section>
 
@@ -109,7 +109,7 @@ function renderEconomy(){
     </section>`:""}
 
     <section class="economy-explore-card">
-      <div class="economy-explore-visual"><img src="assets/ui/nav/reino.png?v=${BUILD_VERSION}" alt="" aria-hidden="true"></div>
+      <div class="economy-explore-visual"><img src="assets/ui/nav/reino.png?v=0.3.46" alt="" aria-hidden="true"></div>
       <div class="economy-explore-copy">
         <span class="section-kicker">EXPANSIÓN TERRITORIAL</span>
         <h3>Explorar nuevas tierras</h3>
