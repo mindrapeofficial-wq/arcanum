@@ -146,10 +146,17 @@ function renderCharacterLayout(profile,snapshot){
 
     '<div class="character-brute-grid">'+
       '<aside class="character-left-column">'+
-        '<section class="character-brute-panel">'+
-          '<div class="character-brute-title"><span>ARSENAL Y DONES DE COMBATE</span><small>Todo lo que entra contigo al duelo</small></div>'+
-          '<div class="character-loadout-grid">'+characterEquipmentTiles(profile)+'</div>'+
-          '<div class="character-bonus-grid">'+characterTraits(raw)+characterAbilities(raw)+'</div>'+
+        '<section class="character-brute-panel character-combat-kit">'+
+          '<div class="character-brute-title"><span>PREPARACIÓN PARA EL DUELO</span><small>Tu configuración de combate</small></div>'+
+          '<div class="character-kit-section">'+
+            '<div class="character-kit-heading"><div><span class="section-kicker">EQUIPO</span><h3>Equipo equipado</h3></div><small>Lo que llevas al combate</small></div>'+
+            '<div class="character-loadout-grid">'+characterEquipmentTiles(profile)+'</div>'+
+          '</div>'+
+          '<div class="character-kit-divider"></div>'+
+          '<div class="character-kit-section">'+
+            '<div class="character-kit-heading"><div><span class="section-kicker">PODERES</span><h3>Dones y habilidades</h3></div><small>Rasgos, familiares y técnicas activas</small></div>'+
+            '<div class="character-bonus-grid character-ability-list">'+characterTraits(raw)+characterAbilities(raw)+'</div>'+
+          '</div>'+
         '</section>'+
       '</aside>'+
 

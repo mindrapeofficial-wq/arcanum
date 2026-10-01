@@ -526,3 +526,25 @@ test("Pillage is a third attack mode, server-driven and never a land grab", () =
   assert.match(sql, /when v_mode=''PILLAGE'' then 0/, "no land changes hands in a pillage");
   assert.doesNotMatch(sql, /barracks\s*=\s*barracks\s*-|fortresses\s*=\s*fortresses\s*-|barriers\s*=\s*barriers\s*-/, "military buildings are never burned");
 });
+
+
+test("navigation is grouped into Arconte, Reino and Comunidad",()=>{
+  const html=read("index.html");
+  for(const group of ["arconte","reino","comunidad"]){
+    assert.match(html,new RegExp(`data-nav-group="${group}"`));
+    assert.match(html,new RegExp(`data-nav-group-trigger="${group}"`));
+    assert.match(html,new RegExp(`data-mobile-nav-group="${group}"`));
+  }
+  assert.match(read("assets/js/router.js"),/NAV_GROUP_BY_VIEW/);
+  assert.match(read("assets/js/ui.js"),/toggleMobileNavGroup/);
+});
+
+test("character combat preparation is readable and mobile-first",()=>{
+  const src=read("assets/js/character.js");
+  const css=read("assets/css/character.css");
+  assert.match(src,/PREPARACIÓN PARA EL DUELO/);
+  assert.match(src,/Equipo equipado/);
+  assert.match(src,/Dones y habilidades/);
+  assert.match(css,/\.character-center-column\{order:1\}/);
+  assert.match(css,/\.character-ability-list/);
+});
