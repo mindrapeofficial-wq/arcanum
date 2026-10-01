@@ -44,6 +44,39 @@ function realmProgressLabel(land){
   return {name:"Imperio arcano",next:3500,level:4};
 }
 
+let realmDomainRecord=null;
+let realmDomainLoad=null;
+
+async function loadRealmDomain(force=false){
+  if(realmDomainRecord&&!force)return realmDomainRecord;
+  if(realmDomainLoad&&!force)return realmDomainLoad;
+  realmDomainLoad=(async()=>{
+    const data=await domainApi();
+    realmDomainRecord=data?.domain||null;
+    return realmDomainRecord;
+  })();
+  try{return await realmDomainLoad;}finally{realmDomainLoad=null;}
+}
+function paintRealmDomainIdentity(){
+  const title=$("#realm-domain-name");
+  const character=$("#realm-character-name");
+  if(title)title.textContent=realmDomainRecord?.domain_name||realmState?.realm?.mage_name||"Dominio";
+  if(character)character.textContent="ARCHIMAGO · "+(realmState?.realm?.mage_name||"");
+}
+async function editRealmDomainName(){
+  const current=realmDomainRecord?.domain_name||realmState?.realm?.mage_name||"";
+  const next=prompt("Nuevo nombre del Dominio",current);
+  if(next===null)return;
+  const clean=next.normalize("NFKC").replace(/\s+/g," ").trim();
+  if(clean===current)return;
+  try{
+    const data=await domainApi({method:"POST",body:{domain_name:clean}});
+    realmDomainRecord=data?.domain||realmDomainRecord;
+    paintRealmDomainIdentity();
+    toast("El Dominio ahora se llama "+realmDomainRecord.domain_name+".","success");
+  }catch(error){toast(humanError(error),"error");}
+}
+
 function renderRealm(){
   const r=realmState.realm,b=realmState.buildings,c=realmState.capacities;
   const school=catalogs.schools.find(s=>s.code===r.school_code);
@@ -55,6 +88,7 @@ function renderRealm(){
   const progression=realmProgressLabel(r.land);
   const progressionPct=progression.level>=4?100:realmPercent(r.land,progression.next);
   const alerts=realmAlerts();
+  const domainName=realmDomainRecord?.domain_name||r.mage_name;
 
   $("#view-host").innerHTML=`<div class="realm-dashboard">
     <section class="realm-banner realm-banner-2">
@@ -62,7 +96,11 @@ function renderRealm(){
       <div class="realm-banner-shade" aria-hidden="true"></div>
       <div class="realm-banner-content">
         <span class="section-kicker">${esc(school?.name_es||r.school_code)}</span>
-        <h2>${esc(r.mage_name)}</h2>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <h2 id="realm-domain-name" style="margin:0">${esc(domainName)}</h2>
+          <button id="realm-domain-edit" class="small-action" type="button" title="Editar nombre del Dominio" aria-label="Editar nombre del Dominio">✎ EDITAR</button>
+        </div>
+        <div id="realm-character-name" style="margin-top:7px;font-size:11px;letter-spacing:.14em;color:rgba(236,216,174,.72)">ARCHIMAGO · ${esc(r.mage_name)}</div>
         <p>${esc(progression.name)} · ${n(r.land)} acres · Nivel Mágico ${n(r.spell_level)}</p>
         <div class="realm-status-line">
           <span class="realm-status ${r.status==="alive"?"good":"danger"}">${r.status==="alive"?"ARCHIMAGO ACTIVO":"ARCHIMAGO CAÍDO"}</span>
@@ -75,7 +113,7 @@ function renderRealm(){
           <button class="small-action" data-quick="war">GUERRA</button>
         </div>
       </div>
-      <small class="realm-art-label" data-realm-ai-status>REINO · PREPARANDO ARTE IA</small>
+      <small class="realm-art-label">DOMINIO · REINO NIVEL 1</small>
     </section>
 
     <section class="realm-command panel">
@@ -127,12 +165,10 @@ function renderRealm(){
 
   document.querySelectorAll("[data-quick]").forEach(btn=>btn.addEventListener("click",()=>navigate(btn.dataset.quick)));
   $("#realm-explore-button").addEventListener("click",()=>doExplore($("#realm-explore-button"),"realm-explore-turns"));
-  if(typeof ensureRealmAiArtwork==="function"){
-    (async()=>{
-      try{if(typeof refreshOwnProfileBadge==="function")await refreshOwnProfileBadge();}
-      finally{ensureRealmAiArtwork();}
-    })();
-  }
+  $("#realm-domain-edit")?.addEventListener("click",editRealmDomainName);
+  loadRealmDomain().then(()=>{
+    if(currentView==="realm")paintRealmDomainIdentity();
+  }).catch(()=>{});
 
   $("#realm-tip-action").addEventListener("click",()=>{
     const target=Number(r.wilderness||0)>=80?"build":Number(b.guilds||0)<5?"build":Number(b.barracks||0)<1?"build":Number(r.turns||0)>=20&&Number(r.land||0)<3500?"economy":"economy";
