@@ -109,5 +109,4 @@ function announceCanonicalLootReward(result,context="Botín"){
   }
   return result;
 }
-globalThis.claimArenaLoot=claimArenaLoot;
-globalThis.claimWorldBossGear=claimWorldBossGear;
+// claimArenaLoot / claimWorldBossGear were removed with the shared Arconte energy refactor; callers guard with typeof.

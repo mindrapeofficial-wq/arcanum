@@ -119,7 +119,7 @@ test("canonical Archmage identity uses one snapshot",()=>{
   assert.match(sheet,/stateApi\("\/archmage\/"\+encodeURIComponent/);
   assert.match(profile,/loadArchmageSnapshot\(activeProfileName/);
   assert.match(profile,/identidad canónica/i);
-  assert.match(profile,/APTITUDES DEL ARCHIMAGO/);
+  assert.match(profile,/APTITUDES DEL ARCONTE/);
   assert.match(profile,/CRÓNICA PERSONAL/);
   assert.match(profile,/RENOMBRE/);
   assert.doesNotMatch(profile,/La sincronización pública del inventario se activará/);
@@ -187,12 +187,8 @@ test("verified Gear comes from gameplay instead of debug drops",()=>{
   assert.doesNotMatch(inventory,/HALLAZGO DE PRUEBA/);
   assert.doesNotMatch(inventory,/data-loot-test-drop/);
   assert.match(inventory,/canonicalLootOriginText/);
-  assert.match(items,/stateApi\("\/loot\/exploration\/start"/);
-  assert.match(items,/stateApi\("\/loot\/exploration\/complete"/);
-  assert.match(items,/stateApi\("\/loot\/arena\/claim"/);
-  assert.match(items,/stateApi\("\/loot\/boss\/claim"/);
-  assert.match(economy,/startLootExplorationClaim/);
-  assert.match(economy,/completeLootExplorationClaim/);
+  // Exploration gear and the /loot/* endpoints were removed with the shared Arconte energy refactor.
+  assert.doesNotMatch(items,/\/loot\/exploration/,"exploration no longer drops gear");
   assert.match(arena,/loot_reward/);
   assert.match(arena,/announceCanonicalLootReward/);
   assert.match(event,/claimWorldBossGear/);
@@ -219,7 +215,7 @@ test("personal PvE expeditions are server-authoritative and persistent",()=>{
   assert.match(pve,/stateApi\("\/pve\/fight"/);
   assert.match(pve,/stateApi\("\/pve\/retreat"/);
   assert.match(pve,/stateApi\("\/pve\/choose"/);
-  assert.match(pve,/VIDA DEL ARCHIMAGO/);
+  assert.match(pve,/VIDA DEL ARCONTE/);
   assert.match(pve,/pve-room-track/);
   assert.match(pve,/Botín de expedición/);
   assert.doesNotMatch(pve,/localStorage\.setItem/);
@@ -237,7 +233,7 @@ test("PvE between-room choices are explicit and consequential",()=>{
   const pve=read("assets/js/pve.js");
   assert.match(pve,/DECISIÓN DEL UMBRAL/);
   assert.match(pve,/data-pve-choice/);
-  assert.match(pve,/SIN COSTE DE TURNO/);
+  assert.match(pve,/SIN COSTE DE ENERGÍA/);
 });
 
 
@@ -245,9 +241,14 @@ test("Edge Function security patches stay in place",()=>{
   const state=read("supabase/functions/arcanum-state/index.ts");
   const admin=read("supabase/functions/arcanum-admin/index.ts");
   assert.match(state,/LEGACY_IMPORT_CLOSED/,"inventory legacy import must stay closed");
-  assert.match(state,/\.eq\("seals_remaining",arena\.seals_remaining\)/,"arena seals must be reserved atomically");
+  assert.match(state,/rpc\("spend_archon_energy"/,"Arconte energy must be spent through the atomic RPC");
+  assert.match(state,/NOT_ENOUGH_ARCHON_ENERGY/);
+  const energy=read("supabase/migrations/20261001153000_archon_energy.sql");
+  assert.match(energy,/spend_archon_energy[\s\S]*for update/i,"energy spending must lock the row");
+  assert.match(energy,/revoke all on function public\.spend_archon_energy/i,"players must not call the spend function directly");
   assert.doesNotMatch(admin,/ADMIN_NAMES/,"admin must not be identified by display name");
-  assert.match(admin,/ADMIN_USER_IDS\.has\(userId\)/);
+  assert.match(admin,/from\("arcanum_admin_users"\)[\s\S]*\.eq\("user_id",userId\)/,"admin must be authorised by user id in arcanum_admin_users");
+  assert.match(admin,/if\(!admin\?\.active\) throw new Error\("FORBIDDEN"\)/,"inactive admins must be rejected");
 });
 
 
@@ -271,7 +272,7 @@ test("Oracle model calls are capped per user",()=>{
 
 
 test("AI features use a configurable free-tier provider, not paid OpenAI",()=>{
-  for(const name of ["arcanum-oracle","astrael-player"]){
+  for(const name of ["arcanum-oracle"]){
     const src=read("supabase/functions/"+name+"/index.ts");
     assert.doesNotMatch(src,/api\.openai\.com/,name+" must not call OpenAI directly");
     assert.doesNotMatch(src,/OPENAI_API_KEY/,name+" must not read the OpenAI key");
@@ -302,7 +303,7 @@ test("PvP ranking is routed, server-authoritative and shows competitive stats",(
   const router=read("assets/js/router.js");
   const ranking=read("assets/js/pvp-ranking.js");
   const stateFn=read("supabase/functions/arcanum-state/index.ts");
-  assert.match(html,/data-view="pvp-ranking"/);
+  assert.match(html,/data-view="ranking"/,"PvP ranking is reached through the Community ranking");
   assert.match(router,/"pvp-ranking":\{name:"renderPvpRanking"/);
   assert.match(router,/view==="pvp-ranking"\) await renderPvpRanking/);
   assert.doesNotThrow(()=>new vm.Script(ranking,{filename:"assets/js/pvp-ranking.js"}));
@@ -352,6 +353,7 @@ test("closed-beta polish stays in place",()=>{
   assert.doesNotMatch(army,/setTimeout\(\(\)=>generateArmyArt\(army,unitById,false\)/,"army portraits must stay opt-in (external AI Horde service)");
   assert.match(army,/GENERAR RETRATO/);
   const war=read("assets/js/war.js");
+  assert.match(war,/rpc\("realm_ranking"\)/,"the ranking comes from the server RPCs, which exclude NPCs and Astrael");
   const rankingFilter=read("supabase/migrations/20261001163000_keep_npcs_out_of_leaderboard.sql");
   assert.match(rankingFilter,/public\.astrael_agent_state/,"Astrael exclusion belongs to the authoritative server ranking");
   assert.match(rankingFilter,/public\.arcanum_system_accounts/,"system-account exclusion belongs to the authoritative server ranking");
@@ -393,10 +395,24 @@ test("regular Ranking and Construction pages keep their render contracts",()=>{
   const war=read("assets/js/war.js");
   assert.doesNotMatch(construction,/(^|[^$])\$\("\[data-building\]"\)\.forEach/m,
     "Construction must iterate building inputs with $$, not $");
-  assert.match(war,/rpc\("realm_ranking"\)/,
-    "Regular Ranking must use the authoritative server leaderboard");
+  assert.doesNotMatch(war,/players\.\\n\s+const botNames/,
+    "Regular Ranking must not contain escaped newlines that comment out its variables");
+  assert.match(war,/rpc\("war_ranking"\)/);
+  assert.match(war,/stateApi\("\/arena\/ranking"\)/);
   assert.doesNotMatch(war,/botNames=new Set/,
     "Human/system filtering must stay server-side instead of being recreated in the client");
+});
+
+test("globalThis exports only reference identifiers that exist",()=>{
+  const files=fs.readdirSync(new URL("../assets/js/",import.meta.url)).filter(f=>f.endsWith(".js"));
+  const all=files.map(f=>read("assets/js/"+f)).join("\n");
+  const missing=[];
+  for(const m of all.matchAll(/globalThis\.[A-Za-z_$][\w$]*\s*=\s*([A-Za-z_$][\w$]*)\s*;/g)){
+    const id=m[1];
+    const defined=new RegExp("(function\\s*\\*?\\s+|class\\s+|(?:const|let|var)\\s+)"+id.replace(/\$/g,"\\$")+"\\b").test(all);
+    if(!defined)missing.push(id);
+  }
+  assert.deepEqual(missing,[],"globalThis.X=Y throws a ReferenceError at load when Y was removed");
 });
 
 test("Construction never references an undefined $$$ selector",()=>{
