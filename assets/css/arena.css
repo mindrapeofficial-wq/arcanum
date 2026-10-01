@@ -375,3 +375,12 @@
   .arena-duel-stage:before{width:260px;height:260px;bottom:-96px}
   .arena-sprite--duel{width:78px;height:130px}
 }
+
+
+/* External CC BY icon: Crossed swords by Lorc, game-icons.net */
+.arena-hero>aside i{
+  background:
+    url("../vendor/game-icons/crossed-swords.svg") center/54px 54px no-repeat,
+    linear-gradient(180deg,rgba(24,20,15,.88),rgba(6,6,6,.92));
+  color:transparent!important;
+}
