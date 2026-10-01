@@ -17,35 +17,19 @@ The player **is the Arconte**. The Domain belongs to that Arconte.
 
 ## 2. Current navigation/product direction
 
-The intended hierarchy is:
+### Temporary product focus: Domain only
 
-1. **ARCONTE**
-   - Personaje
-   - Grimorio
-   - Artefactos
-2. **AVENTURA Y COMBATE**
-   - Arena
-   - Expediciones
-   - Eventos
-3. **REINO**
-   - Dominio
-   - Construcción
-   - Economía
-   - Mercado
-   - Ejército
-   - Guerra
-   - Informes
-4. **COMUNIDAD**
-   - Comunidad
-   - Ranking
+As of **0.3.46**, the live product is intentionally concentrated on **Dominio**.
 
-Current product decisions:
+- **Dominio is the only visible and routable in-game section.**
+- Personaje, Grimorio, Artefactos, Arena, Expediciones, Eventos, Construcción, Economía, Mercado, Ejército, Guerra, Informes, Comunidad and Ranking remain in the codebase but are **temporarily hidden from navigation**.
+- Do **not** delete those systems merely because they are hidden. The current strategy is to preserve them while the core kingdom game is rebuilt.
+- The router must redirect stale/legacy section navigation back to `realm` while `DOMAIN_FOCUS_MODE` is active.
+- New work should prefer integrating useful kingdom actions directly into Dominio instead of creating more top-level pages.
+- The immediate gameplay direction is closer to **classic Archmage-style realm management**: turns as action budget, land expansion, construction, reserves/capacities, strategic trade-offs and kingdom-level decisions.
+- Character/social/RPG surfaces are not a priority during this focus phase and should not be re-exposed without an explicit product decision.
 
-- **Personaje is the default/main in-game page.**
-- The old social profile and the character sheet are separate concepts. Do not collapse them into one screen.
-- **Crónica is removed as a standalone navigation section.** Chronicle-like data may still exist as a derived/read model inside the character identity.
-- **Taberna is intentionally hidden until its gameplay implementation is ready.** Do not re-enable it merely because code/assets still exist.
-- Ranking should represent human players, not NPCs/bots, unless a future explicit design change says otherwise.
+The player is still the **Arconte**, and the Domain still belongs to that Arconte. Hiding Personaje does not merge the character and Domain data models.
 
 ## 3. Character art rules
 
