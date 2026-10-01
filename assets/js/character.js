@@ -18,11 +18,31 @@ function characterRankTitle(progression){
     return identity?.title||"Archimago";
   }catch{return "Archimago"}
 }
+function characterPortraitUrl(profile){
+  const code=String(profile?.school_code||"").toLowerCase();
+  const aliases={
+    verdant:"verdant",viridia:"verdant",
+    eradication:"eradication",cineria:"eradication",
+    phantasm:"phantasm",oneiria:"phantasm",
+    ascendant:"ascendant",aurea:"ascendant",
+    abyssal:"abyssal",nadir:"abyssal"
+  };
+  const school=aliases[code]||code;
+  const paths={
+    verdant:"assets/art/characters/verdante/viridia-level-1.png?v=0.3.19",
+    eradication:"assets/art/characters/eradication/cineria-level-1.png?v=0.3.19",
+    phantasm:"assets/art/characters/phantasm/oneiria-level-1.png?v=0.3.19",
+    ascendant:"assets/art/characters/ascendant/aurea-level-1.png?v=0.3.19",
+    abyssal:"assets/art/characters/abyssal/nadir-level-1.png?v=0.3.19"
+  };
+  return paths[school]||"";
+}
 function characterSpriteMarkup(profile){
-  const portrait=typeof profileDefaultPortraitUrl==="function"?profileDefaultPortraitUrl(profile):"";
-  if(portrait)return '<img class="character-level-portrait" src="'+esc(portrait)+'" alt="'+esc(characterSchoolLabel(profile.school_code))+' · personaje nivel '+n(profile?.archmage_level||1)+'" />';
+  const portrait=characterPortraitUrl(profile)||(typeof profileDefaultPortraitUrl==="function"?profileDefaultPortraitUrl(profile):"");
+  const fallback=(typeof symbols!=="undefined"&&symbols[profile?.school_code])||"✦";
+  if(portrait)return '<img class="character-level-portrait" src="'+esc(portrait)+'" alt="'+esc(characterSchoolLabel(profile.school_code))+' · personaje nivel '+n(profile?.archmage_level||1)+'" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'grid\';" /><div class="character-symbol-fallback character-portrait-fallback" style="display:none">'+esc(fallback)+'</div>';
   if(typeof arenaSpriteHtml==="function")return arenaSpriteHtml(profile.school_code,"character-sheet-sprite");
-  return '<div class="character-symbol-fallback">'+esc((typeof symbols!=="undefined"&&symbols[profile.school_code])||"✦")+'</div>';
+  return '<div class="character-symbol-fallback">'+esc(fallback)+'</div>';
 }
 function characterPercent(v){return Number.isFinite(Number(v))?Math.round(Number(v)*100)+"%":"—"}
 function characterNumber(v,decimals=0){
