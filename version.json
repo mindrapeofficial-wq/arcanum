@@ -1,6 +1,6 @@
 {
-  "version": "0.3.7",
+  "version": "0.3.8",
   "channel": "beta",
-  "updated_at": "2026-09-30T22:53:00+02:00",
-  "note": "Persistent personal PvE Expeditions: Ruinas del Umbral, locked loadout, carried HP, server combat and verified Gear rewards"
+  "updated_at": "2026-10-01T07:25:00+02:00",
+  "note": "Between-room PvE decisions: sanctuary recovery, steady descent, or dangerous Umbral push with visible trade-offs"
 }
