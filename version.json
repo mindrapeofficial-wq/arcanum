@@ -1,6 +1,6 @@
 {
-  "version": "0.3.18",
+  "version": "0.3.21",
   "channel": "beta",
-  "updated_at": "2026-10-01T10:48:00+02:00",
-  "note": "Retratos de perfil fijos por Escuela: Viridia, Cineria, Oneiria, Aurea y Nadir"
+  "updated_at": "2026-10-01T10:55:00+02:00",
+  "note": "Corregida la foto de personaje en la tarjeta lateral del Arconte"
 }
