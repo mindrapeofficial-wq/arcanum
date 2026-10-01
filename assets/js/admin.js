@@ -116,7 +116,7 @@ async function adminPlayers(content){
     const needle=q.trim().toLowerCase();
     $("#admin-player-rows").innerHTML=adminPlayersCache.filter(p=>!needle||[p.username,p.domain_name,p.school_code].some(x=>String(x||"").toLowerCase().includes(needle))).map(p=>`
       <tr><td><strong>${adminEsc(p.username)}</strong><small>${adminEsc(p.user_id||"sin id local")}</small></td><td>${adminEsc(adminSchool(p.school_code))}</td><td>${adminEsc(p.domain_name||"—")}</td>
-      <td>${p.arena?`${p.arena.rating} · ${p.arena.wins}V/${p.arena.losses}D · ${p.arena.seals_remaining} sellos`:"—"}</td>
+      <td>${p.arena?`${p.arena.rating} · ${p.arena.wins}V/${p.arena.losses}D · ${Math.max(0,6-Number(p.arena.ranked_used||0))} ranked · ${Number(p.energy?.energy??12)}/12 energía`:"—"}</td>
       <td>${p.inventory_count??0} objetos · ${p.artifact_count??0} reliquias</td><td>${p.pve?adminEsc(p.pve.status)+" · sala "+p.pve.stage:"—"}</td><td>${p.last_seen?adminDate(p.last_seen):"—"}</td>
       <td><button class="ghost-button admin-open-player" data-player="${adminEsc(p.username)}">GESTIONAR</button></td></tr>`).join("");
     document.querySelectorAll(".admin-open-player").forEach(b=>b.onclick=()=>adminPlayerModal(b.dataset.player));
@@ -140,7 +140,7 @@ function adminPlayerModal(name){
     </div></div>
   </div>`;
   show($("#modal"));
-  $("#adm-save-arena").onclick=async()=>{await adminAction({action:"arena:update",target:name,rating:$("#adm-rating").value,seals:$("#adm-seals").value,wins:$("#adm-wins").value,losses:$("#adm-losses").value},"Arena actualizada");hide($("#modal"))};
+  $("#adm-save-arena").onclick=async()=>{await adminAction({action:"arena:update",target:name,rating:$("#adm-rating").value,ranked_used:$("#adm-ranked-used").value,energy:$("#adm-energy").value,wins:$("#adm-wins").value,losses:$("#adm-losses").value},"Arena y Energía actualizadas");hide($("#modal"))};
   document.querySelectorAll("[data-danger]").forEach(b=>b.onclick=async()=>{
     const kind=b.dataset.danger,map={pve:["pve:abort","abortar su expedición activa"],relic:["artifact:unequip","desequipar todas sus reliquias"],presence:["presence:kick","retirar su presencia online"],combat:["combat:reset","regenerar su perfil de combate"],inventory:["inventory:clear","VACIAR su inventario"]};
     const [action,label]=map[kind]; if(!adminConfirm(`¿Confirmas ${label} para ${name}?`))return; await adminAction({action,target:name},"Operación completada"); hide($("#modal"));
@@ -159,9 +159,18 @@ async function adminModeration(content){
 }
 async function adminEvents(content){
   const d=adminModerationCache||await adminApi("/moderation");
+  const now=new Date(),week=new Date(now.getTime()+7*86400000);
+  const local=v=>{const z=new Date(v.getTime()-v.getTimezoneOffset()*60000);return z.toISOString().slice(0,16)};
   content.innerHTML=`<section class="panel admin-section"><div class="admin-section-head"><div><span class="section-kicker">EVENTOS GLOBALES</span><h3>World Boss</h3></div></div>
-    <div class="admin-list">${(d.boss||[]).map(b=>`<div class="admin-boss-card"><div><strong>${adminEsc(b.boss_name)}</strong><small>${adminEsc(b.event_id)} · ${adminEsc(b.status)} · ${adminDate(b.starts_at)} → ${adminDate(b.ends_at)}</small></div><div class="admin-form-grid"><label class="admin-field"><span>HP actual</span><input type="number" min="0" max="${b.max_hp}" value="${b.current_hp}" data-boss-hp="${b.event_id}"></label><label class="admin-field"><span>Estado</span><select data-boss-status="${b.event_id}"><option value="scheduled" ${b.status==="scheduled"?"selected":""}>scheduled</option><option value="active" ${b.status==="active"?"selected":""}>active</option><option value="defeated" ${b.status==="defeated"?"selected":""}>defeated</option><option value="ended" ${b.status==="ended"?"selected":""}>ended</option></select></label></div><button class="primary-action admin-boss-save" data-id="${b.event_id}">GUARDAR EVENTO</button></div>`).join("")||"No hay eventos."}</div>
+    <div class="admin-boss-card"><div><strong>Nueva instancia</strong><small>Cada ciclo obtiene un event_id único y un ranking independiente.</small></div><div class="admin-form-grid">
+      <label class="admin-field"><span>Nombre</span><input id="adm-boss-name" value="El Devorador del Umbral"></label>
+      <label class="admin-field"><span>HP máximo</span><input id="adm-boss-max" type="number" min="1" value="500000"></label>
+      <label class="admin-field"><span>Inicio</span><input id="adm-boss-start" type="datetime-local" value="${local(now)}"></label>
+      <label class="admin-field"><span>Fin</span><input id="adm-boss-end" type="datetime-local" value="${local(week)}"></label>
+    </div><button class="primary-action" id="admin-boss-create">CREAR NUEVO CICLO</button></div>
+    <div class="admin-list">${(d.boss||[]).map(b=>`<div class="admin-boss-card"><div><strong>${adminEsc(b.boss_name)}</strong><small>${adminEsc(b.event_id)} · ${adminEsc(b.status)} · ${adminDate(b.starts_at)} → ${adminDate(b.ends_at)}</small></div><div class="admin-form-grid"><label class="admin-field"><span>HP actual</span><input type="number" min="0" max="${b.max_hp}" value="${b.current_hp}" data-boss-hp="${b.event_id}"></label><label class="admin-field"><span>Estado</span><select data-boss-status="${b.event_id}"><option value="active" ${b.status==="active"?"selected":""}>active</option><option value="defeated" ${b.status==="defeated"?"selected":""}>defeated</option><option value="closed" ${b.status==="closed"?"selected":""}>closed</option></select></label></div><button class="primary-action admin-boss-save" data-id="${b.event_id}">GUARDAR EVENTO</button></div>`).join("")||"No hay eventos."}</div>
   </section>`;
+  $("#admin-boss-create").onclick=async()=>{if(!adminConfirm("¿Crear una nueva instancia del World Boss con ranking independiente?"))return;await adminAction({action:"boss:create",boss_name:$("#adm-boss-name").value,max_hp:$("#adm-boss-max").value,starts_at:new Date($("#adm-boss-start").value).toISOString(),ends_at:new Date($("#adm-boss-end").value).toISOString()},"Nuevo ciclo del Boss creado");adminModerationCache=null;await adminEvents(content)};
   document.querySelectorAll(".admin-boss-save").forEach(btn=>btn.onclick=()=>{const id=btn.dataset.id;return adminAction({action:"boss:update",target:id,current_hp:document.querySelector(`[data-boss-hp="${id}"]`).value,status:document.querySelector(`[data-boss-status="${id}"]`).value},"Evento actualizado")});
 }
 async function adminAudit(content){
