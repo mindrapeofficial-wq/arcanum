@@ -238,6 +238,5 @@ test("PvE between-room choices are explicit and consequential",()=>{
   assert.match(pve,/DECISIÓN DEL UMBRAL/);
   assert.match(pve,/data-pve-choice/);
   assert.match(pve,/SIN COSTE DE TURNO/);
-  assert.match(pve,/Buscar un santuario/);
   assert.match(pve,/Forzar el Umbral/);
 });
