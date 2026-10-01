@@ -51,7 +51,7 @@ async function renderView(view){
   const host=$("#view-host"); host.innerHTML=`<div class="skeleton" style="width:180px;height:9px;margin-bottom:10px"></div><div class="skeleton" style="width:55%;height:34px;margin-bottom:22px"></div><div class="panel"><div class="skeleton"></div></div>`;
   try{
     await ensureViewRenderer(view);
-    if(view==="realm"){
+    if(view==="character") await renderCharacterPage(); else if(view==="realm"){
       renderRealm();
       host.querySelector(".view-header")?.remove();
     } else if(view==="economy") renderEconomy(); else if(view==="market") await renderMarket(); else if(view==="artifacts") await renderArtifactLibrary(); else if(view==="build") renderBuild(); else if(view==="research") renderResearch(); else if(view==="army") await renderArmy(); else if(view==="war") await renderWar(); else if(view==="arena") await renderArena(); else if(view==="pve") await renderPve(); else if(view==="event") await renderEvent(); else if(view==="ranking") await renderRanking(); else if(view==="battles") await renderBattles(); else if(view==="community") await renderCommunity(); else if(view==="tavern") await renderTavern(); else if(view==="lore") renderLore();
