@@ -1,10 +1,10 @@
-# ARCANUM · Progresión del Archimago
+# ARCANUM · Progresión del Arconte
 
 Estado: persistencia y gasto de atributos implementados en Beta 0.2.21; las fuentes de XP siguen desactivadas.
 
 ## Principios
 
-El Archimago es una capa independiente del Reino y del Ejército. Su progresión debe aportar identidad, desbloqueos y especialización sin sustituir la estrategia militar ni convertir el poder personal en una vía para aplastar ejércitos por nivel.
+El Arconte es una capa independiente del Reino y del Ejército. Su progresión debe aportar identidad, desbloqueos y especialización sin sustituir la estrategia militar ni convertir el poder personal en una vía para aplastar ejércitos por nivel.
 
 La experiencia debe premiar logros significativos, no clics repetibles. No se concederá XP directamente por gastar turnos, construir unidades sueltas o repetir una acción barata.
 
@@ -31,7 +31,7 @@ Referencias de ritmo:
 
 ## Atributos
 
-Todos los Archimagos parten conceptualmente de 1 en cada atributo. La Escuela podrá especializar el comportamiento de esos atributos más adelante, pero no debe alterar las reglas base.
+Todos los Arcontes parten conceptualmente de 1 en cada atributo. La Escuela podrá especializar el comportamiento de esos atributos más adelante, pero no debe alterar las reglas base.
 
 - Poder Arcano
 - Conocimiento
@@ -73,7 +73,7 @@ No se conectará ninguna fuente de XP hasta que exista una regla anti-farming es
 Completado:
 
 1. Persistencia de XP y atributos por reino/temporada.
-2. Lectura de progresión integrada en la ficha del Archimago.
+2. Lectura de progresión integrada en la ficha del Arconte.
 3. RPC transaccional para gastar exactamente un punto.
 4. Restricción de acceso directo a la tabla y validación del presupuesto de atributos.
 5. Pruebas de la curva y del flujo de interfaz.
@@ -86,4 +86,9 @@ Pendiente, deliberadamente:
 4. PvE y recompensas.
 5. Integración controlada con PvP.
 
-La prioridad es mantener separadas las capas Archimago, Reino y Ejército.
+La prioridad es mantener separadas las capas Arconte, Reino y Ejército.
+
+
+## Constitutional boundary
+
+Arconte progression must remain horizontal where it touches realm strategy: it may unlock options, variants and specializations, but must not become a general multiplier for production, territory or army strength.
