@@ -41,6 +41,15 @@ function profileDefaultPortraitUrl(profile){
   const level=Math.max(1,Number(profile?.archmage_level||profile?.level||1));
   return portraits[level]||portraits[1]||"";
 }
+const SIDEBAR_SCHOOL_PORTRAITS={
+  verdant:{1:"assets/art/characters/verdante/viridia-profile-level-1.svg?v=0.3.28"}
+};
+function profileSidebarPortraitUrl(profile){
+  const school=profileCanonicalSchoolCode(profile?.school_code);
+  const portraits=SIDEBAR_SCHOOL_PORTRAITS[school];
+  const level=Math.max(1,Number(profile?.archmage_level||profile?.level||1));
+  return (portraits&&(portraits[level]||portraits[1]))||profileDefaultPortraitUrl(profile);
+}
 function profileAvatarMarkup(profile,large=false){
   const cls=large?"profile-avatar profile-avatar-large":"profile-avatar";
   const src=profileDefaultPortraitUrl(profile);
@@ -64,7 +73,7 @@ function renderOwnProfileBadge(){
   sigil.textContent=fallback;
   sigil.classList.remove("has-avatar");
 
-  const src=profileDefaultPortraitUrl({school_code:schoolCode,archmage_level:ownProfileBadge?.archmage_level||1});
+  const src=profileSidebarPortraitUrl({school_code:schoolCode,archmage_level:ownProfileBadge?.archmage_level||1});
   if(!src)return;
 
   const img=new Image();
