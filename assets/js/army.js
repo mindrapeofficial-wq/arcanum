@@ -103,7 +103,7 @@ function scheduleArmyArt(army,unitById){
   clearTimeout(armyArtAutoTimer);const signature=armyArtSignature(army);if(!signature||armyArtTotal(army)<1)return;
   const cached=loadArmyArtCache(signature);if(cached){showArmyArtResult(signature,cached);return;}
   if(armyArtJob?.signature===signature){armyArtSetBusy(true);armyArtSetStatus("El retrato de este ejército sigue en proceso…");return;}
-  armyArtAutoTimer=setTimeout(()=>generateArmyArt(army,unitById,false),1600);
+  // Opt-in: the portrait is made by an external community service (AI Horde), so nothing leaves the game until the player asks.\n  const askBtn=$("#army-art-regenerate");if(askBtn)askBtn.textContent="GENERAR RETRATO";\n  armyArtSetStatus("Retrato opcional. Se genera con una red comunitaria externa (AI Horde) y puede tardar. Pulsa GENERAR RETRATO para solicitarlo.");
 }
 
 async function renderArmy(){
