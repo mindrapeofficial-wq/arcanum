@@ -1,6 +1,6 @@
 {
-  "version": "0.3.23",
+  "version": "0.3.24",
   "channel": "beta",
-  "updated_at": "2026-10-01T12:22:00+02:00",
-  "note": "Retrato facial de escuela en la tarjeta lateral"
+  "updated_at": "2026-10-01T13:04:00+02:00",
+  "note": "Reconexion completa de APIs auxiliares al proyecto Supabase Arcanum"
 }
