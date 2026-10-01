@@ -80,7 +80,6 @@ async function editRealmDomainName(){
 function renderRealm(){
   const r=realmState.realm,b=realmState.buildings,c=realmState.capacities;
   const school=catalogs.schools.find(s=>s.code===r.school_code);
-  const tip=manualNextStep();
   const popCap=Math.min(Number(c.food||0),Number(c.residential||0));
   const built=Math.max(0,Number(r.land||0)-Number(r.wilderness||0));
   const landPct=realmPercent(built,r.land);
@@ -89,48 +88,83 @@ function renderRealm(){
   const progressionPct=progression.level>=4?100:realmPercent(r.land,progression.next);
   const alerts=realmAlerts();
   const domainName=realmDomainRecord?.domain_name||r.mage_name;
+  const researchRate=Math.floor(Math.sqrt(Math.max(0,Number(b.guilds)||0))*3.5);
+  const totalBuilt=Object.values(b||{}).reduce((sum,value)=>sum+Math.max(0,Number(value)||0),0);
+  const buildingKeys=["farms","towns","nodes","workshops","guilds","barracks","fortresses","barriers"];
+  const buildingNames={farms:"Granjas",towns:"Pueblos",nodes:"Nodos",workshops:"Talleres",guilds:"Gremios",barracks:"Cuarteles",fortresses:"Fortalezas",barriers:"Barreras"};
+  const buildingCards=buildingKeys.map(key=>{
+    const meta=buildMeta[key]||[buildingNames[key]||key,"",0];
+    return `<article class="building-card domain-building-card">
+      <div class="domain-building-copy"><small>${esc(buildingNames[key]||meta[0])}</small><strong>${n(b[key]||0)}</strong><span>${esc(meta[1]||"")}</span></div>
+      <label class="domain-building-order"><span>LEVANTAR</span><input data-building="${esc(key)}" type="number" min="0" max="9999" step="1" value="0" inputmode="numeric" aria-label="Construir ${esc(buildingNames[key]||meta[0])}"></label>
+    </article>`;
+  }).join("");
 
-  $("#view-host").innerHTML=`<div class="realm-dashboard">
-    <section class="realm-banner realm-banner-2">
+  $("#view-host").innerHTML=`<div class="realm-dashboard domain-command-center">
+    <section class="realm-banner realm-banner-2 domain-focus-banner">
       <img class="realm-kingdom-image" src="assets/art/kingdom-level-00.svg?v=0.2.9" alt="" aria-hidden="true" />
       <div class="realm-banner-shade" aria-hidden="true"></div>
       <div class="realm-banner-content">
-        <span class="section-kicker">${esc(school?.name_es||r.school_code)}</span>
-        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-          <h2 id="realm-domain-name" style="margin:0">${esc(domainName)}</h2>
+        <span class="section-kicker">${esc(school?.name_es||r.school_code)} · DOMINIO</span>
+        <div class="domain-title-row">
+          <h2 id="realm-domain-name">${esc(domainName)}</h2>
           <button id="realm-domain-edit" class="small-action" type="button" title="Editar nombre del Dominio" aria-label="Editar nombre del Dominio">✎ EDITAR</button>
         </div>
-        <div id="realm-character-name" style="margin-top:7px;font-size:11px;letter-spacing:.14em;color:rgba(236,216,174,.72)">ARCHIMAGO · ${esc(r.mage_name)}</div>
-        <p>${esc(progression.name)} · ${n(r.land)} acres · Nivel Mágico ${n(r.spell_level)}</p>
-        <div class="realm-status-line"><span>${n(realmState.known_spells.length)} hechizos conocidos</span></div>
-        <div class="quick-actions">
-          <button class="small-action" data-quick="economy">ECONOMÍA</button>
-          <button class="small-action" data-quick="build">CONSTRUIR</button>
-          <button class="small-action" data-quick="research">MAGIA</button>
-          <button class="small-action" data-quick="war">GUERRA</button>
+        <div id="realm-character-name" class="domain-ruler-name">ARCONTE · ${esc(r.mage_name)}</div>
+        <p>${esc(progression.name)} · ${n(r.land)} acres · Nivel Mágico ${n(r.spell_level)} · ${n(realmState.known_spells.length)} hechizos conocidos</p>
+        <div class="domain-jump-nav" aria-label="Áreas del Dominio">
+          <button class="small-action" type="button" data-domain-jump="domain-governance">GOBIERNO</button>
+          <button class="small-action" type="button" data-domain-jump="domain-construction">CONSTRUCCIÓN</button>
+          <button class="small-action" type="button" data-domain-jump="domain-expansion">EXPANSIÓN</button>
         </div>
       </div>
-      <small class="realm-art-label">DOMINIO · REINO NIVEL 1</small>
-    </section>
-
-    <section class="realm-command panel">
-      <div class="realm-command-head"><div><span class="section-kicker">CONSEJO ARCANO</span><h3>¿Qué hago ahora?</h3></div><span class="realm-command-mark">✦</span></div>
-      <strong>${esc(tip.title)}</strong>
-      <p>${esc(tip.text)}</p>
-      <button class="small-action" id="realm-tip-action">VER RECOMENDACIÓN</button>
+      <small class="realm-art-label">CENTRO DE MANDO · REINO NIVEL ${n(progression.level||1)}</small>
     </section>
   </div>
 
-  <div class="realm-vitals">
-    <div class="realm-vital-card"><small>Ascendencia</small><strong>${n(r.net_power)}</strong><em>Fuerza global del dominio</em></div>
-    <div class="realm-vital-card"><small>Turnos</small><strong>${n(r.turns)} / ${n(r.max_turns)}</strong><div class="mini-track"><span style="width:${turnPct}%"></span></div></div>
-    <div class="realm-vital-card"><small>Terreno desarrollado</small><strong>${n(built)} / ${n(r.land)}</strong><em>${landPct}% construido · ${n(r.wilderness)} salvaje</em></div>
-    <div class="realm-vital-card"><small>Fortalezas</small><strong>${n(b.fortresses)}</strong><em>${Number(b.fortresses||0)>0?"Defensa vital activa":"Prioridad crítica"}</em></div>
-  </div>
+  <section class="domain-ledger" aria-label="Estado del Dominio">
+    <article class="domain-ledger-card primary"><small>TURNOS</small><strong>${n(r.turns)} / ${n(r.max_turns)}</strong><div class="mini-track"><span style="width:${turnPct}%"></span></div><em>Presupuesto de acciones</em></article>
+    <article class="domain-ledger-card"><small>ORO</small><strong>${n(r.gold)}</strong><em>Tesoro disponible</em></article>
+    <article class="domain-ledger-card"><small>MANÁ</small><strong>${n(r.mana)} / ${n(c.mana)}</strong><em>Reserva arcana</em></article>
+    <article class="domain-ledger-card"><small>POBLACIÓN</small><strong>${n(r.population)} / ${n(popCap)}</strong><em>Sustento y vivienda</em></article>
+    <article class="domain-ledger-card"><small>TIERRAS</small><strong>${n(r.land)}</strong><em>${n(r.wilderness)} salvajes · ${landPct}% desarrollado</em></article>
+    <article class="domain-ledger-card"><small>ASCENDENCIA</small><strong>${n(r.net_power)}</strong><em>Fuerza global del reino</em></article>
+  </section>
 
-  <div class="realm-lower-grid">
+  <section class="panel domain-governance" id="domain-governance">
+    <div class="panel-title-row domain-section-head">
+      <div><span class="section-kicker">GOBIERNO DEL DOMINIO</span><h3>Ordena cómo emplear los turnos</h3><p>Las órdenes económicas se resuelven en servidor. Elige cuántos turnos gastar y qué prioridad debe seguir el reino.</p></div>
+      <label class="domain-turn-picker">TURNOS<input id="econ-turns" type="number" min="1" max="50" value="1" inputmode="numeric"></label>
+    </div>
+    <div class="domain-order-grid">
+      <button class="domain-order-card" type="button" data-domain-econ="NONE"><span>◈</span><div><strong>Administrar reino</strong><small>Desarrollo equilibrado sin forzar una prioridad extraordinaria.</small></div><b>NORMAL</b></button>
+      <button class="domain-order-card" type="button" data-domain-econ="TAX"><span>¤</span><div><strong>Recaudar impuestos</strong><small>Concentra la actividad del dominio en aumentar el tesoro de Oro.</small></div><b>ORO</b></button>
+      <button class="domain-order-card" type="button" data-domain-econ="MP_CHARGE"><span>✦</span><div><strong>Canalizar maná</strong><small>Concentra la actividad del dominio en recuperar la reserva arcana.</small></div><b>MANÁ</b></button>
+    </div>
+    <div class="domain-rule-strip">
+      <span><small>INVESTIGACIÓN</small><strong>${n(researchRate)} RP/t</strong><em>con ${n(b.guilds)} Gremios</em></span>
+      <span><small>EDIFICIOS</small><strong>${n(totalBuilt)}</strong><em>estructuras levantadas</em></span>
+      <span><small>TIERRA LIBRE</small><strong>${n(r.wilderness)}</strong><em>acres para construir</em></span>
+      <span><small>FORTALEZAS</small><strong>${n(b.fortresses)}</strong><em>${Number(b.fortresses||0)>0?"defensa activa":"prioridad crítica"}</em></span>
+    </div>
+  </section>
+
+  <section class="panel domain-construction" id="domain-construction">
+    <div class="panel-title-row domain-section-head">
+      <div><span class="section-kicker">CONSTRUCCIÓN</span><h3>Levanta la infraestructura del reino</h3><p>Convierte tierra salvaje en capacidad económica, investigación y defensa. Los Talleres reducen el coste efectivo de futuras obras.</p></div>
+      <div class="domain-construction-metric"><small>TIERRA SALVAJE</small><strong>${n(r.wilderness)}</strong></div>
+    </div>
+    <div class="domain-building-grid">${buildingCards}</div>
+    <div id="build-plan-warning" class="notice error hidden construction-warning">Las Barreras deben construirse en una orden separada.</div>
+    <div class="domain-build-actionbar">
+      <div id="build-plan-summary" class="build-plan-summary"><span>LOTE PREPARADO</span><strong>Sin selección</strong><small>Indica cuántos edificios quieres levantar.</small></div>
+      <button id="build-button" class="primary-action build-submit" disabled>✦ CONSTRUIR LOTE</button>
+    </div>
+  </section>
+
+  <div class="realm-lower-grid domain-status-grid">
     <section class="panel realm-capacity-panel">
-      <div class="panel-title-row"><div><span class="section-kicker">CAPACIDAD DEL DOMINIO</span><h3>Reservas y límites</h3></div><span class="muted">Actualizado ahora</span></div>
+      <div class="panel-title-row"><div><span class="section-kicker">CAPACIDAD</span><h3>Límites del reino</h3></div><span class="muted">Estado actual</span></div>
       ${realmBar("Población",r.population,popCap,{dangerBelow:15,warnBelow:30,dangerAbove:98,warnAbove:90})}
       ${realmBar("Maná",r.mana,c.mana,{dangerBelow:10,warnBelow:25,dangerAbove:98,warnAbove:90})}
       ${realmBar("Terreno desarrollado",built,r.land,{dangerBelow:20,warnBelow:45})}
@@ -140,35 +174,38 @@ function renderRealm(){
         <div><small>Cap. maná</small><strong>${n(c.mana)}</strong></div>
       </div>
     </section>
-
     <section class="panel realm-alert-panel">
-      <div class="panel-title-row"><div><span class="section-kicker">VIGILANCIA</span><h3>Alertas del dominio</h3></div><span class="alert-count">${alerts.length}</span></div>
+      <div class="panel-title-row"><div><span class="section-kicker">VIGILANCIA</span><h3>Problemas que requieren atención</h3></div><span class="alert-count">${alerts.length}</span></div>
       <div class="realm-alert-list">${alerts.map(a=>`<article class="realm-alert ${a.tone}"><span></span><div><strong>${esc(a.title)}</strong><p>${esc(a.text)}</p></div></article>`).join("")}</div>
     </section>
   </div>
 
-  <section class="panel realm-growth-panel">
-    <div class="panel-title-row">
-      <div><span class="section-kicker">EXPANSIÓN</span><h3>Progreso del dominio</h3></div>
+  <section class="panel realm-growth-panel domain-expansion" id="domain-expansion">
+    <div class="panel-title-row domain-section-head">
+      <div><span class="section-kicker">EXPANSIÓN TERRITORIAL</span><h3>Explora más allá de tus fronteras</h3><p>Explorar gasta turnos y añade tierra salvaje. Después tendrás que construir sobre ella para que produzca.</p></div>
       <strong class="growth-stage">${esc(progression.name)}</strong>
     </div>
     <div class="growth-track"><span style="width:${progressionPct}%"></span></div>
     <div class="growth-meta"><span>${n(r.land)} acres actuales</span><span>${progression.level>=4?"Máximo de exploración alcanzado":`Siguiente hito: ${n(progression.next)} acres`}</span></div>
-    <div class="action-panel realm-explore-panel">
-      <label>Turnos para explorar<input id="realm-explore-turns" type="number" min="1" max="50" value="1"></label>
+    <div class="action-panel realm-explore-panel domain-explore-action">
+      <label>TURNOS<input id="realm-explore-turns" type="number" min="1" max="50" value="1" inputmode="numeric"></label>
       <button id="realm-explore-button" class="primary-action">✦ EXPLORAR NUEVAS TIERRAS</button>
     </div>
   </section>`;
 
-  document.querySelectorAll("[data-quick]").forEach(btn=>btn.addEventListener("click",()=>navigate(btn.dataset.quick)));
-  $("#realm-explore-button").addEventListener("click",()=>doExplore($("#realm-explore-button"),"realm-explore-turns"));
+  $$("[data-domain-jump]").forEach(btn=>btn.addEventListener("click",()=>{
+    document.getElementById(btn.dataset.domainJump)?.scrollIntoView({behavior:"smooth",block:"start"});
+  }));
+  $$("[data-domain-econ]").forEach(btn=>btn.addEventListener("click",()=>{
+    if(typeof doEconomy==="function")doEconomy(btn.dataset.domainEcon,btn);
+  }));
+  $("#realm-explore-button")?.addEventListener("click",()=>doExplore($("#realm-explore-button"),"realm-explore-turns"));
   $("#realm-domain-edit")?.addEventListener("click",editRealmDomainName);
+  $$("[data-building]").forEach(input=>input.addEventListener("input",()=>{if(typeof refreshBuildPlan==="function")refreshBuildPlan();}));
+  $("#build-button")?.addEventListener("click",()=>{if(typeof doBuild==="function")doBuild($("#build-button"));});
+  if(typeof refreshBuildPlan==="function")refreshBuildPlan();
+
   loadRealmDomain().then(()=>{
     if(currentView==="realm")paintRealmDomainIdentity();
   }).catch(()=>{});
-
-  $("#realm-tip-action").addEventListener("click",()=>{
-    const target=Number(r.wilderness||0)>=80?"build":Number(b.guilds||0)<5?"build":Number(b.barracks||0)<1?"build":Number(r.turns||0)>=20&&Number(r.land||0)<3500?"economy":"economy";
-    navigate(target);
-  });
 }
