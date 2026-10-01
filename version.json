@@ -1,8 +1,6 @@
 {
   "version": "0.3.11",
   "channel": "beta",
-  "updated_at": "2026-10-01T09:20:00+02:00",
-  "note": "Personaje ya es una pagina independiente y no reutiliza la ficha emergente",
-  "updatedAt": "2026-10-01T09:20:00+02:00",
-  "notes": "Corrige el bloqueo de arranque y limpia el logotipo de acceso."
+  "updated_at": "2026-10-01T09:35:00+02:00",
+  "note": "Ficha de Personaje reconstruida desde cero: solo logica jugable del Archimago"
 }
