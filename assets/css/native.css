@@ -43,3 +43,9 @@ html.arcanum-immersive body {
   min-height: 100dvh;
   background: #020202;
 }
+
+/* Taberna is intentionally hidden until the feature is ready for players. */
+#main-nav [data-view="tavern"],
+#mobile-nav [data-view="tavern"] {
+  display: none !important;
+}
