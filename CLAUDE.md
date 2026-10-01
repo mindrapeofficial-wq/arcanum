@@ -246,6 +246,7 @@ Read these instead of reverse-engineering game rules from UI labels:
 - `docs/LOOT_LOOP.md` — loot progression loop
 - `docs/PVE_EXPEDITIONS.md` — PvE/Expeditions
 - `docs/archmage-progression.md` — progression details
+- `docs/DUEL_CATALOG.md` — duel abilities, weapons, grades and compatibility rules
 
 If code and documentation conflict, **do not guess**. Prefer the newest explicit product decision plus the current server contract, then update the stale documentation as part of the same change.
 

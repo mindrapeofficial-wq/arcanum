@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { loadEngine } from "./lib/duel-engine.mjs";
 
 const SUPABASE_HOST = "mrmvmoyysxuopqexbxfk.supabase.co";
 const COMMUNITY_HOST = "mrmvmoyysxuopqexbxfk.supabase.co";
@@ -699,4 +700,50 @@ test("Expediciones inicia una incursión persistente y arrastra vida entre salas
   expect(mock.calls.some(x=>x.path==="state/pve/fight")).toBeTruthy();
   expect(mock.calls.some(x=>x.path==="state/pve/choose")).toBeTruthy();
   expect(errors).toEqual([]);
+});
+
+test("Personaje ofrece las opciones de evolución del servidor con rareza, y permite elegir", async ({page})=>{
+  const engine=loadEngine();
+  const raw=engine.baseProfile("E2E_TESTER","ascendant");
+  raw.levelBonuses=[];
+  const posted=[];
+  let current=raw;
+  const view=()=>engine.evolutionView(current,4);
+  await installMocks(page);
+  // Registered after installMocks, so these routes take precedence for the evolution endpoints.
+  await page.route(/\/functions\/v1\/arcanum-state\/(snapshot|combat\/evolve)(\?.*)?$/, async route=>{
+    const req=route.request(),url=new URL(req.url());
+    if(req.method()==="GET"&&url.pathname.endsWith("/snapshot")){
+      return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({
+        combat:current,arena:{rating:1000,wins:0,losses:0,seals_remaining:6},history:[],server_day:"2026-10-01",evolution_view:view()
+      })});
+    }
+    if(req.method()==="POST"&&url.pathname.endsWith("/combat/evolve")){
+      const body=JSON.parse(req.postData()||"{}");
+      posted.push(body);
+      const option=engine.evolutionOptions(current,Number(body.level)).find(o=>o.id===body.option_id);
+      if(!option)return route.fulfill({status:409,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({error:"EVOLUTION_OPTION_INVALID"})});
+      current={...current,levelBonuses:current.levelBonuses.concat([{level:Number(body.level),id:option.id,kind:option.kind,title:option.title,desc:option.desc,effect:option.effect}])};
+      return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({combat:current,chosen:option,evolution_view:view()})});
+    }
+    return route.fallback();
+  });
+  page.on("dialog",dialog=>dialog.accept());
+  await page.goto("/");
+  await page.locator("#username").fill("E2E_TESTER");
+  await page.locator("#password").fill("prueba-segura");
+  await page.locator("#submit-button").click();
+  await expect(page.locator("#game-view")).toBeVisible();
+  await expect(page.locator(".character-brute-layout")).toBeVisible();
+  const pending=page.locator(".combat-evolution.pending");
+  await expect(pending).toContainText("EVOLUCIÓN PENDIENTE · NIVEL 2");
+  const options=pending.locator("[data-combat-evolution]");
+  await expect(options).toHaveCount(2);
+  const expected=engine.evolutionOptions(raw,2);
+  for(const o of expected)await expect(pending).toContainText(o.title);
+  await options.first().click();
+  await expect(page.locator(".toast").last()).toContainText("Evolución elegida");
+  expect(posted).toHaveLength(1);
+  expect(posted[0]).toEqual({level:2,option_id:expected[0].id});
+  await expect(page.locator(".combat-evolution.pending")).toContainText("EVOLUCIÓN PENDIENTE · NIVEL 3");
 });

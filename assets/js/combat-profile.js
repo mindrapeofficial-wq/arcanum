@@ -66,6 +66,19 @@ function combatRng(seed){
 function combatPick(rng,arr){return arr[Math.floor(rng()*arr.length)]}
 function combatClone(value){return JSON.parse(JSON.stringify(value))}
 const combatServerCache=new Map();
+const combatViewCache=new Map();
+const COMBAT_GRADE_ROMAN=["","I","II","III"];
+function combatCacheView(name,view){
+  if(name&&view)combatViewCache.set(combatNameKey(name),combatClone(view));
+  return view;
+}
+function combatViewFor(profileOrName){
+  const name=typeof profileOrName==="string"?profileOrName:(profileOrName?.mage_name||realmState?.realm?.mage_name||"");
+  return combatViewCache.get(combatNameKey(name))||null;
+}
+function combatAbilityTitle(a){
+  return esc(a.name||"Habilidad")+(Number(a.grade)>1?' <small class="combat-grade">Grado '+COMBAT_GRADE_ROMAN[Math.min(3,Number(a.grade))]+'</small>':"");
+}
 function combatNameKey(name){return String(name||"anon").trim().toLowerCase()}
 function combatProfileKey(name){return "arcanum_combat_profile_v1_"+combatNameKey(name).replace(/[^a-z0-9_-]+/g,"_")}
 function combatCurrentLevel(profile){
@@ -86,19 +99,23 @@ async function combatHydrateProfile(profile){
   const name=profile?.mage_name||realmState?.realm?.mage_name||"";
   if(!name)return null;
   if(profile?.is_self){
-    const snap=await stateApi("/snapshot");
+    let snap=await stateApi("/snapshot");
     let combat=combatCacheProfile(snap?.combat);
+    combatCacheView(name,snap?.evolution_view);
     const legacy=combatLegacyRaw(name);
     if((combat?.levelBonuses||[]).length===0&&(legacy?.levelBonuses||[]).length){
       const choices=(legacy.levelBonuses||[]).map(function(x){return {level:Number(x.level),option_id:String(x.id||"")}}).filter(function(x){return x.level>=2&&x.option_id});
       if(choices.length){
         const migrated=await stateApi("/combat/import-legacy",{method:"POST",body:{choices:choices}});
         combat=combatCacheProfile(migrated?.combat||combat);
+        snap=await stateApi("/snapshot");
+        combatCacheView(name,snap?.evolution_view);
       }
     }
     return combat;
   }
   const data=await stateApi("/combat/"+encodeURIComponent(name));
+  combatCacheView(name,data?.evolution_view);
   return combatCacheProfile(data?.combat);
 }
 function combatBaseProfile(name,school){
@@ -161,8 +178,13 @@ function combatApplyBonus(state,bonus){
   const effect=bonus?.effect||{};
   if(effect.type==="stat"&&COMBAT_STAT_META[effect.stat]){
     state.stats[effect.stat]=Number(state.stats[effect.stat]||0)+Number(effect.amount||0);
+  }else if(effect.type==="stats2"&&Array.isArray(effect.stats)){
+    effect.stats.forEach(function(x){if(COMBAT_STAT_META[x?.stat])state.stats[x.stat]=Number(state.stats[x.stat]||0)+Number(x.amount||0)});
+  }else if(effect.type==="ability_upgrade"){
+    const owned=state.abilities.find(function(x){return x.id===effect.id});
+    if(owned)owned.grade=Math.min(3,(Number(owned.grade)||1)+1);
   }else if(effect.type==="ability"&&effect.ability){
-    if(!state.abilities.some(function(x){return x.id===effect.ability.id}))state.abilities.push(combatClone(effect.ability));
+    if(!state.abilities.some(function(x){return x.id===effect.ability.id}))state.abilities.push(Object.assign(combatClone(effect.ability),{grade:1}));
   }else if(effect.type==="weapon"&&effect.weapon){
     state.weapon=combatClone(effect.weapon);
   }else if(effect.type==="trait"&&effect.trait){
@@ -182,7 +204,13 @@ function combatEffective(raw,maxLevel=Infinity){
   return state;
 }
 function getCombatProfile(profileOrRealm){
-  return combatEffective(combatLoadRaw(profileOrRealm));
+  const state=combatEffective(combatLoadRaw(profileOrRealm));
+  const view=combatViewFor(profileOrRealm?.mage_name||realmState?.realm?.mage_name||"")?.abilities||[];
+  state.abilities=(state.abilities||[]).map(function(a){
+    const v=view.find(function(x){return x.id===a.id});
+    return Object.assign({},a,{grade:Number(v?.grade||a.grade)||1,detail:v?.detail||""});
+  });
+  return state;
 }
 function combatTraitMods(c){
   const traits=[c.trait].concat(c.bonusTraits||[]).filter(Boolean);
@@ -291,6 +319,11 @@ function combatWeaponEvolution(rng,raw,state,level){
   };
 }
 function combatEvolutionOptions(profile,level){
+  const pending=combatViewFor(profile)?.pending;
+  if(pending&&Number(pending.level)===Number(level))return Array.isArray(pending.options)?pending.options:[];
+  return [];
+}
+function combatLegacyEvolutionOptions(profile,level){
   const raw=combatLoadRaw(profile);
   const before=combatEffective(raw,Number(level)-1);
   const rng=combatRng(raw.seed+"|evolution|"+level+"|two-paths-v1");
@@ -324,6 +357,7 @@ async function combatChooseEvolution(profile,level,optionId){
   if(!option)throw new Error("La opción de evolución ya no es válida.");
   const data=await stateApi("/combat/evolve",{method:"POST",body:{level:level,option_id:optionId}});
   combatCacheProfile(data?.combat);
+  combatCacheView(profile.mage_name,data?.evolution_view);
   return data?.chosen||option;
 }
 function renderCombatEvolution(profile){
@@ -335,10 +369,11 @@ function renderCombatEvolution(profile){
   let choice="";
   if(pending){
     const options=combatEvolutionOptions(profile,pending);
-    choice='<section class="combat-evolution pending"><div class="profile-section-title"><span>EVOLUCIÓN PENDIENTE · NIVEL '+pending+'</span><small>'+(level-pending+1)+' elección'+(level-pending+1===1?"":"es")+' pendiente'+(level-pending+1===1?"":"s")+'</small></div>'+
+    if(!options.length)choice='<section class="combat-evolution pending"><div class="profile-section-title"><span>EVOLUCIÓN PENDIENTE · NIVEL '+pending+'</span></div><p class="combat-evolution-intro">No se pudieron cargar las opciones desde el servidor. Recarga la página para continuar.</p></section>';
+    else choice='<section class="combat-evolution pending"><div class="profile-section-title"><span>EVOLUCIÓN PENDIENTE · NIVEL '+pending+'</span><small>'+(level-pending+1)+' elección'+(level-pending+1===1?"":"es")+' pendiente'+(level-pending+1===1?"":"s")+'</small></div>'+
       '<p class="combat-evolution-intro">Elige un destino. La otra posibilidad desaparecerá para este Arconte.</p>'+
       '<div class="combat-choice-grid">'+options.map(function(o){
-        return '<button type="button" class="combat-choice" data-combat-evolution="'+esc(o.id)+'" data-combat-level="'+pending+'"><i>'+esc(o.icon)+'</i><span><small>'+esc(o.kind.toUpperCase())+'</small><strong>'+esc(o.title)+'</strong><em>'+esc(o.desc)+'</em></span><b>ELEGIR</b></button>';
+        return '<button type="button" class="combat-choice" data-combat-evolution="'+esc(o.id)+'" data-combat-level="'+pending+'"><i>'+esc(o.icon)+'</i><span><small>'+esc(o.kind.toUpperCase())+(o.rarity?' · '+esc(o.rarity)+' ('+esc(String(o.chance).replace(".",","))+'% de aparecer)':'')+'</small><strong>'+esc(o.title)+'</strong><em>'+esc(o.desc)+'</em></span><b>ELEGIR</b></button>';
       }).join("")+'</div></section>';
   }else if(level>=2){
     choice='<section class="combat-evolution complete"><div class="profile-section-title"><span>EVOLUCIÓN</span><small>destinos al día</small></div><p class="combat-evolution-intro">Has resuelto todas las elecciones disponibles hasta el nivel '+level+'.</p></section>';
@@ -352,7 +387,7 @@ function renderCombatIdentity(profile,serverDerived=null){
   const c=getCombatProfile(profile),localDerived=combatDerived(profile);
   const d=serverDerived&&Number.isFinite(Number(serverDerived.maxHp))?serverDerived:localDerived;
   const stats=Object.entries(c.stats).map(function(entry){return '<div class="combat-stat"><small>'+esc(COMBAT_STAT_META[entry[0]])+'</small><strong>'+n(entry[1])+'</strong></div>'}).join("");
-  const abilities=c.abilities.map(function(a){return '<div class="combat-ability"><strong>'+esc(a.name)+'</strong><span>'+esc(a.desc)+'</span></div>'}).join("");
+  const abilities=c.abilities.map(function(a){return '<div class="combat-ability"><strong>'+combatAbilityTitle(a)+'</strong><span>'+esc(a.desc)+'</span>'+(a.detail?'<em class="combat-ability-detail">'+esc(a.detail)+'</em>':'')+'</div>'}).join("");
   const traits=[c.trait].concat(c.bonusTraits||[]).filter(Boolean);
   const traitText=traits.map(function(t){return '<span class="combat-trait-chip"><b>'+esc(t.name)+'</b><small>'+esc(t.desc)+'</small></span>'}).join("");
   return '<section class="combat-identity"><div class="profile-section-title"><span>CARACTERÍSTICAS DE DUELO</span><small>perfil persistente del mismo Arconte</small></div>'+
