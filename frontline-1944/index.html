@@ -3,170 +3,124 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#10110d">
-  <title>FRONTLINE 1944</title>
-  <meta name="description" content="Estrategia narrativa histórica de la Segunda Guerra Mundial desde el puesto de mando de un general alemán del Heer.">
-  <link rel="icon" href="logo-official.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#0c0b08">
+  <title>FRONTLINE 1944 · Campaña histórica</title>
+  <meta name="description" content="Estrategia narrativa histórica de la Segunda Guerra Mundial desde la perspectiva de un general del Heer.">
   <link rel="stylesheet" href="styles.css?v=0.3.0">
 </head>
 <body>
   <div class="grain" aria-hidden="true"></div>
 
-  <main id="auth-view" class="auth-screen">
-    <section class="auth-shell">
-      <div class="auth-hero">
-        <img class="official-logo auth-logo" src="logo-official.svg" alt="FRONTLINE 1944">
-        <p class="auth-kicker">ESTRATEGIA NARRATIVA HISTÓRICA · TIERRA</p>
-        <h1>La guerra llega a tu mesa de mando.</h1>
-        <p class="auth-copy">Recibe informes, coordina a tu Estado Mayor, administra recursos militares y toma decisiones dentro de campañas reconstruidas capítulo a capítulo.</p>
-        <div class="auth-principles">
-          <span>HISTORIA DOCUMENTADA</span>
-          <span>INFORMACIÓN IMPERFECTA</span>
-          <span>DECISIONES CON CONSECUENCIAS</span>
-        </div>
+  <main id="auth-shell" class="auth-shell">
+    <div class="auth-photo" aria-hidden="true"></div>
+    <div class="auth-overlay" aria-hidden="true"></div>
+    <section class="auth-card">
+      <img class="official-logo" src="official-logo.svg?v=0.3.0" alt="FRONTLINE 1944">
+      <p class="auth-kicker">ESTRATEGIA NARRATIVA HISTÓRICA · TIERRA</p>
+      <p class="auth-intro">Recibe informes, dirige formaciones, administra recursos militares y toma decisiones con información incompleta. La campaña comienza en Polonia, septiembre de 1939.</p>
+
+      <div class="auth-tabs" role="tablist">
+        <button id="login-tab" class="auth-tab active" type="button">ENTRAR</button>
+        <button id="register-tab" class="auth-tab" type="button">REGISTRO</button>
       </div>
 
-      <section class="auth-card" aria-label="Acceso a FRONTLINE 1944">
-        <div class="auth-tabs" role="tablist">
-          <button id="login-tab" class="auth-tab active" type="button">ENTRAR</button>
-          <button id="register-tab" class="auth-tab" type="button">REGISTRO</button>
-        </div>
+      <form id="auth-form" class="auth-form" novalidate>
+        <label>
+          <span>Usuario</span>
+          <input id="auth-user" autocomplete="username" minlength="3" maxlength="24" required placeholder="Nombre de comandante">
+        </label>
+        <label>
+          <span>Contraseña</span>
+          <input id="auth-password" type="password" autocomplete="current-password" minlength="4" required placeholder="••••••••">
+        </label>
+        <label id="confirm-wrap" class="hidden">
+          <span>Repite la contraseña</span>
+          <input id="auth-confirm" type="password" autocomplete="new-password" minlength="4" placeholder="••••••••">
+        </label>
+        <div id="auth-notice" class="auth-notice hidden"></div>
+        <button id="auth-submit" class="primary auth-submit" type="submit">ENTRAR AL PUESTO DE MANDO</button>
+      </form>
 
-        <form id="auth-form" class="auth-form">
-          <label>
-            <span>Usuario</span>
-            <input id="auth-username" autocomplete="username" minlength="3" maxlength="24" required placeholder="Nombre de mando">
-          </label>
-          <label>
-            <span>Contraseña</span>
-            <input id="auth-password" type="password" autocomplete="current-password" minlength="4" required placeholder="••••••••">
-          </label>
-          <label id="confirm-row" class="hidden">
-            <span>Repite la contraseña</span>
-            <input id="auth-confirm" type="password" autocomplete="new-password" minlength="4" placeholder="••••••••">
-          </label>
-          <div id="auth-notice" class="notice hidden" role="status"></div>
-          <button id="auth-submit" class="primary auth-submit" type="submit">ENTRAR AL CUARTEL GENERAL</button>
-        </form>
-
-        <small class="prototype-note">Prototipo web: la cuenta y el progreso se guardan en este navegador.</small>
-      </section>
+      <div class="auth-foot">
+        <small>Prototipo: las cuentas se guardan localmente en este navegador. No se envían credenciales a un servidor.</small>
+        <small>Fotografía histórica: Bundesarchiv, Bild 101I-012-0035-11A / Wagner / CC-BY-SA 3.0 DE.</small>
+      </div>
     </section>
   </main>
 
-  <main id="menu-view" class="menu-screen hidden">
-    <section class="menu-card">
-      <img class="official-logo menu-logo" src="logo-official.svg" alt="FRONTLINE 1944">
-      <div class="menu-userline">
-        <span>PERFIL DE MANDO</span>
-        <strong id="menu-username">Comandante</strong>
-      </div>
-
-      <section class="chapter-card">
-        <div class="chapter-number">CAPÍTULO I</div>
-        <div class="chapter-copy">
-          <span>1 SEPTIEMBRE 1939</span>
-          <h2>POLONIA · FALL WEISS</h2>
-          <p>Comienza la guerra en Europa. Asume el puesto de Gerd von Rundstedt al frente de Heeresgruppe Süd y dirige los ejércitos 8.º, 10.º y 14.º dentro de una campaña histórica con decisiones divergentes.</p>
-          <div class="chapter-tags">
-            <b>TIERRA</b><b>HEER</b><b>1939</b><b>HISTÓRICO</b>
-          </div>
-        </div>
-      </section>
-
-      <div class="menu-actions">
-        <button id="new-campaign" class="primary menu-action">NUEVA CAMPAÑA</button>
-        <button id="continue-campaign" class="menu-action">CONTINUAR</button>
-        <button id="archive-button" class="menu-action">ARCHIVO HISTÓRICO</button>
-        <button id="logout-button" class="ghost menu-action">CERRAR SESIÓN</button>
-      </div>
-      <div id="campaign-status" class="campaign-status"></div>
-    </section>
-  </main>
-
-  <main id="game-view" class="hidden">
+  <main id="game-shell" class="game-shell hidden">
     <header class="topbar">
-      <button id="menu-button" class="brand brand-button" type="button" title="Volver al menú">
-        <img class="brand-logo" src="logo-official.svg" alt="">
-        <div><strong>FRONTLINE 1944</strong><small id="chapter-label">CAPÍTULO I · POLONIA 1939</small></div>
-      </button>
-      <div class="campaign-clock">
-        <span id="campaign-mode">HISTÓRICO · TIERRA</span>
-        <strong id="campaign-date">1 SEP 1939 · 04:30</strong>
+      <div class="brand">
+        <img src="official-logo.svg?v=0.3.0" alt="" class="brand-logo">
+        <div><strong>FRONTLINE 1944</strong><small id="chapter-header">CAPÍTULO I · FALL WEISS</small></div>
       </div>
+      <div class="campaign-clock"><span id="scene-date">31 AGO 1939</span><strong id="scene-time">23:35</strong></div>
       <div class="top-actions">
-        <span id="game-username" class="game-user"></span>
+        <button id="chapters-button" class="ghost">CAPÍTULOS</button>
         <button id="sources-button" class="ghost">FUENTES</button>
-        <button id="save-menu-button" class="ghost">GUARDAR Y SALIR</button>
+        <button id="logout-button" class="ghost">SALIR</button>
       </div>
     </header>
+
+    <section class="chapter-ribbon">
+      <div><span>CAMPAÑA</span><strong id="chapter-title">CAPÍTULO I · FALL WEISS</strong><small id="chapter-subtitle">Polonia · 1 de septiembre de 1939</small></div>
+      <div class="historical-warning">CONTEXTO HISTÓRICO DOCUMENTADO · LAS DECISIONES DEL JUGADOR PUEDEN CREAR DIVERGENCIAS</div>
+    </section>
 
     <section class="war-room">
       <aside class="left-rail">
         <section class="panel commander-card">
-          <span class="eyebrow">TU PUESTO DE MANDO</span>
-          <h1 id="commander-name">Generaloberst Gerd von Rundstedt</h1>
-          <p id="commander-command">Heeresgruppe Süd · Heer</p>
-          <div class="command-seal">
-            <span>OPERACIÓN</span>
-            <strong id="theater-label">POLONIA 1939 · FALL WEISS</strong>
-            <small id="chief-of-staff">JEFE DE ESTADO MAYOR · ERICH VON MANSTEIN</small>
-          </div>
+          <span class="eyebrow">TU MANDO</span>
+          <h1 id="commander-name">Heinz Guderian</h1>
+          <p id="commander-command">XIX. Armeekorps (mot.)</p>
+          <div class="command-seal"><span>CADENA DE MANDO</span><strong>4. ARMEE</strong><small>HEERESGRUPPE NORD</small></div>
         </section>
 
         <section class="panel">
-          <div class="panel-title"><span>SITUACIÓN DEL GRUPO DE EJÉRCITOS</span><b>ESTIMACIÓN</b></div>
+          <div class="panel-title"><span>SITUACIÓN OPERACIONAL</span><b>INDICADORES</b></div>
           <div class="resources">
             <div><small>MANDO</small><strong id="res-command">8</strong></div>
-            <div><small>COMUNICACIONES</small><strong id="res-communications">76%</strong></div>
-            <div><small>LOGÍSTICA</small><strong id="res-logistics">78%</strong></div>
-            <div><small>COMBUSTIBLE</small><strong id="res-fuel">82%</strong></div>
-            <div><small>MUNICIÓN</small><strong id="res-ammunition">86%</strong></div>
-            <div><small>RESERVAS</small><strong id="res-reserves">74%</strong></div>
-            <div><small>MORAL</small><strong id="res-morale">81%</strong></div>
-            <div><small>INTELIGENCIA</small><strong id="res-intelligence">64%</strong></div>
+            <div><small>COMUNICACIONES</small><strong id="res-communications">78%</strong></div>
+            <div><small>COMBUSTIBLE</small><strong id="res-fuel">86%</strong></div>
+            <div><small>MUNICIÓN</small><strong id="res-ammunition">88%</strong></div>
+            <div><small>RITMO DE MARCHA</small><strong id="res-movement">82%</strong></div>
+            <div><small>COHESIÓN</small><strong id="res-cohesion">84%</strong></div>
+            <div><small>RECONOCIMIENTO</small><strong id="res-reconnaissance">49%</strong></div>
+            <div><small>FATIGA</small><strong id="res-fatigue">8%</strong></div>
           </div>
+          <p class="prototype-note">Estos porcentajes son indicadores de prototipo. Se sustituirán progresivamente por existencias, kilómetros, vehículos, toneladas y tiempos documentados.</p>
         </section>
 
         <section class="panel formations-panel">
-          <div class="panel-title"><span>FORMACIONES</span><b>BAJO TU MANDO</b></div>
+          <div class="panel-title"><span>FORMACIONES DEL CUERPO</span><b>1 SEP 1939</b></div>
           <div id="formations-list" class="formations-list"></div>
         </section>
       </aside>
 
       <section class="center-stage">
-        <section class="panel dossier-panel" id="dossier-panel">
-          <div class="dossier-head">
-            <div><span class="eyebrow">DOSSIER DE CAMPAÑA</span><h2>Europa entra en guerra</h2></div>
-            <button id="close-dossier" class="ghost">ABRIR PRIMER PARTE</button>
+        <section id="dossier-panel" class="panel dossier-panel">
+          <div class="dossier-photo">
+            <img id="dossier-map" alt="Mapa histórico de la campaña de Polonia de 1939">
+            <div class="dossier-stamp">FALL WEISS<br>1939</div>
           </div>
-          <div id="campaign-context" class="campaign-context"></div>
+          <div class="dossier-content">
+            <span class="eyebrow">DOSSIER HISTÓRICO</span>
+            <h2>Europa entra en guerra</h2>
+            <div id="dossier-text"></div>
+            <button id="start-chapter" class="primary">ABRIR PRIMER PARTE DE SITUACIÓN</button>
+          </div>
         </section>
 
-        <section class="panel situation-panel hidden" id="situation-panel">
+        <section id="situation-panel" class="panel situation-panel hidden">
           <div class="situation-head">
-            <div>
-              <span class="eyebrow">SITUATIONSMELDUNG</span>
-              <h2 id="scene-title">Fall Weiss entra en ejecución</h2>
-            </div>
-            <div class="dispatch-meta">
-              <span id="scene-date">1 SEP 1939</span>
-              <strong id="scene-time">04:30</strong>
-            </div>
+            <div><span class="eyebrow">SITUATIONSMELDUNG</span><h2 id="scene-title">La orden entra en vigor</h2></div>
+            <div class="dispatch-meta"><span id="dispatch-date">31 AGO 1939</span><strong id="dispatch-time">23:35</strong></div>
           </div>
-
-          <div class="dispatch-strip">
-            <span id="scene-from">Cuartel General · Heeresgruppe Süd</span>
-            <b id="scene-urgency">ORDEN DE OPERACIONES</b>
-          </div>
-
+          <div class="dispatch-strip"><span id="scene-from">4. Armee · Estado Mayor</span><b id="scene-urgency">GEHEIME KOMMANDOSACHE</b></div>
           <article id="scene-body" class="scene-body"></article>
 
           <section class="historical-box">
-            <div class="historical-head">
-              <span>REGISTRO DOCUMENTAL</span>
-              <b id="scene-classification">HECHO HISTÓRICO + DECISIÓN DEL JUGADOR</b>
-            </div>
+            <div class="historical-head"><span>REGISTRO DOCUMENTAL</span><b id="scene-classification">HECHO HISTÓRICO + RECONSTRUCCIÓN</b></div>
             <div id="historical-facts" class="historical-facts"></div>
           </section>
 
@@ -174,83 +128,54 @@
           <div id="decision-result" class="decision-result hidden"></div>
         </section>
 
-        <section class="panel map-panel">
-          <div class="panel-title">
-            <span>MAPA DE SITUACIÓN · INFORMACIÓN IMPERFECTA</span>
-            <b>NO ES UNA VISTA OMNISCIENTE</b>
-          </div>
-          <div class="map-wrap">
-            <svg id="situation-map" viewBox="0 0 860 540" aria-label="Mapa operacional simplificado de la campaña de Polonia">
-              <defs>
-                <filter id="map-shadow" x="-30%" y="-30%" width="160%" height="160%">
-                  <feDropShadow dx="0" dy="4" stdDeviation="5" flood-opacity=".35"/>
-                </filter>
-                <pattern id="map-grid" width="28" height="28" patternUnits="userSpaceOnUse">
-                  <path d="M28 0H0V28" fill="none" stroke="rgba(255,255,255,.035)" stroke-width="1"/>
-                </pattern>
-              </defs>
-              <path class="landmass" d="M88 70 L710 70 L800 165 L770 455 L570 500 L330 470 L125 400 L65 250 Z"/>
-              <rect x="54" y="52" width="760" height="458" fill="url(#map-grid)"/>
-              <g id="map-links"></g>
-              <g id="map-points"></g>
-            </svg>
-          </div>
-          <div class="map-legend">
-            <span><i class="marker german"></i> Posición propia</span>
-            <span><i class="marker contact"></i> Contacto</span>
-            <span><i class="marker unknown"></i> Información parcial</span>
-            <span><i class="marker hq"></i> Cuartel general</span>
+        <section class="panel archive-visuals">
+          <div class="archive-grid">
+            <figure>
+              <img id="archive-tank-photo" alt="Panzer I e infantería alemana en Polonia, septiembre de 1939">
+              <figcaption>Bundesarchiv · Panzer I e infantería en Polonia, septiembre de 1939.</figcaption>
+            </figure>
+            <figure>
+              <img id="archive-staff-photo" alt="Oficiales alemanes ante un mapa de situación en Varsovia, 1939">
+              <figcaption>Bundesarchiv · oficiales de Estado Mayor ante un mapa de situación, 1939.</figcaption>
+            </figure>
           </div>
         </section>
 
         <section class="panel journal-panel">
-          <div class="panel-title"><span>DIARIO DE ÓRDENES</span><b>CONSECUENCIAS</b></div>
+          <div class="panel-title"><span>DIARIO DE ÓRDENES</span><b>MEMORIA DE CAMPAÑA</b></div>
           <div id="decision-log" class="decision-log"></div>
         </section>
       </section>
 
       <aside class="right-rail">
         <section class="panel staff-panel">
-          <div class="panel-title"><span>ESTADO MAYOR</span><b>PERSONAL</b></div>
+          <div class="panel-title"><span>ESTADO MAYOR</span><b>XIX AK</b></div>
           <div id="staff-list" class="staff-list"></div>
         </section>
 
         <section class="panel intel-panel">
-          <div class="panel-title"><span>VALORACIÓN DE INTELIGENCIA</span><b id="intel-reliability">64%</b></div>
-          <p id="intel-text">Los informes de la primera mañana todavía están incompletos. El mapa muestra la mejor estimación disponible.</p>
+          <div class="panel-title"><span>IMAGEN DE INTELIGENCIA</span><b id="intel-reliability">49%</b></div>
+          <p id="intel-text">La información disponible antes del cruce de frontera es incompleta y pierde valor rápidamente con el movimiento.</p>
           <div class="confidence-scale"><span>RUMOR</span><span>PROBABLE</span><span>CONFIRMADO</span></div>
         </section>
 
-        <section class="panel philosophy-panel">
+        <section class="panel doctrine-panel">
           <span class="eyebrow">PRINCIPIO DE FRONTLINE</span>
-          <blockquote>El mapa muestra lo que tu Estado Mayor cree que está ocurriendo, no lo que realmente está ocurriendo.</blockquote>
+          <blockquote>El mapa no es la guerra. Es la interpretación que tu Estado Mayor consigue construir con información atrasada, incompleta y a veces equivocada.</blockquote>
         </section>
       </aside>
     </section>
   </main>
 
-  <dialog id="archive-dialog">
-    <div class="dialog-head">
-      <div><span class="eyebrow">ARCHIVO HISTÓRICO</span><h2>Capítulo I · Polonia 1939</h2></div>
-      <button class="ghost dialog-close" data-close="archive-dialog">CERRAR</button>
-    </div>
-    <div class="archive-body">
-      <p><strong>1 septiembre:</strong> Alemania invade Polonia.</p>
-      <p><strong>3 septiembre:</strong> Gran Bretaña y Francia declaran la guerra a Alemania.</p>
-      <p><strong>8 septiembre:</strong> fuerzas alemanas alcanzan las afueras de Varsovia.</p>
-      <p><strong>17 septiembre:</strong> la Unión Soviética invade Polonia oriental.</p>
-      <p><strong>6 octubre:</strong> se rinde la última gran formación operacional polaca.</p>
-      <p class="archive-note">El juego diferencia siempre entre cronología documentada y decisiones alternativas del jugador.</p>
-    </div>
+  <dialog id="sources-dialog">
+    <div class="dialog-head"><div><span class="eyebrow">ARCHIVO DOCUMENTAL</span><h2>Fuentes del capítulo</h2></div><button id="close-sources" class="ghost">CERRAR</button></div>
+    <p>Los hechos marcados como históricos se apoyan en estas fuentes. Las decisiones y sus consecuencias alternativas pertenecen a la simulación narrativa.</p>
+    <div id="sources-list" class="sources-list"></div>
   </dialog>
 
-  <dialog id="sources-dialog">
-    <div class="dialog-head">
-      <div><span class="eyebrow">ARCHIVO DOCUMENTAL</span><h2>Fuentes del capítulo</h2></div>
-      <button class="ghost dialog-close" data-close="sources-dialog">CERRAR</button>
-    </div>
-    <p class="dialog-copy">Los hechos marcados como históricos se apoyan en estas fuentes. Las decisiones y sus consecuencias alternativas pertenecen a la simulación.</p>
-    <div id="sources-list" class="sources-list"></div>
+  <dialog id="chapters-dialog">
+    <div class="dialog-head"><div><span class="eyebrow">CRONOLOGÍA</span><h2>Campañas</h2></div><button id="close-chapters" class="ghost">CERRAR</button></div>
+    <div id="chapters-list" class="chapters-list"></div>
   </dialog>
 
   <script src="data.js?v=0.3.0"></script>
