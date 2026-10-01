@@ -4,8 +4,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
 const CORE_URL="https://mrmvmoyysxuopqexbxfk.supabase.co";
 const CORE_KEY="sb_publishable_tZEPJi2v7Tp-xDuVa0qWRw_geizIGoD";
 const ALLOWED_ORIGINS=new Set(["https://arcanum-las-cinco-escuelas.onrender.com"]);
-// Admins are identified by auth user id, never by a claimable display name.
-const ADMIN_USER_IDS=new Set(["4fa0b39b-620a-409a-9fda-0eb65bcb332f"]);
+// Admin authorization lives in arcanum_admin_users, separate from game accounts.
 const db=createClient(Deno.env.get("SUPABASE_URL")!,Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,{auth:{persistSession:false,autoRefreshToken:false}});
 
 function cors(req:Request){
@@ -30,10 +29,12 @@ async function adminIdentity(req:Request){
   if(!u.ok) throw new Error("UNAUTHORIZED");
   const user=await u.json();
   const userId=String(user?.id||"");
-  if(!ADMIN_USER_IDS.has(userId)) throw new Error("FORBIDDEN");
-  const state=await coreRpc(token,"my_realm_state",{});
-  const username=String(state?.realm?.mage_name||"").trim();
-  return {userId,username,token};
+  const {data:admin,error:adminError}=await db.from("arcanum_admin_users").select("role,active").eq("user_id",userId).maybeSingle();
+  if(adminError)throw adminError;
+  if(!admin?.active) throw new Error("FORBIDDEN");
+  const state=await coreRpc(token,"my_realm_state",{}).catch(()=>null);
+  const username=String(state?.realm?.mage_name||user?.email||"admin").trim();
+  return {userId,username,token,role:String(admin.role||"admin")};
 }
 async function audit(who:any,action:string,targetType?:string,targetId?:string,payload:any={}){
   await db.from("arcanum_admin_audit").insert({actor_user_id:who.userId,actor_username:who.username,action,target_type:targetType||null,target_id:targetId||null,payload});
@@ -168,7 +169,7 @@ Deno.serve(async(req:Request)=>{
   try{
     if(req.method==="GET"&&p[0]==="public-status"){const m=await setting("maintenance");return json(req,{maintenance:m?.value||{enabled:false}})}
     const who=await adminIdentity(req);
-    if(req.method==="GET"&&p[0]==="me")return json(req,{admin:true,username:who.username});
+    if(req.method==="GET"&&p[0]==="me")return json(req,{admin:true,username:who.username,role:who.role});
     if(req.method==="GET"&&p[0]==="summary")return json(req,await summary());
     if(req.method==="GET"&&p[0]==="players")return json(req,{players:await players()});
     if(req.method==="GET"&&p[0]==="moderation")return json(req,await moderation());
