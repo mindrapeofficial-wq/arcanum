@@ -28,7 +28,7 @@ function profileSchoolName(code){
   return typeof schoolName==="function"?schoolName(canonical):(catalogs.schools.find(s=>s.code===canonical)?.name_es||code||"Escuela");
 }
 const PROFILE_SCHOOL_PORTRAITS={
-  verdant:{1:"assets/art/characters/verdante/viridia-level-1.png?v=0.3.24"},
+  verdant:{1:"assets/art/characters/verdante/viridia-profile-level-1.svg?v=0.3.25"},
   eradication:{1:"assets/art/characters/eradication/cineria-level-1.png?v=0.3.24"},
   phantasm:{1:"assets/art/characters/phantasm/oneiria-level-1.png?v=0.3.24"},
   ascendant:{1:"assets/art/characters/ascendant/aurea-level-1.png?v=0.3.24"},
