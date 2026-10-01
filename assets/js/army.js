@@ -118,6 +118,12 @@ async function renderArmy(){
   $("#army-art-image")?.addEventListener("error",()=>{clearArmyArtCache(signature);$("#army-art-image")?.classList.add("hidden");armyArtSetStatus("La imagen anterior ya no está disponible. Pulsa REGENERAR ARTE.");});
   scheduleArmyArt(army,unitById);
 }
-async function doRecruit(btn){const unit=$("#recruit-unit").value,turns=Math.max(1,Math.min(50,Number($("#recruit-turns").value)||1));await actionCall(btn,()=>rpc("recruit_units",{p_unit_id:unit,p_turns:turns}),null,res=>`Reclutadas ${n(res.recruited)} unidades.`);}
+async function doRecruit(btn){
+  const unit=$("#recruit-unit").value,turns=Math.max(1,Math.min(50,Number($("#recruit-turns").value)||1));
+  const selected=$("#recruit-unit")?.selectedOptions?.[0]?.textContent?.split(" · ")[0]||"esta unidad";
+  const turnWord=turns===1?"turno":"turnos";
+  if(!window.confirm(`Reclutar ${selected} gastará ${turns} ${turnWord}. ¿Quieres continuar?`))return;
+  await actionCall(btn,()=>rpc("recruit_units",{p_unit_id:unit,p_turns:turns}),null,res=>`Reclutadas ${n(res.recruited)} unidades.`);
+}
 async function doSummon(spell,btn){await actionCall(btn,()=>rpc("cast_summon",{p_spell_id:spell}),null,res=>res.success?`Invocación exitosa: ${n(res.summoned)} criaturas.`:"La invocación ha fallado. El coste se ha consumido.");}
 async function doDisband(unit,max,btn){const raw=prompt(`¿Cuántas unidades quieres disolver? Máximo ${n(max)}`,String(max));if(raw===null)return;const qty=Math.floor(Number(raw));if(!qty||qty<1||qty>max){toast("Cantidad no válida.","error");return;}await actionCall(btn,()=>rpc("disband_units",{p_unit_id:unit,p_quantity:qty}),`Has disuelto ${n(qty)} unidades.`);}
