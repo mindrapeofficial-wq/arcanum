@@ -352,7 +352,10 @@ test("closed-beta polish stays in place",()=>{
   assert.doesNotMatch(army,/setTimeout\(\(\)=>generateArmyArt\(army,unitById,false\)/,"army portraits must stay opt-in (external AI Horde service)");
   assert.match(army,/GENERAR RETRATO/);
   const war=read("assets/js/war.js");
-  assert.match(war,/botNames=new Set\(\["astrael"\]\)/,"Astrael is not a human and must stay out of the human ranking");
+  const rankingFilter=read("supabase/migrations/20261001163000_keep_npcs_out_of_leaderboard.sql");
+  assert.match(rankingFilter,/public\.astrael_agent_state/,"Astrael exclusion belongs to the authoritative server ranking");
+  assert.match(rankingFilter,/public\.arcanum_system_accounts/,"system-account exclusion belongs to the authoritative server ranking");
+  assert.match(rankingFilter,/n\.realm_id is null[\s\S]*a\.username is null[\s\S]*sys\.player_id is null/,"realm ranking must exclude NPC, Astrael and system accounts server-side");
   assert.match(war,/res\?\.attacker_victory && typeof artifactClaimPvp/,"relic loot is only claimed after a win");
   const magic=read("assets/js/magic.js");
   assert.match(magic,/spellIsAdjacent/,"adjacent-school research cost must be flagged as higher than the base cost");
@@ -390,9 +393,10 @@ test("regular Ranking and Construction pages keep their render contracts",()=>{
   const war=read("assets/js/war.js");
   assert.doesNotMatch(construction,/(^|[^$])\$\("\[data-building\]"\)\.forEach/m,
     "Construction must iterate building inputs with $$, not $");
-  assert.doesNotMatch(war,/players\.\\n\s+const botNames/,
-    "Regular Ranking must not contain escaped newlines that comment out its variables");
-  assert.match(war,/const botNames=new Set\(\["astrael"\]\);\s+const humanRows=/);
+  assert.match(war,/rpc\("realm_ranking"\)/,
+    "Regular Ranking must use the authoritative server leaderboard");
+  assert.doesNotMatch(war,/botNames=new Set/,
+    "Human/system filtering must stay server-side instead of being recreated in the client");
 });
 
 test("Construction never references an undefined $$$ selector",()=>{
