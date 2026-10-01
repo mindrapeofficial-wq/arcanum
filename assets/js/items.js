@@ -109,34 +109,5 @@ function announceCanonicalLootReward(result,context="Botín"){
   }
   return result;
 }
-async function startLootExplorationClaim(turns){
-  return stateApi("/loot/exploration/start",{method:"POST",body:{turns}});
-}
-async function completeLootExplorationClaim(claimKey){
-  const data=await stateApi("/loot/exploration/complete",{method:"POST",body:{claim_key:claimKey}});
-  return announceCanonicalLootReward(data,"Hallazgo de exploración");
-}
-async function claimArenaLoot(matchId){
-  const data=await stateApi("/loot/arena/claim",{method:"POST",body:{match_id:matchId}});
-  return data;
-}
-async function claimWorldBossGear(eventId){
-  const data=await stateApi("/loot/boss/claim",{method:"POST",body:{event_id:eventId}});
-  return data;
-}
-
-globalThis.cacheCanonicalItems=cacheCanonicalItems;
-globalThis.getCanonicalItems=getCanonicalItems;
-globalThis.loadCanonicalItems=loadCanonicalItems;
-globalThis.equipCanonicalItem=equipCanonicalItem;
-globalThis.unequipCanonicalSlot=unequipCanonicalSlot;
-globalThis.canonicalEquippedRelic=canonicalEquippedRelic;
-globalThis.canonicalItemDisplayName=canonicalItemDisplayName;
-globalThis.canonicalLootSourceLabel=canonicalLootSourceLabel;
-globalThis.canonicalLootTierLabel=canonicalLootTierLabel;
-globalThis.canonicalLootOriginText=canonicalLootOriginText;
-globalThis.announceCanonicalLootReward=announceCanonicalLootReward;
-globalThis.startLootExplorationClaim=startLootExplorationClaim;
-globalThis.completeLootExplorationClaim=completeLootExplorationClaim;
 globalThis.claimArenaLoot=claimArenaLoot;
 globalThis.claimWorldBossGear=claimWorldBossGear;
