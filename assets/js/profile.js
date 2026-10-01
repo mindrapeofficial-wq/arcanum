@@ -11,11 +11,11 @@ function profileSchoolName(code){
   return typeof schoolName==="function"?schoolName(code):(catalogs.schools.find(s=>s.code===code)?.name_es||code||"Escuela");
 }
 const PROFILE_SCHOOL_PORTRAITS={
-  verdant:{1:"assets/art/characters/verdante/viridia-level-1.png?v=0.3.18"},
-  eradication:{1:"assets/art/characters/eradication/cineria-level-1.png?v=0.3.18"},
-  phantasm:{1:"assets/art/characters/phantasm/oneiria-level-1.png?v=0.3.18"},
-  ascendant:{1:"assets/art/characters/ascendant/aurea-level-1.png?v=0.3.18"},
-  abyssal:{1:"assets/art/characters/abyssal/nadir-level-1.png?v=0.3.18"}
+  verdant:{1:"assets/art/characters/verdante/viridia-level-1.png?v=0.3.21"},
+  eradication:{1:"assets/art/characters/eradication/cineria-level-1.png?v=0.3.21"},
+  phantasm:{1:"assets/art/characters/phantasm/oneiria-level-1.png?v=0.3.21"},
+  ascendant:{1:"assets/art/characters/ascendant/aurea-level-1.png?v=0.3.21"},
+  abyssal:{1:"assets/art/characters/abyssal/nadir-level-1.png?v=0.3.21"}
 };
 function profileDefaultPortraitUrl(profile){
   const school=String(profile?.school_code||"");
@@ -41,8 +41,14 @@ function renderOwnProfileBadge(){
   if(schoolLabel)schoolLabel.textContent=progression?schoolName+" · Nivel "+progression.level:schoolName;
   const src=profileDefaultPortraitUrl({school_code:realmState.realm.school_code,archmage_level:ownProfileBadge?.archmage_level||1});
   if(src){
-    sigil.innerHTML='<img src="'+esc(src)+'" alt="" />';
+    const absoluteSrc=new URL(src,document.baseURI).href;
+    sigil.innerHTML='<img src="'+esc(absoluteSrc)+'" alt="Retrato de '+esc(realmState.realm.mage_name||"Arconte")+'" decoding="async" />';
     sigil.classList.add("has-avatar");
+    const img=sigil.querySelector("img");
+    img?.addEventListener("error",()=>{
+      sigil.textContent=symbols[realmState.realm.school_code]||"✦";
+      sigil.classList.remove("has-avatar");
+    },{once:true});
   }else{
     sigil.textContent=symbols[realmState.realm.school_code]||"✦";
     sigil.classList.remove("has-avatar");
