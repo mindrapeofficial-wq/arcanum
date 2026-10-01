@@ -395,3 +395,9 @@ test("regular Ranking and Construction pages keep their render contracts",()=>{
   assert.match(war,/const botNames=new Set\(\["astrael"\]\);\s+const humanRows=/);
 });
 
+test("Construction never references an undefined $$$ selector",()=>{
+  const construction=read("assets/js/construction.js");
+  assert.doesNotMatch(construction,/\$\$\$\(/,
+    "Construction must use $$ for selector lists; $$$ is undefined");
+});
+
