@@ -102,10 +102,7 @@ function renderRealm(){
         </div>
         <div id="realm-character-name" style="margin-top:7px;font-size:11px;letter-spacing:.14em;color:rgba(236,216,174,.72)">ARCHIMAGO · ${esc(r.mage_name)}</div>
         <p>${esc(progression.name)} · ${n(r.land)} acres · Nivel Mágico ${n(r.spell_level)}</p>
-        <div class="realm-status-line">
-          <span class="realm-status ${r.status==="alive"?"good":"danger"}">${r.status==="alive"?"ARCHIMAGO ACTIVO":"ARCHIMAGO CAÍDO"}</span>
-          <span>${n(realmState.known_spells.length)} hechizos conocidos</span>
-        </div>
+        <div class="realm-status-line"><span>${n(realmState.known_spells.length)} hechizos conocidos</span></div>
         <div class="quick-actions">
           <button class="small-action" data-quick="economy">ECONOMÍA</button>
           <button class="small-action" data-quick="build">CONSTRUIR</button>
