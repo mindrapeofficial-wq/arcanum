@@ -1,6 +1,6 @@
 {
-  "version": "0.3.12",
+  "version": "0.3.13",
   "channel": "beta",
-  "updated_at": "2026-10-01T09:48:00+02:00",
-  "note": "Personaje rediseñado con composicion de duelista: arsenal, archimago, estadisticas y trayectoria"
+  "updated_at": "2026-10-01T10:02:00+02:00",
+  "note": "Personaje: eliminados los recuadros azules y simplificada la jerarquia visual"
 }
