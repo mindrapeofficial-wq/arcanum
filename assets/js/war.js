@@ -83,59 +83,59 @@ function battleNarrative(b,units,events){
 }
 
 async function renderRanking(){
-  const [rows,npcs,pvpData]=await Promise.all([
+  const [rows,npcs,pvpData,warRowsRaw]=await Promise.all([
     rpc("leaderboard",{p_limit:100}),
     rpc("npc_directory"),
-    stateApi("/arena/ranking").catch(()=>({ranking:[]}))
+    stateApi("/arena/ranking").catch(()=>({ranking:[]})),
+    rpc("war_ranking").catch(()=>[])
   ]);
   const mine=String(realmState.realm.mage_name||"").trim().toLowerCase();
   const npcNames=new Set((npcs||[]).map(x=>String(x.mage_name||"").trim().toLowerCase()));
   const botNames=new Set(["astrael"]);
   const humanRows=(rows||[]).filter(x=>{
     const key=String(x.mage_name||"").trim().toLowerCase();
-    return !npcNames.has(key)&&!botNames.has(key);
+    return key&&!npcNames.has(key)&&!botNames.has(key);
+  });
+  const warRows=(warRowsRaw||[]).filter(x=>{
+    const key=String(x.username||x.mage_name||"").trim().toLowerCase();
+    return key&&!npcNames.has(key)&&!botNames.has(key);
   });
   const pvpRows=(Array.isArray(pvpData?.ranking)?pvpData.ranking:[]).filter(x=>{
     const key=String(x.username||x.mage_name||"").trim().toLowerCase();
     return key&&!npcNames.has(key)&&!botNames.has(key);
   });
-  const pvpByName=new Map(pvpRows.map(x=>[String(x.username||x.mage_name||"").trim().toLowerCase(),x]));
   const schoolName=code=>catalogs.schools.find(s=>s.code===code)?.name_es||code||"—";
-  const generalScore=(asc,wins,losses,elo)=>Math.max(0,Math.round(
-    Number(elo||1000)+(Number(wins||0)*40)-(Number(losses||0)*20)+(Math.log10(Math.max(1,Number(asc||0)+1))*300)
-  ));
-  const generalRows=humanRows.map(x=>{
-    const p=pvpByName.get(String(x.mage_name||"").trim().toLowerCase())||{};
-    const wins=Number(p.wins||0),losses=Number(p.losses||0),elo=Number(p.rating||1000),asc=Number(x.net_power||0);
-    return {...x,wins,losses,elo,general_score:generalScore(asc,wins,losses,elo)};
-  }).sort((a,b)=>b.general_score-a.general_score||b.elo-a.elo||b.net_power-a.net_power);
-
-  const generalBody=generalRows.length?generalRows.map((x,index)=>`<tr class="${String(x.mage_name).trim().toLowerCase()===mine?"rank-me":""}"><td>${n(index+1)}</td><td><strong><button class="player-link" data-profile="${esc(x.mage_name)}">${esc(x.mage_name)}</button></strong></td><td><span class="school-dot ${esc(x.school_code)}"></span>${esc(schoolName(x.school_code))}</td><td>${n(x.wins)}</td><td>${n(x.losses)}</td><td>${n(x.elo)}</td><td>${n(x.net_power)}</td><td><strong class="ranking-general-score">${n(x.general_score)}</strong></td></tr>`).join(""):`<tr><td colspan="8"><div class="empty">Todavía no hay jugadores humanos clasificados.</div></td></tr>`;
 
   const realmBody=humanRows.length?humanRows.map((x,index)=>`<tr class="${String(x.mage_name).trim().toLowerCase()===mine?"rank-me":""}"><td>${n(index+1)}</td><td><strong><button class="player-link" data-profile="${esc(x.mage_name)}">${esc(x.mage_name)}</button></strong></td><td><span class="school-dot ${esc(x.school_code)}"></span>${esc(schoolName(x.school_code))}</td><td>${n(x.land)}</td><td>${n(x.net_power)}</td></tr>`).join(""):`<tr><td colspan="5"><div class="empty">Todavía no hay reinos humanos clasificados.</div></td></tr>`;
+
+  const warBody=warRows.length?warRows.map((x,index)=>{
+    const name=String(x.username||x.mage_name||"");
+    const balance=Number(x.net_land||0);
+    return `<tr class="${name.trim().toLowerCase()===mine?"rank-me":""}"><td>${n(index+1)}</td><td><strong><button class="player-link" data-profile="${esc(name)}">${esc(name)}</button></strong></td><td><span class="school-dot ${esc(x.school_code)}"></span>${esc(schoolName(x.school_code))}</td><td><strong>${n(x.wins||0)}</strong></td><td>${n(x.losses||0)}</td><td>${n(x.battles||0)}</td><td>${balance>0?"+":""}${n(balance)}</td></tr>`;
+  }).join(""):`<tr><td colspan="7"><div class="empty">Todavía no hay guerras resueltas entre jugadores.</div></td></tr>`;
 
   const pvpBody=pvpRows.length?pvpRows.map((x,index)=>{
     const name=String(x.username||x.mage_name||"");
     const rate=(Number(x.wins||0)+Number(x.losses||0))?Math.round(Number(x.wins||0)*100/(Number(x.wins||0)+Number(x.losses||0))):0;
     return `<tr class="${name.trim().toLowerCase()===mine?"rank-me":""}"><td>${n(x.position||index+1)}</td><td><strong><button class="player-link" data-profile="${esc(name)}">${esc(name)}</button></strong></td><td>${n(x.wins||0)}</td><td>${n(x.losses||0)}</td><td>${rate}%</td><td><strong>${n(x.rating||1000)}</strong></td></tr>`;
-  }).join(""):`<tr><td colspan="6"><div class="empty">Todavía no hay jugadores con clasificación PvP.</div></td></tr>`;
+  }).join(""):`<tr><td colspan="6"><div class="empty">Todavía no hay jugadores con clasificación de Arena.</div></td></tr>`;
 
   $("#view-host").innerHTML=`
     <div class="ranking-tabs" role="tablist" aria-label="Listas de clasificación">
-      <button class="ranking-tab active" type="button" data-rank-tab="general">✦ General</button>
-      <button class="ranking-tab" type="button" data-rank-tab="realm">Reinos</button>
-      <button class="ranking-tab" type="button" data-rank-tab="pvp">PvP</button>
+      <button class="ranking-tab active" type="button" data-rank-tab="realm">Reino</button>
+      <button class="ranking-tab" type="button" data-rank-tab="war">Guerra</button>
+      <button class="ranking-tab" type="button" data-rank-tab="arena">Arena</button>
     </div>
-    <section class="ranking-panel active" data-rank-panel="general">
-      <div class="ranking-panel-head"><div><span class="section-kicker">PRINCIPAL</span><h3>Ranking General</h3></div><p>Combina victorias, derrotas, ELO actual y Ascendencia.</p></div>
-      <div class="table-wrap"><table><thead><tr><th>#</th><th>Arconte</th><th>Escuela</th><th>V</th><th>D</th><th>ELO</th><th>Ascendencia</th><th>Puntuación</th></tr></thead><tbody>${generalBody}</tbody></table></div>
-    </section>
-    <section class="ranking-panel" data-rank-panel="realm">
-      <div class="ranking-panel-head"><div><span class="section-kicker">DOMINIOS</span><h3>Ranking de Reinos</h3></div><p>Ordenado por Ascendencia del dominio.</p></div>
+    <section class="ranking-panel active" data-rank-panel="realm">
+      <div class="ranking-panel-head"><div><span class="section-kicker">DOMINIOS</span><h3>Ranking de Reino</h3></div><p>Progreso estratégico de los dominios humanos de la Era.</p></div>
       <div class="table-wrap"><table><thead><tr><th>#</th><th>Arconte</th><th>Escuela</th><th>Tierras</th><th>Ascendencia</th></tr></thead><tbody>${realmBody}</tbody></table></div>
     </section>
-    <section class="ranking-panel" data-rank-panel="pvp">
-      <div class="ranking-panel-head"><div><span class="section-kicker">ARENA</span><h3>Ranking PvP</h3></div><p>Clasificación competitiva por ELO y récord de Arena.</p></div>
+    <section class="ranking-panel" data-rank-panel="war">
+      <div class="ranking-panel-head"><div><span class="section-kicker">CAMPAÑAS</span><h3>Ranking de Guerra</h3></div><p>Victorias militares. En empate cuentan el balance territorial, las derrotas y la actividad.</p></div>
+      <div class="table-wrap"><table><thead><tr><th>#</th><th>Arconte</th><th>Escuela</th><th>V</th><th>D</th><th>Batallas</th><th>Tierra +/-</th></tr></thead><tbody>${warBody}</tbody></table></div>
+    </section>
+    <section class="ranking-panel" data-rank-panel="arena">
+      <div class="ranking-panel-head"><div><span class="section-kicker">ARENA</span><h3>Ranking de Arena</h3></div><p>Clasificación competitiva personal por ELO y récord de Arena.</p></div>
       <div class="table-wrap"><table><thead><tr><th>#</th><th>Arconte</th><th>Victorias</th><th>Derrotas</th><th>Ratio</th><th>ELO</th></tr></thead><tbody>${pvpBody}</tbody></table></div>
     </section>`;
 
