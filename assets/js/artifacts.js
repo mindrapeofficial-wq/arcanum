@@ -32,7 +32,7 @@ const ARCANUM_ARTIFACT_CATALOG=Object.freeze([
   {id:"cinder_mask",name:"Máscara de Ceniza",category:"minor",effect:"+4% resistencia al fuego.",lore:"El rostro interior cambia después de cada incendio."},
   {id:"echo_flute",name:"Flauta del Eco",category:"minor",effect:"+3% poder de invocación.",lore:"Repite notas que aún no han sido tocadas."},
 
-  {id:"verdant_crown",name:"Corona del Bosque Primigenio",category:"school",school:"verdant",art:"assets/art/artifacts/verdant-crown.b64?v=1",effect:"+12% regeneración y +8% producción de alimentos.",lore:"Las ramas que la forman siguen creciendo alrededor de su portador."},
+  {id:"verdant_crown",name:"Corona del Bosque Primigenio",category:"school",school:"verdant",art:"assets/art/artifacts/verdant-crown.b64?v=2",effect:"+12% regeneración y +8% producción de alimentos.",lore:"Las ramas que la forman siguen creciendo alrededor de su portador."},
   {id:"verdant_codex",name:"Códice de las Mil Raíces",category:"school",school:"verdant",effect:"+10% conocimiento arcano Viridia.",lore:"Cada página contiene el mapa de un bosque distinto."},
   {id:"verdant_seedheart",name:"Corazón Semilla",category:"school",school:"verdant",effect:"+10% vida del Arconte y +6% defensa.",lore:"Late lentamente bajo una corteza de oro verde."},
 
