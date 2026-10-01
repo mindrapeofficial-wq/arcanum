@@ -1,6 +1,6 @@
 {
-  "version": "0.3.15",
+  "version": "0.3.16",
   "channel": "beta",
-  "updated_at": "2026-10-01T10:18:00+02:00",
-  "note": "Inventario: los objetos equipados muestran Desequipar y estado Equipado"
+  "updated_at": "2026-10-01T10:29:00+02:00",
+  "note": "Corrige la apertura de Personaje, Ejército y Comunidad y fuerza recarga de módulos"
 }
