@@ -3,6 +3,8 @@ name: Build Android APK
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -59,17 +61,32 @@ jobs:
           fi
           node scripts/patch-android.mjs
 
+      - name: Verify immersive fullscreen patch
+        shell: bash
+        run: |
+          grep -q "BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE" android/app/src/main/java/com/arcanum/MainActivity.java
+          grep -q "hide(WindowInsetsCompat.Type.systemBars())" android/app/src/main/java/com/arcanum/MainActivity.java
+          grep -q "LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS" android/app/src/main/java/com/arcanum/MainActivity.java
+
       - name: Build APK
         shell: bash
         run: |
           chmod +x android/gradlew
           cd android
-          ./gradlew assembleDebug --stacktrace
+          ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: APK metadata
+        shell: bash
+        run: |
+          ls -lh android/app/build/outputs/apk/debug/app-debug.apk
+          sha256sum android/app/build/outputs/apk/debug/app-debug.apk | tee android/app/build/outputs/apk/debug/app-debug.apk.sha256
 
       - name: Upload Arcanum APK
         uses: actions/upload-artifact@v4
         with:
           name: arcanum-android-debug
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          path: |
+            android/app/build/outputs/apk/debug/app-debug.apk
+            android/app/build/outputs/apk/debug/app-debug.apk.sha256
           if-no-files-found: error
           retention-days: 30
