@@ -268,7 +268,9 @@ function wireProfileSheet(profile){
   if(typeof wireCombatEvolution==="function")wireCombatEvolution(profile);
   document.querySelectorAll("[data-archmage-attribute]").forEach(b=>b.addEventListener("click",()=>spendArchmageAttribute(b.dataset.archmageAttribute,profile)));
   $("#profile-save-bio")?.addEventListener("click",()=>saveOwnProfile(profile));
-  $("#profile-avatar-file")?.addEventListener("change",e=>startProfileAvatarCrop(e.target.files?.[0],profile));\n  $("#profile-remove-avatar")?.addEventListener("click",()=>removeProfileAvatar(profile));\n  $("#profile-use-school-avatar")?.addEventListener("click",()=>useSchoolProfileAvatar(profile));
+  $("#profile-avatar-file")?.addEventListener("change",e=>startProfileAvatarCrop(e.target.files?.[0],profile));
+  $("#profile-remove-avatar")?.addEventListener("click",()=>removeProfileAvatar(profile));
+  $("#profile-use-school-avatar")?.addEventListener("click",()=>useSchoolProfileAvatar(profile));
   $$("[data-profile-friend-add]").forEach(b=>b.addEventListener("click",()=>profileFriendRequest(b.dataset.profileFriendAdd)));
   $$("[data-profile-friend-accept]").forEach(b=>b.addEventListener("click",()=>profileFriendRespond(b.dataset.profileFriendAccept,true)));
   $$("[data-profile-friend-reject]").forEach(b=>b.addEventListener("click",()=>profileFriendRespond(b.dataset.profileFriendReject,false)));
