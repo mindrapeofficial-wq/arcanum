@@ -1,6 +1,6 @@
 {
-  "version": "0.3.29",
+  "version": "0.3.30",
   "channel": "beta",
-  "updated_at": "2026-10-01T14:34:44+02:00",
-  "note": "Pulido de beta cerrada: costes claros, retrato de ejército opcional, tutorial de equipo, ranking humano y correcciones de backend"
+  "updated_at": "2026-10-01T15:24:00+02:00",
+  "note": "Corrige los errores de las páginas Clasificación normal y Construcción"
 }
