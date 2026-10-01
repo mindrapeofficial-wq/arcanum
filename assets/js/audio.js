@@ -3,8 +3,17 @@
 const ArcanumAudio=(()=>{
   const KEY="arcanum.audio.v1";
   const defaults={master:0.75,music:0.45,sfx:0.62,muted:false,musicEnabled:true,sfxEnabled:true};
+  const bankPaths={
+    select:"assets/audio/sfx/ui-select.wav.b64",
+    confirm1:"assets/audio/sfx/ui-confirm-1.wav.b64",
+    confirm2:"assets/audio/sfx/ui-confirm-2.wav.b64",
+    open:"assets/audio/sfx/ui-open.wav.b64",
+    error:"assets/audio/sfx/ui-error.wav.b64"
+  };
   let settings={...defaults};
-  let ctx=null, music=null, musicStarted=false, unlocked=false;
+  let ctx=null,music=null,unlocked=false;
+  let successIndex=0,selectIndex=0,lastHover=null,lastHoverAt=0;
+  const bank=new Map();
 
   function clamp(v){return Math.max(0,Math.min(1,Number(v)||0));}
   function load(){
@@ -12,7 +21,7 @@ const ArcanumAudio=(()=>{
     ["master","music","sfx"].forEach(k=>settings[k]=clamp(settings[k]));
     return settings;
   }
-  function save(){localStorage.setItem(KEY,JSON.stringify(settings)); apply(); renderValues();}
+  function save(){localStorage.setItem(KEY,JSON.stringify(settings));apply();renderValues();}
   function ensureCtx(){
     if(!ctx)ctx=new (window.AudioContext||window.webkitAudioContext)();
     if(ctx.state==="suspended")ctx.resume().catch(()=>{});
@@ -24,27 +33,91 @@ const ArcanumAudio=(()=>{
     if(kind==="sfx"&&!settings.sfxEnabled)return 0;
     return settings.master*settings[kind];
   }
+
   function tone({f=440,f2=null,d=.06,type="sine",gain=.08,delay=0}={}){
     if(!unlocked||effective("sfx")<=0)return;
-    const c=ensureCtx(), now=c.currentTime+delay, o=c.createOscillator(), g=c.createGain();
+    const c=ensureCtx(),now=c.currentTime+delay,o=c.createOscillator(),g=c.createGain();
     o.type=type;o.frequency.setValueAtTime(f,now);
     if(f2)o.frequency.exponentialRampToValueAtTime(Math.max(20,f2),now+d);
     const vol=gain*effective("sfx");
-    g.gain.setValueAtTime(.0001,now);g.gain.exponentialRampToValueAtTime(Math.max(.0001,vol),now+.008);g.gain.exponentialRampToValueAtTime(.0001,now+d);
+    g.gain.setValueAtTime(.0001,now);
+    g.gain.exponentialRampToValueAtTime(Math.max(.0001,vol),now+.008);
+    g.gain.exponentialRampToValueAtTime(.0001,now+d);
     o.connect(g);g.connect(c.destination);o.start(now);o.stop(now+d+.02);
   }
+
+  function b64ToBlobUrl(text){
+    const clean=String(text||"").replace(/\s+/g,"");
+    const raw=atob(clean);
+    const bytes=new Uint8Array(raw.length);
+    for(let i=0;i<raw.length;i++)bytes[i]=raw.charCodeAt(i);
+    return URL.createObjectURL(new Blob([bytes],{type:"audio/wav"}));
+  }
+  async function loadSample(key,path){
+    if(bank.has(key))return bank.get(key);
+    const promise=fetch(path,{cache:"force-cache"})
+      .then(r=>{if(!r.ok)throw new Error("Audio asset "+r.status);return r.text();})
+      .then(b64ToBlobUrl)
+      .catch(err=>{console.warn("[ARCANUM audio] sample unavailable:",key,err);return null;});
+    bank.set(key,promise);
+    return promise;
+  }
+  function preloadBank(){
+    Object.entries(bankPaths).forEach(([key,path])=>void loadSample(key,path));
+  }
+  function playSample(key,{gain=1,rate=1}={}){
+    if(!unlocked||effective("sfx")<=0)return false;
+    const pending=bank.get(key);
+    if(!pending)return false;
+    Promise.resolve(pending).then(url=>{
+      if(!url||effective("sfx")<=0)return;
+      const a=new Audio(url);
+      a.preload="auto";
+      a.volume=Math.min(1,effective("sfx")*gain);
+      a.playbackRate=rate;
+      a.play().catch(()=>{});
+    });
+    return true;
+  }
+  function sampleOrTone(key,opts,toneOpts){
+    if(!playSample(key,opts))tone(toneOpts);
+  }
+
   const sfx={
-    click(){tone({f:620,f2:460,d:.045,type:"triangle",gain:.035});},
-    nav(){tone({f:310,f2:430,d:.075,type:"sine",gain:.035});},
-    open(){tone({f:420,f2:690,d:.11,type:"triangle",gain:.04});tone({f:690,f2:820,d:.09,type:"sine",gain:.025,delay:.045});},
-    success(){tone({f:392,f2:523,d:.12,type:"sine",gain:.04});tone({f:523,f2:784,d:.18,type:"triangle",gain:.035,delay:.07});},
-    error(){tone({f:180,f2:110,d:.16,type:"sawtooth",gain:.028});},
-    battle(){tone({f:95,f2:55,d:.24,type:"square",gain:.025});}
+    hover(){
+      const rates=[1.16,1.22,1.12];
+      const rate=rates[selectIndex++%rates.length];
+      sampleOrTone("select",{gain:.16,rate},{f:720,f2:650,d:.025,type:"sine",gain:.012});
+    },
+    click(){
+      const rates=[.98,1.03,1.00];
+      const rate=rates[selectIndex++%rates.length];
+      sampleOrTone("select",{gain:.34,rate},{f:620,f2:460,d:.045,type:"triangle",gain:.035});
+    },
+    nav(){
+      const rates=[.82,.87,.78];
+      const rate=rates[selectIndex++%rates.length];
+      sampleOrTone("select",{gain:.42,rate},{f:310,f2:430,d:.075,type:"sine",gain:.035});
+    },
+    open(){
+      sampleOrTone("open",{gain:.48,rate:.9},{f:420,f2:690,d:.11,type:"triangle",gain:.04});
+    },
+    success(){
+      const key=(successIndex++%2===0)?"confirm1":"confirm2";
+      sampleOrTone(key,{gain:.52,rate:1},{f:392,f2:523,d:.12,type:"sine",gain:.04});
+    },
+    error(){
+      sampleOrTone("error",{gain:.48,rate:.9},{f:180,f2:110,d:.16,type:"sawtooth",gain:.028});
+    },
+    battle(){
+      tone({f:95,f2:55,d:.24,type:"square",gain:.025});
+    }
   };
+
   function buildMusic(){
     if(music)return music;
     music=new Audio("assets/audio/Dungeon%20Lobby.mp3");
-    music.loop=true; music.preload="auto"; music.crossOrigin="anonymous";
+    music.loop=true;music.preload="auto";
     music.addEventListener("error",()=>document.documentElement.classList.add("audio-music-missing"));
     return music;
   }
@@ -53,31 +126,39 @@ const ArcanumAudio=(()=>{
     m.volume=Math.min(1,effective("music"));
     const should=settings.musicEnabled&&!settings.muted&&settings.music>0&&settings.master>0;
     if(!should&&!m.paused)m.pause();
-    else if(should&&unlocked&&m.paused)m.play().then(()=>musicStarted=true).catch(()=>{});
+    else if(should&&unlocked&&m.paused)m.play().catch(()=>{});
     document.documentElement.classList.toggle("audio-muted",settings.muted);
   }
   function unlock(){
     if(unlocked)return;
-    unlocked=true;ensureCtx();apply();
+    unlocked=true;ensureCtx();preloadBank();apply();
   }
   function renderValues(){
     const map={master:"audio-master",music:"audio-music",sfx:"audio-sfx"};
     Object.entries(map).forEach(([k,id])=>{
-      const el=document.getElementById(id), out=document.getElementById(id+"-value");
+      const el=document.getElementById(id),out=document.getElementById(id+"-value");
       if(el)el.value=Math.round(settings[k]*100);
       if(out)out.textContent=Math.round(settings[k]*100)+"%";
     });
     const muted=document.getElementById("audio-mute-toggle");
-    if(muted){muted.classList.toggle("active",settings.muted);muted.setAttribute("aria-pressed",String(settings.muted));muted.textContent=settings.muted?"SONIDO DESACTIVADO":"SILENCIAR TODO";}
+    if(muted){
+      muted.classList.toggle("active",settings.muted);
+      muted.setAttribute("aria-pressed",String(settings.muted));
+      muted.textContent=settings.muted?"SONIDO DESACTIVADO":"SILENCIAR TODO";
+    }
     const musicToggle=document.getElementById("audio-music-toggle");
-    if(musicToggle){musicToggle.checked=!!settings.musicEnabled;}
+    if(musicToggle)musicToggle.checked=!!settings.musicEnabled;
     const sfxToggle=document.getElementById("audio-sfx-toggle");
-    if(sfxToggle){sfxToggle.checked=!!settings.sfxEnabled;}
+    if(sfxToggle)sfxToggle.checked=!!settings.sfxEnabled;
   }
   function wirePanel(){
-    const panel=document.getElementById("audio-panel"), btn=document.getElementById("audio-settings-button"), close=document.getElementById("audio-panel-close");
+    const panel=document.getElementById("audio-panel"),btn=document.getElementById("audio-settings-button"),close=document.getElementById("audio-panel-close");
     if(!panel||!btn)return;
-    const setOpen=v=>{panel.classList.toggle("hidden",!v);btn.setAttribute("aria-expanded",String(v));if(v)sfx.open();};
+    const setOpen=v=>{
+      panel.classList.toggle("hidden",!v);
+      btn.setAttribute("aria-expanded",String(v));
+      if(v)sfx.open();
+    };
     btn.addEventListener("click",e=>{e.stopPropagation();unlock();setOpen(panel.classList.contains("hidden"));});
     close?.addEventListener("click",()=>setOpen(false));
     panel.addEventListener("click",e=>e.stopPropagation());
@@ -93,15 +174,31 @@ const ArcanumAudio=(()=>{
   function wireGlobalSfx(){
     document.addEventListener("pointerdown",unlock,{once:true,capture:true});
     document.addEventListener("keydown",unlock,{once:true,capture:true});
+    document.addEventListener("pointerover",e=>{
+      if(e.pointerType==="touch")return;
+      const el=e.target.closest("button:not(:disabled),a,[role='button'],.school-card,[data-view]");
+      if(!el||el===lastHover)return;
+      const now=performance.now();
+      lastHover=el;
+      if(now-lastHoverAt<70)return;
+      lastHoverAt=now;
+      sfx.hover();
+    },true);
+    document.addEventListener("pointerout",e=>{
+      const el=e.target.closest?.("button,a,[role='button'],.school-card,[data-view]");
+      if(el===lastHover&&!el.contains(e.relatedTarget))lastHover=null;
+    },true);
     document.addEventListener("click",e=>{
       const b=e.target.closest("button,a,.school-card,[data-view]");
       if(!b||b.id==="audio-settings-button")return;
-      if(b.matches("[data-view]"))sfx.nav(); else sfx.click();
+      if(b.matches("[data-view]"))sfx.nav();else sfx.click();
     },true);
     document.addEventListener("arcanum:success",()=>sfx.success());
     document.addEventListener("arcanum:error",()=>sfx.error());
   }
-  function init(){load();buildMusic();wirePanel();wireGlobalSfx();apply();}
+  function init(){
+    load();buildMusic();preloadBank();wirePanel();wireGlobalSfx();apply();
+  }
   return {init,sfx,get settings(){return settings;},unlock,apply};
 })();
 
