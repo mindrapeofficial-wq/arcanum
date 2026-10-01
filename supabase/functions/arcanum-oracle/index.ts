@@ -38,6 +38,8 @@ async function identity(req: Request) {
     headers: { apikey: ARCANUM_KEY, Authorization: `Bearer ${token}` },
   });
   if (!authResp.ok) throw new Response("UNAUTHORIZED", { status: 401 });
+  const authUser = await authResp.json().catch(() => null);
+  const userId = String(authUser?.id || "");
 
   const realmResp = await fetch(`${ARCANUM_URL}/rest/v1/rpc/my_realm_state`, {
     method: "POST",
@@ -51,7 +53,7 @@ async function identity(req: Request) {
   if (!realmResp.ok) throw new Response("REALM_REQUIRED", { status: 403 });
   const state = await realmResp.json();
   if (!state?.realm?.mage_name) throw new Response("REALM_REQUIRED", { status: 403 });
-  return { token, state };
+  return { token, state, userId };
 }
 
 
@@ -366,7 +368,7 @@ Deno.serve(async (req: Request) => {
   if (req.method !== "POST") return json(req, { error:"METHOD_NOT_ALLOWED" }, 405);
 
   try {
-    const { token, state } = await identity(req);
+    const { token, state, userId } = await identity(req);
     const body = await req.json().catch(() => ({}));
     if (body?.op === "capabilities") {
       const capabilities = await discoverGameCapabilities(token).catch(() => ({ rpc_names:[], table_names:[] }));
@@ -380,11 +382,23 @@ Deno.serve(async (req: Request) => {
     if (!message || message.length > 700) return json(req, { error:"INVALID_MESSAGE" }, 400);
     const history = Array.isArray(body?.history) ? body.history : [];
 
-    const live = await liveGameContext(token).catch(() => ({}));
-    let answer = await generateWithModel(message, history, state, live).catch(err => {
-      console.error("ARCANUM AI error", err);
-      return null;
-    });
+    // Daily per-user cap on paid model calls. Over the cap (or if the counter is unavailable)
+    // the player still gets the free built-in knowledge answer instead of an error.
+    let withinQuota = false;
+    if (aux && userId) {
+      const { data: allowed, error: quotaError } = await aux.rpc("arcanum_oracle_consume", {
+        p_user_id: userId,
+        p_limit: Number(Deno.env.get("ARCANUM_ORACLE_DAILY_LIMIT") || 40),
+      });
+      withinQuota = !quotaError && allowed === true;
+    }
+    const live = withinQuota ? await liveGameContext(token).catch(() => ({})) : {};
+    let answer = withinQuota
+      ? await generateWithModel(message, history, state, live).catch(err => {
+          console.error("ARCANUM AI error", err);
+          return null;
+        })
+      : null;
     const mode = answer ? "ai" : "knowledge";
     if (!answer) answer = fallbackAnswer(message, state);
 

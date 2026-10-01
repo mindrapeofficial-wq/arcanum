@@ -258,3 +258,13 @@ test("Community function keeps relic claims safe",()=>{
   assert.match(c,/\.is\("completed_at",\s*null\)/,"exploration claims must be locked atomically");
   assert.match(c,/claimInsertError/,"pvp claim insert result must be checked");
 });
+
+
+test("Oracle model calls are capped per user",()=>{
+  const o=read("supabase/functions/arcanum-oracle/index.ts");
+  const m=read("supabase/migrations/20261001120000_oracle_daily_quota.sql");
+  assert.match(o,/arcanum_oracle_consume/);
+  assert.match(o,/withinQuota/);
+  assert.match(m,/revoke all on function public\.arcanum_oracle_consume/);
+  assert.match(m,/to service_role/);
+});
