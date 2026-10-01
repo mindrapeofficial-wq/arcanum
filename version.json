@@ -1,6 +1,6 @@
 {
-  "version": "0.3.26",
+  "version": "0.3.27",
   "channel": "beta",
-  "updated_at": "2026-10-01T13:22:02+02:00",
-  "note": "Acceso mas claro (contrasena minima de 8 al registrarse) y API de Astrael en el proyecto Arcanum"
+  "updated_at": "2026-10-01T14:05:00+02:00",
+  "note": "Ranking PvP con victorias, derrotas y ELO; el ELO competitivo actualiza a ambos duelistas"
 }
