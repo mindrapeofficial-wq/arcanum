@@ -258,7 +258,7 @@ async function installMocks(page){
       return route.fulfill({status:201,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({run:pveView(),resumed:false})});
     }
     if(req.method()==="POST"&&tail==="/pve/choose"){
-      const choice=String(body().choice_id||"");
+      const choice=String((()=>{try{return req.postDataJSON()||{};}catch{return {};}})().choice_id||"");
       if(choice==="sanctuary"){
         pveRun={...pveRun,pending_decision:null,player_hp:305,next_modifiers:{choice_id:"sanctuary",enemy_mult:1,loot_bonus:-.10,rarity_bias:-.08}};
       }else if(choice==="forbidden"){
@@ -374,6 +374,8 @@ test("flujo crítico completo: login, reino, explorar, construir, investigar, re
   await expect(page.locator("#mage-title")).toHaveText("E2E_TESTER");
   await expect(page.locator("#mage-school")).toContainText("Nivel 4");
 
+  // Personaje is the landing page (CLAUDE.md sec.2); exploring lives in Dominio.
+  await page.locator('#main-nav button[data-view="realm"]').click();
   await page.locator("#realm-explore-turns").fill("2");
   await page.locator("#realm-explore-button").click();
   await expect(page.locator(".toast").last()).toContainText("Exploración completada");
@@ -454,7 +456,29 @@ test("la navegación móvil abre Comunidad sin errores", async ({page})=>{
 });
 
 
-test("la ficha de personaje se abre, permite gastar un punto y editar la bio", async ({page})=>{
+test("Personaje muestra la progresión y permite gastar un punto de atributo", async ({page})=>{
+  const mock=await installMocks(page);
+  page.on("dialog",dialog=>dialog.accept());
+  await page.goto("/");
+  await page.locator("#username").fill("E2E_TESTER");
+  await page.locator("#password").fill("prueba-segura");
+  await page.locator("#submit-button").click();
+  await expect(page.locator("#game-view")).toBeVisible();
+  await expect(page.locator("#mage-title")).toHaveText("E2E_TESTER");
+  // Personaje is the landing page and owns progression, equipment and combat identity.
+  await expect(page.locator(".character-brute-layout")).toBeVisible();
+  await expect(page.getByText("PROGRESIÓN",{exact:true})).toBeVisible();
+  await expect(page.locator(".character-level-heading strong")).toHaveText("4");
+  const knowledge=page.locator(".character-development-stat").filter({hasText:"Conocimiento"});
+  await expect(knowledge.locator("strong")).toHaveText("2");
+  await knowledge.locator("[data-archmage-attribute]").click();
+  await expect(page.locator(".toast").last()).toContainText("Conocimiento ha aumentado a 3");
+  await expect(page.locator(".character-development-stat").filter({hasText:"Conocimiento"}).locator("strong")).toHaveText("3");
+  await expect(page.locator("[data-archmage-attribute]")).toHaveCount(0);
+  expect(mock.calls.some(x=>x.path==="/rest/v1/rpc/spend_archmage_attribute")).toBeTruthy();
+});
+
+test("el Perfil social se abre desde la tarjeta del mago y permite editar la bio", async ({page})=>{
   const mock=await installMocks(page);
   page.on("dialog",dialog=>dialog.accept());
   await page.goto("/");
@@ -464,25 +488,15 @@ test("la ficha de personaje se abre, permite gastar un punto y editar la bio", a
   await expect(page.locator("#game-view")).toBeVisible();
   await expect(page.locator("#mage-title")).toHaveText("E2E_TESTER");
   await page.locator("#mage-card-button").click();
-  await expect(page.getByText("IDENTIDAD CANÓNICA")).toBeVisible();
+  // The social profile is a separate concept from the character sheet (CLAUDE.md sec.2).
+  await expect(page.locator("#modal-content").getByText("PERFIL SOCIAL")).toBeVisible();
   await expect(page.locator("#profile-bio-input")).toBeVisible();
-  await expect(page.getByText("PROGRESIÓN DEL ARCHIMAGO")).toBeVisible();
-  await expect(page.getByText("Poder Arcano",{exact:true}).first()).toBeVisible();
-  await expect(page.getByText("FUENTES DE EXPERIENCIA")).toBeVisible();
-  await expect(page.locator("#modal-content").getByText("Conocimiento Arcano",{exact:true}).first()).toBeVisible();
-  await expect(page.getByText("Jefes PvE",{exact:true})).toBeVisible();
-  await expect(page.getByText("Sendero Híbrido")).toBeVisible();
-  await expect(page.locator(".archmage-level-row > div:first-child strong")).toHaveText("4");
-  await expect(page.locator('[data-archmage-stat="knowledge"] strong')).toHaveText("2");
-  await page.locator('[data-archmage-attribute="knowledge"]').click();
-  await expect(page.locator(".toast").last()).toContainText("Conocimiento ha aumentado a 3");
-  await expect(page.locator('[data-archmage-stat="knowledge"] strong')).toHaveText("3");
-  await expect(page.getByText("Mente Erudita")).toBeVisible();
-  await expect(page.locator("[data-archmage-attribute]")).toHaveCount(0);
-  expect(mock.calls.some(x=>x.path==="/rest/v1/rpc/spend_archmage_attribute")).toBeTruthy();
+  await expect(page.getByText("AMISTADES",{exact:true})).toBeVisible();
+  await expect(page.locator(".profile-section-title span",{hasText:"ALIANZA"})).toBeVisible();
   await page.locator("#profile-bio-input").fill("Nueva bio de pruebas.");
   await page.locator("#profile-save-bio").click();
   await expect(page.locator(".toast").last()).toContainText("Ficha de personaje actualizada");
+  expect(mock.calls.some(x=>x.path==="/rest/v1/rpc/update_my_profile")).toBeTruthy();
 });
 
 
@@ -510,6 +524,9 @@ test("atacar abre siempre la crónica de batalla", async ({page})=>{
   await page.locator("#username").fill("E2E_TESTER");
   await page.locator("#password").fill("prueba-segura");
   await page.locator("#submit-button").click();
+  // Wait for boot to finish: it lands on Personaje and would override an earlier navigation.
+  await expect(page.locator("#game-view")).toBeVisible();
+  await expect(page.locator("#mage-title")).toHaveText("E2E_TESTER");
   await page.locator('#main-nav button[data-view="war"]').click();
   await page.locator('.attack-btn[data-mode="REGULAR"]').click();
   await expect(page.locator("#modal")).toBeVisible();
