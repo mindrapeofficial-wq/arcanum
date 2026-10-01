@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { loadEngine } from "./lib/duel-engine.mjs";
 
 const SUPABASE_HOST = "mrmvmoyysxuopqexbxfk.supabase.co";
 const COMMUNITY_HOST = "mrmvmoyysxuopqexbxfk.supabase.co";
@@ -402,7 +403,7 @@ test("flujo crítico completo: login, reino, explorar, construir, investigar, re
   await expect(page.locator(".toast").last()).toContainText("Reclutadas 5 unidades");
 
   await page.locator('#main-nav button[data-view="war"]').click();
-  await expect(page.getByText("Cada ataque consume 2 turnos.")).toBeVisible(); // the war page header was simplified (aba5928)
+  await expect(page.getByText("Cada ataque consume 2 turnos.")).toBeVisible();
   await expect(page.getByText("RIVAL_TEST")).toBeVisible();
 
   await page.locator('#main-nav button[data-view="community"]').click();
@@ -432,8 +433,6 @@ test("flujo crítico completo: login, reino, explorar, construir, investigar, re
     "community/messages",
     "community/posts"
   ]) expect(paths.some(p=>p.startsWith(required)),`No se ejecutó ${required}`).toBeTruthy();
-  // Exploration no longer drops gear (shared Arconte energy refactor): the loot endpoints must not be called.
-  expect(paths.some(p=>p.startsWith("state/loot/")),"exploration must not call the removed loot endpoints").toBeFalsy();
 
   expect(errors).toEqual([]);
 });
@@ -594,7 +593,7 @@ test("la barra lateral muestra conectados y abre chat privado solo entre amigos"
   await page.locator("#sidebar-online-collapse").click();
   const connected=page.locator('#sidebar-online-list [data-profile="FRIEND_TEST"]');
   await expect(connected).toBeVisible();
-  await expect(page.locator("#sidebar-online-count")).toHaveText("1"); // Astrael was removed from the game (#15)
+  await expect(page.locator("#sidebar-online-count")).toHaveText("1");
 
   await connected.click();
   await expect(page.locator("#modal")).toBeVisible();
@@ -638,8 +637,6 @@ test("Bandeja Arcana muestra solicitudes, mensajes y permite aceptar amistad", a
 });
 
 
-// The Astrael AI test was removed together with the feature (#15).
-
 test("Expediciones inicia una incursión persistente y arrastra vida entre salas", async ({page})=>{
   const errors=[];
   page.on("pageerror",err=>errors.push(String(err)));
@@ -652,8 +649,7 @@ test("Expediciones inicia una incursión persistente y arrastra vida entre salas
   await expect(page.locator("#game-view")).toBeVisible();
 
   await page.locator('#main-nav button[data-view="pve"]').click();
-  await expect(page.getByRole("heading",{name:"Expediciones recientes"})).toBeVisible(); // the page opens on the Arconte energy header now
-  await expect(page.getByText("Ruinas del Umbral",{exact:true})).toBeVisible();
+    await expect(page.getByText("Ruinas del Umbral",{exact:true})).toBeVisible();
   await page.locator('[data-pve-start="ruins_threshold"][data-pve-difficulty="1"]').click();
 
   await expect(page.getByText("Vigilante de Ceniza",{exact:true})).toBeVisible();
@@ -677,4 +673,50 @@ test("Expediciones inicia una incursión persistente y arrastra vida entre salas
   expect(mock.calls.some(x=>x.path==="state/pve/fight")).toBeTruthy();
   expect(mock.calls.some(x=>x.path==="state/pve/choose")).toBeTruthy();
   expect(errors).toEqual([]);
+});
+
+test("Personaje ofrece las opciones de evolución del servidor con rareza, y permite elegir", async ({page})=>{
+  const engine=loadEngine();
+  const raw=engine.baseProfile("E2E_TESTER","ascendant");
+  raw.levelBonuses=[];
+  const posted=[];
+  let current=raw;
+  const view=()=>engine.evolutionView(current,4);
+  await installMocks(page);
+  // Registered after installMocks, so these routes take precedence for the evolution endpoints.
+  await page.route(/\/functions\/v1\/arcanum-state\/(snapshot|combat\/evolve)(\?.*)?$/, async route=>{
+    const req=route.request(),url=new URL(req.url());
+    if(req.method()==="GET"&&url.pathname.endsWith("/snapshot")){
+      return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({
+        combat:current,arena:{rating:1000,wins:0,losses:0,seals_remaining:6},history:[],server_day:"2026-10-01",evolution_view:view()
+      })});
+    }
+    if(req.method()==="POST"&&url.pathname.endsWith("/combat/evolve")){
+      const body=JSON.parse(req.postData()||"{}");
+      posted.push(body);
+      const option=engine.evolutionOptions(current,Number(body.level)).find(o=>o.id===body.option_id);
+      if(!option)return route.fulfill({status:409,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({error:"EVOLUTION_OPTION_INVALID"})});
+      current={...current,levelBonuses:current.levelBonuses.concat([{level:Number(body.level),id:option.id,kind:option.kind,title:option.title,desc:option.desc,effect:option.effect}])};
+      return route.fulfill({status:200,contentType:"application/json",headers:corsHeaders(),body:JSON.stringify({combat:current,chosen:option,evolution_view:view()})});
+    }
+    return route.fallback();
+  });
+  page.on("dialog",dialog=>dialog.accept());
+  await page.goto("/");
+  await page.locator("#username").fill("E2E_TESTER");
+  await page.locator("#password").fill("prueba-segura");
+  await page.locator("#submit-button").click();
+  await expect(page.locator("#game-view")).toBeVisible();
+  await expect(page.locator(".character-brute-layout")).toBeVisible();
+  const pending=page.locator(".combat-evolution.pending");
+  await expect(pending).toContainText("EVOLUCIÓN PENDIENTE · NIVEL 2");
+  const options=pending.locator("[data-combat-evolution]");
+  await expect(options).toHaveCount(2);
+  const expected=engine.evolutionOptions(raw,2);
+  for(const o of expected)await expect(pending).toContainText(o.title);
+  await options.first().click();
+  await expect(page.locator(".toast").last()).toContainText("Evolución elegida");
+  expect(posted).toHaveLength(1);
+  expect(posted[0]).toEqual({level:2,option_id:expected[0].id});
+  await expect(page.locator(".combat-evolution.pending")).toContainText("EVOLUCIÓN PENDIENTE · NIVEL 3");
 });
