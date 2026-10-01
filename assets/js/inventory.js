@@ -74,6 +74,21 @@ function lootMageKey(profile){
   return "arcanum_inventory_v"+ARCANUM_INVENTORY_VERSION+"_"+String(profile?.mage_name||realmState?.realm?.mage_name||"unknown").toLowerCase();
 }
 function lootNameKey(profile){return String(profile?.mage_name||realmState?.realm?.mage_name||"unknown").trim().toLowerCase()}
+function lootItemOriginSource(item){
+  return String(item?.origin?.source||item?.raw?.origin?.source||item?.source||"").trim();
+}
+function lootIsLegacyItem(item){
+  return lootItemOriginSource(item)==="legacy_beta";
+}
+function lootRemoveLegacyItems(state){
+  const clean=lootNormalizeV2(state);
+  const removed=new Set((clean.items||[]).filter(lootIsLegacyItem).map(item=>String(item.id)));
+  clean.items=(clean.items||[]).filter(item=>!lootIsLegacyItem(item));
+  Object.keys(clean.equipment||{}).forEach(slot=>{
+    if(removed.has(String(clean.equipment[slot]||"")))clean.equipment[slot]=null;
+  });
+  return clean;
+}
 function lootEmptyState(){
   return {version:ARCANUM_INVENTORY_VERSION,items:[],equipment:{weapon:null,robe:null,amulet:null,ring1:null,ring2:null,focus:null},found:0,legacy_imported:false};
 }
@@ -98,7 +113,7 @@ function lootLegacyLoad(profile){
 function lootLoad(profile){
   const parsed=lootServerCache.get(lootNameKey(profile));
   if(!parsed)return lootEmptyState();
-  const state=lootNormalizeV2(parsed);
+  const state=lootRemoveLegacyItems(parsed);
   state.items=Array.isArray(state.items)?state.items.slice(0,ARCANUM_INVENTORY_CAP):[];
   state.equipment={...lootEmptyState().equipment,...(state.equipment||{})};
   return state;
@@ -109,15 +124,9 @@ function lootSave(profile,state){
 }
 async function lootHydrateProfile(profile){
   if(!profile?.is_self)return lootLoad(profile);
-  let data=await stateApi("/inventory");
-  let state=data?.inventory||lootEmptyState();
+  const data=await stateApi("/inventory");
+  const state=lootRemoveLegacyItems(data?.inventory||lootEmptyState());
   lootSave(profile,state);
-  const legacy=lootLegacyLoad(profile);
-  if(!state.legacy_imported&&legacy?.items?.length){
-    const migrated=await stateApi("/inventory/import-legacy",{method:"POST",body:{state:legacy}});
-    state=migrated?.inventory||state;
-    lootSave(profile,state);
-  }
   return state;
 }
 function lootTierForLevel(level){
@@ -345,5 +354,6 @@ function wireInventoryPanel(profile){
 
 
 globalThis.lootCombatBonuses=lootCombatBonuses;
+globalThis.lootIsLegacyItem=lootIsLegacyItem;
 globalThis.lootHydrateProfile=lootHydrateProfile;
 globalThis.lootCacheState=function(profile,state){return lootSave(profile,state);};
