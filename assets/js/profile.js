@@ -41,14 +41,10 @@ function profileDefaultPortraitUrl(profile){
   const level=Math.max(1,Number(profile?.archmage_level||profile?.level||1));
   return portraits[level]||portraits[1]||"";
 }
-const SIDEBAR_SCHOOL_PORTRAITS={
-  verdant:{1:"assets/art/characters/verdante/viridia-profile-level-1.svg?v=0.3.28"}
-};
 function profileSidebarPortraitUrl(profile){
-  const school=profileCanonicalSchoolCode(profile?.school_code);
-  const portraits=SIDEBAR_SCHOOL_PORTRAITS[school];
-  const level=Math.max(1,Number(profile?.archmage_level||profile?.level||1));
-  return (portraits&&(portraits[level]||portraits[1]))||profileDefaultPortraitUrl(profile);
+  // The sidebar must use the same canonical school portrait as the rest of
+  // the profile UI. This avoids stale/synthetic one-off avatar assets.
+  return profileDefaultPortraitUrl(profile);
 }
 function profileAvatarMarkup(profile,large=false){
   const cls=large?"profile-avatar profile-avatar-large":"profile-avatar";
