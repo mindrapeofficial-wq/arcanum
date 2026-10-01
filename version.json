@@ -1,6 +1,6 @@
 {
-  "version": "0.3.28",
+  "version": "0.3.29",
   "channel": "beta",
-  "updated_at": "2026-10-01T14:25:00+02:00",
-  "note": "Confirmaciones antes de gastar turnos, Ascendencia sincronizada, vistas ocultas accesibles y mejor margen inicial de población"
+  "updated_at": "2026-10-01T14:34:44+02:00",
+  "note": "Pulido de beta cerrada: costes claros, retrato de ejército opcional, tutorial de equipo, ranking humano y correcciones de backend"
 }
