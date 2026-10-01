@@ -249,3 +249,12 @@ test("Edge Function security patches stay in place",()=>{
   assert.doesNotMatch(admin,/ADMIN_NAMES/,"admin must not be identified by display name");
   assert.match(admin,/ADMIN_USER_IDS\.has\(userId\)/);
 });
+
+
+test("Community function keeps relic claims safe",()=>{
+  const c=read("supabase/functions/arcanum-community/index.ts");
+  assert.doesNotMatch(c,/beta_discovery/,"QA discovery must not grant relics");
+  assert.match(c,/DISCOVERY_CLOSED/);
+  assert.match(c,/\.is\("completed_at",null\)/,"exploration claims must be locked atomically");
+  assert.match(c,/claimInsertError/,"pvp claim insert result must be checked");
+});

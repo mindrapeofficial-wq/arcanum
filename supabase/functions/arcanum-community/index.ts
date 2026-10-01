@@ -622,6 +622,17 @@ Deno.serve(async (req: Request) => {
           return json(req, { error: "EXPLORATION_CLAIM_EXPIRED" }, 409);
         }
 
+        // Atomic lock: only one request can move completed_at from null while the claim is still started.
+        const { data: locked, error: lockError } = await supabase
+          .from("arcanum_artifact_claims")
+          .update({ completed_at: new Date().toISOString() })
+          .eq("claim_key", claimKey)
+          .eq("status", "started")
+          .is("completed_at", null)
+          .select("claim_key");
+        if (lockError) throw lockError;
+        if (!locked?.length) return json(req, { error: "INVALID_EXPLORATION_CLAIM" }, 409);
+
         const landBefore = Number(claim.metadata?.land_before || 0);
         const landAfter = Number(who.realm?.land || 0);
         const landGain = Math.max(0, landAfter - landBefore);
@@ -678,7 +689,9 @@ Deno.serve(async (req: Request) => {
         const landChange = Number(battle.land_change || 0);
         const opponent = String(battle.opponent_mage_name || "");
 
-        await supabase.from("arcanum_artifact_claims").insert({
+        // claim_key is the primary key: if a parallel request already inserted it, stop here
+        // instead of granting a second reward for the same battle.
+        const { error: claimInsertError } = await supabase.from("arcanum_artifact_claims").insert({
           claim_key: claimKey,
           user_id: who.userId,
           username: who.username,
@@ -686,6 +699,10 @@ Deno.serve(async (req: Request) => {
           source: "pvp",
           metadata: { battle_id: battleId, mode, land_change: landChange, opponent },
         });
+        if (claimInsertError) {
+          if (String((claimInsertError as any)?.code || "") === "23505") return json(req, { already_claimed: true });
+          throw claimInsertError;
+        }
 
         // A successful Siege can physically move a world-unique from the defeated realm.
         if (mode === "SIEGE" && landChange > 0 && opponent && Math.random() < 0.06) {
@@ -887,10 +904,9 @@ Deno.serve(async (req: Request) => {
         }
       }
 
-      // Kept for beta QA only. The UI no longer exposes it.
+      // Beta QA discovery was removed: it let any signed-in player grant themselves unlimited relics.
       if (req.method === "POST" && parts[1] === "discover") {
-        const artifact = await grantArtifact(who, "beta_discovery", { minor: 70, school: 22, cursed: 6.5, unique: 1.5 });
-        return json(req, { artifact }, 201);
+        return json(req, { error: "DISCOVERY_CLOSED" }, 410);
       }
     }
 
