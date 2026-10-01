@@ -155,23 +155,36 @@
         <div class="mage-sigil" id="mage-sigil">✦</div>
         <div><strong id="mage-title">Arconte</strong><small id="mage-school">Escuela</small></div>
       </button>
-      <nav id="main-nav" class="main-nav" aria-label="Secciones del dominio">
-        <button data-view="realm" class="active"><img class="nav-icon" src="assets/ui/nav/reino.png?v=0.2.28" alt="" aria-hidden="true" decoding="async" /> Dominio</button>
-        <button data-view="economy"><img class="nav-icon" src="assets/ui/nav/economia.png?v=0.2.28" alt="" aria-hidden="true" decoding="async" /> Economía</button>
-        <button data-view="market"><img class="nav-icon" src="assets/ui/nav/economia.png?v=0.2.45" alt="" aria-hidden="true" decoding="async" /> Mercado</button>
-        <button data-view="artifacts"><span class="nav-icon" aria-hidden="true">✧</span> Artefactos</button>
-        <button data-view="build"><img class="nav-icon" src="assets/ui/nav/construccion.png?v=0.2.28" alt="" aria-hidden="true" decoding="async" /> Construcción</button>
-        <button data-view="research"><img class="nav-icon" src="assets/ui/nav/investigacion.png?v=0.2.28" alt="" aria-hidden="true" decoding="async" /> Conocimiento Arcano</button>
-        <button data-view="army"><img class="nav-icon" src="assets/ui/nav/ejercito.png?v=0.2.28" alt="" aria-hidden="true" decoding="async" /> Ejército</button>
-        <button data-view="war"><img class="nav-icon" src="assets/ui/nav/guerra.png?v=0.2.28" alt="" aria-hidden="true" decoding="async" /> Guerra</button>
-        <button data-view="arena"><span class="nav-icon" aria-hidden="true">⚔</span> Arena</button>
-        <button data-view="pve"><span class="nav-icon" aria-hidden="true">◇</span> Expediciones</button>
-        <button data-view="event"><span class="nav-icon" aria-hidden="true">◈</span> Evento</button>
-        <button data-view="ranking"><img class="nav-icon" src="assets/ui/nav/clasificacion.png?v=0.2.28" alt="" aria-hidden="true" decoding="async" /> Clasificación</button>
-        <button data-view="battles"><img class="nav-icon" src="assets/ui/nav/informes.png?v=0.2.28" alt="" aria-hidden="true" decoding="async" /> Informes</button>
-        <button data-view="community"><img class="nav-icon" src="assets/ui/nav/comunidad.png?v=0.2.28" alt="" aria-hidden="true" decoding="async" /> Comunidad</button>
-        <button data-view="tavern"><img class="nav-icon" src="assets/ui/nav/comunidad.png?v=0.2.28" alt="" aria-hidden="true" decoding="async" /> Taberna</button>
-        <button data-view="lore"><span class="nav-icon" aria-hidden="true">⌘</span> Crónica</button>
+      <nav id="main-nav" class="main-nav" aria-label="Secciones de ARCANUM">
+        <div class="nav-section" aria-label="Archimago">
+          <div class="nav-section-title">ARCHIMAGO</div>
+          <button type="button" class="nav-character-button" data-open-mage-card><span class="nav-icon" aria-hidden="true">✦</span> Personaje</button>
+          <button data-view="research"><img class="nav-icon" src="assets/ui/nav/investigacion.png?v=0.2.28" alt="" aria-hidden="true" decoding="async" /> Grimorio</button>
+          <button data-view="artifacts"><span class="nav-icon" aria-hidden="true">✧</span> Artefactos</button>
+        </div>
+        <div class="nav-section" aria-label="Aventura y combate">
+          <div class="nav-section-title">AVENTURA Y COMBATE</div>
+          <button data-view="arena"><span class="nav-icon" aria-hidden="true">⚔</span> Arena</button>
+          <button data-view="pve"><span class="nav-icon" aria-hidden="true">◇</span> Expediciones</button>
+          <button data-view="event"><span class="nav-icon" aria-hidden="true">◈</span> Eventos</button>
+          <button data-view="ranking"><img class="nav-icon" src="assets/ui/nav/clasificacion.png?v=0.2.28" alt="" aria-hidden="true" decoding="async" /> Ranking</button>
+        </div>
+        <div class="nav-section" aria-label="Reino">
+          <div class="nav-section-title">REINO</div>
+          <button data-view="realm" class="active"><img class="nav-icon" src="assets/ui/nav/reino.png?v=0.2.28" alt="" aria-hidden="true" decoding="async" /> Dominio</button>
+          <button data-view="build"><img class="nav-icon" src="assets/ui/nav/construccion.png?v=0.2.28" alt="" aria-hidden="true" decoding="async" /> Construcción</button>
+          <button data-view="economy"><img class="nav-icon" src="assets/ui/nav/economia.png?v=0.2.28" alt="" aria-hidden="true" decoding="async" /> Economía</button>
+          <button data-view="market"><img class="nav-icon" src="assets/ui/nav/economia.png?v=0.2.45" alt="" aria-hidden="true" decoding="async" /> Mercado</button>
+          <button data-view="army"><img class="nav-icon" src="assets/ui/nav/ejercito.png?v=0.2.28" alt="" aria-hidden="true" decoding="async" /> Ejército</button>
+          <button data-view="war"><img class="nav-icon" src="assets/ui/nav/guerra.png?v=0.2.28" alt="" aria-hidden="true" decoding="async" /> Guerra</button>
+          <button data-view="battles"><img class="nav-icon" src="assets/ui/nav/informes.png?v=0.2.28" alt="" aria-hidden="true" decoding="async" /> Informes</button>
+        </div>
+        <div class="nav-section" aria-label="Comunidad">
+          <div class="nav-section-title">COMUNIDAD</div>
+          <button data-view="tavern"><img class="nav-icon" src="assets/ui/nav/comunidad.png?v=0.2.28" alt="" aria-hidden="true" decoding="async" /> Taberna</button>
+          <button data-view="community"><img class="nav-icon" src="assets/ui/nav/comunidad.png?v=0.2.28" alt="" aria-hidden="true" decoding="async" /> Comunidad</button>
+          <button data-view="lore"><span class="nav-icon" aria-hidden="true">⌘</span> Crónica</button>
+        </div>
       </nav>
       <button class="manual-button" id="manual-side-button" type="button">? &nbsp; MANUAL BÁSICO</button>
       <button class="manual-button tutorial-launch-button" id="tutorial-side-button" type="button">✦ &nbsp; TUTORIAL GUIADO</button>
@@ -196,20 +209,22 @@
     </section>
 
     <nav id="mobile-nav" class="mobile-nav" aria-label="Navegación móvil">
-      <button data-view="realm" class="active"><img class="nav-icon" src="assets/ui/nav/reino.png?v=0.2.28" alt="" aria-hidden="true" decoding="async" /><small>Dominio</small></button>
-      <button data-view="economy"><img class="nav-icon" src="assets/ui/nav/economia.png?v=0.2.28" alt="" aria-hidden="true" decoding="async" /><small>Economía</small></button>
-      <button data-view="market"><img class="nav-icon" src="assets/ui/nav/economia.png?v=0.2.45" alt="" aria-hidden="true" decoding="async" /><small>Mercado</small></button>
+      <button type="button" data-open-mage-card><span class="nav-icon" aria-hidden="true">✦</span><small>Personaje</small></button>
+      <button data-view="research"><img class="nav-icon" src="assets/ui/nav/investigacion.png?v=0.2.28" alt="" aria-hidden="true" decoding="async" /><small>Grimorio</small></button>
       <button data-view="artifacts"><span class="nav-icon" aria-hidden="true">✧</span><small>Artefactos</small></button>
-      <button data-view="build"><img class="nav-icon" src="assets/ui/nav/construccion.png?v=0.2.28" alt="" aria-hidden="true" decoding="async" /><small>Construir</small></button>
-      <button data-view="research"><img class="nav-icon" src="assets/ui/nav/investigacion.png?v=0.2.28" alt="" aria-hidden="true" decoding="async" /><small>Magia</small></button>
-      <button data-view="army"><img class="nav-icon" src="assets/ui/nav/ejercito.png?v=0.2.28" alt="" aria-hidden="true" decoding="async" /><small>Ejército</small></button>
-      <button data-view="war"><img class="nav-icon" src="assets/ui/nav/guerra.png?v=0.2.28" alt="" aria-hidden="true" decoding="async" /><small>Guerra</small></button>
       <button data-view="arena"><span class="nav-icon" aria-hidden="true">⚔</span><small>Arena</small></button>
       <button data-view="pve"><span class="nav-icon" aria-hidden="true">◇</span><small>Expedición</small></button>
-      <button data-view="event"><span class="nav-icon" aria-hidden="true">◈</span><small>Evento</small></button>
+      <button data-view="event"><span class="nav-icon" aria-hidden="true">◈</span><small>Eventos</small></button>
       <button data-view="ranking"><img class="nav-icon" src="assets/ui/nav/clasificacion.png?v=0.2.28" alt="" aria-hidden="true" decoding="async" /><small>Ranking</small></button>
-      <button data-view="community"><img class="nav-icon" src="assets/ui/nav/comunidad.png?v=0.2.28" alt="" aria-hidden="true" decoding="async" /><small>Comunidad</small></button>
+      <button data-view="realm" class="active"><img class="nav-icon" src="assets/ui/nav/reino.png?v=0.2.28" alt="" aria-hidden="true" decoding="async" /><small>Dominio</small></button>
+      <button data-view="build"><img class="nav-icon" src="assets/ui/nav/construccion.png?v=0.2.28" alt="" aria-hidden="true" decoding="async" /><small>Construir</small></button>
+      <button data-view="economy"><img class="nav-icon" src="assets/ui/nav/economia.png?v=0.2.28" alt="" aria-hidden="true" decoding="async" /><small>Economía</small></button>
+      <button data-view="market"><img class="nav-icon" src="assets/ui/nav/economia.png?v=0.2.45" alt="" aria-hidden="true" decoding="async" /><small>Mercado</small></button>
+      <button data-view="army"><img class="nav-icon" src="assets/ui/nav/ejercito.png?v=0.2.28" alt="" aria-hidden="true" decoding="async" /><small>Ejército</small></button>
+      <button data-view="war"><img class="nav-icon" src="assets/ui/nav/guerra.png?v=0.2.28" alt="" aria-hidden="true" decoding="async" /><small>Guerra</small></button>
+      <button data-view="battles"><img class="nav-icon" src="assets/ui/nav/informes.png?v=0.2.28" alt="" aria-hidden="true" decoding="async" /><small>Informes</small></button>
       <button data-view="tavern"><img class="nav-icon" src="assets/ui/nav/comunidad.png?v=0.2.28" alt="" aria-hidden="true" decoding="async" /><small>Taberna</small></button>
+      <button data-view="community"><img class="nav-icon" src="assets/ui/nav/comunidad.png?v=0.2.28" alt="" aria-hidden="true" decoding="async" /><small>Comunidad</small></button>
       <button data-view="lore"><span class="nav-icon" aria-hidden="true">⌘</span><small>Crónica</small></button>
     </nav>
   </main>
@@ -251,6 +266,13 @@
   <script defer src="assets/js/sidebar-social.js?v=0.3.3-astrael-live"></script>
   <script defer src="assets/js/realm-ai.js?v=0.2.36"></script>
   <script defer src="assets/js/realm.js?v=0.2.34"></script>
+  <script>
+    document.addEventListener('click', function (event) {
+      const trigger = event.target.closest('[data-open-mage-card]');
+      if (!trigger) return;
+      document.getElementById('mage-card-button')?.click();
+    });
+  </script>
   <script defer src="assets/js/economy.js?v=0.3.6"></script>
   <script defer src="assets/js/market.js?v=0.2.67"></script>
   <script defer src="assets/js/construction.js?v=0.2.45"></script>
