@@ -236,7 +236,6 @@ async function renderArena(){
   const level=Number(snapshot?.identity?.level||(typeof combatCurrentLevel==="function"?combatCurrentLevel(selfProfile):Math.max(1,Number(selfProfile.archmage_level||1))));
 
   $("#view-host").innerHTML=
-    viewHeader("DUELISTAS","Arena Arcana","PvP individual automático. El resultado, los Sellos y el rating se resuelven en el servidor.")+
     '<section class="arena-hero"><div><span class="section-kicker">CÍRCULO DE DUELO</span><h3>'+esc(selfProfile.mage_name)+'</h3>'+
       '<p>Seis combates clasificatorios al día según reloj del servidor. Los amistosos son ilimitados. Perfil, equipo, Sellos, rating y resultado se validan en backend.</p>'+
       '<div class="arena-meta">'+
