@@ -500,6 +500,51 @@ test("el Perfil social se abre desde la tarjeta del mago y permite editar la bio
 });
 
 
+test("cambiar de sección mientras Personaje aún carga no deja contenido de Personaje encima", async ({page})=>{
+  await installMocks(page);
+  await page.goto("/");
+  await page.locator("#username").fill("E2E_TESTER");
+  await page.locator("#password").fill("prueba-segura");
+  await page.locator("#submit-button").click();
+  await expect(page.locator("#game-view")).toBeVisible();
+  await expect(page.locator("#mage-title")).toHaveText("E2E_TESTER");
+  // Make Personaje slow, like it is on a real connection, then leave it before it finishes.
+  await page.evaluate(()=>{
+    globalThis.renderCharacterPage=async()=>{
+      await new Promise(r=>setTimeout(r,900));
+      document.querySelector("#view-host").innerHTML='<div id="stale-character">PERSONAJE TARDÍO</div>';
+    };
+  });
+  await page.locator('#main-nav button[data-view="realm"]').click();
+  await page.locator('#main-nav button[data-view="character"]').click();
+  await page.locator('#main-nav button[data-view="economy"]').click();
+  await expect(page.locator("#stale-character")).toHaveCount(0,{timeout:3000});
+  await page.waitForTimeout(1500);
+  await expect(page.locator("#stale-character")).toHaveCount(0);
+  await expect(page.locator('#main-nav button[data-view="economy"]')).toHaveClass(/active/);
+  await expect(page.locator("#view-host")).toContainText("Oro");
+});
+
+test("un jugador que no es admin deja de consultar el endpoint de administración tras el primer 403", async ({page})=>{
+  await installMocks(page);
+  let adminHits=0;
+  await page.route(/\/functions\/v1\/arcanum-admin(?:\/.*)?(?:\?.*)?$/, async route=>{
+    const req=route.request();
+    if(req.method()==="OPTIONS") return route.fulfill({status:204,headers:{"access-control-allow-origin":"*","access-control-allow-headers":"authorization, content-type","access-control-allow-methods":"GET,POST,OPTIONS"},body:""});
+    if(req.url().includes("/public-status")) return route.fulfill({status:200,contentType:"application/json",headers:{"access-control-allow-origin":"*"},body:JSON.stringify({maintenance:{enabled:false}})});
+    adminHits++;
+    return route.fulfill({status:403,contentType:"application/json",headers:{"access-control-allow-origin":"*"},body:JSON.stringify({error:"FORBIDDEN"})});
+  });
+  await page.goto("/");
+  await page.locator("#username").fill("E2E_TESTER");
+  await page.locator("#password").fill("prueba-segura");
+  await page.locator("#submit-button").click();
+  await expect(page.locator("#game-view")).toBeVisible();
+  await page.waitForTimeout(8000);
+  // Before the fix this was one probe every 2.5 s forever (about 3 in 8 s and growing).
+  expect(adminHits).toBeLessThanOrEqual(2);
+});
+
 test("los iconos artísticos de navegación y recursos cargan", async ({page})=>{
   await installMocks(page);
   await page.goto("/");
