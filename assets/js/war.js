@@ -112,7 +112,7 @@ async function renderRanking(){
 
   const generalBody=generalRows.length?generalRows.map((x,index)=>`<tr class="${String(x.mage_name).trim().toLowerCase()===mine?"rank-me":""}"><td>${n(index+1)}</td><td><strong><button class="player-link" data-profile="${esc(x.mage_name)}">${esc(x.mage_name)}</button></strong></td><td><span class="school-dot ${esc(x.school_code)}"></span>${esc(schoolName(x.school_code))}</td><td>${n(x.wins)}</td><td>${n(x.losses)}</td><td>${n(x.elo)}</td><td>${n(x.net_power)}</td><td><strong class="ranking-general-score">${n(x.general_score)}</strong></td></tr>`).join(""):`<tr><td colspan="8"><div class="empty">Todavía no hay jugadores humanos clasificados.</div></td></tr>`;
 
-  const realmBody=humanRows.length?humanRows.map((x,index)=>`<tr class="${String(x.mage_name).trim().toLowerCase()===mine?"rank-me":""}"><td>${n(index+1)}</td><td><strong><button class="player-link" data-profile="${esc(x.mage_name)}">${esc(x.mage_name)}</button></strong></td><td><span class="school-dot ${esc(x.school_code)}"></span>${esc(schoolName(x.school_code))}</td><td>${n(x.land)}</td><td>${n(x.net_power)}</td><td>${esc(x.status)}</td></tr>`).join(""):`<tr><td colspan="6"><div class="empty">Todavía no hay reinos humanos clasificados.</div></td></tr>`;
+  const realmBody=humanRows.length?humanRows.map((x,index)=>`<tr class="${String(x.mage_name).trim().toLowerCase()===mine?"rank-me":""}"><td>${n(index+1)}</td><td><strong><button class="player-link" data-profile="${esc(x.mage_name)}">${esc(x.mage_name)}</button></strong></td><td><span class="school-dot ${esc(x.school_code)}"></span>${esc(schoolName(x.school_code))}</td><td>${n(x.land)}</td><td>${n(x.net_power)}</td></tr>`).join(""):`<tr><td colspan="5"><div class="empty">Todavía no hay reinos humanos clasificados.</div></td></tr>`;
 
   const pvpBody=pvpRows.length?pvpRows.map((x,index)=>{
     const name=String(x.username||x.mage_name||"");
@@ -132,7 +132,7 @@ async function renderRanking(){
     </section>
     <section class="ranking-panel" data-rank-panel="realm">
       <div class="ranking-panel-head"><div><span class="section-kicker">DOMINIOS</span><h3>Ranking de Reinos</h3></div><p>Ordenado por Ascendencia del dominio.</p></div>
-      <div class="table-wrap"><table><thead><tr><th>#</th><th>Arconte</th><th>Escuela</th><th>Tierras</th><th>Ascendencia</th><th>Estado</th></tr></thead><tbody>${realmBody}</tbody></table></div>
+      <div class="table-wrap"><table><thead><tr><th>#</th><th>Arconte</th><th>Escuela</th><th>Tierras</th><th>Ascendencia</th></tr></thead><tbody>${realmBody}</tbody></table></div>
     </section>
     <section class="ranking-panel" data-rank-panel="pvp">
       <div class="ranking-panel-head"><div><span class="section-kicker">ARENA</span><h3>Ranking PvP</h3></div><p>Clasificación competitiva por ELO y récord de Arena.</p></div>
