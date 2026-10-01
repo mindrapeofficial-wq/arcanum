@@ -388,3 +388,19 @@
   .character-avatar-zone:after{width:160px;height:160px}
   .character-loadout-grid{padding:9px}
 }
+
+
+/* External CC BY icon: Crystal wand by Lorc, game-icons.net */
+.character-character-stage:after{
+  content:"";
+  position:absolute;
+  z-index:1;
+  right:14px;
+  top:14px;
+  width:32px;
+  height:32px;
+  background:url("../vendor/game-icons/crystal-wand.svg") center/contain no-repeat;
+  opacity:.22;
+  filter:drop-shadow(0 0 8px rgba(216,182,108,.14));
+  pointer-events:none;
+}
