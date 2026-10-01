@@ -121,12 +121,6 @@ async function renderRanking(){
   }).join(""):`<tr><td colspan="6"><div class="empty">Todavía no hay jugadores con clasificación PvP.</div></td></tr>`;
 
   $("#view-host").innerHTML=`
-    <section class="ranking-hero">
-      <span class="section-kicker">COMUNIDAD · CLASIFICACIÓN</span>
-      <h2>Ranking</h2>
-      <p>La clasificación central de ARCANUM reúne progreso de reino y rendimiento competitivo.</p>
-      <div class="ranking-formula"><small>FÓRMULA GENERAL</small><strong>ELO + 40×Victorias − 20×Derrotas + 300×log₁₀(Ascendencia + 1)</strong></div>
-    </section>
     <div class="ranking-tabs" role="tablist" aria-label="Listas de clasificación">
       <button class="ranking-tab active" type="button" data-rank-tab="general">✦ General</button>
       <button class="ranking-tab" type="button" data-rank-tab="realm">Reinos</button>
