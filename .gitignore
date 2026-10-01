@@ -6,3 +6,5 @@ android/app/build/
 *.apk
 *.aab
 supabase/.temp/
+test-results/
+playwright-report/
