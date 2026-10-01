@@ -1,0 +1,7 @@
+/* ARCANUM Classic: solo el Reino. Todo se aplica únicamente con <html data-edition="classic">. */
+html[data-edition="classic"] .market-artifact-link,
+html[data-edition="classic"] [data-rank-tab="arena"],
+html[data-edition="classic"] [data-rank-panel="arena"],
+html[data-edition="classic"] .social-profile-summary > div:nth-child(2) {
+  display: none !important;
+}

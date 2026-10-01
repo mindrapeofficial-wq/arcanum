@@ -9,7 +9,7 @@ const version=JSON.parse(read("version.json"));
 const jsFiles=[
   "assets/js/immersive.js","assets/js/state.js","assets/js/auth.js","assets/js/archmage.js","assets/js/combat-profile.js","assets/js/items.js","assets/js/inventory.js","assets/js/archmage-sheet.js","assets/js/profile.js","assets/js/realm-state.js","assets/js/router.js",
   "assets/js/community.js","assets/js/realm.js","assets/js/economy.js","assets/js/construction.js",
-  "assets/js/magic.js","assets/js/army.js","assets/js/realm-tools.js","assets/js/luck-support.js","assets/js/war.js","assets/js/arena.js","assets/js/pve.js","assets/js/tutorial.js","assets/js/ui.js"
+  "assets/js/magic.js","assets/js/army.js","assets/js/edition.js","assets/js/realm-tools.js","assets/js/luck-support.js","assets/js/war.js","assets/js/arena.js","assets/js/pve.js","assets/js/tutorial.js","assets/js/ui.js"
 ];
 const js=jsFiles.map(read).join("\n");
 const uiAssets=[
@@ -652,4 +652,50 @@ test("players table is not writable by signed-in players",()=>{
     const src=read("assets/js/"+f);
     assert.doesNotMatch(src,/\/rest\/v1\/players/,f+" must not write to the players table directly");
   }
+});
+
+test("Classic edition helpers hide the role-playing layer and keep the Reino",()=>{
+  const context={};
+  vm.createContext(context);
+  vm.runInContext(read("assets/js/edition.js"),context);
+  assert.equal(vm.runInContext("ARCANUM_EDITION",context),"standard","the default edition is the full game");
+  for(const hidden of ["character","artifacts","arena","pve","event","tavern","pvp-ranking"])
+    assert.equal(vm.runInContext(`classicViewAllowed(${JSON.stringify(hidden)})`,context),false,hidden+" must be hidden");
+  for(const shown of ["realm","build","economy","research","market","army","war","battles","community","ranking","admin"])
+    assert.equal(vm.runInContext(`classicViewAllowed(${JSON.stringify(shown)})`,context),true,shown+" must stay");
+  assert.equal(vm.runInContext("classicText('Los Arcontes y el ARCONTE; tu Arconte')",context),"Los Arcontes y el ARCONTE; tu Arconte","Classic keeps ARCANUM's own vocabulary (no Archimago rewrite)");
+  assert.equal(vm.runInContext("classicText('Arconteado')",context),"Arconteado","vocabulary is left untouched");
+  assert.equal(vm.runInContext("classicNavGroup('research','arconte')",context),"reino","the grimoire lives in the Reino");
+  assert.equal(vm.runInContext("classicNavGroup('unknown','arconte')",context),"reino");
+  assert.equal(vm.runInContext("classicNavGroup('ranking','comunidad')",context),"comunidad");
+  context.steps=[{view:"realm",kicker:"PASO 1 · A"},{view:"character",kicker:"PASO 2 · B"},{view:"war",kicker:"PASO 3 · C"},{view:"realm",kicker:"PASO 4 · D"}];
+  const steps=JSON.parse(vm.runInContext("JSON.stringify(classicTutorialSteps(steps))",context));
+  assert.deepEqual(steps.map(s=>s.kicker),["PASO 1 · A","PASO 2 · C","PASO 3 · D"],"tutorial steps are filtered and renumbered");
+});
+
+test("Classic edition never calls the Arconte backend and only activates on its own flag",()=>{
+  const src=read("assets/js/edition.js");
+  assert.doesNotMatch(src,/stateApi\(|arcanum-state|COMBAT|STATE_API/,"Classic must not depend on arcanum-state");
+  assert.match(src,/loadArchmageSnapshot = async name => \(\{ profile: await rpc\("player_profile"/);
+  assert.doesNotMatch(src,/localStorage|sessionStorage/);
+  assert.match(src,/if \(ARCANUM_IS_CLASSIC\) document\.addEventListener\("DOMContentLoaded", startClassicEdition\)/,"the standard edition must stay untouched");
+  const css=read("assets/css/classic.css").replace(/\/\*[\s\S]*?\*\//g,"");
+  const classicSelectors=css.split("}").map(block=>block.split("{")[0]).join(",").split(",").map(s=>s.trim()).filter(Boolean);
+  assert.ok(classicSelectors.length>0,"classic.css has at least one rule");
+  for(const selector of classicSelectors)
+    assert.match(selector,/^html\[data-edition="classic"\]/,"every Classic rule is scoped to the edition");
+  assert.match(html,/assets\/js\/edition\.js/);
+  assert.match(html,/assets\/css\/classic\.css/);
+});
+
+test("Classic build injects the edition flag and keeps the ARCANUM identity",async()=>{
+  const { classicIndexHtml, classicManifest }=await import("../scripts/build-classic.mjs");
+  const out=classicIndexHtml(html);
+  assert.match(out,/<script>window\.ARCANUM_EDITION="classic";<\/script>\s*<script defer src="assets\/js\/edition\.js/,"the flag precedes edition.js");
+  assert.match(out,/<title>ARCANUM<\/title>/,"the product keeps the ARCANUM name (Classic is only the internal model)");
+  assert.doesNotMatch(out,/ARCANUM Classic/,"no visible Classic branding");
+  assert.doesNotMatch(html,/ARCANUM_EDITION="classic"/,"the source index.html stays the standard edition");
+  const manifest=JSON.parse(classicManifest(read("manifest.webmanifest")));
+  assert.equal(manifest.name,"ARCANUM: Las Cinco Escuelas");
+  assert.throws(()=>classicIndexHtml("<html><title>ARCANUM</title></html>"),/edition\.js/);
 });
