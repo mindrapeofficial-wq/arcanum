@@ -235,39 +235,7 @@ function renderPlayerProfile(profile,inbox=null,snapshot=null,target=null){
     '</section>';
   wireProfileSheet(profile);
 }
-async function renderCharacterPage(){
-  const host=$("#view-host");
-  const mageName=String(realmState?.realm?.mage_name||ownProfileBadge?.mage_name||"").trim();
-  if(!host)return;
-  if(!mageName){
-    host.innerHTML='<div class="view-header"><div><span class="section-kicker">ARCHIMAGO</span><h2>Personaje</h2><p>No se ha podido identificar a tu Archimago.</p></div></div>';
-    return;
-  }
-  activeProfileName=mageName;
-  host.innerHTML='<div class="profile-loading character-page-loading">Abriendo ficha canónica de '+esc(mageName)+'…</div>';
-  try{
-    let snapshot=typeof loadArchmageSnapshot==="function"
-      ?await loadArchmageSnapshot(mageName,{force:true})
-      :{profile:await rpc("player_profile",{p_mage_name:mageName})};
-    let profile=snapshot.profile;
-    try{
-      if(typeof combatHydrateProfile==="function")await combatHydrateProfile(profile);
-      if(typeof lootHydrateProfile==="function")await lootHydrateProfile(profile);
-      if(typeof loadArchmageSnapshot==="function"){
-        snapshot=await loadArchmageSnapshot(mageName,{force:true});
-        profile=snapshot.profile;
-      }
-    }catch(e){console.warn("Character page migration check failed",e)}
-    const inbox=await rpc("social_inbox");
-    ownProfileBadge=profile;
-    renderOwnProfileBadge();
-    renderPlayerProfile(profile,inbox,snapshot,host);
-    host.querySelector(".canonical-archmage-sheet")?.classList.add("character-page-sheet");
-  }catch(e){
-    host.innerHTML='<div class="view-header"><div><span class="section-kicker">ARCHIMAGO</span><h2>Error de personaje</h2><p>'+esc(humanError(e))+'</p></div></div>';
-  }
-}
-globalThis.renderCharacterPage=renderCharacterPage;
+
 
 function renderOwnSocial(profile,inbox){
   const friends=inbox?.friends||[];
@@ -308,6 +276,14 @@ function wireProfileSheet(profile){
   $$("[data-alliance-reject]").forEach(b=>b.addEventListener("click",()=>profileAllianceRespond(b.dataset.allianceReject,false)));
   $("#profile-alliance-create")?.addEventListener("submit",createProfileAlliance);
 }
+async function refreshOwnCharacterSurface(profile){
+  if(typeof currentView!=="undefined"&&currentView==="character"&&typeof renderCharacterPage==="function"){
+    await renderCharacterPage();
+    return;
+  }
+  await refreshOwnCharacterSurface(profile);
+}
+
 async function spendArchmageAttribute(key,profile){
   const meta=ARCHMAGE_STAT_META[key];
   if(!profile?.is_self||!meta)return;
@@ -317,7 +293,7 @@ async function spendArchmageAttribute(key,profile){
   try{
     const result=await rpc("spend_archmage_attribute",{p_attribute:key});
     toast(meta.label+" ha aumentado a "+n(result[key])+".","success");
-    await openPlayerProfile(profile.mage_name);
+    await refreshOwnCharacterSurface(profile);
   }catch(e){
     toast(humanError(e),"error");
     buttons.forEach(b=>b.disabled=false);
@@ -331,7 +307,7 @@ async function saveOwnProfile(profile){
   try{
     await rpc("update_my_profile",{p_bio:bio,p_avatar_path:profile.avatar_path||null});
     toast("Ficha de personaje actualizada.","success");
-    await openPlayerProfile(profile.mage_name);
+    await refreshOwnCharacterSurface(profile);
     await refreshOwnProfileBadge(true);
   }catch(e){toast(humanError(e),"error");}
   finally{if(btn){btn.disabled=false;btn.textContent=old;}}
@@ -449,7 +425,7 @@ async function uploadProfileAvatar(file,profile){
     const bio=$("#profile-bio-input")?.value||profile.bio||"";
     await rpc("update_my_profile",{p_bio:bio,p_avatar_path:path});
     toast("Imagen de perfil actualizada.","success");
-    await openPlayerProfile(profile.mage_name);
+    await refreshOwnCharacterSurface(profile);
     await refreshOwnProfileBadge(true);
   }catch(e){toast(humanError(e),"error");}
 }
