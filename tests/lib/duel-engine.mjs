@@ -30,7 +30,7 @@ const EXPORTS = [
 export function loadEngine(text) {
   const src = extractEngineSource(text);
   const present = EXPORTS.filter((name) => new RegExp(`(function|const|let)\\s+${name}\\b`).test(src));
-  const extra = ["EVOLVE_ABILITIES", "EXTRA_WEAPONS", "ABILITY_META", "gradeOf", "abilityParam", "abilityViews", "pendingEvolutionFor", "evolutionView", "duelRounds", "deal"]
+  const extra = ["EVOLVE_ABILITIES", "EXTRA_WEAPONS", "ABILITY_META", "gradeOf", "abilityParam", "abilityViews", "pendingEvolutionFor", "evolutionView", "duelRounds", "deal", "SPELLS", "FAMILIARS", "familiarView", "familiarViews", "familiarDef", "makePet", "livePets", "arenaBonusFights"]
     .filter((name) => new RegExp(`(function|const|let)\\s+${name}\\b`).test(src));
   const js = stripTypeScriptTypes(src + `\n;({${present.concat(extra).join(",")}})`);
   return vm.runInNewContext(js, { Math, JSON, Number, String, Object, Array, Set, Map, Infinity, Date }, { filename: "duel-engine.js" });
