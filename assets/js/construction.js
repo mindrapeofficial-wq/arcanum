@@ -130,7 +130,7 @@ function renderBuild(){
     </div>
   </section>`;
 
-  $("[data-building]").forEach(input=>input.addEventListener("input",refreshBuildPlan));
+  $$("[data-building]").forEach(input=>input.addEventListener("input",refreshBuildPlan));
   $("#build-button").addEventListener("click",()=>doBuild($("#build-button")));
   refreshBuildPlan();
 }

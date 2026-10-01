@@ -1,6 +1,6 @@
 {
-  "version": "0.3.32",
+  "version": "0.3.33",
   "channel": "beta",
-  "updated_at": "2026-10-01T15:36:00+02:00",
-  "note": "Corrige el último selector de Construcción que seguía usando $ en lugar de $$"
+  "updated_at": "2026-10-01T15:42:00+02:00",
+  "note": "Hotfix definitivo de Construcción: todos los campos usan el selector de lista $$"
 }
