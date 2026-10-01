@@ -24,3 +24,9 @@ The files are stored as Base64 text so they can be committed through the project
 ## Existing music
 
 `Dungeon Lobby.mp3` predates this change. Its provenance and license are intentionally not modified or asserted by this document.
+
+## Procedural arcane voices
+
+`whoosh`, `chime`, `levelup`, `impact`, `cast`, `coin` and `portal` in `assets/js/audio.js` are
+synthesised at runtime with WebAudio (FM bells, filtered noise sweeps, sub thumps, generated reverb).
+They use no external audio files and have no licensing requirements.

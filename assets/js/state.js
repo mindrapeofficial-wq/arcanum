@@ -3,7 +3,7 @@
 const SUPABASE_URL = "https://mrmvmoyysxuopqexbxfk.supabase.co";
 const SUPABASE_KEY = "sb_publishable_tZEPJi2v7Tp-xDuVa0qWRw_geizIGoD";
 const SESSION_KEY = "arcanum_session_v2";
-const BUILD_VERSION = "0.3.42";
+const BUILD_VERSION = "0.3.44";
 const VERSION_CHECK_INTERVAL_MS = 60000;
 const COMMUNITY_API = "https://mrmvmoyysxuopqexbxfk.supabase.co/functions/v1/arcanum-community";
 const ORACLE_API = "https://mrmvmoyysxuopqexbxfk.supabase.co/functions/v1/arcanum-oracle";
@@ -66,6 +66,7 @@ function clearNotice(el){ if(!el)return; el.textContent=""; el.className="notice
 function toast(message,type="success",ms=4200){
   const host=$("#toast-host"); const item=document.createElement("div"); item.className=`toast ${type}`; item.textContent=message; host.appendChild(item);
   setTimeout(()=>item.remove(),ms);
+  if(type==="success"||type==="error")document.dispatchEvent(new CustomEvent("arcanum:"+type));
 }
 async function stateApi(path,{method="GET",body}={}){
   const session=getSession();

@@ -117,6 +117,7 @@ async function pveStart(expeditionId,difficulty,btn){
   try{
     const data=await stateApi("/pve/start",{method:"POST",body:{expedition_id:expeditionId,difficulty:Number(difficulty)}});
     toast(data?.resumed?"Has retomado tu expedición.":"La entrada a las Ruinas ha quedado sellada.","success");
+    document.dispatchEvent(new CustomEvent("arcanum:portal"));
     await renderPve();
   }catch(e){toast(humanError(e),"error");if(btn){btn.disabled=false;btn.classList.remove("busy")}}
 }

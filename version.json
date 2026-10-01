@@ -1,6 +1,6 @@
 {
-  "version": "0.3.42",
+  "version": "0.3.44",
   "channel": "beta",
-  "updated_at": "2026-10-01T19:30:00+00:00",
-  "note": "Pulido visual: profundidad, legibilidad, estados de interacción, barras con brillo y ambiente animado"
+  "updated_at": "2026-10-01T20:00:00+00:00",
+  "note": "Dirección artística: tipografía Cinzel, partículas, sonido procedural, transiciones y tinte por escuela"
 }

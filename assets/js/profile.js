@@ -364,6 +364,7 @@ async function spendArchmageAttribute(key,profile){
   try{
     const result=await rpc("spend_archmage_attribute",{p_attribute:key});
     toast(meta.label+" ha aumentado a "+n(result[key])+".","success");
+    document.dispatchEvent(new CustomEvent("arcanum:cast"));
     await refreshOwnCharacterSurface(profile);
   }catch(e){
     toast(humanError(e),"error");

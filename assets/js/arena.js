@@ -233,6 +233,7 @@ function arenaOpen(rec){
       return '<p><small>'+String(i+1).padStart(2,"0")+'</small>'+esc(x)+'</p>';
     }).join("")+'</div>';
   show($("#modal"));
+  document.dispatchEvent(new CustomEvent("arcanum:impact"));
   arenaHydrateSprites($("#modal-content")).then(function(){arenaRunReplay(rec)});
 }
 
