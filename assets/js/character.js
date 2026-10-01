@@ -29,11 +29,11 @@ function characterPortraitUrl(profile){
   };
   const school=aliases[code]||code;
   const paths={
-    verdant:"assets/art/characters/verdante/viridia-level-1.webp?v=0.3.23",
-    eradication:"assets/art/characters/eradication/cineria-level-1.webp?v=0.3.23",
-    phantasm:"assets/art/characters/phantasm/oneiria-level-1.webp?v=0.3.23",
-    ascendant:"assets/art/characters/ascendant/aurea-level-1.webp?v=0.3.23",
-    abyssal:"assets/art/characters/abyssal/nadir-level-1.webp?v=0.3.23"
+    verdant:"assets/art/characters/verdante/viridia-level-1.svg?v=0.3.26",
+    eradication:"assets/art/characters/eradication/cineria-level-1.png?v=0.3.26",
+    phantasm:"assets/art/characters/phantasm/oneiria-level-1.png?v=0.3.26",
+    ascendant:"assets/art/characters/ascendant/aurea-level-1.png?v=0.3.26",
+    abyssal:"assets/art/characters/abyssal/nadir-level-1.png?v=0.3.26"
   };
   return paths[school]||"";
 }
