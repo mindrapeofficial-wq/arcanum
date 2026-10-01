@@ -16,18 +16,18 @@ The browser is never allowed to be the source of truth for progression or compet
 
 | Domain | Data | Authority | Status |
 | --- | --- | --- | --- |
-| Realm | gold, mana, population, land, turns, buildings, research, army, war | Core Supabase | SERVER_CANONICAL |
-| Archmage progression | XP, level, four core attributes, attribute points | Core Supabase | SERVER_CANONICAL |
-| Market | offers and resource settlement | Core Supabase RPC | SERVER_CANONICAL |
-| Community | chat, board, presence | Nexo Supabase | SERVER_CANONICAL |
-| Social | friends, DMs, alliances, profile/bio | Core Supabase | SERVER_CANONICAL |
-| Artifacts | ownership, unique relics, artifact market/history | Nexo Supabase | SERVER_CANONICAL |
-| World Boss | event state, attacks, participants | Nexo Supabase | SERVER_CANONICAL |
-| Combat identity | base stats, weapon, trait, abilities, evolution choices | Nexo Supabase / arcanum-state | SERVER_CANONICAL since 0.3.0 |
-| Arena | daily seals, rating, wins/losses, history, duel result | Nexo Supabase / arcanum-state | SERVER_CANONICAL since 0.3.0 |
+| Realm | gold, mana, population, land, turns, buildings, research, army, war | ARCANUM Supabase | SERVER_CANONICAL |
+| Archmage progression | XP, level, four core attributes, attribute points | ARCANUM Supabase | SERVER_CANONICAL |
+| Market | offers and resource settlement | ARCANUM Supabase RPC | SERVER_CANONICAL |
+| Community | chat, board, presence | ARCANUM Supabase | SERVER_CANONICAL |
+| Social | friends, DMs, alliances, profile/bio | ARCANUM Supabase | SERVER_CANONICAL |
+| Artifacts | ownership, unique relics, artifact market/history | ARCANUM Supabase | SERVER_CANONICAL |
+| World Boss | event state, attacks, participants | ARCANUM Supabase | SERVER_CANONICAL |
+| Combat identity | base stats, weapon, trait, abilities, evolution choices | ARCANUM Supabase / arcanum-state | SERVER_CANONICAL since 0.3.0 |
+| Arena | daily seals, rating, wins/losses, history, duel result | ARCANUM Supabase / arcanum-state | SERVER_CANONICAL since 0.3.0 |
 | Combat derived stats | HP, attack, armor, speed, crit, dodge, block | Recalculated from combat profile | DERIVED |
 | Passive resource animation | interpolated per-second display | Browser cache | DERIVED / presentation only |
-| Procedural inventory | items, equipment, loot rolls | Nexo Supabase / arcanum-state | SERVER_CANONICAL since 0.3.1 |
+| Procedural inventory | items, equipment, loot rolls | ARCANUM Supabase / arcanum-state | SERVER_CANONICAL since 0.3.1 |
 | Audio settings | volumes, mute | Browser localStorage | LOCAL_ONLY |
 | Tutorial completed | tutorial marker | Browser localStorage | LOCAL_ONLY |
 | Online panel collapsed | UI preference | Browser localStorage | LOCAL_ONLY |
@@ -48,23 +48,11 @@ The browser is never allowed to be the source of truth for progression or compet
 - The client no longer writes Arena progression to localStorage.
 - `combat-profile.js` uses server state as its runtime authority. The former localStorage profile is read only as a one-time migration source.
 
-## Next migration inside Point 1
+## Inventory migration status
 
-**Procedural inventory is the remaining critical local authority.**
+The procedural inventory migration described in older Point 1 notes is **complete** in the current beta line. Inventory, equipment mutations and verified Gear acquisition are server-authoritative through ARCANUM Supabase / `arcanum-state`.
 
-It currently changes combat statistics while items, rolls and equipment are stored in localStorage. It must be migrated before equipment is allowed to affect authoritative ranked combat.
-
-Required next steps:
-
-1. Server tables for inventory items and equipped slots.
-2. Server-side item generation / roll validation.
-3. One-time beta migration policy for existing local items.
-4. Equip, unequip and destroy as authenticated server mutations.
-5. Arena reads equipment bonuses only from verified server inventory.
-6. Remove all inventory writes to localStorage.
-
-After inventory, audit any remaining gameplay-changing local state and enforce a CI test that fails when new gameplay code introduces localStorage as an authority.
-
+Do not reintroduce localStorage as gameplay authority. Legacy local inventory keys may exist only as one-time migration inputs where the server explicitly validates/imports them.
 
 ## 0.3.3 canonical Archmage identity
 

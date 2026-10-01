@@ -47,6 +47,20 @@ Current product decisions:
 - **Taberna is intentionally hidden until its gameplay implementation is ready.** Do not re-enable it merely because code/assets still exist.
 - Ranking should represent human players, not NPCs/bots, unless a future explicit design change says otherwise.
 
+
+## 2A. Current product constraints
+
+Read `docs/PRODUCT_DECISIONS.md` before changing authentication, onboarding, deployment assumptions, navigation, visual identity, or world/map direction.
+
+Key constraints:
+
+- immediate priority is a stable, playable public beta;
+- registration is normal username + email + password, with **no invitation requirement**;
+- entry screen primary actions are **ENTRAR** and **REGISTRO**;
+- production deployment is Render;
+- imported Drive documents under `docs/reference/` are continuity snapshots, not automatic authority;
+- source precedence is defined in `docs/CONTEXT_SOURCES.md`.
+
 ## 3. Character art rules
 
 ARCANUM uses five schools:
@@ -100,14 +114,14 @@ Rules:
 
 ### Supabase warning
 
-ARCANUM has undergone Supabase separation/migration work. Recent commits explicitly moved/fixed ARCANUM APIs after that separation.
+ARCANUM has completed the critical Supabase separation work. The current runtime configuration in `assets/js/state.js` points ARCANUM APIs to project ref `mrmvmoyysxuopqexbxfk`.
 
-**Do not trust an old hard-coded project URL, old “Core/Nexo” assumption, or stale documentation blindly.** Before adding or changing any Supabase call:
+**Do not trust an old hard-coded project URL, “Core/Nexo” ownership label, or stale historical documentation. NEXO is not a current ARCANUM backend/source of truth.** Before adding or changing any Supabase call:
 
-- inspect the current runtime config and existing API client,
-- verify which ARCANUM project/function currently owns the endpoint,
+- inspect `assets/js/state.js` and the existing API client,
+- verify the current ARCANUM Edge Function/RPC that owns the endpoint,
 - reuse the existing canonical client/configuration,
-- never copy credentials or endpoints from another project such as Nexo.
+- never copy credentials or endpoints from another project.
 
 ## 6. Economy contract
 
@@ -246,6 +260,9 @@ Read these instead of reverse-engineering game rules from UI labels:
 - `docs/LOOT_LOOP.md` — loot progression loop
 - `docs/PVE_EXPEDITIONS.md` — PvE/Expeditions
 - `docs/archmage-progression.md` — progression details
+- `docs/PRODUCT_DECISIONS.md` — explicit current product decisions and handoff context
+- `docs/CONTEXT_SOURCES.md` — source precedence and imported Drive snapshot index
+- `docs/reference/` — historical/design snapshots imported from the ARCANUM Drive project
 
 If code and documentation conflict, **do not guess**. Prefer the newest explicit product decision plus the current server contract, then update the stale documentation as part of the same change.
 
