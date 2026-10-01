@@ -304,13 +304,13 @@ async function refreshSidebarPresence(force=false){
         if(af!==bf)return af?-1:1;
         return String(a.username||"").localeCompare(String(b.username||""),"es");
       });
-    count.textContent=String(online.length+1);
-    host.innerHTML=sidebarOracleRow()+(online.length
+    count.textContent=String(online.length);
+    host.innerHTML=online.length
       ?online.map(x=>sidebarOnlineRow(x,friends)).join("")
-      :'<div class="sidebar-online-empty">No hay otros Arcontes conectados ahora.</div>');
+      :'<div class="sidebar-online-empty">No hay otros Arcontes conectados ahora.</div>';
   }catch(e){
-    count.textContent="1";
-    host.innerHTML=sidebarOracleRow()+'<div class="sidebar-online-empty">No se pudo consultar la presencia de otros Arcontes.</div>';
+    count.textContent="0";
+    host.innerHTML='<div class="sidebar-online-empty">No se pudo consultar la presencia de otros Arcontes.</div>';
     if(!arcaneInboxState.requests.length&&!arcaneInboxState.conversations.length)refreshArcaneInbox();
   }finally{sidebarPresenceBusy=false;}
 }
@@ -358,15 +358,12 @@ function stopAstraelAutoplay(){
 function startSidebarSocial(){
   stopSidebarSocial(false);
   ensureOnlinePanelCollapseButton();
-  warmOracleCapabilities();
-  startAstraelAutoplay();
   refreshSidebarPresence(true);
   sidebarPresenceTimer=setInterval(()=>refreshSidebarPresence(false),15000);
 }
 function stopSidebarSocial(closeChat=true){
   clearInterval(sidebarPresenceTimer);
   sidebarPresenceTimer=null;
-  stopAstraelAutoplay();
   closeArcaneInbox();
   if(closeChat)closeDirectChatWindow();
 }
