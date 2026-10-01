@@ -595,7 +595,7 @@ test("la barra lateral muestra conectados y abre chat privado solo entre amigos"
   await page.locator("#sidebar-online-collapse").click();
   const connected=page.locator('#sidebar-online-list [data-profile="FRIEND_TEST"]');
   await expect(connected).toBeVisible();
-  await expect(page.locator("#sidebar-online-count")).toHaveText("2");
+  await expect(page.locator("#sidebar-online-count")).toHaveText("1");
 
   await connected.click();
   await expect(page.locator("#modal")).toBeVisible();
@@ -639,31 +639,7 @@ test("Bandeja Arcana muestra solicitudes, mensajes y permite aceptar amistad", a
 });
 
 
-test("Astrael aparece conectado y responde dudas del juego", async ({page})=>{
-  const mock=await installMocks(page);
-  await page.goto("/");
-  await page.locator("#username").fill("E2E_TESTER");
-  await page.locator("#password").fill("prueba-segura");
-  await page.locator("#submit-button").click();
-  await expect(page.locator("#game-view")).toBeVisible();
-
-  await expect(page.locator("#sidebar-online-list")).toContainText("Astrael");
-  await expect(page.locator("#sidebar-online-list")).toContainText("IA");
-  await page.locator("#sidebar-online-collapse").click();
-  await page.locator('#sidebar-online-list [data-oracle-chat]').first().click();
-
-  await expect(page.locator("#direct-chat-window")).toBeVisible();
-  await expect(page.locator("#direct-chat-name")).toHaveText("Astrael");
-  await expect(page.locator("#direct-chat-school")).toContainText("IA");
-  await page.locator("#direct-chat-input").fill("¿Cómo funcionan los turnos?");
-  await page.locator("#direct-chat-send").click();
-
-  await expect(page.locator("#direct-chat-messages")).toContainText("cada 5 minutos");
-  expect(mock.calls.some(x=>x.path==="oracle")).toBeTruthy();
-});
-
-
-test("Expediciones inicia una incursión persistente y arrastra vida entre salas", async ({page})=>{
+test("Astrael no aparece como IA en la interfaz del jugador", async ({page})=>{\n  await installMocks(page);\n  await page.goto("/");\n  await page.locator("#username").fill("E2E_TESTER");\n  await page.locator("#password").fill("prueba-segura");\n  await page.locator("#submit-button").click();\n  await expect(page.locator("#game-view")).toBeVisible();\n\n  await expect(page.locator("#sidebar-online-list")).not.toContainText("Astrael");\n  await expect(page.locator("[data-oracle-chat]")).toHaveCount(0);\n});\n\n\ntest("Expediciones inicia una incursión persistente y arrastra vida entre salas", async ({page})=>{
   const errors=[];
   page.on("pageerror",err=>errors.push(String(err)));
   const mock=await installMocks(page);
