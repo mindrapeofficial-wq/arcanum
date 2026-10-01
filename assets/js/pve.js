@@ -56,7 +56,7 @@ function pveDecisionHtml(run){
   return '<section class="pve-decision-shell">'+
     '<div class="pve-decision-head"><div><span class="section-kicker">DECISIÓN DEL UMBRAL</span><h3>El siguiente paso es tuyo</h3>'+
       '<p>Has superado la cámara. Antes de entrar en <strong>'+esc(room.name||"la siguiente cámara")+'</strong>, puedes protegerte, mantener el rumbo o forzar el riesgo.</p></div>'+
-      '<span class="pve-decision-lock">SIN COSTE DE TURNO</span></div>'+
+      '<span class="pve-decision-lock">SIN COSTE DE ENERGÍA</span></div>'+
     '<div class="pve-choice-grid">'+decision.options.map(option=>
       '<button class="pve-choice" data-pve-choice="'+esc(option.id)+'">'+
         '<span class="pve-choice-icon">'+esc(option.icon||"◇")+'</span>'+
@@ -67,13 +67,13 @@ function pveDecisionHtml(run){
   '</section>';
 }
 
-function pveActiveHtml(run,turnCost){
+function pveActiveHtml(run,energyCost,energy){
   const room=run.current_room||{},pct=pveHpPct(run),busy=run.status==="fighting";
   return '<section class="pve-active-shell">'+
     '<div class="pve-run-header"><div><span class="section-kicker">INCURSIÓN ACTIVA</span><h3>'+esc(run.expedition_name)+'</h3>'+
       '<p>'+esc(run.difficulty_name)+' · La vida restante se conserva entre cámaras. El equipo quedó sellado al iniciar.</p></div>'+
       '<span class="pve-status '+esc(run.status)+'">'+esc(pveStatusLabel(run.status))+'</span></div>'+
-    '<div class="pve-vitals"><div class="pve-hp-head"><span>VIDA DEL ARCHIMAGO</span><strong>'+n(run.player_hp)+' / '+n(run.player_max_hp)+'</strong></div>'+
+    '<div class="pve-vitals"><div class="pve-hp-head"><span>VIDA DEL ARCONTE</span><strong>'+n(run.player_hp)+' / '+n(run.player_max_hp)+'</strong></div>'+
       '<div class="pve-hp"><i style="width:'+pct.toFixed(2)+'%"></i></div></div>'+
     pveRoomTrack(run)+
     (run.pending_decision
@@ -83,7 +83,7 @@ function pveActiveHtml(run,turnCost){
         '<div><span class="section-kicker">'+(room.boss?"JEFE DE EXPEDICIÓN":"ENCUENTRO "+(Number(run.stage)+1))+'</span>'+
           '<h3>'+esc(room.name||"Cámara despejada")+'</h3><small>'+esc(pveSchoolName(room.school))+'</small><p>'+esc(room.desc||"")+'</p></div>'+
         '<div class="pve-actions">'+
-          '<button class="primary-action" id="pve-fight" '+(busy||!room.id?"disabled":"")+'>'+(busy?"RESOLVIENDO…":"⚔ ENFRENTARSE · "+n(turnCost)+" TURNO")+'</button>'+
+          '<button class="primary-action" id="pve-fight" '+(busy||!room.id?"disabled":"")+'>'+(busy?"RESOLVIENDO…":"⚔ ENFRENTARSE · "+n(energyCost)+" ENERGÍA")+'</button>'+
           '<button class="ghost-button" id="pve-retreat" '+(busy?"disabled":"")+'>RETIRARSE</button>'+
         '</div>'+
       '</article>')+
@@ -157,9 +157,10 @@ async function pveRetreat(){
 async function renderPve(){
   const data=await stateApi("/pve");
   $("#view-host").innerHTML=
-    viewHeader("PVE PERSONAL","Expediciones","Entra con tu Archimago, arrastra sus heridas entre salas y decide hasta dónde merece la pena avanzar.")+
+    viewHeader("PVE PERSONAL","Expediciones","Entra con tu Arconte, arrastra sus heridas entre salas y decide hasta dónde merece la pena avanzar.")+
+    '<div class="pve-energy"><span>ENERGÍA DEL ARCONTE</span><strong>'+n(data.energy?.current||0)+' / '+n(data.energy?.max||12)+'</strong></div>'+
     (data.run&&["active","fighting"].includes(data.run.status)
-      ?pveActiveHtml(data.run,Number(data.turn_cost_per_fight||1))
+      ?pveActiveHtml(data.run,Number(data.energy_cost_per_fight||1),data.energy)
       :'<section class="pve-catalog">'+pveCatalogHtml(data.catalog)+'</section>')+
     '<section class="panel pve-history"><div class="panel-title-row"><div><span class="section-kicker">CRÓNICA DE INCURSIONES</span><h3>Expediciones recientes</h3></div></div>'+
       pveHistoryHtml(data.history)+'</section>';
