@@ -80,10 +80,10 @@ async function renderArtifactLibrary(){
   const host=$("#view-host");
   host.innerHTML=`
     <section class="artifact-hero">
-      <div><span class="section-kicker">BIBLIOTECA DEL CÓNCLAVE</span><h2>Artefactos de ARCANUM</h2><p>60 reliquias con identidad propia. Los Únicos Mundiales sólo pueden tener un poseedor activo en todo el servidor.</p></div>
+      <div><span class="section-kicker">RELICARIO DEL CÓNCLAVE</span><h2>Reliquias descubiertas</h2><p>El Relicario sólo revela aquello que ya ha aparecido en el mundo. Las reliquias desconocidas permanecen ocultas hasta su primer hallazgo.</p></div>
       <button id="artifact-refresh" class="primary-action" type="button">↻ ACTUALIZAR RELICARIO</button>
     </section>
-    <section class="artifact-world-panel"><div><small>ÚNICOS MUNDIALES</small><strong id="artifact-world-count">—</strong></div><p id="artifact-world-note">Consultando custodios del servidor…</p></section>
+    <section class="artifact-world-panel"><div><small>DESCUBIERTAS EN EL MUNDO</small><strong id="artifact-world-count">—</strong></div><p id="artifact-world-note">Consultando la memoria del servidor…</p></section>
     <div class="artifact-toolbar">
       <button data-artifact-filter="all" class="active">TODOS</button>
       <button data-artifact-filter="minor">MENORES</button>
@@ -108,13 +108,21 @@ async function loadArtifactLibrary(){
     const data=await communityApi("/artifacts");
     const mine=artifactOwnedMap(data.mine||[]);
     const uniqueOwners=new Map((data.uniques||[]).map(x=>[x.artifact_id,x]));
-    const filtered=ARCANUM_ARTIFACT_CATALOG.filter(a=>artifactFilter==="all"||a.category===artifactFilter);
-    $("#artifact-world-count").textContent=(data.uniques||[]).length+" / 10 encontrados";
-    $("#artifact-world-note").textContent=(data.uniques||[]).length?"Algunas reliquias ya tienen custodio. Su historia queda registrada para siempre.":"Los diez Únicos Mundiales siguen perdidos.";
+    const discoveryRows=Array.isArray(data.discovered)?data.discovered:[];
+    const discoveredIds=new Set(discoveryRows.map(x=>String(x.artifact_id||"")).filter(Boolean));
+    const discoveryById=new Map(discoveryRows.map(x=>[String(x.artifact_id||""),x]));
+    const discoveredCatalog=ARCANUM_ARTIFACT_CATALOG.filter(a=>discoveredIds.has(a.id));
+    const filtered=discoveredCatalog.filter(a=>artifactFilter==="all"||a.category===artifactFilter);
+    const uniqueDiscovered=discoveredCatalog.filter(a=>a.category==="unique").length;
+    $("#artifact-world-count").textContent=String(discoveredCatalog.length);
+    $("#artifact-world-note").textContent=discoveredCatalog.length
+      ?uniqueDiscovered+" Único"+(uniqueDiscovered===1?" Mundial descubierto":"s Mundiales descubiertos")+" · El resto del catálogo permanece oculto."
+      :"Todavía no se ha descubierto ninguna reliquia. El primer hallazgo inaugurará el Relicario.";
     $("#artifact-owned-count").textContent=(data.mine||[]).length+" en tu relicario";
-    grid.innerHTML=filtered.map(a=>{
+    grid.innerHTML=filtered.length?filtered.map(a=>{
       const owned=mine.get(a.id)||[];
       const owner=uniqueOwners.get(a.id);
+      const discovery=discoveryById.get(a.id)||null;
       const equipped=owned.find(x=>x.equipped);
       const school=a.school?'<span class="artifact-school '+esc(a.school)+'">'+esc(artifactSchoolLabel(a.school))+'</span>':"";
       const uniqueState=a.category==="unique"
@@ -122,6 +130,9 @@ async function loadArtifactLibrary(){
         :"";
       const ownState=owned.length
         ?'<div class="artifact-owned">POSEES '+owned.length+(equipped?' · EQUIPADO':'')+'</div>'
+        :"";
+      const discoveryState=discovery
+        ?'<div class="artifact-owned">DESCUBIERTA'+(discovery.first_discovered_by?' POR '+esc(discovery.first_discovered_by):'')+(discovery.first_discovered_at?' · '+new Date(discovery.first_discovered_at).toLocaleDateString("es-ES"):'')+'</div>'
         :"";
       const equipButton=owned.length
         ?(equipped
@@ -132,9 +143,9 @@ async function loadArtifactLibrary(){
       return '<article class="artifact-card artifact-'+esc(a.category)+' '+(owned.length?'is-owned':'')+'">'+
         '<header><span>'+esc(artifactCategoryLabel(a.category))+'</span>'+school+'</header>'+
         '<h3>'+esc(a.name)+'</h3><p class="artifact-effect">'+esc(a.effect)+'</p>'+
-        '<p class="artifact-lore">'+esc(a.lore)+'</p>'+uniqueState+ownState+
+        '<p class="artifact-lore">'+esc(a.lore)+'</p>'+discoveryState+uniqueState+ownState+
         '<div class="artifact-actions">'+equipButton+historyButton+'</div></article>';
-    }).join("");
+    }).join(""):'<div class="empty">No hay reliquias descubiertas en esta categoría.</div>';
     grid.querySelectorAll("[data-artifact-equip]").forEach(b=>b.addEventListener("click",()=>equipNamedArtifact(b.dataset.artifactEquip)));
     grid.querySelectorAll("[data-artifact-unequip]").forEach(b=>b.addEventListener("click",()=>unequipNamedArtifact()));
     grid.querySelectorAll("[data-artifact-history]").forEach(b=>b.addEventListener("click",()=>showArtifactHistory(b.dataset.artifactHistory)));
