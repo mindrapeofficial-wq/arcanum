@@ -27,6 +27,10 @@ The browser is never allowed to be the source of truth for progression or compet
 | Arena | daily seals, rating, wins/losses, history, duel result | ARCANUM Supabase / arcanum-state | SERVER_CANONICAL since 0.3.0 |
 | Combat derived stats | HP, attack, armor, speed, crit, dodge, block | Recalculated from combat profile | DERIVED |
 | Passive resource animation | interpolated per-second display | Browser cache | DERIVED / presentation only |
+| Lady Luck (expiry, source, log) | 24 h favour granted by Discord/admin; modifies summoning and exploration in the Core | ARCANUM Supabase (`arcanum_luck`) | SERVER_CANONICAL since 0.3.39 |
+| Supporting status | credit points, tier, ledger, private notes | ARCANUM Supabase (`arcanum_supporters`, `arcanum_player_notes`) | SERVER_CANONICAL since 0.3.39 |
+| Discord link | Discord id ↔ Arconte, one-time link codes, daily claim day | ARCANUM Supabase (`arcanum_discord_links`) | SERVER_CANONICAL since 0.3.39 |
+| Shields (damage protection, meditation) | 24 h shield after >30% army loss; 3-day opt-in meditation, 14-day cooldown | ARCANUM Supabase (`realm_shields`) | SERVER_CANONICAL since 0.3.40 |
 | Procedural inventory | items, equipment, loot rolls | ARCANUM Supabase / arcanum-state | SERVER_CANONICAL since 0.3.1 |
 | Audio settings | volumes, mute | Browser localStorage | LOCAL_ONLY |
 | Tutorial completed | tutorial marker | Browser localStorage | LOCAL_ONLY |
