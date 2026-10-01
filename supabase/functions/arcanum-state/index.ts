@@ -1487,6 +1487,10 @@ Deno.serve(async(req:Request)=>{
     }
 
     if(req.method==="POST"&&p[0]==="inventory"&&p[1]==="import-legacy"){
+      return json(req,{error:"LEGACY_IMPORT_CLOSED"},410);
+    }
+
+    if(false){
       const body=await req.json().catch(()=>({})),current=await ensureInventory(who);
       if(current.legacy_imported)return json(req,{inventory:current,already_imported:true});
       const incoming=body?.state||{},level=levelFromProfile(who.profile),items:any[]=[];
@@ -1548,13 +1552,18 @@ Deno.serve(async(req:Request)=>{
       const [myRaw,targetRaw,myInventory,targetInventory,myRelics,targetRelics]=await Promise.all([ensureCombat(who),targetCombat(who.token,target),ensureInventory(who),inventoryByUsername(String(target.mage_name)),relicsByUsername(who.username),relicsByUsername(String(target.mage_name))]);
       const myItems=mergeCombatBonuses(inventoryCombatBonuses(myInventory),relicCombatBonuses(myRelics.find((x:any)=>x.equipped)));
       const targetItems=mergeCombatBonuses(inventoryCombatBonuses(targetInventory),relicCombatBonuses(targetRelics.find((x:any)=>x.equipped)));
+      if(mode==="ranked"){
+        const {data:reserved,error:reserveError}=await supabase.from("arcanum_arena_state").update({seals_remaining:Number(arena.seals_remaining)-1,updated_at:new Date().toISOString()}).eq("user_id",who.userId).eq("seals_remaining",arena.seals_remaining).select("user_id");
+        if(reserveError)throw reserveError;
+        if(!reserved?.length)return json(req,{error:"ARENA_BUSY"},409);
+      }
       const matchId=crypto.randomUUID(),seed="arena|"+matchId+"|"+who.userId+"|"+String(target.mage_name),sim=simulate(who.profile,myRaw,myItems,target,targetRaw,targetItems,seed);
       let delta=0,ratingAfter=Number(arena.rating);
       if(mode==="ranked"){
         const {data:targetArena}=await supabase.from("arcanum_arena_state").select("rating").ilike("username",String(target.mage_name)).maybeSingle();
         const targetRating=Number(targetArena?.rating||1000),expected=1/(1+Math.pow(10,(targetRating-Number(arena.rating))/400));
         delta=Math.round(28*((sim.won?1:0)-expected));ratingAfter=Math.max(100,Number(arena.rating)+delta);
-        const update:any={rating:ratingAfter,seals_remaining:Number(arena.seals_remaining)-1,updated_at:new Date().toISOString()};
+        const update:any={rating:ratingAfter,updated_at:new Date().toISOString()};
         update[sim.won?"wins":"losses"]=Number(arena[sim.won?"wins":"losses"]||0)+1;
         const {error:updateError}=await supabase.from("arcanum_arena_state").update(update).eq("user_id",who.userId);if(updateError)throw updateError;
       }

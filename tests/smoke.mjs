@@ -239,3 +239,13 @@ test("PvE between-room choices are explicit and consequential",()=>{
   assert.match(pve,/data-pve-choice/);
   assert.match(pve,/SIN COSTE DE TURNO/);
 });
+
+
+test("Edge Function security patches stay in place",()=>{
+  const state=read("supabase/functions/arcanum-state/index.ts");
+  const admin=read("supabase/functions/arcanum-admin/index.ts");
+  assert.match(state,/LEGACY_IMPORT_CLOSED/,"inventory legacy import must stay closed");
+  assert.match(state,/\.eq\("seals_remaining",arena\.seals_remaining\)/,"arena seals must be reserved atomically");
+  assert.doesNotMatch(admin,/ADMIN_NAMES/,"admin must not be identified by display name");
+  assert.match(admin,/ADMIN_USER_IDS\.has\(userId\)/);
+});
