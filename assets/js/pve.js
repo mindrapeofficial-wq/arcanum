@@ -167,7 +167,7 @@ async function renderPve(){
   $("#pve-fight")?.addEventListener("click",pveFight);
   $("#pve-retreat")?.addEventListener("click",pveRetreat);
   $("#pve-retreat-bottom")?.addEventListener("click",pveRetreat);
-  $(".pve-choice").forEach(btn=>btn.addEventListener("click",()=>pveChoose(btn.dataset.pveChoice,btn)));
+  Array.from(document.querySelectorAll(".pve-choice")).forEach(btn=>btn.addEventListener("click",()=>pveChoose(btn.dataset.pveChoice,btn)));
 }
 
 globalThis.renderPve=renderPve;
