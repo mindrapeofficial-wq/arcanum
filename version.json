@@ -1,6 +1,6 @@
 {
-  "version": "0.3.11",
+  "version": "0.3.12",
   "channel": "beta",
-  "updated_at": "2026-10-01T09:35:00+02:00",
-  "note": "Ficha de Personaje reconstruida desde cero: solo logica jugable del Archimago"
+  "updated_at": "2026-10-01T09:48:00+02:00",
+  "note": "Personaje rediseñado con composicion de duelista: arsenal, archimago, estadisticas y trayectoria"
 }
