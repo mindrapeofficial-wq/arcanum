@@ -36,3 +36,145 @@
 .relic-equip-art img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 5px 8px rgba(0,0,0,.48))}
 .loot-equip-slot.relic-slot.filled{padding-right:86px;min-height:72px}
 .relic-inventory-card .artifact-art img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 8px 14px rgba(0,0,0,.45))}
+
+
+/* ==========================================================================
+   GOTHIC INVENTORY VAULT
+   Equipment reads as physical slots inside an arcane reliquary.
+   ========================================================================== */
+.archmage-inventory{
+  position:relative;
+  border-top-color:rgba(190,155,91,.2);
+}
+.archmage-inventory:before{
+  content:"";
+  position:absolute;
+  right:4px;top:8px;
+  width:38px;height:38px;
+  background:url("../vendor/game-icons/chest.svg") center/contain no-repeat;
+  opacity:.22;
+  filter:drop-shadow(0 0 10px rgba(216,182,108,.12));
+  pointer-events:none;
+}
+.loot-summary>div{
+  position:relative;
+  overflow:hidden;
+  border-color:rgba(190,155,91,.16);
+  background:linear-gradient(180deg,rgba(17,14,11,.82),rgba(5,5,5,.9));
+  box-shadow:inset 0 1px rgba(255,255,255,.02),inset 0 -1px rgba(0,0,0,.8);
+}
+.loot-summary>div:after{
+  content:"";
+  position:absolute;
+  left:24%;right:24%;bottom:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(221,181,101,.28),transparent);
+}
+.loot-equipment{
+  padding:12px;
+  border:1px solid rgba(190,155,91,.17);
+  background:
+    radial-gradient(circle at 50% 45%,rgba(185,130,52,.06),transparent 44%),
+    linear-gradient(145deg,rgba(16,13,10,.82),rgba(4,4,4,.9));
+  box-shadow:inset 0 0 0 4px rgba(0,0,0,.22),inset 0 0 0 5px rgba(190,155,91,.04);
+}
+.loot-equip-slot{
+  min-height:78px;
+  border-style:solid;
+  border-color:rgba(190,155,91,.13);
+  background:
+    linear-gradient(180deg,rgba(20,17,13,.78),rgba(5,5,5,.88));
+  box-shadow:inset 0 0 0 3px rgba(0,0,0,.25),inset 0 0 0 4px rgba(190,155,91,.035);
+}
+.loot-equip-slot:after{
+  content:"";
+  position:absolute;
+  inset:5px;
+  border:1px solid rgba(190,155,91,.035);
+  pointer-events:none;
+}
+.loot-equip-slot.filled{
+  border-color:rgba(212,169,91,.26);
+  box-shadow:inset 0 0 18px rgba(185,130,52,.04),0 0 14px rgba(185,130,52,.02);
+}
+.loot-equip-slot.relic-slot{
+  border-color:rgba(221,181,101,.32);
+  background:
+    radial-gradient(circle at 82% 20%,rgba(185,130,52,.08),transparent 48%),
+    linear-gradient(180deg,rgba(21,17,12,.84),rgba(5,5,5,.91));
+}
+.loot-toolbar{
+  position:relative;
+  padding-bottom:9px;
+}
+.loot-toolbar:after{
+  content:"";
+  position:absolute;
+  left:0;right:55%;bottom:0;height:1px;
+  background:linear-gradient(90deg,rgba(218,177,96,.32),transparent);
+}
+.loot-item{
+  border-color:rgba(190,155,91,.14);
+  background:
+    radial-gradient(circle at 100% 0,rgba(185,130,52,.035),transparent 38%),
+    linear-gradient(180deg,rgba(16,13,10,.82),rgba(5,5,5,.9));
+  box-shadow:inset 0 1px rgba(255,255,255,.018),0 8px 22px rgba(0,0,0,.11);
+  transition:transform .14s ease,border-color .14s ease,box-shadow .14s ease;
+}
+.loot-item:hover{
+  transform:translateY(-1px);
+  border-color:rgba(207,165,89,.24);
+  box-shadow:inset 0 1px rgba(255,255,255,.02),0 12px 28px rgba(0,0,0,.17);
+}
+.loot-item:after{
+  content:"";
+  position:absolute;
+  inset:5px;
+  border:1px solid rgba(190,155,91,.03);
+  pointer-events:none;
+}
+.loot-origin{
+  border-color:rgba(190,155,91,.1);
+  background:linear-gradient(90deg,rgba(185,130,52,.025),rgba(0,0,0,.12));
+}
+.loot-relic-vault{
+  position:relative;
+  border-top-color:rgba(221,181,101,.18);
+}
+.relic-inventory-card{
+  border-color:rgba(207,166,91,.22);
+  background:
+    radial-gradient(circle at 50% 34%,rgba(173,115,48,.07),transparent 48%),
+    linear-gradient(180deg,rgba(17,14,10,.86),rgba(5,5,5,.94));
+}
+.relic-inventory-card.is-equipped{
+  border-color:rgba(229,187,105,.48);
+  box-shadow:inset 0 0 28px rgba(222,178,98,.055),0 0 18px rgba(222,178,98,.035);
+}
+.relic-inventory-art{
+  position:relative;
+  height:148px;
+  border-color:rgba(190,155,91,.16);
+  background:
+    radial-gradient(circle at 50% 55%,rgba(185,130,52,.1),transparent 62%),
+    linear-gradient(180deg,rgba(5,5,5,.25),rgba(0,0,0,.48));
+}
+.relic-inventory-art:before{
+  content:"";
+  position:absolute;
+  width:105px;height:105px;
+  left:50%;top:50%;
+  translate:-50% -50%;
+  border-radius:50%;
+  border:1px solid rgba(221,181,101,.1);
+  box-shadow:0 0 0 13px rgba(221,181,101,.01);
+}
+.rarity-uncommon{box-shadow:inset 2px 0 rgba(114,150,108,.32)}
+.rarity-rare{box-shadow:inset 2px 0 rgba(110,132,174,.34)}
+.rarity-epic{box-shadow:inset 2px 0 rgba(140,103,174,.36)}
+.rarity-legendary{box-shadow:inset 2px 0 rgba(193,138,67,.4)}
+.rarity-arcane{box-shadow:inset 2px 0 rgba(210,193,123,.5),0 0 16px rgba(210,193,123,.025)}
+
+@media(max-width:700px){
+  .archmage-inventory:before{width:30px;height:30px;top:10px}
+  .loot-equipment{padding:8px}
+}
