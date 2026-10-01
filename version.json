@@ -1,6 +1,6 @@
 {
-  "version": "0.3.45",
+  "version": "0.3.46",
   "channel": "beta",
-  "updated_at": "2026-10-01T20:12:00+00:00",
-  "note": "Hotfix de arranque: evita que la pantalla de carga quede bloqueada si falla o se demora la validación de sesión"
+  "updated_at": "2026-10-02T00:41:00+02:00",
+  "note": "Modo Dominio: ARCANUM concentra temporalmente la interfaz en gobierno, construcción y expansión del reino"
 }
