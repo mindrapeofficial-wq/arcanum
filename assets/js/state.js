@@ -3,7 +3,7 @@
 const SUPABASE_URL = "https://mrmvmoyysxuopqexbxfk.supabase.co";
 const SUPABASE_KEY = "sb_publishable_tZEPJi2v7Tp-xDuVa0qWRw_geizIGoD";
 const SESSION_KEY = "arcanum_session_v2";
-const BUILD_VERSION = "0.3.27";
+const BUILD_VERSION = "0.3.28";
 const VERSION_CHECK_INTERVAL_MS = 60000;
 const COMMUNITY_API = "https://mrmvmoyysxuopqexbxfk.supabase.co/functions/v1/arcanum-community";
 const ORACLE_API = "https://mrmvmoyysxuopqexbxfk.supabase.co/functions/v1/arcanum-oracle";
@@ -47,8 +47,20 @@ let communitySignature = "";
 
 function esc(value){ return String(value ?? "").replace(/[&<>'"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c])); }
 function n(value){ return fmt.format(Number(value || 0)); }
-function show(el){ el?.classList.remove("hidden"); }
-function hide(el){ el?.classList.add("hidden"); }
+function show(el){
+  if(!el)return;
+  el.classList.remove("hidden");
+  el.removeAttribute("hidden");
+  el.removeAttribute("aria-hidden");
+  if("inert" in el) el.inert=false;
+}
+function hide(el){
+  if(!el)return;
+  el.classList.add("hidden");
+  el.setAttribute("hidden","");
+  el.setAttribute("aria-hidden","true");
+  if("inert" in el) el.inert=true;
+}
 function setNotice(el,text,type="error"){ if(!el)return; el.textContent=text; el.className=`notice ${type}`; }
 function clearNotice(el){ if(!el)return; el.textContent=""; el.className="notice hidden"; }
 function toast(message,type="success",ms=4200){
