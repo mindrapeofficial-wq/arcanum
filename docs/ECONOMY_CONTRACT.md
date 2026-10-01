@@ -68,7 +68,7 @@ The UI must never present one category as another.
 - Exploration converts Turns into new Wilderness.
 - Construction converts Wilderness into buildings.
 - War can transfer Land according to Core battle rules.
-- Exploration yield declines as a realm approaches 3,500 acres.
+- Base Exploration yield is 4-8 Wilderness per Turn.\n- Exploration yield declines as a realm approaches 3,500 acres.
 
 ### Ascendancy — DERIVED INDICATOR
 - Measures total strength for comparison/ranking.
