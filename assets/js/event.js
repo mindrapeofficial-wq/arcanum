@@ -88,21 +88,11 @@ function startBossPolling(){
 function bossStatusLabel(status){
   return status==="defeated"?"DERROTADO":status==="closed"?"CERRADO":"● EVENTO ACTIVO";
 }
-let bossArtDataUrl=null;
-let bossArtLoading=null;
+const BOSS_ART_URL="assets/art/drive/bosses/dread-wraith-queen.png?v=0.3.44";
 async function hydrateBossArt(){
   const img=$("#boss-art-image");
   if(!img)return;
-  try{
-    if(!bossArtDataUrl){
-      if(!bossArtLoading)bossArtLoading=fetch("assets/art/boss_devorador_umbral.b64?v=0.2.56",{cache:"force-cache"})
-        .then(r=>{if(!r.ok)throw new Error("BOSS_ART");return r.text();})
-        .then(text=>bossArtDataUrl="data:image/webp;base64,"+text.trim())
-        .finally(()=>bossArtLoading=null);
-      await bossArtLoading;
-    }
-    if($("#boss-art-image"))$("#boss-art-image").src=bossArtDataUrl;
-  }catch{}
+  img.src=BOSS_ART_URL;
 }
 function drawBoss(data){
   if(currentView!=="event")return;
