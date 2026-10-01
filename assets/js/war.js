@@ -86,7 +86,9 @@ async function renderRanking(){
   const [rows,npcs]=await Promise.all([rpc("leaderboard",{p_limit:100}),rpc("npc_directory")]);
   const mine=String(realmState.realm.mage_name||"").trim().toLowerCase();
   const npcNames=new Set((npcs||[]).map(x=>String(x.mage_name||"").trim().toLowerCase()));
-  // Astrael is the AI-run archmage, not a human: the ranking is for human players.\n  const botNames=new Set(["astrael"]);\n  const humanRows=(rows||[]).filter(x=>{const key=String(x.mage_name||"").trim().toLowerCase();return !npcNames.has(key)&&!botNames.has(key);});
+  // Astrael is the AI-run archmage, not a human: the ranking is for human players.
+  const botNames=new Set(["astrael"]);
+  const humanRows=(rows||[]).filter(x=>{const key=String(x.mage_name||"").trim().toLowerCase();return !npcNames.has(key)&&!botNames.has(key);});
   const body=humanRows.length?humanRows.map((x,index)=>`<tr class="${String(x.mage_name).trim().toLowerCase()===mine?"rank-me":""}"><td>${n(index+1)}</td><td><strong><button class="player-link" data-profile="${esc(x.mage_name)}">${esc(x.mage_name)}</button></strong></td><td><span class="school-dot ${esc(x.school_code)}"></span>${esc(catalogs.schools.find(s=>s.code===x.school_code)?.name_es||x.school_code)}</td><td>${n(x.land)}</td><td>${n(x.net_power)}</td><td>${esc(x.status)}</td></tr>`).join(""):`<tr><td colspan="6"><div class="empty">Todavía no hay jugadores humanos clasificados en esta temporada.</div></td></tr>`;
   $("#view-host").innerHTML=`${viewHeader("COMUNIDAD","Clasificación","Jugadores humanos de la temporada ordenados por Ascendencia.")}<div class="table-wrap"><table><thead><tr><th>#</th><th>Arconte</th><th>Escuela</th><th>Tierras</th><th>Ascendencia</th><th>Estado</th></tr></thead><tbody>${body}</tbody></table></div>`;
 }
