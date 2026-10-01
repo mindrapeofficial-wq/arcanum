@@ -239,3 +239,17 @@ test("PvE between-room choices are explicit and consequential",()=>{
   assert.match(pve,/data-pve-choice/);
   assert.match(pve,/SIN COSTE DE TURNO/);
 });
+
+
+test("Combat migrations and SQL suite are present and keep their safety guards",()=>{
+  const suite=read("supabase/tests/combat_core.sql");
+  assert.match(suite,/raise exception E'ARCANUM COMBAT TESTS/,"the SQL suite must always end by rolling back");
+  assert.doesNotMatch(suite,/\bcommit\b/i);
+  const t=read("supabase/migrations/20261001130000_combat_victory_threshold.sql");
+  assert.match(t,/v_threshold_bp:=1000;/);
+  assert.match(t,/not patching/,"must abort on unexpected function text");
+  const c=read("supabase/migrations/20261001130100_combat_accuracy_curve.sql");
+  assert.match(c,/accuracy_apply_curve/);
+  assert.match(c,/revoke all on function private\.accuracy_apply_curve/);
+  assert.match(c,/not patching/);
+});
