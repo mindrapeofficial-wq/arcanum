@@ -1,6 +1,6 @@
 {
-  "version": "0.3.45",
+  "version": "0.3.46",
   "channel": "beta",
-  "updated_at": "2026-10-01T20:12:00+00:00",
-  "note": "Hotfix de arranque: evita que la pantalla de carga quede bloqueada si falla o se demora la validación de sesión"
+  "updated_at": "2026-10-02T09:00:00+00:00",
+  "note": "Carga mucho más rápida: iconos, objetos y paisaje del Dominio optimizados (~22 MB menos)"
 }

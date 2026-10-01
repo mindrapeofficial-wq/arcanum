@@ -92,7 +92,7 @@ function renderRealm(){
 
   $("#view-host").innerHTML=`<div class="realm-dashboard">
     <section class="realm-banner realm-banner-2">
-      <img class="realm-kingdom-image" src="assets/art/kingdom-level-00.svg?v=0.2.9" alt="" aria-hidden="true" />
+      <img class="realm-kingdom-image" src="assets/art/kingdom-level-00.jpg?v=0.3.46" alt="" aria-hidden="true" decoding="async" />
       <div class="realm-banner-shade" aria-hidden="true"></div>
       <div class="realm-banner-content">
         <span class="section-kicker">${esc(school?.name_es||r.school_code)}</span>

@@ -101,7 +101,7 @@ function renderBuild(){
       </div>
     </div>
     <div class="construction-hero-art">
-      <img src="assets/art/kingdom-level-00.svg?v=0.2.23" alt="" aria-hidden="true" decoding="async" />
+      <img src="assets/art/kingdom-level-00.jpg?v=0.3.46" alt="" aria-hidden="true" decoding="async" />
       <div class="construction-art-shade" aria-hidden="true"></div>
       <div class="construction-art-caption">
         <span>${esc(progression.name)}</span>
