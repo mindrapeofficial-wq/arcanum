@@ -1,4 +1,5 @@
 "use strict";
+const DOMAIN_FOCUS_MODE=true;
 currentView="realm";
 
 const VIEW_RENDERERS={
@@ -45,51 +46,18 @@ function startCommunityPolling(){
   if(currentView!=="community" || !["chat","school"].includes(communityMode))return;
   communityPollTimer=setInterval(()=>{ if(currentView==="community" && ["chat","school"].includes(communityMode)){ loadChatMessages(true); loadPresence(); } },COMMUNITY_POLL_MS);
 }
-const NAV_GROUP_BY_VIEW=Object.freeze({
-  character:"arconte",research:"arconte",artifacts:"arconte",arena:"arconte",pve:"arconte",event:"arconte",
-  realm:"reino",build:"reino",economy:"reino",market:"reino",army:"reino",war:"reino",battles:"reino",
-  tavern:"comunidad",community:"comunidad",ranking:"comunidad",admin:"comunidad"
-});
-const NAV_GROUP_LABELS=Object.freeze({arconte:"Personaje",reino:"Reino",comunidad:"Comunidad"});
-function navGroupForView(view){return NAV_GROUP_BY_VIEW[view]||"arconte"}
 function closeMobileNavMenu(){
-  const menu=document.getElementById("mobile-nav-menu");if(!menu)return;
-  menu.classList.add("hidden");menu.setAttribute("aria-hidden","true");
-  document.querySelectorAll("[data-nav-group-trigger]").forEach(btn=>btn.setAttribute("aria-expanded","false"));
+  const menu=document.getElementById("mobile-nav-menu");
+  if(menu){menu.classList.add("hidden");menu.setAttribute("aria-hidden","true");}
 }
-function toggleMobileNavGroup(group){
-  const menu=document.getElementById("mobile-nav-menu");if(!menu)return;
-  const sameOpen=!menu.classList.contains("hidden")&&menu.dataset.group===group;
-  if(sameOpen){closeMobileNavMenu();return}
-  menu.dataset.group=group;menu.classList.remove("hidden");menu.setAttribute("aria-hidden","false");
-  const title=document.getElementById("mobile-nav-menu-title");if(title)title.textContent=NAV_GROUP_LABELS[group]||"Navegación";
-  menu.querySelectorAll("[data-mobile-nav-group]").forEach(panel=>panel.classList.toggle("hidden",panel.dataset.mobileNavGroup!==group));
-  document.querySelectorAll("[data-nav-group-trigger]").forEach(btn=>btn.setAttribute("aria-expanded",btn.dataset.navGroupTrigger===group?"true":"false"));
+function toggleMobileNavGroup(){ navigate("realm"); }
+function syncNavigationGroup(){
+  document.querySelectorAll("[data-view]").forEach(btn=>btn.classList.toggle("active",btn.dataset.view==="realm"));
 }
-function syncNavigationGroup(view){
-  const group=navGroupForView(view);
-  const mainNav=document.getElementById("main-nav");
-  const reinoSection=mainNav?.querySelector('details[data-nav-group="reino"]');
-  const personajeSection=mainNav?.querySelector('details[data-nav-group="arconte"]');
-  if(mainNav&&reinoSection&&personajeSection){
-    mainNav.insertBefore(reinoSection,personajeSection);
-    const title=personajeSection.querySelector("summary span:first-child");
-    if(title)title.textContent="PERSONAJE";
-  }
-  const mobileNav=document.getElementById("mobile-nav");
-  const reinoTrigger=mobileNav?.querySelector('[data-nav-group-trigger="reino"]');
-  const personajeTrigger=mobileNav?.querySelector('[data-nav-group-trigger="arconte"]');
-  if(mobileNav&&reinoTrigger&&personajeTrigger){
-    mobileNav.insertBefore(reinoTrigger,personajeTrigger);
-    const label=personajeTrigger.querySelector("small");
-    if(label)label.textContent="Personaje";
-  }
-  document.querySelectorAll("[data-nav-group-trigger]").forEach(btn=>btn.classList.toggle("active",btn.dataset.navGroupTrigger===group));
-  document.querySelectorAll("#main-nav details[data-nav-group]").forEach(section=>{section.open=section.dataset.navGroup===group});
-}
-syncNavigationGroup(currentView);
+syncNavigationGroup();
 
 async function navigate(view){
+  if(DOMAIN_FOCUS_MODE)view="realm";
   if(currentView==="tavern" && view!=="tavern" && typeof stopTavern==="function")stopTavern();
   if(currentView==="event" && view!=="event" && typeof stopBossPolling==="function")stopBossPolling();
   currentView=view;
@@ -100,6 +68,7 @@ async function navigate(view){
 }
 let viewRenderSeq=0;
 async function renderView(view){
+  if(DOMAIN_FOCUS_MODE)view="realm";
   const seq=++viewRenderSeq;
   const host=$("#view-host"); host.innerHTML=`<div class="skeleton" style="width:180px;height:9px;margin-bottom:10px"></div><div class="skeleton" style="width:55%;height:34px;margin-bottom:22px"></div><div class="panel"><div class="skeleton"></div></div>`;
   try{
