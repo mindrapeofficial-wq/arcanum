@@ -663,3 +663,30 @@ tbody tr:hover td{
 .realm-art-citadel span{
   opacity:0!important;
 }
+
+
+/* APK/mobile header polish: appended so the full gothic native stylesheet stays intact. */
+@media (max-width: 760px) {
+  .brand-mini {
+    min-width:168px;
+    padding:0 2px;
+    overflow:hidden;
+  }
+  .brand-mini img {
+    width:220px;
+    max-width:none;
+    height:62px;
+    object-fit:contain;
+    transform:scale(1.48);
+    transform-origin:center;
+  }
+  .view-host > .view-header:only-child {
+    margin:18px 0;
+    padding:18px;
+    border:1px solid rgba(190,155,91,.18);
+    background:linear-gradient(180deg,rgba(18,15,11,.88),rgba(5,5,5,.92));
+  }
+  .view-host > .view-header:only-child h2 {
+    font-size:clamp(26px,8vw,38px);
+  }
+}
