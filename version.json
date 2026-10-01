@@ -1,6 +1,6 @@
 {
-  "version": "0.3.31",
+  "version": "0.3.32",
   "channel": "beta",
-  "updated_at": "2026-10-01T15:31:00+02:00",
-  "note": "Corrige el error $$$ is not defined en la página Construcción"
+  "updated_at": "2026-10-01T15:36:00+02:00",
+  "note": "Corrige el último selector de Construcción que seguía usando $ en lugar de $$"
 }
