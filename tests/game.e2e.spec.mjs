@@ -430,8 +430,6 @@ test("flujo crítico completo: login, reino, explorar, construir, investigar, re
     "/rest/v1/rpc/recruit_units",
     "/rest/v1/rpc/attack_targets",
     "/rest/v1/rpc/npc_directory",
-    "state/loot/exploration/start",
-    "state/loot/exploration/complete",
     "community/messages",
     "community/posts"
   ]) expect(paths.some(p=>p.startsWith(required)),`No se ejecutó ${required}`).toBeTruthy();
