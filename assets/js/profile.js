@@ -11,10 +11,10 @@ function profileSchoolName(code){
   return typeof schoolName==="function"?schoolName(code):(catalogs.schools.find(s=>s.code===code)?.name_es||code||"Escuela");
 }
 const PROFILE_SCHOOL_PORTRAITS={
-  verdant:{1:"assets/art/characters/verdante/viridia-level-1.png?v=0.3.16"},
-  eradication:{1:"assets/art/characters/eradication/cineria-level-1.png?v=0.3.16"},
-  phantasm:{1:"assets/art/characters/phantasm/oneiria-level-1.png?v=0.3.16"},
-  ascendant:{1:"assets/art/characters/ascendant/aurea-level-1.png?v=0.3.16"},
+  verdant:{1:"assets/art/characters/verdante/viridia-level-1.png?v=0.3.18"},
+  eradication:{1:"assets/art/characters/eradication/cineria-level-1.png?v=0.3.18"},
+  phantasm:{1:"assets/art/characters/phantasm/oneiria-level-1.png?v=0.3.18"},
+  ascendant:{1:"assets/art/characters/ascendant/aurea-level-1.png?v=0.3.18"},
   abyssal:{1:"assets/art/characters/abyssal/nadir-level-1.png?v=0.3.18"}
 };
 function profileDefaultPortraitUrl(profile){
@@ -26,7 +26,7 @@ function profileDefaultPortraitUrl(profile){
 }
 function profileAvatarMarkup(profile,large=false){
   const cls=large?"profile-avatar profile-avatar-large":"profile-avatar";
-  const src=profile?.avatar_path?profileAvatarUrl(profile.avatar_path):profileDefaultPortraitUrl(profile);
+  const src=profileDefaultPortraitUrl(profile);
   if(src){
     return '<span class="'+cls+'"><img src="'+esc(src)+'" alt="Avatar de '+esc(profile?.mage_name||"Arconte")+'" /></span>';
   }
@@ -39,7 +39,7 @@ function renderOwnProfileBadge(){
   const progression=archmageProgressionFromProfile(ownProfileBadge);
   const schoolLabel=$("#mage-school");
   if(schoolLabel)schoolLabel.textContent=progression?schoolName+" · Nivel "+progression.level:schoolName;
-  const src=ownProfileBadge?.avatar_path?profileAvatarUrl(ownProfileBadge.avatar_path):profileDefaultPortraitUrl({school_code:realmState.realm.school_code});
+  const src=profileDefaultPortraitUrl({school_code:realmState.realm.school_code,archmage_level:ownProfileBadge?.archmage_level||1});
   if(src){
     sigil.innerHTML='<img src="'+esc(src)+'" alt="" />';
     sigil.classList.add("has-avatar");
@@ -208,16 +208,9 @@ function renderPlayerProfile(profile,inbox=null,snapshot=null,target=null){
 
   let bioBlock="";
   if(profile.is_self){
-    const schoolPortrait=profileDefaultPortraitUrl(profile);
-    const genericButton=schoolPortrait
-      ?'<button class="profile-action secondary" id="profile-use-school-avatar" type="button">USAR RETRATO '+esc(profileSchoolName(profile.school_code).toUpperCase())+'</button>'
-      :"";
-    const removeButton=profile.avatar_path
-      ?'<button class="profile-action danger" id="profile-remove-avatar" type="button">ELIMINAR FOTO</button>'
-      :"";
     bioBlock='<textarea id="profile-bio-input" maxlength="500" placeholder="Cuenta quién eres en ARCANUM, qué buscas o cómo quieres que te conozcan otros jugadores…">'+esc(profile.bio||"")+'</textarea>'+
-      '<div class="profile-edit-row social-avatar-actions"><label class="profile-action secondary profile-file-label">CAMBIAR FOTO<input id="profile-avatar-file" type="file" accept="image/png,image/jpeg,image/webp" hidden /></label>'+genericButton+removeButton+'<button class="profile-action" id="profile-save-bio">GUARDAR PERFIL</button></div>'+
-      '<small class="profile-upload-note">Foto: JPG, PNG o WebP · máximo 2 MB. Puedes volver en cualquier momento al retrato genérico de tu Escuela.</small>';
+      '<div class="profile-edit-row"><button class="profile-action" id="profile-save-bio">GUARDAR PERFIL</button></div>'+
+      '<small class="profile-upload-note">La foto de perfil la determina automáticamente tu Escuela y nivel de personaje.</small>';
   }else{
     bioBlock='<p>'+(profile.bio?esc(profile.bio):'<span class="muted">Este jugador aún no ha escrito su presentación.</span>')+'</p>';
   }
@@ -278,9 +271,6 @@ function wireProfileSheet(profile){
   if(typeof wireCombatEvolution==="function")wireCombatEvolution(profile);
   document.querySelectorAll("[data-archmage-attribute]").forEach(b=>b.addEventListener("click",()=>spendArchmageAttribute(b.dataset.archmageAttribute,profile)));
   $("#profile-save-bio")?.addEventListener("click",()=>saveOwnProfile(profile));
-  $("#profile-avatar-file")?.addEventListener("change",e=>startProfileAvatarCrop(e.target.files?.[0],profile));
-  $("#profile-remove-avatar")?.addEventListener("click",()=>removeProfileAvatar(profile));
-  $("#profile-use-school-avatar")?.addEventListener("click",()=>useSchoolProfileAvatar(profile));
   $$("[data-profile-friend-add]").forEach(b=>b.addEventListener("click",()=>profileFriendRequest(b.dataset.profileFriendAdd)));
   $$("[data-profile-friend-accept]").forEach(b=>b.addEventListener("click",()=>profileFriendRespond(b.dataset.profileFriendAccept,true)));
   $$("[data-profile-friend-reject]").forEach(b=>b.addEventListener("click",()=>profileFriendRespond(b.dataset.profileFriendReject,false)));
@@ -321,7 +311,7 @@ async function saveOwnProfile(profile){
   const btn=$("#profile-save-bio"),old=btn?.textContent;
   if(btn){btn.disabled=true;btn.textContent="GUARDANDO…";}
   try{
-    await rpc("update_my_profile",{p_bio:bio,p_avatar_path:profile.avatar_path||null});
+    await rpc("update_my_profile",{p_bio:bio,p_avatar_path:null});
     toast("Ficha de personaje actualizada.","success");
     await refreshOwnCharacterSurface(profile);
     await refreshOwnProfileBadge(true);
