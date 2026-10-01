@@ -180,6 +180,39 @@
 }
 
 
+/* ITEM ART FRAMING FIX
+   Keep every Drive item fully visible and centered inside the card.
+   Images must never bleed into the item title/stats area. */
+.loot-item-art{
+  height:190px;
+  margin:-2px -2px 10px;
+  padding:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  box-sizing:border-box;
+}
+.loot-item-art img{
+  display:block;
+  width:auto!important;
+  height:auto!important;
+  max-width:92%!important;
+  max-height:166px!important;
+  object-fit:contain!important;
+  object-position:center center!important;
+  padding:0!important;
+  margin:auto!important;
+}
+@media(min-width:1100px){
+  .loot-item-art{height:205px}
+  .loot-item-art img{max-height:179px!important}
+}
+@media(max-width:700px){
+  .loot-item-art{height:180px}
+  .loot-item-art img{max-height:156px!important}
+}
+
 /* DRIVE PRIORITY ITEM ART */
 .loot-item{position:relative;overflow:hidden}
 .loot-item-art{height:138px;margin:-2px -2px 10px;display:grid;place-items:center;overflow:hidden;border-bottom:1px solid rgba(218,151,57,.13);background:radial-gradient(circle at 50% 52%,rgba(166,91,52,.13),transparent 62%),rgba(0,0,0,.24)}
