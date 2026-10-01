@@ -132,7 +132,7 @@ async function pveFight(){
 }
 
 async function pveChoose(choiceId,btn){
-  $(".pve-choice").forEach(x=>x.disabled=true);
+  Array.from(document.querySelectorAll(".pve-choice")).forEach(x=>x.disabled=true);
   try{
     const data=await stateApi("/pve/choose",{method:"POST",body:{choice_id:String(choiceId)}});
     const choice=data?.choice;
