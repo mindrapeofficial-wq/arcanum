@@ -1,6 +1,6 @@
 {
-  "version": "0.3.35",
+  "version": "0.3.36",
   "channel": "beta",
-  "updated_at": "2026-10-01T16:28:00+02:00",
-  "note": "Arena por ELO y buscador, Energía del Arconte, PvE inicial ajustada, alianzas completas, boss por instancias y cuenta admin fuera de rankings"
+  "updated_at": "2026-10-01T16:40:00+02:00",
+  "note": "Sustituye el ranking General por los tres rankings canónicos: Reino, Guerra y Arena"
 }
