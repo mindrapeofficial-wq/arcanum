@@ -210,3 +210,43 @@ Future expeditions may add:
 - seasonal modifiers.
 
 They must still use the canonical run state, combat identity and verified loot pipeline rather than inventing a second PvE inventory or combat model.
+
+
+## Between-room decisions
+
+After every non-boss victory, the run pauses before the next room.
+
+The server offers exactly three explicit choices:
+
+### Descender al Umbral
+- no immediate HP change;
+- normal enemy scaling;
+- normal Gear chance and rarity.
+
+### Buscar un santuario
+- restore 18% of maximum HP, capped at maximum;
+- next room Gear chance -10 percentage points;
+- rarity weights shift slightly downward.
+
+### Forzar el Umbral
+- next enemy combat stats ×1.15;
+- next room Gear chance +18 percentage points;
+- rarity weights shift upward.
+
+Choosing does not consume a Turn.
+
+The chosen modifier is stored server-side and consumed by the next room. It cannot be edited by the browser.
+
+The choice is recorded in `decision_history` with:
+- stage,
+- choice,
+- HP before/after,
+- next room,
+- applied modifiers,
+- timestamp.
+
+The next room is previewed before the choice. This makes the trade-off legible without revealing the exact combat result.
+
+The boss is still mandatory. The final boss has guaranteed Gear; the risk choice before it affects rarity rather than the already-guaranteed drop chance.
+
+Design rule: the options are intentionally incomparable. Recovery sacrifices loot quality, aggression increases danger for better loot, and steady descent preserves both at baseline.
