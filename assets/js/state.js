@@ -8,7 +8,7 @@ const VERSION_CHECK_INTERVAL_MS = 60000;
 const COMMUNITY_API = "https://smynvbrkgffpepbhrpxt.supabase.co/functions/v1/arcanum-community";
 const ORACLE_API = "https://smynvbrkgffpepbhrpxt.supabase.co/functions/v1/arcanum-oracle";
 const BOSS_API = "https://smynvbrkgffpepbhrpxt.supabase.co/functions/v1/arcanum-boss";
-const STATE_API = "https://smynvbrkgffpepbhrpxt.supabase.co/functions/v1/arcanum-state";
+const STATE_API = "https://smynvbrkgffpepbhrpxt.supabase.co/functions/v1/arcanum-state";\nconst DOMAIN_API = "https://smynvbrkgffpepbhrpxt.supabase.co/functions/v1/arcanum-domain";
 const COMMUNITY_POLL_MS = 2500;
 
 
@@ -67,6 +67,19 @@ async function stateApi(path,{method="GET",body}={}){
   if(!res.ok)throw new Error(String(data?.error||"STATE_API_ERROR"));
   return data;
 }
+async function domainApi({method="GET",body}={}){
+  const session=getSession();
+  if(!session?.access_token)throw new Error("UNAUTHORIZED");
+  const res=await fetch(DOMAIN_API,{
+    method,
+    headers:{Authorization:`Bearer ${session.access_token}`,...(body?{"Content-Type":"application/json"}:{})},
+    body:body?JSON.stringify(body):undefined,
+    cache:"no-store"
+  });
+  const data=await res.json().catch(()=>({}));
+  if(!res.ok)throw new Error(String(data?.error||"DOMAIN_API_ERROR"));
+  return data;
+}
 
 function humanError(error){
   const m=String(error?.message || error || "Error desconocido");
@@ -88,7 +101,7 @@ function humanError(error){
     ["UNRESOLVED_TERRITORY_DAMAGE","Tu dominio tiene daño territorial pendiente de resolver."],["INVALID_BUILD_PLAN","El plan de construcción no es válido."],
     ["UNIT_UNDISBANDABLE","Esta unidad no puede ser disuelta."],["SPELL_NOT_KNOWN","Aún no conoces ese hechizo."],
     ["NO_ATTRIBUTE_POINTS","No tienes puntos de atributo disponibles."],["ATTRIBUTE_AT_CAP","Ese atributo ya ha alcanzado el máximo de esta beta."],["INVALID_ATTRIBUTE","Ese atributo no es válido."],
-    ["REALM_NOT_FOUND","Aún no has fundado un dominio."],["ARENA_NO_SEALS","Has gastado los 6 Sellos de Arena de hoy."],["CANNOT_FIGHT_SELF","No puedes combatir contra tu propio Arconte."],["EVOLUTION_LEVEL_LOCKED","Ese nivel todavía no está disponible."],["EVOLUTION_ALREADY_CHOSEN","Ese destino ya fue elegido."],["EVOLUTION_ORDER_REQUIRED","Debes resolver primero la evolución pendiente anterior."],["EVOLUTION_OPTION_INVALID","La opción de evolución ya no es válida."],["INVENTORY_FULL","Tu inventario está lleno."],["ITEM_NOT_FOUND","Ese objeto ya no existe."],["INVALID_EQUIP_SLOT","Ese objeto no puede equiparse en ese hueco."],["PVE_EXPEDITION_NOT_FOUND","Esa expedición no existe."],["PVE_DIFFICULTY_LOCKED","Tu Archimago todavía no puede entrar en esa dificultad."],["PVE_RUN_REQUIRED","No tienes una expedición activa."],["PVE_RUN_FINISHED","Esta expedición ya ha terminado."],["PVE_FIGHT_IN_PROGRESS","Ya hay un encuentro resolviéndose. Espera un instante."],["PVE_DECISION_REQUIRED","Debes elegir cómo continuar antes de entrar en la siguiente cámara."],["PVE_DECISION_NOT_AVAILABLE","Ahora mismo no hay ninguna decisión pendiente."],["PVE_DECISION_INVALID","Esa opción ya no es válida para esta expedición."],["PVE_DECISION_ALREADY_TAKEN","La decisión ya ha sido resuelta."]
+    ["REALM_NOT_FOUND","Aún no has fundado un dominio."],["ARENA_NO_SEALS","Has gastado los 6 Sellos de Arena de hoy."],["CANNOT_FIGHT_SELF","No puedes combatir contra tu propio Arconte."],["EVOLUTION_LEVEL_LOCKED","Ese nivel todavía no está disponible."],["EVOLUTION_ALREADY_CHOSEN","Ese destino ya fue elegido."],["EVOLUTION_ORDER_REQUIRED","Debes resolver primero la evolución pendiente anterior."],["EVOLUTION_OPTION_INVALID","La opción de evolución ya no es válida."],["INVENTORY_FULL","Tu inventario está lleno."],["ITEM_NOT_FOUND","Ese objeto ya no existe."],["INVALID_EQUIP_SLOT","Ese objeto no puede equiparse en ese hueco."],["PVE_EXPEDITION_NOT_FOUND","Esa expedición no existe."],["PVE_DIFFICULTY_LOCKED","Tu Archimago todavía no puede entrar en esa dificultad."],["PVE_RUN_REQUIRED","No tienes una expedición activa."],["PVE_RUN_FINISHED","Esta expedición ya ha terminado."],["PVE_FIGHT_IN_PROGRESS","Ya hay un encuentro resolviéndose. Espera un instante."],["PVE_DECISION_REQUIRED","Debes elegir cómo continuar antes de entrar en la siguiente cámara."],["PVE_DECISION_NOT_AVAILABLE","Ahora mismo no hay ninguna decisión pendiente."],["PVE_DECISION_INVALID","Esa opción ya no es válida para esta expedición."],["PVE_DECISION_ALREADY_TAKEN","La decisión ya ha sido resuelta."],["DOMAIN_NAME_TAKEN","Ese nombre de Dominio ya pertenece a otro jugador."],["INVALID_DOMAIN_NAME","El nombre del Dominio debe tener entre 3 y 32 caracteres y usar letras, números, espacios, apóstrofes, puntos o guiones."],["DOMAIN_NAME_UNAVAILABLE","No se pudo reservar un nombre inicial para tu Dominio."]
   ];
   for(const [k,v] of map) if(m.includes(k)) return v;
   if(m.includes("duplicate key") || m.includes("unique")) return "Ese nombre ya está ocupado.";
