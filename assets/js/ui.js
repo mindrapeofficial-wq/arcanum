@@ -69,6 +69,7 @@ function wireStaticEvents(){
         await registerAccount(username,password);
       }
       await signInAccount(username,password);
+      if(typeof enforceMaintenance==="function" && await enforceMaintenance()) return;
       await bootGame();
     }catch(err){setNotice($("#auth-notice"),humanError(err));}
     finally{btn.disabled=false;$("#submit-label").textContent=registering?"CREAR CUENTA":"ENTRAR";}
@@ -108,6 +109,8 @@ async function init(){
   wireStaticEvents();
   setInterval(checkForUpdate,VERSION_CHECK_INTERVAL_MS);
   document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")checkForUpdate();});
-  const session=await validSession(); if(session)await bootGame(); else showAuth();
+  const session=await validSession();
+  if(typeof enforceMaintenance==="function" && await enforceMaintenance()) return;
+  if(session)await bootGame(); else showAuth();
 }
 window.addEventListener("DOMContentLoaded",init);
