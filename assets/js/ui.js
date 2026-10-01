@@ -78,13 +78,13 @@ function wireStaticEvents(){
   });
   $("#create-form").addEventListener("submit",async e=>{
     e.preventDefault(); clearNotice($("#create-notice")); const username=String(getSession()?.user?.user_metadata?.username||"").trim(); if(!username){setNotice($("#create-notice"),"No se ha podido recuperar tu nombre de usuario. Vuelve a iniciar sesión.");return;} if(!selectedSchool){setNotice($("#create-notice"),"Elige una de las Cinco Escuelas.");return;} const btn=$("#create-button"); btn.disabled=true;
-    try{await rpc("create_archmage",{p_display_name:username,p_mage_name:username,p_school_code:selectedSchool}); toast("Tu dominio ha sido fundado."); realmState=await rpc("my_realm_state"); showGame(); setTimeout(()=>startTutorial(false),450);}
+    try{await rpc("create_archmage",{p_display_name:username,p_mage_name:username,p_school_code:selectedSchool}); toast("Tu dominio ha sido fundado."); realmState=await rpc("my_realm_state"); showGame(); if(typeof DOMAIN_FOCUS_MODE==="undefined"||!DOMAIN_FOCUS_MODE)setTimeout(()=>startTutorial(false),450);}
     catch(err){setNotice($("#create-notice"),humanError(err));} finally{btn.disabled=false;}
   });
   $("#creation-logout").addEventListener("click",signOut); $("#logout-button").addEventListener("click",signOut); $("#refresh-button").addEventListener("click",()=>refreshState(false));
   $("#manual-top-button").addEventListener("click",openManual); $("#manual-side-button").addEventListener("click",openManual); $("#tutorial-side-button")?.addEventListener("click",()=>startTutorial(true));
   $("#main-nav").addEventListener("click",e=>{const b=e.target.closest("button[data-view]");if(b)navigate(b.dataset.view);});
-  $("#mobile-nav").addEventListener("click",e=>{const trigger=e.target.closest("[data-nav-group-trigger]");if(trigger)toggleMobileNavGroup(trigger.dataset.navGroupTrigger);});
+  $("#mobile-nav").addEventListener("click",e=>{const direct=e.target.closest("button[data-view]");if(direct){navigate(direct.dataset.view);return;}const trigger=e.target.closest("[data-nav-group-trigger]");if(trigger)toggleMobileNavGroup(trigger.dataset.navGroupTrigger);});
   $("#mobile-nav-menu")?.addEventListener("click",e=>{const b=e.target.closest("button[data-view]");if(b){closeMobileNavMenu();navigate(b.dataset.view);}});
   $("#mobile-nav-close")?.addEventListener("click",closeMobileNavMenu);
   document.addEventListener("click",e=>{const b=e.target.closest("[data-open-mage-card]");if(b)$("#mage-card-button")?.click();});

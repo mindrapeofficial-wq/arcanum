@@ -208,7 +208,7 @@ test("Gear provenance is visible to the player",()=>{
 test("personal PvE expeditions are server-authoritative and persistent",()=>{
   const pve=read("assets/js/pve.js");
   const router=read("assets/js/router.js");
-  assert.match(html,/data-view="pve"/);
+  assert.doesNotMatch(html,/data-view="pve"/,"PvE remains implemented but is intentionally hidden during Domain focus");
   assert.match(router,/pve:\{name:"renderPve"/);
   assert.match(router,/view==="pve"\) await renderPve/);
   assert.match(pve,/stateApi\("\/pve\/start"/);
@@ -621,15 +621,22 @@ test("Pillage is a third attack mode, server-driven and never a land grab", () =
 });
 
 
-test("navigation is grouped into Arconte, Reino and Comunidad",()=>{
+test("focused build exposes only Domain navigation and locks routing to realm",()=>{
   const html=read("index.html");
-  for(const group of ["arconte","reino","comunidad"]){
-    assert.match(html,new RegExp(`data-nav-group="${group}"`));
-    assert.match(html,new RegExp(`data-nav-group-trigger="${group}"`));
-    assert.match(html,new RegExp(`data-mobile-nav-group="${group}"`));
-  }
-  assert.match(read("assets/js/router.js"),/NAV_GROUP_BY_VIEW/);
-  assert.match(read("assets/js/ui.js"),/toggleMobileNavGroup/);
+  const router=read("assets/js/router.js");
+  const realm=read("assets/js/realm.js");
+  assert.match(html,/class="game-shell domain-focus hidden"/);
+  assert.match(html,/class="main-nav domain-only-nav"/);
+  assert.match(html,/button type="button" class="active" data-view="realm"/);
+  assert.doesNotMatch(html,/data-view="character"/);
+  assert.doesNotMatch(html,/data-view="economy"/);
+  assert.doesNotMatch(html,/data-view="community"/);
+  assert.match(router,/const DOMAIN_FOCUS_MODE=true/);
+  assert.match(router,/if\(DOMAIN_FOCUS_MODE\)view="realm"/);
+  assert.match(realm,/GOBIERNO DEL DOMINIO/);
+  assert.match(realm,/data-domain-econ="TAX"/);
+  assert.match(realm,/id="domain-construction"/);
+  assert.match(realm,/data-building=/);
 });
 
 test("character combat preparation is readable and mobile-first",()=>{
