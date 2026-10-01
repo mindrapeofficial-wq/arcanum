@@ -129,7 +129,7 @@ function adminPlayerModal(name){
     <span class="section-kicker">GESTIÓN DE JUGADOR</span><h2>${adminEsc(name)}</h2>
     <div class="admin-form-grid">
       <label class="admin-field"><span>Rating Arena</span><input id="adm-rating" type="number" min="100" value="${a.rating??1000}"></label>
-      <label class="admin-field"><span>Sellos</span><input id="adm-seals" type="number" min="0" max="6" value="${a.seals_remaining??6}"></label>
+      <label class="admin-field"><span>Clasificatorias usadas hoy</span><input id="adm-ranked-used" type="number" min="0" max="6" value="${a.ranked_used??0}"></label>\n      <label class="admin-field"><span>Energía del Arconte</span><input id="adm-energy" type="number" min="0" max="12" value="${p.energy?.energy??12}"></label>
       <label class="admin-field"><span>Victorias</span><input id="adm-wins" type="number" min="0" value="${a.wins??0}"></label>
       <label class="admin-field"><span>Derrotas</span><input id="adm-losses" type="number" min="0" value="${a.losses??0}"></label>
     </div>
