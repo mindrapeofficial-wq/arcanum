@@ -57,9 +57,14 @@ as $$
       r.status
     from public.realms r
     join current_season cs on cs.id=r.season_id
+    left join private.npc_controllers n on n.realm_id=r.id
+    left join public.astrael_agent_state a
+      on a.singleton=true and lower(a.username)=lower(r.mage_name)
     left join public.arcanum_system_accounts sys
       on sys.player_id=r.player_id and sys.excluded_from_rankings=true
-    where sys.player_id is null
+    where n.realm_id is null
+      and a.username is null
+      and sys.player_id is null
   )
   select
     row_number() over(order by np desc,land desc,lower(mage_name)) as rank,
