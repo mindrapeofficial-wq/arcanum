@@ -237,8 +237,10 @@ function canonicalRelicEquipmentCard(){
   const rawRelic=typeof canonicalEquippedRelic==="function"?canonicalEquippedRelic():null;
   const relic=rawRelic&&!lootIsLegacyItem(rawRelic)?rawRelic:null;
   if(!relic)return '<div class="loot-equip-slot relic-slot"><small>Reliquia</small><span>Vacío</span></div>';
-  const name=typeof canonicalItemDisplayName==="function"?canonicalItemDisplayName(relic):(typeof artifactDef==="function"?artifactDef(relic.artifact_id)?.name:relic.artifact_id);
-  return '<div class="loot-equip-slot filled relic-slot"><small>Reliquia</small><strong>'+esc(name||"Reliquia")+'</strong><span>'+esc((relic.category||"reliquia").toUpperCase())+'</span><button class="loot-unequip" type="button" data-relic-unequip="relic">×</button></div>';
+  const def=typeof artifactDef==="function"?artifactDef(relic.artifact_id):null;
+  const name=typeof canonicalItemDisplayName==="function"?canonicalItemDisplayName(relic):(def?.name||relic.artifact_id);
+  const art=typeof artifactArtHtml==="function"?artifactArtHtml(def,"relic-equip-art"):"";
+  return '<div class="loot-equip-slot filled relic-slot">'+art+'<small>Reliquia</small><strong>'+esc(name||"Reliquia")+'</strong><span>'+esc((relic.category||"reliquia").toUpperCase())+'</span><button class="loot-unequip" type="button" data-relic-unequip="relic">×</button></div>';
 }
 function canonicalRelicInventoryCards(){
   const model=typeof getCanonicalItems==="function"?getCanonicalItems():null;
@@ -249,9 +251,12 @@ function canonicalRelicInventoryCards(){
     const active=String(item.id)===activeId||item.equipped;
     const name=typeof canonicalItemDisplayName==="function"?canonicalItemDisplayName(item):(item.artifact_id||"Reliquia");
     const category=typeof artifactCategoryLabel==="function"?artifactCategoryLabel(item.category):(item.category||"Reliquia");
-    const effect=typeof artifactDef==="function"?artifactDef(item.artifact_id)?.effect||"":"";
+    const def=typeof artifactDef==="function"?artifactDef(item.artifact_id):null;
+    const effect=def?.effect||"";
+    const art=typeof artifactArtHtml==="function"?artifactArtHtml(def,"relic-inventory-art"):"";
     return '<article class="loot-item relic-inventory-card '+(active?'is-equipped':'')+'">'+
       '<header><span class="loot-rarity">'+esc(category)+'</span><b>'+(active?'VINCULADA':'RELIQUIA')+'</b></header>'+
+      art+
       '<h4>'+esc(name)+'</h4>'+
       (effect?'<p class="relic-inventory-effect">'+esc(effect)+'</p>':"")+
       '<div class="loot-actions">'+
@@ -302,6 +307,7 @@ function lootRefreshProfile(profile){
 }
 function wireInventoryPanel(profile){
   const root=document.querySelector("[data-loot-root]");if(!root||!profile?.is_self)return;
+  if(typeof hydrateArtifactArt==="function")hydrateArtifactArt(root);
 
   root.querySelectorAll("[data-loot-equip]").forEach(btn=>btn.addEventListener("click",async()=>{
     btn.disabled=true;
