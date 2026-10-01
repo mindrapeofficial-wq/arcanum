@@ -509,9 +509,10 @@ test("war view exposes shield/meditation state from the server and keeps version
   for (const code of ["TARGET_IN_MEDITATION", "TARGET_DAMAGE_PROTECTED", "ATTACKER_IN_MEDITATION", "MEDITATION_COOLDOWN"]) {
     assert.match(state, new RegExp(code), `${code} needs a human message`);
   }
-  assert.match(html, /war\.js\?v=0\.3\.41/);
-  assert.match(html, /state\.js\?v=0\.3\.41/);
-  assert.match(state, /BUILD_VERSION = "0\.3\.41"/);
+  const escapedVersion = String(version.version).replaceAll(".", "\\.");
+  assert.match(html, new RegExp(`war\\.js\\?v=${escapedVersion}`));
+  assert.match(html, new RegExp(`state\\.js\\?v=${escapedVersion}`));
+  assert.match(state, new RegExp(`BUILD_VERSION = "${escapedVersion}"`));
 });
 
 test("Pillage is a third attack mode, server-driven and never a land grab", () => {
