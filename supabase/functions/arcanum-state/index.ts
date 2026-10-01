@@ -905,15 +905,34 @@ function serverDay(){
   const values=Object.fromEntries(parts.map(x=>[x.type,x.value]));
   return values.year+"-"+values.month+"-"+values.day;
 }
-async function ensureArena(who:any){
+async function ensureArenaIdentity(userId:string,username:string){
   const day=serverDay();
-  const {data,error}=await supabase.from("arcanum_arena_state").select("*").eq("user_id",who.userId).maybeSingle();
+  const {data,error}=await supabase.from("arcanum_arena_state").select("*").eq("user_id",userId).maybeSingle();
   if(error)throw error;
-  let state=data||{user_id:who.userId,username:who.username,rating:1000,wins:0,losses:0,seal_day:day,seals_remaining:6};
+  let state=data||{user_id:userId,username,rating:1000,wins:0,losses:0,seal_day:day,seals_remaining:6};
   if(String(state.seal_day)!==day){state.seal_day=day;state.seals_remaining=6}
-  state.username=who.username;state.updated_at=new Date().toISOString();
+  state.username=username;state.updated_at=new Date().toISOString();
   const {data:saved,error:saveError}=await supabase.from("arcanum_arena_state").upsert(state,{onConflict:"user_id"}).select("*").single();
   if(saveError)throw saveError; return saved;
+}
+async function ensureArena(who:any){return await ensureArenaIdentity(who.userId,who.username)}
+async function arenaRanking(who:any){
+  const {data,error}=await supabase.rpc("arena_pvp_ranking");
+  if(error)throw error;
+  const rows=(data||[]).map((x:any)=>({
+    username:String(x.username||"Archimago"),
+    school_code:String(x.school_code||"ascendant"),
+    rating:Math.max(100,Number(x.rating||1000)),
+    wins:Math.max(0,Number(x.wins||0)),
+    losses:Math.max(0,Number(x.losses||0)),
+    games:Math.max(0,Number(x.games||0)),
+    win_rate:Math.max(0,Math.min(100,Number(x.win_rate||0))),
+    is_self:String(x.player_id||"")===String(who.userId)
+  }));
+  rows.sort((a:any,b:any)=>b.rating-a.rating||b.wins-a.wins||a.losses-b.losses||a.username.localeCompare(b.username,"es"));
+  rows.forEach((x:any,i:number)=>x.position=i+1);
+  const self=rows.find((x:any)=>x.is_self)||null;
+  return {ranking:rows,self_position:self?.position||null,generated_at:new Date().toISOString()};
 }
 function traitMods(c:any){
   const ts=[c.trait].concat(c.bonusTraits||[]).filter(Boolean);
@@ -1535,7 +1554,11 @@ Deno.serve(async(req:Request)=>{
       return json(req,{inventory:state});
     }
 
-    if(req.method==="GET"&&p[0]==="arena"){
+    if(req.method==="GET"&&p[0]==="arena"&&p[1]==="ranking"){
+      return json(req,await arenaRanking(who));
+    }
+
+    if(req.method==="GET"&&p[0]==="arena"&&p.length===1){
       const arena=await ensureArena(who);
       const {data:history,error}=await supabase.from("arcanum_arena_matches").select("id,defender_username,mode,attacker_won,rating_delta,rating_after,combat_log,created_at").eq("attacker_user_id",who.userId).order("created_at",{ascending:false}).limit(30);
       if(error)throw error;return json(req,{arena,history:history||[],server_day:serverDay()});
@@ -1547,7 +1570,13 @@ Deno.serve(async(req:Request)=>{
       if(targetName.toLowerCase()===who.username.toLowerCase())return json(req,{error:"CANNOT_FIGHT_SELF"},409);
       const target=await coreRpc(who.token,"player_profile",{p_mage_name:targetName});
       if(!target?.mage_name||target?.is_npc)return json(req,{error:"TARGET_NOT_FOUND"},404);
-      const arena=await ensureArena(who);
+      const {data:targetRealm,error:targetRealmError}=await supabase.from("realms").select("player_id,mage_name").ilike("mage_name",String(target.mage_name)).maybeSingle();
+      if(targetRealmError)throw targetRealmError;
+      if(!targetRealm?.player_id)return json(req,{error:"TARGET_NOT_FOUND"},404);
+      const [arena,targetArena]=await Promise.all([
+        ensureArena(who),
+        ensureArenaIdentity(String(targetRealm.player_id),String(target.mage_name))
+      ]);
       if(mode==="ranked"&&Number(arena.seals_remaining)<=0)return json(req,{error:"ARENA_NO_SEALS"},409);
       const [myRaw,targetRaw,myInventory,targetInventory,myRelics,targetRelics]=await Promise.all([ensureCombat(who),targetCombat(who.token,target),ensureInventory(who),inventoryByUsername(String(target.mage_name)),relicsByUsername(who.username),relicsByUsername(String(target.mage_name))]);
       const myItems=mergeCombatBonuses(inventoryCombatBonuses(myInventory),relicCombatBonuses(myRelics.find((x:any)=>x.equipped)));
@@ -1560,15 +1589,23 @@ Deno.serve(async(req:Request)=>{
       const matchId=crypto.randomUUID(),seed="arena|"+matchId+"|"+who.userId+"|"+String(target.mage_name),sim=simulate(who.profile,myRaw,myItems,target,targetRaw,targetItems,seed);
       let delta=0,ratingAfter=Number(arena.rating);
       if(mode==="ranked"){
-        const {data:targetArena}=await supabase.from("arcanum_arena_state").select("rating").ilike("username",String(target.mage_name)).maybeSingle();
         const targetRating=Number(targetArena?.rating||1000),expected=1/(1+Math.pow(10,(targetRating-Number(arena.rating))/400));
         delta=Math.round(28*((sim.won?1:0)-expected));ratingAfter=Math.max(100,Number(arena.rating)+delta);
-        const update:any={rating:ratingAfter,updated_at:new Date().toISOString()};
-        update[sim.won?"wins":"losses"]=Number(arena[sim.won?"wins":"losses"]||0)+1;
-        const {error:updateError}=await supabase.from("arcanum_arena_state").update(update).eq("user_id",who.userId);if(updateError)throw updateError;
+        const defenderRatingAfter=Math.max(100,targetRating-delta);
+        const attackerUpdate:any={rating:ratingAfter,updated_at:new Date().toISOString()};
+        attackerUpdate[sim.won?"wins":"losses"]=Number(arena[sim.won?"wins":"losses"]||0)+1;
+        const defenderUpdate:any={rating:defenderRatingAfter,updated_at:new Date().toISOString()};
+        defenderUpdate[sim.won?"losses":"wins"]=Number(targetArena[sim.won?"losses":"wins"]||0)+1;
+        const [attackerSaved,defenderSaved]=await Promise.all([
+          supabase.from("arcanum_arena_state").update(attackerUpdate).eq("user_id",who.userId),
+          supabase.from("arcanum_arena_state").update(defenderUpdate).eq("user_id",String(targetRealm.player_id))
+        ]);
+        if(attackerSaved.error)throw attackerSaved.error;
+        if(defenderSaved.error)throw defenderSaved.error;
       }
       const {error:matchError}=await supabase.from("arcanum_arena_matches").insert({
-        id:matchId,attacker_user_id:who.userId,attacker_username:who.username,defender_username:String(target.mage_name),
+        id:matchId,attacker_user_id:who.userId,attacker_username:who.username,
+        defender_user_id:String(targetRealm.player_id),defender_username:String(target.mage_name),
         mode,attacker_won:sim.won,rating_delta:delta,rating_after:ratingAfter,seed,combat_log:sim.log
       });if(matchError)throw matchError;
       const fresh=await ensureArena(who);
