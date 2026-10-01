@@ -971,3 +971,22 @@ html.arcanum-immersive .mobile-nav{
 .canonical-renown strong{display:block;margin-top:3px;color:#e5cda5;font-size:24px;font-weight:500}
 .canonical-renown>span{color:#786a58;font:8.5px/1.4 Arial,sans-serif;text-align:right}
 @media(max-width:650px){.canonical-renown{align-items:flex-start;flex-direction:column}.canonical-renown>span{text-align:left}}
+
+
+/* Nombres de las Cinco Escuelas · cromatismo arcano global */
+.school-name{
+  font-weight:800;
+  letter-spacing:.025em;
+  text-shadow:0 0 6px currentColor,0 0 14px color-mix(in srgb,currentColor 38%,transparent);
+}
+.school-name--viridia{color:#79f29a}
+.school-name--aurea{color:#fff7df;text-shadow:0 0 6px #fff,0 0 15px rgba(255,240,190,.58)}
+.school-name--cineria{color:#ff735f}
+.school-name--nadir{color:#b58cff}
+.school-name--oneiria{color:#74c7ff}
+
+.school-card[data-school="verdant"] strong{color:#79f29a;text-shadow:0 0 8px rgba(121,242,154,.58)}
+.school-card[data-school="ascendant"] strong{color:#fff7df;text-shadow:0 0 8px rgba(255,247,223,.62)}
+.school-card[data-school="eradication"] strong{color:#ff735f;text-shadow:0 0 8px rgba(255,115,95,.58)}
+.school-card[data-school="abyssal"] strong{color:#b58cff;text-shadow:0 0 8px rgba(181,140,255,.58)}
+.school-card[data-school="phantasm"] strong{color:#74c7ff;text-shadow:0 0 8px rgba(116,199,255,.58)}
