@@ -3,6 +3,8 @@ name: Build Android APK
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -40,6 +42,9 @@ jobs:
           yes | "$SDKMANAGER" --licenses >/dev/null || true
           "$SDKMANAGER" "platforms;android-36" "build-tools;36.0.0"
 
+      - name: Install ImageMagick
+        run: sudo apt-get update -qq && sudo apt-get install -y imagemagick
+
       - name: Install dependencies
         run: npm install --no-audit --no-fund
 
@@ -59,17 +64,95 @@ jobs:
           fi
           node scripts/patch-android.mjs
 
+      - name: Brand launcher icons and splash
+        shell: bash
+        run: |
+          set -euo pipefail
+          RES="android/app/src/main/res"
+          BRAND="#020202"
+          SRC="logo.png"
+
+          # Legacy launcher icons: official ARCANUM artwork on the game's obsidian background.
+          for spec in "mdpi:48" "hdpi:72" "xhdpi:96" "xxhdpi:144" "xxxhdpi:192"; do
+            density="${spec%%:*}"
+            size="${spec##*:}"
+            dir="$RES/mipmap-$density"
+            mkdir -p "$dir"
+            convert -size "${size}x${size}" "xc:$BRAND" \
+              \( "$SRC" -trim +repage -resize "$((size*82/100))x$((size*82/100))>" \) \
+              -gravity center -composite "$dir/ic_launcher.png"
+            cp "$dir/ic_launcher.png" "$dir/ic_launcher_round.png"
+          done
+
+          # Adaptive foreground layers with safe-zone padding.
+          for spec in "mdpi:108" "hdpi:162" "xhdpi:216" "xxhdpi:324" "xxxhdpi:432"; do
+            density="${spec%%:*}"
+            size="${spec##*:}"
+            dir="$RES/mipmap-$density"
+            mkdir -p "$dir"
+            convert -size "${size}x${size}" xc:none \
+              \( "$SRC" -trim +repage -resize "$((size*64/100))x$((size*64/100))>" \) \
+              -gravity center -composite "$dir/ic_launcher_foreground.png"
+          done
+
+          mkdir -p "$RES/values" "$RES/mipmap-anydpi-v26"
+          cat > "$RES/values/ic_launcher_background.xml" <<'XML'
+          <?xml version="1.0" encoding="utf-8"?>
+          <resources>
+              <color name="ic_launcher_background">#020202</color>
+          </resources>
+          XML
+          cat > "$RES/mipmap-anydpi-v26/ic_launcher.xml" <<'XML'
+          <?xml version="1.0" encoding="utf-8"?>
+          <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+              <background android:drawable="@color/ic_launcher_background" />
+              <foreground android:drawable="@mipmap/ic_launcher_foreground" />
+          </adaptive-icon>
+          XML
+          cp "$RES/mipmap-anydpi-v26/ic_launcher.xml" "$RES/mipmap-anydpi-v26/ic_launcher_round.xml"
+
+          # Replace every Capacitor splash density with official ARCANUM artwork.
+          while IFS= read -r splash; do
+            geometry="$(identify -format '%wx%h' "$splash" 2>/dev/null || echo '2732x2732')"
+            w="${geometry%x*}"; h="${geometry#*x}"
+            maxw=$((w*72/100)); maxh=$((h*52/100))
+            convert -size "${w}x${h}" "xc:$BRAND" \
+              \( "$SRC" -trim +repage -resize "${maxw}x${maxh}>" \) \
+              -gravity center -composite "$splash"
+          done < <(find "$RES" -type f -name 'splash.png' | sort)
+
+      - name: Verify Android branding and immersive fullscreen
+        shell: bash
+        run: |
+          grep -q "BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE" android/app/src/main/java/com/arcanum/MainActivity.java
+          grep -q "hide(WindowInsetsCompat.Type.systemBars())" android/app/src/main/java/com/arcanum/MainActivity.java
+          grep -q "LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS" android/app/src/main/java/com/arcanum/MainActivity.java
+          grep -q '<string name="app_name">ARCANUM</string>' android/app/src/main/res/values/strings.xml
+          test -s android/app/src/main/res/mipmap-mdpi/ic_launcher.png
+          test -s android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+          test -s android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.png
+          test -s android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+          test "$(find android/app/src/main/res -type f -name 'splash.png' -size +1k | wc -l)" -gt 0
+
       - name: Build APK
         shell: bash
         run: |
           chmod +x android/gradlew
           cd android
-          ./gradlew assembleDebug --stacktrace
+          ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: APK metadata
+        shell: bash
+        run: |
+          ls -lh android/app/build/outputs/apk/debug/app-debug.apk
+          sha256sum android/app/build/outputs/apk/debug/app-debug.apk | tee android/app/build/outputs/apk/debug/app-debug.apk.sha256
 
       - name: Upload Arcanum APK
         uses: actions/upload-artifact@v4
         with:
           name: arcanum-android-debug
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          path: |
+            android/app/build/outputs/apk/debug/app-debug.apk
+            android/app/build/outputs/apk/debug/app-debug.apk.sha256
           if-no-files-found: error
           retention-days: 30

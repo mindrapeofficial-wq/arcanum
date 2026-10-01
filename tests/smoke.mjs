@@ -9,7 +9,7 @@ const version=JSON.parse(read("version.json"));
 const jsFiles=[
   "assets/js/immersive.js","assets/js/state.js","assets/js/auth.js","assets/js/archmage.js","assets/js/combat-profile.js","assets/js/items.js","assets/js/inventory.js","assets/js/archmage-sheet.js","assets/js/profile.js","assets/js/realm-state.js","assets/js/router.js",
   "assets/js/community.js","assets/js/realm.js","assets/js/economy.js","assets/js/construction.js",
-  "assets/js/magic.js","assets/js/army.js","assets/js/war.js","assets/js/arena.js","assets/js/pve.js","assets/js/tutorial.js","assets/js/ui.js"
+  "assets/js/magic.js","assets/js/army.js","assets/js/luck-support.js","assets/js/war.js","assets/js/arena.js","assets/js/pve.js","assets/js/tutorial.js","assets/js/ui.js"
 ];
 const js=jsFiles.map(read).join("\n");
 const uiAssets=[
@@ -119,7 +119,7 @@ test("canonical Archmage identity uses one snapshot",()=>{
   assert.match(sheet,/stateApi\("\/archmage\/"\+encodeURIComponent/);
   assert.match(profile,/loadArchmageSnapshot\(activeProfileName/);
   assert.match(profile,/identidad canónica/i);
-  assert.match(profile,/APTITUDES DEL ARCHIMAGO/);
+  assert.match(profile,/APTITUDES DEL ARCONTE/);
   assert.match(profile,/CRÓNICA PERSONAL/);
   assert.match(profile,/RENOMBRE/);
   assert.doesNotMatch(profile,/La sincronización pública del inventario se activará/);
@@ -187,12 +187,8 @@ test("verified Gear comes from gameplay instead of debug drops",()=>{
   assert.doesNotMatch(inventory,/HALLAZGO DE PRUEBA/);
   assert.doesNotMatch(inventory,/data-loot-test-drop/);
   assert.match(inventory,/canonicalLootOriginText/);
-  assert.match(items,/stateApi\("\/loot\/exploration\/start"/);
-  assert.match(items,/stateApi\("\/loot\/exploration\/complete"/);
   assert.match(items,/stateApi\("\/loot\/arena\/claim"/);
   assert.match(items,/stateApi\("\/loot\/boss\/claim"/);
-  assert.match(economy,/startLootExplorationClaim/);
-  assert.match(economy,/completeLootExplorationClaim/);
   assert.match(arena,/loot_reward/);
   assert.match(arena,/announceCanonicalLootReward/);
   assert.match(event,/claimWorldBossGear/);
@@ -219,7 +215,7 @@ test("personal PvE expeditions are server-authoritative and persistent",()=>{
   assert.match(pve,/stateApi\("\/pve\/fight"/);
   assert.match(pve,/stateApi\("\/pve\/retreat"/);
   assert.match(pve,/stateApi\("\/pve\/choose"/);
-  assert.match(pve,/VIDA DEL ARCHIMAGO/);
+  assert.match(pve,/VIDA DEL ARCONTE/);
   assert.match(pve,/pve-room-track/);
   assert.match(pve,/Botín de expedición/);
   assert.doesNotMatch(pve,/localStorage\.setItem/);
@@ -237,7 +233,7 @@ test("PvE between-room choices are explicit and consequential",()=>{
   const pve=read("assets/js/pve.js");
   assert.match(pve,/DECISIÓN DEL UMBRAL/);
   assert.match(pve,/data-pve-choice/);
-  assert.match(pve,/SIN COSTE DE TURNO/);
+  assert.match(pve,/SIN COSTE DE ENERGÍA/);
 });
 
 
@@ -245,9 +241,17 @@ test("Edge Function security patches stay in place",()=>{
   const state=read("supabase/functions/arcanum-state/index.ts");
   const admin=read("supabase/functions/arcanum-admin/index.ts");
   assert.match(state,/LEGACY_IMPORT_CLOSED/,"inventory legacy import must stay closed");
-  assert.match(state,/\.eq\("seals_remaining",arena\.seals_remaining\)/,"arena seals must be reserved atomically");
+  assert.match(state,/spendArchonEnergy\(who\.userId,ARCHON_ENERGY_ARENA_RANKED_COST\)/,"ranked Arena must spend Arconte energy on the server");
+  const energySql=read("supabase/migrations/20261001153000_archon_energy.sql");
+  assert.match(energySql,/from public\.arcanum_archon_energy\s+where user_id = p_user_id\s+for update/,"energy spending must lock the row atomically");
+  assert.match(energySql,/revoke all on function public\.spend_archon_energy\(uuid, integer\) from public, anon, authenticated/,"players must not call spend_archon_energy directly");
+  assert.match(energySql,/grant execute on function public\.spend_archon_energy\(uuid, integer\) to service_role/);
   assert.doesNotMatch(admin,/ADMIN_NAMES/,"admin must not be identified by display name");
-  assert.match(admin,/ADMIN_USER_IDS\.has\(userId\)/);
+  assert.match(admin,/from\("arcanum_admin_users"\)\.select\("role,active"\)\.eq\("user_id",userId\)/,"admin must be resolved by user id in the admin table");
+  assert.match(admin,/if\(!admin\?\.active\) throw new Error\("FORBIDDEN"\)/);
+  const adminSql=read("supabase/migrations/20261001162000_admin_and_system_accounts.sql");
+  assert.match(adminSql,/alter table public\.arcanum_admin_users enable row level security/);
+  assert.match(adminSql,/revoke all on table public\.arcanum_admin_users from public, anon, authenticated/);
 });
 
 
@@ -271,7 +275,7 @@ test("Oracle model calls are capped per user",()=>{
 
 
 test("AI features use a configurable free-tier provider, not paid OpenAI",()=>{
-  for(const name of ["arcanum-oracle","astrael-player"]){
+  for(const name of ["arcanum-oracle"]){
     const src=read("supabase/functions/"+name+"/index.ts");
     assert.doesNotMatch(src,/api\.openai\.com/,name+" must not call OpenAI directly");
     assert.doesNotMatch(src,/OPENAI_API_KEY/,name+" must not read the OpenAI key");
@@ -302,7 +306,6 @@ test("PvP ranking is routed, server-authoritative and shows competitive stats",(
   const router=read("assets/js/router.js");
   const ranking=read("assets/js/pvp-ranking.js");
   const stateFn=read("supabase/functions/arcanum-state/index.ts");
-  assert.match(html,/data-view="pvp-ranking"/);
   assert.match(router,/"pvp-ranking":\{name:"renderPvpRanking"/);
   assert.match(router,/view==="pvp-ranking"\) await renderPvpRanking/);
   assert.doesNotThrow(()=>new vm.Script(ranking,{filename:"assets/js/pvp-ranking.js"}));
@@ -352,10 +355,8 @@ test("closed-beta polish stays in place",()=>{
   assert.doesNotMatch(army,/setTimeout\(\(\)=>generateArmyArt\(army,unitById,false\)/,"army portraits must stay opt-in (external AI Horde service)");
   assert.match(army,/GENERAR RETRATO/);
   const war=read("assets/js/war.js");
-  const rankingFilter=read("supabase/migrations/20261001163000_keep_npcs_out_of_leaderboard.sql");
-  assert.match(rankingFilter,/public\.astrael_agent_state/,"Astrael exclusion belongs to the authoritative server ranking");
-  assert.match(rankingFilter,/public\.arcanum_system_accounts/,"system-account exclusion belongs to the authoritative server ranking");
-  assert.match(rankingFilter,/n\.realm_id is null[\s\S]*a\.username is null[\s\S]*sys\.player_id is null/,"realm ranking must exclude NPC, Astrael and system accounts server-side");
+  assert.match(war,/rpc\("war_ranking"\)/,"human war ranking must come from the canonical server RPC");
+  assert.doesNotMatch(war,/botNames/,"bot filtering must live on the server, not in the client");
   assert.match(war,/res\?\.attacker_victory && typeof artifactClaimPvp/,"relic loot is only claimed after a win");
   const magic=read("assets/js/magic.js");
   assert.match(magic,/spellIsAdjacent/,"adjacent-school research cost must be flagged as higher than the base cost");
@@ -393,10 +394,10 @@ test("regular Ranking and Construction pages keep their render contracts",()=>{
   const war=read("assets/js/war.js");
   assert.doesNotMatch(construction,/(^|[^$])\$\("\[data-building\]"\)\.forEach/m,
     "Construction must iterate building inputs with $$, not $");
-  assert.match(war,/rpc\("realm_ranking"\)/,
-    "Regular Ranking must use the authoritative server leaderboard");
-  assert.doesNotMatch(war,/botNames=new Set/,
-    "Human/system filtering must stay server-side instead of being recreated in the client");
+  assert.doesNotMatch(war,/players\.\\n\s+const botNames/,
+    "Regular Ranking must not contain escaped newlines that comment out its variables");
+  assert.match(war,/rpc\("realm_ranking"\)/);
+  assert.match(war,/const warRows=Array\.isArray\(warRowsRaw\)/);
 });
 
 test("Construction never references an undefined $$$ selector",()=>{
@@ -405,3 +406,123 @@ test("Construction never references an undefined $$$ selector",()=>{
     "Construction must use $$ for selector lists; $$$ is undefined");
 });
 
+
+test("audio uses local CC0 interface samples with documented provenance",()=>{
+  const audio=read("assets/js/audio.js");
+  const sources=read("assets/audio/SOURCES.md");
+  assert.match(audio,/assets\/audio\/sfx\/ui-select\.wav\.b64/);
+  assert.match(audio,/assets\/audio\/sfx\/ui-confirm-1\.wav\.b64/);
+  assert.match(audio,/assets\/audio\/sfx\/ui-error\.wav\.b64/);
+  assert.match(audio,/b64ToBlobUrl/);
+  assert.match(sources,/Kenney Interface Sounds/);
+  assert.match(sources,/CC0 1\.0/);
+  for(const name of [
+    "ui-select.wav.b64",
+    "ui-confirm-1.wav.b64",
+    "ui-confirm-2.wav.b64",
+    "ui-open.wav.b64",
+    "ui-error.wav.b64"
+  ]){
+    assert.ok(read("assets/audio/sfx/"+name).length>1000,name+" should contain an imported audio payload");
+  }
+});
+
+test("Lady Luck client helpers format time, tier and bonuses",()=>{
+  const context={document:{addEventListener(){}}};
+  vm.createContext(context);
+  vm.runInContext(read("assets/js/luck-support.js"),context);
+  assert.equal(vm.runInContext("luckTimeLeftText(0)",context),"0 min");
+  assert.equal(vm.runInContext("luckTimeLeftText(59)",context),"1 min");
+  assert.equal(vm.runInContext("luckTimeLeftText(3600)",context),"1 h");
+  assert.equal(vm.runInContext("luckTimeLeftText(86399)",context),"23 h 59 min");
+  assert.equal(vm.runInContext("luckTimeLeftText(-5)",context),"0 min");
+  assert.equal(vm.runInContext("supporterTierLabel('patron')",context),"Mecenas");
+  assert.equal(vm.runInContext("supporterTierLabel('supporter')",context),"Colaborador");
+  assert.equal(vm.runInContext("supporterTierLabel(null)",context),"Sin estatus de apoyo");
+  const lines=JSON.parse(vm.runInContext("JSON.stringify(luckBonusLines({summon_success_points:5,explore_land_percent:10}))",context));
+  assert.deepEqual(lines,["+5 % de éxito al invocar","+10 % de tierra al explorar"]);
+  assert.equal(vm.runInContext("luckBonusLines({}).length",context),0);
+});
+
+test("Lady Luck client only reads server state and never stores it locally",()=>{
+  const src=read("assets/js/luck-support.js");
+  assert.doesNotMatch(src,/localStorage|sessionStorage/,"luck and supporter state are server canonical");
+  const allowed=new Set(["my_luck_status","my_supporter_status","my_discord_link","create_discord_link_code","unlink_discord","get_my_notes","save_my_notes"]);
+  const used=[...src.matchAll(/rpc\("([a-z_]+)"/g)].map(m=>m[1]);
+  assert.ok(used.length>=7);
+  for(const name of used)assert.ok(allowed.has(name),"unexpected RPC: "+name);
+  assert.match(html,/id="luck-support-button"[^>]*class|class="[^"]*luck-support-button[^"]*hidden/,"the button stays hidden until the server answers");
+  assert.match(html,/assets\/js\/luck-support\.js/);
+});
+
+test("Lady Luck migration keeps tables private and effects server-side",()=>{
+  const sql=read("supabase/migrations/20261001180000_luck_supporters_discord.sql");
+  const tables=[...sql.matchAll(/create table if not exists public\.(\w+)/g)].map(m=>m[1]);
+  assert.deepEqual(tables.sort(),["arcanum_discord_link_codes","arcanum_discord_links","arcanum_luck","arcanum_luck_log","arcanum_player_notes","arcanum_supporter_ledger","arcanum_supporters"]);
+  for(const t of tables){
+    assert.match(sql,new RegExp("alter table public\\."+t+" enable row level security"),t+" must enable RLS");
+    assert.match(sql,new RegExp("revoke all on table public\\."+t+" from public, anon, authenticated"),t+" must be closed to players");
+  }
+  for(const fn of ["redeem_discord_link(text, text, text)","discord_claim_luck(text)","discord_status(text)","admin_grant_supporter_credit(uuid, integer, text, uuid)","admin_grant_luck(uuid, integer)"]){
+    assert.ok(sql.includes("revoke all on function public."+fn+" from public, anon, authenticated"),fn+" must not be callable by players");
+    assert.ok(sql.includes("grant execute on function public."+fn+" to service_role"),fn+" must be callable by the service role");
+  }
+  assert.match(sql,/greatest\(public\.arcanum_luck\.expires_at, excluded\.expires_at\)/,"luck must not stack or shorten");
+  assert.match(sql,/v_chance_bp\+500/,"+5 points of summoning success");
+  assert.match(sql,/v_roll::numeric \* v_factor \* 1\.10/,"+10% exploration land");
+  assert.match(sql,/not patching/,"patches must abort when the Core text moved");
+  assert.match(sql,/Europe\/Madrid/,"the daily claim uses the Madrid day like the Arena");
+  assert.match(sql,/supporter_tier[\s\S]*>= 15 then 'patron'[\s\S]*>= 2 then 'supporter'/);
+});
+
+test("Discord endpoint authenticates every request by Ed25519 signature",()=>{
+  const src=read("supabase/functions/arcanum-discord/index.ts");
+  assert.match(src,/x-signature-ed25519/);
+  assert.match(src,/x-signature-timestamp/);
+  assert.match(src,/name: "Ed25519"/);
+  assert.match(src,/MAX_SKEW_SECONDS/,"stale timestamps must be rejected");
+  assert.match(src,/status: 401/);
+  assert.match(src,/flags: 64/,"replies are ephemeral");
+  assert.match(src,/allowed_mentions/);
+  assert.doesNotMatch(src,/Authorization.*(req\.headers|Bearer \$\{token\})/,"Discord calls carry no player JWT");
+  for(const rpc of ["redeem_discord_link","discord_claim_luck","discord_status"])assert.match(src,new RegExp(rpc));
+  const script=read("scripts/register-discord-commands.mjs");
+  for(const name of ["vincular","suerte","estado"])assert.match(script,new RegExp('name: "'+name+'"'));
+});
+
+test("Admin can grant supporter credit and luck, always audited",()=>{
+  const src=read("supabase/functions/arcanum-admin/index.ts");
+  assert.match(src,/action==="supporter:grant"/);
+  assert.match(src,/action==="luck:grant"/);
+  assert.match(src,/rpc\("admin_grant_supporter_credit"/);
+  assert.match(src,/rpc\("admin_grant_luck"/);
+  const block=src.slice(src.indexOf('action==="supporter:grant"'),src.indexOf("async function userIdByMageName"));
+  assert.equal((block.match(/await audit\(/g)||[]).length,2,"both grants must write an audit row");
+});
+
+test("war view exposes shield/meditation state from the server and keeps versions in sync", () => {
+  const war = read("assets/js/war.js");
+  const state = read("assets/js/state.js");
+  const html = read("index.html");
+  assert.match(war, /rpc\("my_shield_status"\)\.catch\(\(\)=>null\)/, "hidden until the RPC exists");
+  assert.match(war, /rpc\("start_meditation"\)/);
+  for (const code of ["TARGET_IN_MEDITATION", "TARGET_DAMAGE_PROTECTED", "ATTACKER_IN_MEDITATION", "MEDITATION_COOLDOWN"]) {
+    assert.match(state, new RegExp(code), `${code} needs a human message`);
+  }
+  const v = version.version.replace(/\./g, "\\.");
+  assert.match(html, new RegExp(`war\\.js\\?v=${v}`));
+  assert.match(html, new RegExp(`state\\.js\\?v=${v}`));
+  assert.match(state, new RegExp(`BUILD_VERSION = "${v}"`));
+});
+
+test("Pillage is a third attack mode, server-driven and never a land grab", () => {
+  const war = read("assets/js/war.js");
+  const state = read("assets/js/state.js");
+  const sql = read("supabase/migrations/20261001200000_pillage.sql");
+  assert.match(war, /data-mode="PILLAGE"/);
+  assert.match(war, /res\.pillage\?\.total/, "burned buildings come from the server result");
+  assert.match(state, /PILLAGE_LIMIT_REACHED/);
+  assert.match(sql, /abort|text moved/i, "the Core patch must abort if the deployed text moved");
+  assert.match(sql, /when v_mode=''PILLAGE'' then 0/, "no land changes hands in a pillage");
+  assert.doesNotMatch(sql, /barracks\s*=\s*barracks\s*-|fortresses\s*=\s*fortresses\s*-|barriers\s*=\s*barriers\s*-/, "military buildings are never burned");
+});

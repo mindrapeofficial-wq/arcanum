@@ -157,6 +157,7 @@ async function pveRetreat(){
 async function renderPve(){
   const data=await stateApi("/pve");
   $("#view-host").innerHTML=
+    '<div class="view-header"><div><span class="section-kicker">AVENTURA PERSONAL</span><h2>Expediciones</h2><p>Adéntrate en incursiones persistentes, conserva tu vida entre salas y reclama el botín que sobreviva contigo.</p></div></div>'+
     '<div class="pve-energy"><span>ENERGÍA DEL ARCONTE</span><strong>'+n(data.energy?.current||0)+' / '+n(data.energy?.max||12)+'</strong></div>'+
     (data.run&&["active","fighting"].includes(data.run.status)
       ?pveActiveHtml(data.run,Number(data.energy_cost_per_fight||1),data.energy)

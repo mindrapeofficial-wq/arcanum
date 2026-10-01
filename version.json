@@ -1,6 +1,6 @@
 {
-  "version": "0.3.39",
+  "version": "0.3.42",
   "channel": "beta",
-  "updated_at": "2026-10-01T19:00:00+02:00",
-  "note": "Pulido visual: formularios, pestañas, tablas y estados vacíos"
+  "updated_at": "2026-10-01T19:30:00+00:00",
+  "note": "Pulido visual: profundidad, legibilidad, estados de interacción, barras con brillo y ambiente animado"
 }

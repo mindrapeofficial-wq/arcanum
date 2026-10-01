@@ -3,7 +3,7 @@
 const SUPABASE_URL = "https://mrmvmoyysxuopqexbxfk.supabase.co";
 const SUPABASE_KEY = "sb_publishable_tZEPJi2v7Tp-xDuVa0qWRw_geizIGoD";
 const SESSION_KEY = "arcanum_session_v2";
-const BUILD_VERSION = "0.3.39";
+const BUILD_VERSION = "0.3.42";
 const VERSION_CHECK_INTERVAL_MS = 60000;
 const COMMUNITY_API = "https://mrmvmoyysxuopqexbxfk.supabase.co/functions/v1/arcanum-community";
 const ORACLE_API = "https://mrmvmoyysxuopqexbxfk.supabase.co/functions/v1/arcanum-oracle";
@@ -109,7 +109,7 @@ function humanError(error){
     ["ATTACKER_HAS_NO_ARMY","Necesitas un ejército antes de atacar."],["TARGET_HAS_NO_ARMY","Ese objetivo no tiene ejército disponible para esta beta."],
     ["NOT_ENOUGH_RESOURCES_FOR_WAR_EXPENSE","No puedes pagar el gasto de guerra de tu ejército."],["BARRIERS_REQUIRE_EXCLUSIVE_BUILD","Las Barreras deben construirse en una orden separada."],
     ["BUILD_BATCH_TOO_LARGE","Ese lote de construcción requiere más de 50 turnos. Reduce la cantidad."],["REALM_ALREADY_EXISTS","Ya tienes un dominio en esta temporada."],
-    ["INVITE_REQUIRED","Esta cuenta no tiene una invitación válida de ARCANUM."],["MAGE_NOT_ALIVE","Este Arconte ya no está vivo."],
+    ["INVITE_REQUIRED","Esta cuenta no tiene una invitación válida de ARCANUM."],["MAGE_NOT_ALIVE","Este Arconte ya no está vivo."],["TARGET_IN_MEDITATION","Ese Arconte está en meditación y no puede ser atacado."],["TARGET_DAMAGE_PROTECTED","Ese Arconte está protegido tras sufrir grandes pérdidas."],["ATTACKER_IN_MEDITATION","No puedes atacar mientras meditas."],["ALREADY_MEDITATING","Ya estás meditando."],["PILLAGE_LIMIT_REACHED","Ese Arconte ya ha sufrido demasiados saqueos en las últimas 24 horas."],["MEDITATION_COOLDOWN","Aún no puedes volver a meditar."],
     ["TARGET_NOT_FOUND","No se ha encontrado al Arconte objetivo."],["TARGET_NOT_ALIVE","Ese Arconte ya ha caído."],
     ["UNRESOLVED_TERRITORY_DAMAGE","Tu dominio tiene daño territorial pendiente de resolver."],["INVALID_BUILD_PLAN","El plan de construcción no es válido."],
     ["UNIT_UNDISBANDABLE","Esta unidad no puede ser disuelta."],["SPELL_NOT_KNOWN","Aún no conoces ese hechizo."],

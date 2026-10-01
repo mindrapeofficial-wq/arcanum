@@ -37,3 +37,145 @@
 .artifact-art-missing{display:none}
 .artifact-card.artifact-school .artifact-card-art{box-shadow:inset 0 0 32px rgba(76,133,62,.06)}
 @media(max-width:700px){.artifact-card-art{height:158px}}
+
+
+/* ==========================================================================
+   FORBIDDEN ARTIFACT GALLERY
+   Discovered relics feel exhibited, catalogued and dangerous.
+   ========================================================================== */
+.artifact-hero{
+  position:relative;
+  overflow:hidden;
+  border-color:rgba(190,155,91,.24);
+  background:
+    radial-gradient(circle at 82% 44%,rgba(185,130,52,.11),transparent 30%),
+    linear-gradient(135deg,rgba(19,15,10,.97),rgba(4,4,4,.99));
+  box-shadow:inset 0 0 0 5px rgba(0,0,0,.2),inset 0 0 0 6px rgba(190,155,91,.045),0 16px 38px rgba(0,0,0,.16);
+}
+.artifact-hero:before{
+  content:"";
+  position:absolute;
+  inset:8px;
+  border:1px solid rgba(221,181,101,.06);
+  pointer-events:none;
+}
+.artifact-hero:after{
+  content:"";
+  position:absolute;
+  right:26px;top:50%;
+  width:88px;height:88px;
+  translate:0 -50%;
+  background:url("../vendor/game-icons/crystal-ball.svg") center/contain no-repeat;
+  opacity:.12;
+  filter:drop-shadow(0 0 18px rgba(216,182,108,.12));
+  pointer-events:none;
+}
+.artifact-hero h2{
+  color:#f0ddb7;
+  text-shadow:0 2px 14px rgba(0,0,0,.82),0 0 18px rgba(185,130,52,.06);
+}
+.artifact-world-panel{
+  position:relative;
+  border-color:rgba(209,171,82,.21);
+  background:
+    linear-gradient(90deg,rgba(117,87,27,.08),rgba(0,0,0,.18)),
+    repeating-linear-gradient(135deg,rgba(255,255,255,.006) 0 1px,transparent 1px 5px);
+  box-shadow:inset 0 1px rgba(255,255,255,.016);
+}
+.artifact-world-panel:before{
+  content:"";
+  position:absolute;
+  left:6px;top:6px;bottom:6px;width:1px;
+  background:linear-gradient(transparent,rgba(221,181,101,.34),transparent);
+}
+.artifact-toolbar button{
+  border-radius:1px;
+  background:linear-gradient(180deg,rgba(21,18,14,.88),rgba(5,5,5,.93));
+}
+.artifact-toolbar button.active{
+  border-color:rgba(221,181,101,.42);
+  color:#f0d9ad;
+  background:linear-gradient(180deg,rgba(62,43,21,.38),rgba(14,10,7,.88));
+  box-shadow:inset 0 0 16px rgba(185,130,52,.035);
+}
+.artifact-card{
+  border-color:rgba(190,155,91,.15);
+  background:
+    radial-gradient(circle at 50% 32%,rgba(185,130,52,.045),transparent 42%),
+    linear-gradient(180deg,rgba(15,12,9,.88),rgba(4,4,4,.96));
+  box-shadow:inset 0 1px rgba(255,255,255,.018),0 10px 28px rgba(0,0,0,.13);
+  transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease;
+}
+.artifact-card:hover{
+  transform:translateY(-2px);
+  border-color:rgba(207,165,89,.26);
+  box-shadow:inset 0 1px rgba(255,255,255,.02),0 16px 36px rgba(0,0,0,.19);
+}
+.artifact-card:after{
+  content:"";
+  position:absolute;
+  inset:5px;
+  border:1px solid rgba(190,155,91,.035);
+  pointer-events:none;
+}
+.artifact-card-art{
+  position:relative;
+  height:210px;
+  border-color:rgba(190,155,91,.17);
+  background:
+    radial-gradient(circle at 50% 52%,rgba(185,130,52,.115),transparent 57%),
+    linear-gradient(180deg,rgba(8,8,8,.42),rgba(0,0,0,.68));
+  box-shadow:inset 0 0 34px rgba(0,0,0,.24);
+}
+.artifact-card-art:before{
+  content:"";
+  position:absolute;
+  z-index:0;
+  width:128px;height:128px;
+  left:50%;top:50%;
+  translate:-50% -50%;
+  border-radius:50%;
+  border:1px solid rgba(221,181,101,.11);
+  box-shadow:0 0 0 17px rgba(221,181,101,.012),0 0 0 34px rgba(221,181,101,.007);
+}
+.artifact-card-art:after{
+  background:rgba(73,50,24,.24);
+}
+.artifact-art img{
+  filter:drop-shadow(0 14px 22px rgba(0,0,0,.58)) drop-shadow(0 0 8px rgba(205,158,73,.05));
+}
+.artifact-unique{
+  border-color:rgba(221,184,91,.34);
+  background:
+    radial-gradient(circle at 50% 31%,rgba(211,173,76,.1),transparent 45%),
+    linear-gradient(180deg,rgba(19,14,8,.93),rgba(3,3,3,.98));
+}
+.artifact-unique .artifact-card-art{
+  border-color:rgba(221,184,91,.24);
+  box-shadow:inset 0 0 40px rgba(211,173,76,.035);
+}
+.artifact-owner,.artifact-owned{
+  background:linear-gradient(90deg,rgba(185,130,52,.035),rgba(0,0,0,.16));
+}
+.artifact-market-shell{
+  position:relative;
+  border-color:rgba(190,155,91,.19);
+  background:linear-gradient(180deg,rgba(16,13,9,.82),rgba(4,4,4,.95));
+  box-shadow:inset 0 1px rgba(255,255,255,.018);
+}
+.artifact-market-row,
+.artifact-market-create{
+  border-color:rgba(190,155,91,.12);
+  background:linear-gradient(180deg,rgba(12,10,8,.7),rgba(4,4,4,.78));
+}
+.market-artifact-link{
+  border-color:rgba(204,160,74,.2);
+  background:
+    radial-gradient(circle at 95% 50%,rgba(185,130,52,.06),transparent 24%),
+    linear-gradient(90deg,rgba(127,83,27,.07),rgba(0,0,0,.18));
+}
+
+@media(max-width:700px){
+  .artifact-hero:after{width:58px;height:58px;right:16px;top:28px;translate:0 0}
+  .artifact-card-art{height:172px}
+}

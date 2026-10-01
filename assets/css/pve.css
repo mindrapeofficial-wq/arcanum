@@ -19,3 +19,155 @@
 .pve-choice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.pve-choice{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start;text-align:left;padding:12px;border:1px solid rgba(218,151,57,.12);background:rgba(5,5,5,.34);color:#c6ad87;transition:transform .12s ease,border-color .12s ease,background .12s ease}.pve-choice:hover:not(:disabled){transform:translateY(-1px);border-color:rgba(218,151,57,.34);background:rgba(154,98,35,.07)}.pve-choice:disabled{opacity:.55}.pve-choice-icon{display:grid;place-items:center;width:30px;height:30px;border:1px solid rgba(218,151,57,.20);color:#d0a665;font-size:15px}.pve-choice-body strong,.pve-choice-body small,.pve-choice-body em,.pve-choice-target{display:block}.pve-choice-body strong{color:#d9bf92;font:700 10px Arial,sans-serif}.pve-choice-body small{margin-top:4px;color:#a58a62;font:800 7px Arial,sans-serif;letter-spacing:.03em}.pve-choice-body em{margin-top:7px;color:#756957;font:8px/1.5 Arial,sans-serif;font-style:normal}.pve-choice-target{margin-top:9px;color:#5f564b;font:800 7px Arial,sans-serif;letter-spacing:.06em}
 .pve-retreat-row{display:flex;justify-content:flex-end;margin-top:9px}.pve-retreat-row .ghost-button{font-size:8px;padding:7px 10px}
 @media(max-width:850px){.pve-choice-grid{grid-template-columns:1fr}.pve-decision-head{flex-direction:column}.pve-decision-lock{align-self:flex-start}}
+
+
+/* ==========================================================================
+   EXPEDITION PORTAL
+   PvE feels like entering a mapped magical route instead of opening a list.
+   ========================================================================== */
+.pve-expedition-card{
+  position:relative;
+  overflow:hidden;
+  border-color:rgba(190,155,91,.2);
+  background:
+    radial-gradient(circle at 8% 50%,rgba(126,77,38,.12),transparent 30%),
+    linear-gradient(90deg,rgba(18,14,10,.88),rgba(4,4,4,.94));
+  box-shadow:inset 0 1px rgba(255,255,255,.02),0 12px 30px rgba(0,0,0,.13);
+}
+.pve-expedition-card:before{
+  content:"";
+  position:absolute;
+  inset:6px;
+  border:1px solid rgba(190,155,91,.045);
+  pointer-events:none;
+}
+.pve-expedition-sigil{
+  position:relative;
+  width:76px;height:76px;
+  border-color:rgba(221,181,101,.34);
+  color:transparent!important;
+  background:
+    url("../vendor/game-icons/treasure-map.svg") center/48px 48px no-repeat,
+    linear-gradient(180deg,rgba(27,22,16,.9),rgba(6,6,6,.94));
+  box-shadow:inset 0 0 0 6px rgba(185,130,52,.02),0 0 18px rgba(185,130,52,.045);
+}
+.pve-expedition-sigil::first-letter{color:transparent}
+.pve-expedition-copy h3{
+  color:#ead4aa;
+  text-shadow:0 2px 12px rgba(0,0,0,.72);
+}
+.pve-start{
+  border-color:rgba(190,155,91,.14);
+  background:linear-gradient(180deg,rgba(19,16,12,.76),rgba(5,5,5,.86));
+  box-shadow:inset 0 1px rgba(255,255,255,.016);
+}
+.pve-start:hover:not(:disabled){
+  border-color:rgba(221,181,101,.32);
+  background:linear-gradient(180deg,rgba(38,28,18,.76),rgba(8,7,6,.9));
+  transform:translateX(1px);
+}
+.pve-active-shell{
+  position:relative;
+  border-color:rgba(190,155,91,.18);
+  background:
+    radial-gradient(circle at 50% 100%,rgba(185,130,52,.07),transparent 42%),
+    linear-gradient(180deg,rgba(14,12,10,.82),rgba(4,4,4,.92));
+  box-shadow:inset 0 0 0 5px rgba(0,0,0,.18),inset 0 0 0 6px rgba(190,155,91,.04);
+}
+.pve-status{
+  border-color:rgba(190,155,91,.22);
+  background:rgba(0,0,0,.22);
+}
+.pve-hp{
+  height:11px;
+  border-color:rgba(190,155,91,.14);
+  border-radius:0;
+  background:#050505;
+  box-shadow:inset 0 2px 5px rgba(0,0,0,.8);
+}
+.pve-hp i{
+  background:linear-gradient(90deg,#713b2c,#b45739 65%,#d47750);
+  box-shadow:0 0 8px rgba(181,85,53,.16);
+}
+.pve-room-track{
+  position:relative;
+}
+.pve-room-track:before{
+  content:"";
+  position:absolute;
+  z-index:0;
+  left:7%;right:7%;top:25px;height:1px;
+  background:linear-gradient(90deg,rgba(190,155,91,.08),rgba(221,181,101,.22),rgba(190,155,91,.08));
+}
+.pve-room-node{
+  z-index:1;
+  border-color:rgba(190,155,91,.1);
+  background:linear-gradient(180deg,rgba(14,12,10,.9),rgba(5,5,5,.94));
+}
+.pve-room-node span{
+  background:#080706;
+  box-shadow:0 0 0 4px rgba(4,4,4,.9);
+}
+.pve-room-node.current{
+  border-color:rgba(221,181,101,.31);
+  box-shadow:inset 0 0 24px rgba(180,116,40,.045),0 0 14px rgba(185,130,52,.025);
+}
+.pve-room-node.current span{
+  border-color:rgba(225,184,101,.45);
+  box-shadow:0 0 0 4px rgba(4,4,4,.9),0 0 12px rgba(185,130,52,.09);
+}
+.pve-encounter{
+  position:relative;
+  overflow:hidden;
+  border-color:rgba(190,155,91,.18);
+  background:
+    radial-gradient(circle at 0 50%,rgba(126,77,38,.08),transparent 34%),
+    linear-gradient(135deg,rgba(22,16,11,.78),rgba(4,4,4,.9));
+}
+.pve-encounter:after{
+  content:"";
+  position:absolute;
+  right:-58px;bottom:-88px;
+  width:180px;height:180px;
+  border-radius:50%;
+  border:1px solid rgba(221,181,101,.055);
+  box-shadow:0 0 0 22px rgba(221,181,101,.007);
+  pointer-events:none;
+}
+.pve-encounter.boss{
+  border-color:rgba(193,112,67,.34);
+  background:
+    radial-gradient(circle at 0 50%,rgba(129,42,35,.17),transparent 38%),
+    linear-gradient(135deg,rgba(22,9,8,.82),rgba(4,4,4,.92));
+}
+.pve-enemy-mark{
+  rotate:45deg;
+  background:rgba(0,0,0,.24);
+  box-shadow:inset 0 0 0 4px rgba(185,130,52,.02);
+}
+.pve-enemy-mark>*{rotate:-45deg}
+.pve-decision-shell{
+  position:relative;
+  border-color:rgba(190,155,91,.22);
+  background:
+    radial-gradient(circle at 100% 0,rgba(180,116,40,.09),transparent 34%),
+    linear-gradient(180deg,rgba(13,11,9,.82),rgba(4,4,4,.92));
+}
+.pve-choice{
+  border-color:rgba(190,155,91,.13);
+  background:linear-gradient(180deg,rgba(13,11,9,.78),rgba(4,4,4,.86));
+}
+.pve-choice:hover:not(:disabled){
+  border-color:rgba(221,181,101,.32);
+  background:linear-gradient(180deg,rgba(34,25,16,.75),rgba(6,6,6,.9));
+}
+.pve-loot-found{
+  border-color:rgba(221,181,101,.2);
+  background:
+    radial-gradient(circle at 100% 50%,rgba(185,130,52,.07),transparent 34%),
+    linear-gradient(90deg,rgba(150,96,35,.055),rgba(0,0,0,.18));
+}
+
+@media(max-width:560px){
+  .pve-room-track:before{display:none}
+}
