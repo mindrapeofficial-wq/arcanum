@@ -1,5 +1,6 @@
 (() => {
   const root = document.documentElement;
+  if (/(?:^|\s)ArcanumNative\//.test(navigator.userAgent)) root.classList.add("arcanum-native");
   const isTouchDevice =
     navigator.maxTouchPoints > 0 ||
     window.matchMedia("(pointer: coarse)").matches;

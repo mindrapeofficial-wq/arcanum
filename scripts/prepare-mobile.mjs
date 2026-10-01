@@ -11,7 +11,8 @@ const entries = [
   ["manifest.webmanifest", "manifest.webmanifest"],
   ["logo.png", "logo.png"],
   ["version.json", "version.json"],
-  ["assets", "assets"]
+  ["assets", "assets"],
+  ["native/offline.html", "offline.html"]
 ];
 
 for (const [source, target] of entries) {

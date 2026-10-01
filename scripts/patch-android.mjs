@@ -41,10 +41,4 @@ manifest = manifest.replace(/android:configChanges="([^"]*)"/, (_match, value) =
 if (!manifest.includes("android.permission.INTERNET")) manifest = manifest.replace(/<manifest([^>]*)>/, '<manifest$1>\n    <uses-permission android:name="android.permission.INTERNET" />');
 await writeFile(manifestPath, manifest, "utf8");
 
-const nativeCssPath = new URL("../www/assets/css/native.css", import.meta.url);
-let nativeCss = await readFile(nativeCssPath, "utf8");
-const nativeFix = `\n/* APK-specific mobile polish. Applied only to the packaged www copy. */\n@media(max-width:760px){\n  .brand-mini{min-width:168px;padding:0 2px;overflow:hidden}\n  .brand-mini img{width:220px;max-width:none;height:62px;object-fit:contain;transform:scale(1.48);transform-origin:center}\n  .view-host>.view-header:only-child{margin:18px 0;padding:18px;border:1px solid rgba(190,155,91,.18);background:linear-gradient(180deg,rgba(18,15,11,.88),rgba(5,5,5,.92))}\n  .view-host>.view-header:only-child h2{font-size:clamp(26px,8vw,38px)}\n}\n`;
-if (!nativeCss.includes("APK-specific mobile polish")) nativeCss += nativeFix;
-await writeFile(nativeCssPath, nativeCss, "utf8");
-
-console.log("Android immersive, network and APK UI patch applied.");
+console.log("Android immersive and network patch applied.");

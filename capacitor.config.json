@@ -5,8 +5,13 @@
   "appendUserAgent": " ArcanumNative/1.0",
   "backgroundColor": "#020202",
   "server": {
-    "hostname": "arcanum-las-cinco-escuelas.onrender.com",
-    "androidScheme": "https"
+    "url": "https://arcanum-las-cinco-escuelas.onrender.com",
+    "androidScheme": "https",
+    "errorPath": "offline.html",
+    "allowNavigation": [
+      "arcanum-las-cinco-escuelas.onrender.com",
+      "mrmvmoyysxuopqexbxfk.supabase.co"
+    ]
   },
   "android": {
     "backgroundColor": "#020202"
