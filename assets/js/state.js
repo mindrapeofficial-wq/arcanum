@@ -110,3 +110,56 @@ function humanError(error){
   if(m.includes("JWT") || m.includes("token")) return "Tu sesión ha caducado. Vuelve a entrar.";
   return m.replace(/^.*?message[:=]\s*/i,"").slice(0,260);
 }
+
+
+/* School-name chroma: keeps every visible school name aligned with its representative color. */
+const SCHOOL_TEXT_CLASSES = {
+  Viridia: "school-name school-name--viridia",
+  Aurea: "school-name school-name--aurea",
+  Cineria: "school-name school-name--cineria",
+  Nadir: "school-name school-name--nadir",
+  Oneiria: "school-name school-name--oneiria"
+};
+let schoolNameDecorateQueued = false;
+function decorateSchoolNames(root=document){
+  const scope = root?.nodeType === 1 || root?.nodeType === 9 ? root : document;
+  const walker = document.createTreeWalker(scope, NodeFilter.SHOW_TEXT);
+  const pending = [];
+  let node;
+  while((node = walker.nextNode())){
+    const parent = node.parentElement;
+    if(!parent || parent.closest("script,style,textarea,input,select,option,.school-name,[contenteditable='true']")) continue;
+    if(!/\b(?:Viridia|Aurea|Cineria|Nadir|Oneiria)\b/.test(node.nodeValue || "")) continue;
+    pending.push(node);
+  }
+  for(const textNode of pending){
+    const text = textNode.nodeValue || "";
+    const frag = document.createDocumentFragment();
+    let last = 0;
+    text.replace(/\b(Viridia|Aurea|Cineria|Nadir|Oneiria)\b/g,(match,name,offset)=>{
+      if(offset > last) frag.append(document.createTextNode(text.slice(last,offset)));
+      const span = document.createElement("span");
+      span.className = SCHOOL_TEXT_CLASSES[name];
+      span.textContent = match;
+      frag.append(span);
+      last = offset + match.length;
+      return match;
+    });
+    if(last < text.length) frag.append(document.createTextNode(text.slice(last)));
+    textNode.replaceWith(frag);
+  }
+}
+function queueSchoolNameDecoration(){
+  if(schoolNameDecorateQueued) return;
+  schoolNameDecorateQueued = true;
+  requestAnimationFrame(()=>{
+    schoolNameDecorateQueued = false;
+    decorateSchoolNames(document);
+  });
+}
+if(document.readyState === "loading"){
+  document.addEventListener("DOMContentLoaded",queueSchoolNameDecoration,{once:true});
+}else{
+  queueSchoolNameDecoration();
+}
+new MutationObserver(queueSchoolNameDecoration).observe(document.documentElement,{subtree:true,childList:true});
