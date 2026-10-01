@@ -268,3 +268,14 @@ test("Oracle model calls are capped per user",()=>{
   assert.match(m,/revoke all on function public\.arcanum_oracle_consume/);
   assert.match(m,/to service_role/);
 });
+
+
+test("AI features use a configurable free-tier provider, not paid OpenAI",()=>{
+  for(const name of ["arcanum-oracle","astrael-player"]){
+    const src=read("supabase/functions/"+name+"/index.ts");
+    assert.doesNotMatch(src,/api\.openai\.com/,name+" must not call OpenAI directly");
+    assert.doesNotMatch(src,/OPENAI_API_KEY/,name+" must not read the OpenAI key");
+    assert.match(src,/ORACLE_BASE_URL/);
+    assert.match(src,/ORACLE_API_KEY/);
+  }
+});

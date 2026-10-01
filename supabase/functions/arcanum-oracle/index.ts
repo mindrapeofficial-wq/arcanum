@@ -313,9 +313,12 @@ function extractResponseText(data: any) {
 }
 
 async function generateWithModel(question: string, history: any[], state: any, live: any) {
-  const apiKey = Deno.env.get("OPENAI_API_KEY");
-  if (!apiKey) return null;
-  const model = Deno.env.get("ARCANUM_AI_MODEL") || "gpt-5.6-luna";
+  // Any OpenAI-compatible chat endpoint with a free tier works (Groq, Google Gemini, OpenRouter...).
+  // Without all three secrets the Oracle answers from its free built-in knowledge instead.
+  const baseUrl = String(Deno.env.get("ORACLE_BASE_URL") || "").replace(/\/+$/, "");
+  const apiKey = Deno.env.get("ORACLE_API_KEY");
+  const model = Deno.env.get("ORACLE_MODEL");
+  if (!baseUrl || !apiKey || !model) return null;
   const cleanHistory = (Array.isArray(history) ? history : []).slice(-10).map((x:any)=>({
     role: x?.role === "assistant" ? "assistant" : "user",
     content: String(x?.content || "").slice(0,1000)
@@ -338,21 +341,21 @@ Estado actual del jugador:
 ${JSON.stringify(stateSummary(state))}
 
 Datos vivos consultados en este mismo momento desde ARCANUM:
-${JSON.stringify(live).slice(0, 26000)}
+${JSON.stringify(live).slice(0, 9000)}
 
 Los datos vivos tienen prioridad sobre descripciones estáticas cuando exista una diferencia. Usa nombres, costes, unidades, hechizos, ejército, objetivos, NPCs, mercado y batallas reales cuando sean relevantes.
 La lista rpc_capabilities representa capacidades reales expuestas por el backend a la sesión del jugador. No afirmes que una acción existe si no aparece en los datos vivos o en el conocimiento confirmado.
 El bloque astrael_self es tu propia memoria verificable como jugador. Solo puedes afirmar que tú construiste, atacaste, comerciaste, investigaste o realizaste otra acción si aparece respaldada por astrael_self.recent_actions o por tu estado persistente. Si active=false, explica con naturalidad que tu reino autónomo todavía no ha sido activado, sin fingir acciones.`;
 
-  const input = [...cleanHistory, { role:"user", content:question }];
-  const resp = await fetch("https://api.openai.com/v1/responses", {
+  const messages = [{ role:"system", content:prompt }, ...cleanHistory, { role:"user", content:question }];
+  const resp = await fetch(`${baseUrl}/chat/completions`, {
     method:"POST",
     headers:{ Authorization:`Bearer ${apiKey}`, "Content-Type":"application/json" },
     body:JSON.stringify({
       model,
-      instructions:prompt,
-      input,
-      max_output_tokens:900
+      messages,
+      max_tokens:700,
+      temperature:0.7
     })
   });
   if (!resp.ok) {
@@ -360,7 +363,8 @@ El bloque astrael_self es tu propia memoria verificable como jugador. Solo puede
     return null;
   }
   const data = await resp.json();
-  return extractResponseText(data) || null;
+  const text = data?.choices?.[0]?.message?.content;
+  return typeof text === "string" && text.trim() ? text.trim() : null;
 }
 
 Deno.serve(async (req: Request) => {

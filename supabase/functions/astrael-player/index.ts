@@ -100,8 +100,11 @@ function parseObject(text:string){
 }
 
 async function decide(obs:any){
-  const key=Deno.env.get("OPENAI_API_KEY");
-  if(!key)return null;
+  // OpenAI-compatible chat endpoint with a free tier (Groq, Gemini, OpenRouter...). Without these
+  // secrets Astrael plays with his built-in rule-based fallback, which costs nothing.
+  const baseUrl=String(Deno.env.get("ORACLE_BASE_URL")||"").replace(/\/+$/,"");
+  const key=Deno.env.get("ORACLE_API_KEY"),model=Deno.env.get("ORACLE_MODEL");
+  if(!baseUrl||!key||!model)return null;
   const instructions=`Eres Astrael, un Archimago autónomo que juega ARCANUM como un jugador real.
 El estado y catálogos recibidos son autoritativos. Elige exactamente UNA acción por ciclo.
 Objetivos: sobrevivir, aprender, construir un reino coherente, mantener economía sana, formar ejército, comerciar y participar ocasionalmente en PvP.
@@ -119,13 +122,15 @@ Acciones permitidas:
 {"type":"market_accept","offer_id":"id"}
 {"type":"market_create","offer_resource":"gold|mana|population","offer_amount":entero,"want_resource":"gold|mana|population","want_amount":entero,"note":"texto"}
 Devuelve SOLO JSON con {"action":{...},"reason":"...","intent":"..."}.\n\nOBSERVACIÓN:\n${JSON.stringify(obs).slice(0,28000)}`;
-  const resp=await fetch("https://api.openai.com/v1/responses",{
+  const resp=await fetch(`${baseUrl}/chat/completions`,{
     method:"POST",
     headers:{Authorization:`Bearer ${key}`,"Content-Type":"application/json"},
-    body:JSON.stringify({model:MODEL,instructions,input:"Decide el siguiente movimiento de Astrael.",max_output_tokens:500})
+    body:JSON.stringify({model,messages:[{role:"system",content:instructions},{role:"user",content:"Decide el siguiente movimiento de Astrael."}],max_tokens:500,temperature:0.6})
   });
   if(!resp.ok)return null;
-  return parseObject(extractText(await resp.json()));
+  const data=await resp.json();
+  const text=data?.choices?.[0]?.message?.content;
+  return typeof text==="string"?parseObject(text):null;
 }
 
 function turns(v:any){return Math.max(1,Math.min(3,Math.floor(safeNumber(v)||1)));}
