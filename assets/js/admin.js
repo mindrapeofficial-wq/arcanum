@@ -2,6 +2,7 @@
 
 const ADMIN_API="https://mrmvmoyysxuopqexbxfk.supabase.co/functions/v1/arcanum-admin";
 let adminReady=false;
+let adminDenied=false; // a 403 is final for this session: stop probing the admin endpoint
 let adminPlayersCache=[];
 let adminModerationCache=null;
 
@@ -38,13 +39,17 @@ async function adminAction(payload,success="Acción completada"){
 }
 async function probeAdmin(){
   if(adminReady)return true;
+  if(adminDenied)return false;
   try{
     const me=await adminApi("/me");
-    if(!me?.admin)return false;
+    if(!me?.admin){adminDenied=true;return false}
     adminReady=true;
     document.querySelectorAll(".admin-nav-button").forEach(x=>x.classList.remove("hidden"));
     return true;
-  }catch{return false}
+  }catch(e){
+    if(String(e?.message||e).includes("FORBIDDEN"))adminDenied=true;
+    return false;
+  }
 }
 async function renderAdminPanel(){
   const ok=await probeAdmin(); const host=$("#view-host");
@@ -163,6 +168,6 @@ async function adminAudit(content){
   const d=adminModerationCache||await adminApi("/moderation");
   content.innerHTML=`<section class="panel admin-section"><div class="admin-section-head"><div><span class="section-kicker">TRAZABILIDAD</span><h3>Registro administrativo</h3></div></div><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Fecha</th><th>Actor</th><th>Acción</th><th>Objetivo</th><th>Payload</th></tr></thead><tbody>${(d.audit||[]).map(x=>`<tr><td>${adminDate(x.created_at)}</td><td>${adminEsc(x.actor_username)}</td><td>${adminEsc(x.action)}</td><td>${adminEsc(x.target_type||"")} · ${adminEsc(x.target_id||"")}</td><td><code>${adminEsc(JSON.stringify(x.payload||{}))}</code></td></tr>`).join("")}</tbody></table></div></section>`;
 }
-setInterval(()=>{if(!adminReady&&!$("#game-view")?.classList.contains("hidden"))probeAdmin()},2500);
+setInterval(()=>{if(!adminReady&&!adminDenied&&!$("#game-view")?.classList.contains("hidden"))probeAdmin()},2500);
 globalThis.renderAdminPanel=renderAdminPanel;
 globalThis.enforceMaintenance=enforceMaintenance;
