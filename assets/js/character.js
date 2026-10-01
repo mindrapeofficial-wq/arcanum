@@ -29,7 +29,7 @@ function characterPortraitUrl(profile){
   };
   const school=aliases[code]||code;
   const paths={
-    verdant:"assets/art/characters/verdante/verdante-level-1.png?v=0.3.20",
+    verdant:"assets/art/characters/verdante/viridia-level-1.png?v=0.3.22",
     eradication:"assets/art/characters/eradication/cineria-level-1.png?v=0.3.19",
     phantasm:"assets/art/characters/phantasm/oneiria-level-1.png?v=0.3.19",
     ascendant:"assets/art/characters/ascendant/aurea-level-1.png?v=0.3.19",
