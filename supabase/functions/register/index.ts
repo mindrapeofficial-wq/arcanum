@@ -28,6 +28,13 @@ Deno.serve(async (req: Request) => {
     if (!/^[\p{L}\p{N}_. -]+$/u.test(username)) {
       return Response.json({ error: "El nombre de usuario contiene caracteres no permitidos." }, { status: 400, headers: cors });
     }
+    // Staff-looking names are reserved so nobody can impersonate the admin, the AI archmage or the game itself.
+    const folded = username.normalize("NFKC").toLowerCase().replace(/[\s._-]+/g, "");
+    const reservedExact = new Set(["admin", "administrador", "administrator", "moderador", "moderator", "soporte", "support", "staff", "sistema", "system", "gm"]);
+    const reservedPrefix = ["admin", "galante", "astrael", "arcanum", "moderador"];
+    if (reservedExact.has(folded) || reservedPrefix.some((p) => folded.startsWith(p))) {
+      return Response.json({ error: "Ese nombre de usuario está reservado." }, { status: 400, headers: cors });
+    }
     if (!email.includes("@")) {
       return Response.json({ error: "Introduce un correo válido." }, { status: 400, headers: cors });
     }
