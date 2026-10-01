@@ -365,6 +365,9 @@ test("flujo crítico completo: login, reino, explorar, construir, investigar, re
   const mock=await installMocks(page);
   await page.goto("/");
 
+  // Exploring asks the player to confirm the turn spend.
+  page.on("dialog",dialog=>dialog.accept());
+
   await expect(page.locator("#auth-view")).toBeVisible();
   await page.locator("#username").fill("E2E_TESTER");
   await page.locator("#password").fill("prueba-segura");
