@@ -28,6 +28,9 @@ The browser is never allowed to be the source of truth for progression or compet
 | Combat derived stats | HP, attack, armor, speed, crit, dodge, block | Recalculated from combat profile | DERIVED |
 | Passive resource animation | interpolated per-second display | Browser cache | DERIVED / presentation only |
 | Procedural inventory | items, equipment, loot rolls | Nexo Supabase / arcanum-state | SERVER_CANONICAL since 0.3.1 |
+| Lady Luck (expiry, source, log) | 24 h favour granted by Discord/admin; modifies summoning and exploration in the Core | Core Supabase (`arcanum_luck`) | SERVER_CANONICAL since 0.3.39 |
+| Supporting status | credit points, tier, ledger, private notes | Core Supabase (`arcanum_supporters`, `arcanum_player_notes`) | SERVER_CANONICAL since 0.3.39 |
+| Discord link | Discord id ↔ Arconte, one-time link codes, daily claim day | Core Supabase (`arcanum_discord_links`) | SERVER_CANONICAL since 0.3.39 |
 | Audio settings | volumes, mute | Browser localStorage | LOCAL_ONLY |
 | Tutorial completed | tutorial marker | Browser localStorage | LOCAL_ONLY |
 | Online panel collapsed | UI preference | Browser localStorage | LOCAL_ONLY |

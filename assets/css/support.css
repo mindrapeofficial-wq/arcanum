@@ -1,2 +1,20 @@
 .support-gate{margin-top:14px;padding-top:13px;border-top:1px solid rgba(218,151,57,.12);display:grid;gap:9px;text-align:center}.support-gate>span{color:#6f6253;font:8.5px/1.45 Arial,sans-serif;letter-spacing:.04em}.support-link{box-sizing:border-box;text-decoration:none}.support-link-gate{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:38px;padding:9px 12px;border:1px solid rgba(218,151,57,.22);background:linear-gradient(180deg,rgba(177,112,33,.09),rgba(0,0,0,.16));color:#c9aa78;font:800 8px Arial,sans-serif;letter-spacing:.11em;transition:.18s ease}.support-link-gate:hover{border-color:rgba(218,151,57,.5);color:#efd4a6;background:rgba(177,112,33,.14);transform:translateY(-1px)}.support-link-sidebar{display:grid;grid-template-columns:28px minmax(0,1fr);gap:9px;align-items:center;margin-top:8px;padding:9px 10px;border:1px solid rgba(218,151,57,.16);background:radial-gradient(circle at 12% 50%,rgba(174,102,25,.12),transparent 35%),rgba(0,0,0,.13);color:inherit;transition:.18s ease}.support-link-sidebar:hover{border-color:rgba(218,151,57,.35);background:radial-gradient(circle at 12% 50%,rgba(174,102,25,.18),transparent 38%),rgba(0,0,0,.18);transform:translateY(-1px)}.support-link-mark{width:26px;height:26px;display:grid;place-items:center;border:1px solid rgba(218,151,57,.24);color:#c99650;background:rgba(177,112,33,.07);font-size:12px}.support-link-sidebar strong,.support-link-sidebar small{display:block}.support-link-sidebar strong{color:#d8c3a0;font:800 8px Arial,sans-serif;letter-spacing:.09em}.support-link-sidebar small{margin-top:3px;color:#665b4d;font:7px Arial,sans-serif}@media(max-width:760px){.support-link-sidebar{display:none}}
 .field-hint{display:block;margin-top:5px;color:#8a7a62;font:9px/1.4 Arial,sans-serif;letter-spacing:.03em}
+
+/* Suerte y Apoyo (0.3.39) */
+.luck-support-button.luck-active{border-color:rgba(255,209,109,.55);color:var(--gold-hot)}
+.luck-grid{display:grid;gap:12px;margin-top:12px}
+.luck-section{padding:12px;border:1px solid var(--line);background:rgba(15,12,8,.7);display:grid;gap:8px}
+.luck-status{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.luck-status strong{color:var(--gold-pale);font:800 12px Arial,sans-serif;letter-spacing:.1em}
+.luck-status strong.luck-on{color:var(--green)}
+.luck-status small{color:#9b8e7e;font:11px Arial,sans-serif}
+.luck-bonuses,.luck-perks{margin:0;padding-left:18px;color:var(--gold-pale);font:12px/1.7 Arial,sans-serif}
+.luck-perks{list-style:none;padding-left:0}
+.luck-perks .perk-off{color:#6f6253}
+.luck-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.luck-code{padding:10px;border:1px dashed var(--gold);display:grid;gap:4px}
+.luck-code code,.luck-section code{color:var(--gold-hot);font:700 13px ui-monospace,Consolas,monospace}
+.luck-notes{width:100%;min-height:120px;padding:8px;background:#0f0c08;color:var(--text);border:1px solid var(--line);border-radius:0;font:13px/1.5 Arial,sans-serif;resize:vertical}
+.luck-section .tools-note{margin:0;color:#9b8e7e;font:11px/1.55 Arial,sans-serif}
+.luck-section .support-link{display:inline-flex}

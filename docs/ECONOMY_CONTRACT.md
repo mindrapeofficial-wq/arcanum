@@ -107,6 +107,14 @@ There is no fallback formula based on Ascendancy or any other proxy.
 
 If production is unknown, the correct visual fallback is **zero interpolation**, not a guessed income.
 
+## Lady Luck modifiers (0.3.39)
+
+Lady Luck is a **server-side modifier**, not a resource. While `arcanum_luck.expires_at > now()`:
+- `cast_summon_impl` adds 5 points to the success chance (cap 100%).
+- `explore_impl` multiplies each turn's land gain by 1.10 with probabilistic rounding.
+
+The client may display the status and the bonus list returned by `my_luck_status()`; it must never apply the bonuses to its own estimates. Luck does not stack and is never a spendable amount. See `docs/LUCK_AND_SUPPORT.md`.
+
 ## Economy loop
 
 `Turns -> Economy / Exploration / Research / Recruitment / War`
