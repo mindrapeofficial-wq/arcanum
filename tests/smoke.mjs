@@ -208,7 +208,7 @@ test("Gear provenance is visible to the player",()=>{
 test("personal PvE expeditions are server-authoritative and persistent",()=>{
   const pve=read("assets/js/pve.js");
   const router=read("assets/js/router.js");
-  assert.match(html,/data-view="pve"/);
+  assert.doesNotMatch(html,/data-view="pve"/,"PvE remains implemented but is intentionally hidden during Domain focus");
   assert.match(router,/pve:\{name:"renderPve"/);
   assert.match(router,/view==="pve"\) await renderPve/);
   assert.match(pve,/stateApi\("\/pve\/start"/);
