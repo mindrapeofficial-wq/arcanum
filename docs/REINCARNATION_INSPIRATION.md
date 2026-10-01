@@ -33,7 +33,8 @@ Verified against the live Core function `private.run_economy_impl` (project Arca
 - A shortfall is **not punished yet**: it is recorded in `economy_ledger.crisis_events` as `GOLD_SHORTFALL` / `MANA_SHORTFALL` / `POPULATION_SHORTFALL` with resolution `DEFERRED_UNTIL_CRISIS_PRIORITY_IS_VERSIONED`.
 - `run_economy` returns `army_gold_upkeep`, `army_mana_upkeep`, `army_population_upkeep` for the processed turn.
 - Consequence for the client: the catalogue upkeep shown in Army is accurate; the HUD mana alert reflects a real drain.
-- Open question: define the crisis consequences (e.g. units desert when mana upkeep is unpaid) as a versioned Core rule before the client shows anything beyond the warning.
+- Open question: define the crisis consequences as a versioned Core rule before the client shows anything beyond the warning.
+- **Reference behaviour (Reincarnation, observed 2026-10-01):** when mana upkeep cannot be paid, the game removes an **entire unit stack** ("Insufficient Mana: Lost 347 Unicorns!") and the net mana flow recovers. In the test, 6 turns took mana from 2,068 to 60 with a net of −427/turn; at turn 206 the whole Unicorn stack (0.8 mana per unit, 347 units, ~600k gold of investment) was lost while Naga Queens (5.5 mana per unit) were kept. There was no warning besides a "−" sign in the header. If Arcanum adopts a similar rule, the HUD mana alert shipped here becomes the minimum warning, and purchases that add mana upkeep (market, summons) should show the new net mana flow *before* confirming.
 
 ### 2. Barrier mana upkeep
 Reincarnation: barrier resistance = barriers / land × 3000% (cap 75%), costing 60 mana per barrier per turn. 20 barriers on 1,124 acres gave 53% resistance and −1,200 mana/turn. It is a clear defence ↔ economy trade-off.
