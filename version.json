@@ -1,6 +1,6 @@
 {
-  "version": "0.3.36",
+  "version": "0.3.37",
   "channel": "beta",
-  "updated_at": "2026-10-01T16:40:00+02:00",
-  "note": "Sustituye el ranking General por los tres rankings canónicos: Reino, Guerra y Arena"
+  "updated_at": "2026-10-01T16:55:00+02:00",
+  "note": "Separa Puntuación Reino de Ascendencia y reduce la exploración base a 4-8 acres por turno"
 }
