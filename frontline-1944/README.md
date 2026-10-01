@@ -1,37 +1,56 @@
 # FRONTLINE 1944
 
-Juego de estrategia narrativa histórica para navegador, centrado en campañas terrestres de la Segunda Guerra Mundial desde el punto de vista de un general alemán del Heer.
+Juego de estrategia narrativa histórica para navegador, centrado en la guerra terrestre de la Segunda Guerra Mundial desde puestos de mando del Heer.
 
-## Versión 0.3
+## Versión 0.3.0
 
-La web ya incluye:
+La campaña ya no comienza en 1944. El recorrido histórico empieza en **Polonia, septiembre de 1939**, y avanzará capítulo a capítulo por las principales campañas terrestres hasta 1944-45.
 
-- pantalla de entrada con usuario, contraseña y registro;
-- menú principal con nueva campaña, continuar y archivo histórico;
-- guardado separado por usuario en el navegador;
-- logo oficial adaptado a la interfaz web;
-- Capítulo I reconstruido desde el inicio de la guerra: **Polonia 1939 · Fall Weiss**;
-- Gerd von Rundstedt como comandante de Heeresgruppe Süd;
-- Estado Mayor, ejércitos subordinados y recursos operacionales;
-- decisiones narrativas con consecuencias persistentes;
-- mapa de situación basado en información imperfecta;
-- fuentes históricas accesibles desde el propio juego;
-- separación visible entre hechos documentados y simulación contrafactual.
+### Capítulo I · FALL WEISS
+
+Primer rol histórico del prototipo:
+
+**General der Panzertruppe Heinz Guderian**  
+**XIX. Armeekorps (mot.) · 4. Armee · Heeresgruppe Nord**
+
+Incluye:
+
+- dossier histórico inicial;
+- escenas narrativas fechadas y documentadas;
+- decisiones operacionales ramificadas;
+- 3. Panzer-Division, 2. Infanterie-Division (mot.) y 20. Infanterie-Division (mot.);
+- mando, comunicaciones, combustible, munición, ritmo de marcha, cohesión, reconocimiento y fatiga;
+- Estado Mayor con personajes ficticios marcados como tales;
+- memoria de decisiones por usuario;
+- fotografías y cartografía histórica con atribución;
+- archivo de fuentes dentro del juego.
+
+## Acceso
+
+La versión 0.3 añade página de entrada con usuario, contraseña y registro.
+
+Por ahora las cuentas son **locales al navegador** y la contraseña se guarda como hash SHA-256 en localStorage. Esto sirve para el prototipo de un jugador, no sustituye a un backend de autenticación para producción.
 
 ## Principios
 
 1. Realismo histórico, militar y armamentístico.
-2. Profundidad táctica, operacional y logística.
-3. Perspectiva limitada de un general alemán del Heer.
+2. Profundidad táctica y operacional.
+3. Perspectiva limitada del mando alemán.
 4. Información imperfecta.
-5. Consecuencias que sobreviven a la escena en la que fueron provocadas.
+5. Separación visible entre hecho histórico, reconstrucción narrativa y divergencia del jugador.
 
-## Capítulo I
+## Recursos visuales
 
-La campaña comienza el 1 de septiembre de 1939 con Heeresgruppe Süd. El jugador atraviesa varios hitos de la campaña polaca hasta el cierre de las operaciones principales en octubre.
+El juego incorpora cartografía pública del United States Military Academy y fotografías del Bundesarchiv distribuidas por Wikimedia Commons, manteniendo la atribución y licencia de cada recurso.
 
-Los hechos históricos se apoyan en fuentes documentales. Las decisiones alternativas del jugador no sustituyen la cronología real, sino que construyen una línea contrafactual plausible alrededor de ella.
+## Próximo tramo
 
-## Autenticación
+El siguiente desarrollo del Capítulo I cubrirá:
 
-La autenticación actual es de prototipo y se almacena localmente en el navegador. Antes de una beta pública deberá migrarse a un backend con autenticación real y persistencia remota.
+- bosques de Tuchola;
+- cierre del Corredor Polaco;
+- cruces del Brda/Vístula;
+- pérdidas, averías y combustible con magnitudes documentadas;
+- informes de radio con retrasos;
+- órdenes de división y regimiento;
+- consecuencias diferidas.
