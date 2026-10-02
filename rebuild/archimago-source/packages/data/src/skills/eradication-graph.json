@@ -1,9 +1,9 @@
 [
   {
     "id": "hearth",
-    "name": "Hearth",
+    "name": "Corazón de Forja",
     "magic": "eradication",
-    "description": "Increase mana production by 200 per level",
+    "description": "Incrementa la producción de maná alimentando los hornos arcanos de Cineria.",
     "maxLevel": 10,
     "prereqs": {},
     "effects": [
@@ -12,20 +12,30 @@
         "rule": "add",
         "production": "mana",
         "magic": {
-          "ascendant": { "value": 200 },
-          "verdant": { "value": 200 },
-          "eradication": { "value": 200 },
-          "nether": { "value": 200 },
-          "phantasm": { "value": 200 }
+          "ascendant": {
+            "value": 200
+          },
+          "verdant": {
+            "value": 200
+          },
+          "eradication": {
+            "value": 200
+          },
+          "nether": {
+            "value": 200
+          },
+          "phantasm": {
+            "value": 200
+          }
         }
       }
     ]
   },
   {
     "id": "fireMastery",
-    "name": "Fire Mastery",
+    "name": "Señorío de la Brasa",
     "magic": "eradication",
-    "description": "Increase fire-based attack",
+    "description": "Potencia los ataques de fuego y mejora la eficiencia de las fuerzas ligadas a la llama.",
     "maxLevel": 10,
     "prereqs": {
       "hearth": 3
@@ -36,7 +46,11 @@
         "target": "self",
         "targetType": "all",
         "filters": [
-          { "allAttackType": [ "fire"] }
+          {
+            "allAttackType": [
+              "fire"
+            ]
+          }
         ],
         "trigger": null,
         "effects": [
@@ -47,11 +61,21 @@
               "primaryAttackPower,secondaryAttackPower": {
                 "rule": "percentage",
                 "magic": {
-                  "ascendant": { "value": 0.02 },
-                  "verdant": { "value": 0.02 },
-                  "eradication": { "value": 0.02 },
-                  "nether": { "value": 0.02 },
-                  "phantasm": { "value": 0.02 }
+                  "ascendant": {
+                    "value": 0.02
+                  },
+                  "verdant": {
+                    "value": 0.02
+                  },
+                  "eradication": {
+                    "value": 0.02
+                  },
+                  "nether": {
+                    "value": 0.02
+                  },
+                  "phantasm": {
+                    "value": 0.02
+                  }
                 }
               }
             }
@@ -62,7 +86,9 @@
         "effectType": "ArmyUpkeepEffect",
         "filters": [
           {
-            "allAttackType": ["fire"]
+            "allAttackType": [
+              "fire"
+            ]
           }
         ],
         "rule": "percentage",
@@ -80,9 +106,9 @@
   },
   {
     "id": "resilence",
-    "name": "Resilence",
+    "name": "Temple de Escoria",
     "magic": "eradication",
-    "description": "Increase the abilities of your dwarven troops",
+    "description": "Aumenta la resistencia de las tropas forjadas en las tradiciones de Cineria.",
     "maxLevel": 10,
     "prereqs": {
       "hearth": 3
@@ -93,7 +119,11 @@
         "target": "self",
         "targetType": "all",
         "filters": [
-          { "race": [ "dwarf"] }
+          {
+            "race": [
+              "dwarf"
+            ]
+          }
         ],
         "trigger": null,
         "effects": [
@@ -104,11 +134,21 @@
               "hitPoints": {
                 "rule": "percentage",
                 "magic": {
-                  "ascendant": { "value": 0.03 },
-                  "verdant": { "value": 0.03 },
-                  "eradication": { "value": 0.03 },
-                  "nether": { "value": 0.03 },
-                  "phantasm": { "value": 0.03 }
+                  "ascendant": {
+                    "value": 0.03
+                  },
+                  "verdant": {
+                    "value": 0.03
+                  },
+                  "eradication": {
+                    "value": 0.03
+                  },
+                  "nether": {
+                    "value": 0.03
+                  },
+                  "phantasm": {
+                    "value": 0.03
+                  }
                 }
               }
             }
@@ -119,9 +159,9 @@
   },
   {
     "id": "songOfMight",
-    "name": "Song of Might",
+    "name": "Cántico del Coloso",
     "magic": "eradication",
-    "description": "Increase the abilities of your giants",
+    "description": "Refuerza la vitalidad y el poder ofensivo de las unidades gigantescas.",
     "maxLevel": 10,
     "prereqs": {
       "resilence": 3
@@ -132,7 +172,11 @@
         "target": "self",
         "targetType": "all",
         "filters": [
-          { "race": [ "giant"] }
+          {
+            "race": [
+              "giant"
+            ]
+          }
         ],
         "trigger": null,
         "effects": [
@@ -143,11 +187,21 @@
               "hitPoints": {
                 "rule": "percentage",
                 "magic": {
-                  "ascendant": { "value": 0.01 },
-                  "verdant": { "value": 0.01 },
-                  "eradication": { "value": 0.01 },
-                  "nether": { "value": 0.01 },
-                  "phantasm": { "value": 0.01 }
+                  "ascendant": {
+                    "value": 0.01
+                  },
+                  "verdant": {
+                    "value": 0.01
+                  },
+                  "eradication": {
+                    "value": 0.01
+                  },
+                  "nether": {
+                    "value": 0.01
+                  },
+                  "phantasm": {
+                    "value": 0.01
+                  }
                 }
               }
             }
@@ -159,11 +213,21 @@
               "primaryAttackPower,secondaryAttackPower": {
                 "rule": "percentage",
                 "magic": {
-                  "ascendant": { "value": 0.03 },
-                  "verdant": { "value": 0.03 },
-                  "eradication": { "value": 0.03 },
-                  "nether": { "value": 0.03 },
-                  "phantasm": { "value": 0.03 }
+                  "ascendant": {
+                    "value": 0.03
+                  },
+                  "verdant": {
+                    "value": 0.03
+                  },
+                  "eradication": {
+                    "value": 0.03
+                  },
+                  "nether": {
+                    "value": 0.03
+                  },
+                  "phantasm": {
+                    "value": 0.03
+                  }
                 }
               }
             }
