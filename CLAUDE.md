@@ -1,274 +1,206 @@
-# CLAUDE.md — ARCANUM technical reference
+# CLAUDE.md — ARCANUM rebuild technical reference
 
-> **Read this file before changing ARCANUM.**
+> Read this file before changing ARCANUM on the rebuild branch.
 >
-> This document is the project-level context and change contract for Claude/AI-assisted development. It is intentionally concise enough to read on every task and points to deeper canonical docs where needed.
+> This branch replaces the previous character-centric product direction. If an older document conflicts with this file or `docs/REBUILD_ARCHIMAGO.md`, the rebuild direction wins.
 
-## 1. Project identity
+## 1. Product identity
 
-ARCANUM is a persistent browser strategy/RPG with two connected layers:
+ARCANUM is a persistent browser strategy game centred on the player's **Domain**.
 
-- **The Arconte (player character):** personal progression, equipment, Arena/PvP, Expeditions/PvE, Events and discovered relics.
-- **The Domain (realm):** economy, construction, resources, army, war and strategic reports.
+The player is still an **Arconte** in the fiction, but there is no standalone character-progression product layer in this rebuild. The strategic Domain is the canonical gameplay surface.
 
-These are related, but **the character and the Domain are not the same entity**. Never use the character name as a substitute for the Domain name or vice versa.
+Five schools remain canonical:
 
-The player **is the Arconte**. The Domain belongs to that Arconte.
+- VIRIDIA — green
+- AUREA — white/light
+- CINERIA — red
+- NADIR — dark purple
+- ONEIRIA — blue
 
-## 2. Current navigation/product direction
+Player-facing terminology must use ARCANUM names. Legacy Archimago identifiers may survive internally only when required for compatibility and must never leak into visible UI.
 
-The intended hierarchy is:
+## 2. Rebuild source and architecture
 
-1. **ARCONTE**
-   - Personaje
-   - Grimorio
-   - Artefactos
-2. **AVENTURA Y COMBATE**
-   - Arena
-   - Expediciones
-   - Eventos
-3. **REINO**
-   - Dominio
-   - Construcción
-   - Economía
-   - Mercado
-   - Ejército
-   - Guerra
-   - Informes
-4. **COMUNIDAD**
-   - Comunidad
-   - Ranking
+The functional source is `mindrapeofficial-wq/archimago`, fixed initially at commit:
 
-Current product decisions:
+`e84237e6a7624c0be71cce6a92cbabbe81471a9f`
 
-- **Personaje is the default/main in-game page.**
-- The old social profile and the character sheet are separate concepts. Do not collapse them into one screen.
-- **Crónica is removed as a standalone navigation section.** Chronicle-like data may still exist as a derived/read model inside the character identity.
-- **Taberna is intentionally hidden until its gameplay implementation is ready.** Do not re-enable it merely because code/assets still exist.
-- Ranking should represent human players, not NPCs/bots, unless a future explicit design change says otherwise.
+A staged snapshot lives under:
 
-## 3. Character art rules
+`rebuild/archimago-source/`
 
-ARCANUM uses five schools:
+Imported core packages:
 
-- **VIRIDIA** — green
-- **AUREA** — white/light
-- **CINERIA** — red
-- **NADIR** — dark purple
-- **ONEIRIA** — blue
+- `packages/shared`
+- `packages/data`
+- `packages/data-adapter`
+- `packages/engine`
+- `packages/server`
 
-Important distinctions:
+The source project is TypeScript with a Vue 3 client. ARCANUM may reuse its functionality, data model and engine while presenting it through ARCANUM's own visual language.
 
-- **Character body art** is used where a full character/sprite is appropriate.
-- **Face portrait art** is used in profile/avatar/sidebar/social portrait contexts.
-- Do not substitute a full-body image where the UI expects the face portrait.
-- Player-uploaded profile art is not the current canonical direction for character identity. Prefer the school/level portrait system.
-- Do not add experimental generated art into production unless the task explicitly asks for it and it has been validated visually.
-- Preserve transparent backgrounds where assets were designed that way.
+## 3. Navigation and product direction
 
-## 4. Relics / artifacts
+**Dominio is the main/default in-game page.**
 
-Relics are intentionally mysterious.
+Target top-level surfaces:
 
-- The player should not see a complete catalogue of undiscovered relics.
-- Show discovered/owned relics and information legitimately revealed by gameplay.
-- Do not expose a full spoiler list in normal player UI.
-- Named relics and procedural inventory are distinct systems unless/until the canonical item model explicitly merges them.
+1. Dominio
+2. Economía
+3. Construcción
+4. Exploración
+5. Investigación
+6. Magia
+7. Ejército
+8. Mercado
+9. Clasificación
+10. Comunidad
+11. Chat
 
-See:
-- `docs/ITEM_MODEL.md`
-- `docs/LOOT_LOOP.md`
-- `docs/ARCHMAGE_IDENTITY.md`
+Additional pages are allowed when required to expose imported systems completely, but they must fit this Domain-first hierarchy.
 
-## 5. State authority: never invent client-side truth
+## 4. Explicitly removed systems
 
-The browser must **not** become the source of truth for progression, economy, possessions, ranked combat, rewards or competitive state.
+Do not restore or rebuild these as player-facing features:
 
-Before changing stateful gameplay, read:
+- Personaje page
+- character equipment/progression layer
+- Arena
+- duels
+- individual PvP
+- ELO for individual PvP
+- direct player-vs-player attack preparation/results flows
+- character portrait/profile mechanics as a gameplay requirement
 
-- `docs/STATE_AUTHORITY.md`
-- `docs/ECONOMY_CONTRACT.md`
-- `docs/ARCHMAGE_IDENTITY.md`
+The imported battle engine is **not deleted**. Keep it available for non-individual-PvP use such as PvE, world encounters, domain wars, alliance conflict or future strategic combat.
 
-Rules:
+Legacy code or docs describing Personaje/Arena may remain temporarily during migration, but they are non-authoritative and should not be reconnected to navigation.
 
-1. Gameplay-changing data is server canonical unless explicitly documented otherwise.
-2. Derived values may be recalculated in the client only when deterministic from canonical state.
-3. `localStorage` is for UI preferences/cache/migrations only, never new gameplay authority.
-4. Do not create a second independent player/Arconte model when the canonical server read model is available.
-5. Do not guess resource production, rewards, combat results or inventory ownership in UI code.
+## 5. Systems to reach functional parity with the imported engine
 
-### Supabase warning
+Preserve and integrate, unless explicitly excluded above:
 
-ARCANUM has undergone Supabase separation/migration work. Recent commits explicitly moved/fixed ARCANUM APIs after that separation.
+- turns
+- land/exploration
+- economy and reserves
+- construction/destruction
+- mana generation/storage
+- research
+- spells and dispels
+- army recruitment/disbanding
+- units
+- items
+- unique items/relic equivalents
+- defensive configuration where useful outside individual PvP
+- market
+- kingdom/domain status
+- rankings that do not rank individual PvP performance
+- server/API
+- persistence/data adapter
+- engine tests and deterministic calculations
 
-**Do not trust an old hard-coded project URL, old “Core/Nexo” assumption, or stale documentation blindly.** Before adding or changing any Supabase call:
+## 6. Rebranding contract
 
-- inspect the current runtime config and existing API client,
-- verify which ARCANUM project/function currently owns the endpoint,
-- reuse the existing canonical client/configuration,
-- never copy credentials or endpoints from another project such as Nexo.
+All player-facing inherited terminology must be rewritten into original ARCANUM terminology, including:
 
-## 6. Economy contract
+- world terms
+- school names
+- units
+- spells
+- items
+- unique items/relics
+- buildings when appropriate
+- events
+- resources where ARCANUM already has canonical terms
+- categories
+- help/guide text
+- server messages
+- route/page labels
 
-Do not reinterpret resource semantics in the UI.
+Do not perform unsafe blind search-and-replace on internal identifiers. Prefer display-name maps or data migration when internal IDs are referenced by engine logic.
 
-Canonical categories include:
+Canonical ARCANUM economy concepts currently include:
 
 - Turns = action budget
 - Gold = reserve
 - Mana = reserve + cap
 - Population = reserve + capacity constraints
-- Food = capacity, not an accumulating stock
-- Research = action-driven flow, not passive inventory
+- Food = capacity
+- Research = action-driven flow
 - Land = space
 - Ascendancy = derived indicator, not spendable
 
-Read `docs/ECONOMY_CONTRACT.md` before changing the HUD, economy, construction, exploration, research or resource animations.
+For example, the imported visible term “Geld” should map to ARCANUM's canonical Gold economy rather than creating a new resource.
 
-## 7. Character identity contract
+## 7. Relics and items
 
-Before touching Personaje, Arena, social profile links, equipment or combat identity, read `docs/ARCHMAGE_IDENTITY.md`.
+Relics remain intentionally mysterious.
 
-Maintain these distinctions:
+- Do not expose a complete spoiler catalogue of undiscovered relics in normal player UI.
+- Imported unique items can provide mechanics, but their visible names/lore must become ARCANUM originals.
+- Preserve discovered/owned-only presentation for named relics unless a later explicit design change says otherwise.
 
-- Arconte aptitudes/progression vs duel combat characteristics.
-- Duel Weapon vs physical inventory weapon.
-- Character/Arconte identity vs Domain identity.
-- Full inventory for owner vs limited equipped/public data for other players.
-- Named relics vs procedural equipment until the canonical model says otherwise.
+Relevant legacy docs such as `docs/ITEM_MODEL.md` and `docs/LOOT_LOOP.md` may still contain useful constraints, but character-layer assumptions are superseded by this rebuild.
 
-## 8. UI and regression discipline
+## 8. State authority
 
-ARCANUM is currently a tightly coupled client with a large `index.html` and production-sensitive interactions. A “small” edit can break unrelated screens.
+The browser must not become the source of truth for progression, economy, possessions, rewards or competitive state.
 
-For every meaningful UI/code change:
+Rules:
 
-1. Inspect the existing implementation before editing.
-2. Reuse current helpers/components/styles rather than creating a parallel system.
-3. Keep desktop and mobile navigation in sync.
-4. Check authenticated and unauthenticated/loading states where relevant.
-5. Do not remove IDs/classes/functions without searching for all references.
-6. Avoid broad search-and-replace edits on `index.html`.
-7. Preserve accessibility labels and button semantics.
-8. Verify that hidden/disabled product sections stay hidden/disabled.
-9. Never ship literal escaped text such as `/n` or `\\n` into visible UI.
-10. Do not add placeholder buttons that appear functional but have no working action.
+1. Gameplay-changing data is server canonical unless explicitly documented otherwise.
+2. Derived values may be recalculated client-side only when deterministic from canonical state.
+3. `localStorage` is for UI preferences/cache/migrations only.
+4. Reuse one canonical Domain/player state model; do not create parallel gameplay truth.
+5. Do not guess resource production, rewards, combat results or inventory ownership in UI code.
 
-## 9. Tests required before considering a change complete
+ARCANUM's existing Supabase history must not be copied blindly into the imported engine. Verify the active backend strategy before wiring production persistence.
 
-The repository already contains smoke and Playwright tests.
+## 9. Community and chat
 
-Run, as appropriate:
+Community and Chat are retained from ARCANUM.
 
-```bash
-npm test
-npm run test:e2e
-```
+The imported Archimago client/server does not replace them. Integrate them with the rebuilt navigation and authentication/state layer without bringing back the retired social-character/PvP model.
 
-For live/deployment-sensitive work, also inspect the relevant live test in `tests/live.e2e.spec.mjs`.
+## 10. UI and assets
 
-A change is not complete just because the modified screen renders. Check for regressions in at least:
+ARCANUM branding has priority:
 
-- Personaje
-- Arena
-- Expediciones
-- Eventos
-- Comunidad/social surfaces
-- Dominio
-- Mercado
-- Ejército
-- navigation/mobile layout
+- keep the ARCANUM name and logo;
+- keep useful existing ARCANUM layout/components;
+- prefer ARCANUM assets over imported generic images;
+- use imported Vue screens as functional references, not as final art direction;
+- add pages needed for parity rather than hiding engine functionality.
 
-When the task fixes a regression, add or strengthen a test when practical.
+Do not ship source-project branding or visible legacy terminology.
 
-## 10. Versioning, cache and deployment
+## 11. Tests and CI
 
-ARCANUM uses explicit version/cache busting in production assets and has `version.json` plus package versioning.
+Existing ARCANUM smoke tests remain relevant while legacy code is present.
 
-When publishing a production-facing change:
+The rebuild branch also validates the imported workspace in `.github/workflows/core-ci.yml`.
 
-- follow the repository's existing version/cache-bump convention,
-- do not leave HTML/JS/CSS referencing inconsistent asset versions,
-- avoid unnecessary multiple “release/bump/fix” commits for one logical change when one coherent commit is possible,
-- confirm the deployed build actually contains the intended commit.
+Before treating a migration step as complete:
 
-Production deployment for this project is **Render**, not Vercel, unless the infrastructure is deliberately changed later.
+- run/inspect existing ARCANUM tests;
+- typecheck the imported core;
+- add parity tests for migrated mechanics;
+- verify the relevant UI route;
+- do not merge the rebuild PR until the replacement path is coherent.
 
-## 11. Mobile / APK
+## 12. Deployment
 
-The project uses Capacitor for Android.
+Production deployment remains Render unless deliberately changed.
 
-Relevant scripts:
+Do not deploy the rebuild branch over production merely because an individual subsystem compiles. PR #51 stays the integration boundary until the Domain-first replacement is ready.
 
-```bash
-npm run mobile:prepare
-npm run android:sync
-npm run android:build
-```
+## 13. Canonical rebuild docs
 
-Do not break browser behavior while fixing APK behavior, or vice versa. Mobile fullscreen/system-bar handling needs to be validated on-device or with the closest available Android verification path.
+Read together:
 
-## 12. Change protocol for Claude
+- `docs/REBUILD_ARCHIMAGO.md`
+- `docs/ARCHIMAGO_PARITY_MATRIX.md` once present
+- this file
 
-Before changing code:
-
-1. Read this file.
-2. Inspect the current code paths involved.
-3. Read the relevant canonical document(s) in `docs/`.
-4. Inspect recent commits if the area has been actively modified.
-5. Identify which state is authoritative before writing data.
-
-While changing code:
-
-- make the smallest coherent change,
-- preserve existing working behavior outside scope,
-- do not silently resurrect removed/hidden features,
-- do not invent new game rules to fill missing backend behavior,
-- do not overwrite user-approved art with generated placeholders.
-
-After changing code:
-
-- run relevant tests,
-- inspect the exact diff,
-- verify no unrelated files changed,
-- verify version/cache behavior if production-facing,
-- summarize what changed and any unresolved risk.
-
-## 13. Canonical documentation index
-
-Read these instead of reverse-engineering game rules from UI labels:
-
-- `docs/STATE_AUTHORITY.md` — ownership/source of truth for state
-- `docs/ECONOMY_CONTRACT.md` — resource and economy semantics
-- `docs/ARCHMAGE_IDENTITY.md` — canonical player/character identity
-- `docs/ITEM_MODEL.md` — item/equipment model
-- `docs/LOOT_LOOP.md` — loot progression loop
-- `docs/PVE_EXPEDITIONS.md` — PvE/Expeditions
-- `docs/archmage-progression.md` — progression details
-- `docs/DUEL_CATALOG.md` — duel abilities, weapons, grades and compatibility rules
-
-If code and documentation conflict, **do not guess**. Prefer the newest explicit product decision plus the current server contract, then update the stale documentation as part of the same change.
-
-## 14. High-risk areas
-
-Treat these as regression-prone:
-
-- Supabase project/function routing
-- authentication/session-dependent requests
-- Personaje vs social-profile routing
-- school/level portrait selection
-- Arena authoritative state
-- inventory/equipment
-- resource HUD/economy calculations
-- mobile navigation/fullscreen behavior
-- cache-busted asset paths
-- large edits to `index.html`
-
-When working in one of these areas, inspect recent commits first.
-
----
-
-**Last project-context refresh:** 2026-10-01.
-
-This file should evolve with ARCANUM. When a product or architecture decision becomes stable, update this reference in the same pull request/commit so future agents do not work from archaeological sediment.
+These documents override older product-direction statements about Personaje, Arena or individual PvP on the rebuild branch.
