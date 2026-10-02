@@ -44,7 +44,7 @@ export abstract class DataAdapter {
   // Mage CRUD
   abstract nextMageId(): Promise<number>
   abstract createMage(username: string, mage: Mage): Promise<Mage>
-  abstract getMageByUser(username: string): Promise<Mage>
+  abstract getMageByUser(username: string): Promise<Mage | null>
   abstract getAllMages(): Promise<Mage[]>;
   abstract updateMage(mage: Mage): Promise<void>
   abstract getMage(id: number): Promise<Mage>
@@ -61,7 +61,7 @@ export abstract class DataAdapter {
 
   // Battle reports
   abstract getBattles(options: SearchOptions): Promise<BattleReportSummary[]>
-  abstract getBattleReport(id: string): Promise<BattleReport>
+  abstract getBattleReport(id: string): Promise<BattleReport | null>
   abstract saveBattleReport(id: number, reportId: string, report: any, reportSummary: any): Promise<void>
 
   // Chronicles
