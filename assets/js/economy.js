@@ -88,7 +88,6 @@ function renderEconomy(){
         <label class="economy-turn-picker">TURNOS<input id="econ-turns" type="number" min="1" max="50" value="1" inputmode="numeric"></label>
       </div>
       <div class="economy-action-grid">
-        ${economyActionCard("NONE","Desarrollo equilibrado","Procesa turnos sin forzar una prioridad extraordinaria. Úsalo cuando no necesites concentrar la economía.","assets/ui/resources/poblacion.png?v="+BUILD_VERSION,"NORMAL")}
         ${economyActionCard("TAX","Recaudar impuestos","Orienta la acción económica hacia el Oro. Útil antes de reclutar, comerciar o afrontar gastos militares.","assets/ui/resources/oro.png?v="+BUILD_VERSION,"RECAUDAR")}
         ${economyActionCard("MP_CHARGE","Cargar maná","Orienta la acción económica hacia la reserva de Maná para invocaciones, unidades mágicas y comercio.","assets/ui/resources/mana.png?v="+BUILD_VERSION,"CARGAR MANÁ")}
       </div>
