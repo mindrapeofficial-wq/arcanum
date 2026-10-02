@@ -1,11 +1,13 @@
 [
   {
     "id": "phantasmMagic",
-    "name": "Phantasm Magic",
+    "name": "Espejismo Letal",
     "magic": "phantasm",
     "rank": "simple",
     "description": "This spell will create shadows that will strike the enemy. These shadows do not have corporeal forms and are mere illusions. However, those who fail to disbelieve the illusion will fall dead and never recover",
-    "attributes": ["battle"],
+    "attributes": [
+      "battle"
+    ],
     "researchCost": 600,
     "castingCost": 800,
     "castingTurn": 0,
@@ -21,28 +23,58 @@
           {
             "effectType": "UnitDamageEffect",
             "checkResistance": true,
-            "damageType": ["psychic"],
+            "damageType": [
+              "psychic"
+            ],
             "target": "damage",
             "rule": "spellLevel",
             "magic": {
-              "ascendant": { "value": { "min": 140, "max": 140 } },
-              "verdant": { "value": { "min": 90, "max": 90 } },
-              "eradication": { "value": { "min": 90, "max": 90 } },
-              "nether": { "value": { "min": 140, "max": 140 } },
-              "phantasm": { "value": { "min": 230, "max": 230 } }
+              "ascendant": {
+                "value": {
+                  "min": 140,
+                  "max": 140
+                }
+              },
+              "verdant": {
+                "value": {
+                  "min": 90,
+                  "max": 90
+                }
+              },
+              "eradication": {
+                "value": {
+                  "min": 90,
+                  "max": 90
+                }
+              },
+              "nether": {
+                "value": {
+                  "min": 140,
+                  "max": 140
+                }
+              },
+              "phantasm": {
+                "value": {
+                  "min": 230,
+                  "max": 230
+                }
+              }
             }
           }
         ]
       }
-    ]
+    ],
+    "displaySchool": "Oneiria"
   },
   {
     "id": "fogCloud",
-    "name": "Fog Clound",
+    "name": "Niebla Onírica",
     "magic": "phantasm",
     "rank": "simple",
     "description": "This spell will fill the battleground with a thick mist of fog, reducing visibility for the armies. All units will suffer as they will have difficulty finding their enemies.",
-    "attributes": ["battle"],
+    "attributes": [
+      "battle"
+    ],
     "researchCost": 900,
     "castingCost": 950,
     "castingTurn": 0,
@@ -62,26 +94,40 @@
               "accuracy": {
                 "rule": "spellLevelScaled",
                 "magic": {
-                  "ascendant": { "value": -5 },
-                  "verdant": { "value": -2 },
-                  "eradication": { "value": -2 },
-                  "nether": { "value": -5 },
-                  "phantasm": { "value": -10 }
+                  "ascendant": {
+                    "value": -5
+                  },
+                  "verdant": {
+                    "value": -2
+                  },
+                  "eradication": {
+                    "value": -2
+                  },
+                  "nether": {
+                    "value": -5
+                  },
+                  "phantasm": {
+                    "value": -10
+                  }
                 }
               }
             }
           }
         ]
       }
-    ]
+    ],
+    "displaySchool": "Oneiria"
   },
   {
     "id": "summonSprite",
-    "name": "Summon Sprite",
+    "name": "Convocar Chispa Feérica",
     "magic": "phantasm",
     "rank": "simple",
     "description": "This spell will summon playful sprites from nearly springs and fountains. These pretty elfin creatures can be very irritating as they are elusive like a butterfly but sting like a bee.",
-    "attributes": ["summon", "selfOnly"],
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
     "researchCost": 500,
     "castingCost": 6600,
     "castingTurn": 1,
@@ -89,27 +135,43 @@
     "effects": [
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["sprite"],
+        "unitIds": [
+          "sprite"
+        ],
         "summonType": "all",
         "summonNetPower": 70000,
         "rule": "spellLevelScaled",
         "magic": {
-          "ascendant": { "value": 1.0 },
-          "verdant": { "value": 0.6 },
-          "eradication": { "value": 0.2 },
-          "nether": { "value": 0.2 },
-          "phantasm": { "value": 0.6 }
+          "ascendant": {
+            "value": 1
+          },
+          "verdant": {
+            "value": 0.6
+          },
+          "eradication": {
+            "value": 0.2
+          },
+          "nether": {
+            "value": 0.2
+          },
+          "phantasm": {
+            "value": 0.6
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Oneiria"
   },
   {
     "id": "summonPsychicWisp",
-    "name": "Summon Psychic Wisp",
+    "name": "Convocar Fulgor Psíquico",
     "magic": "phantasm",
     "rank": "simple",
     "description": "By chanting this incantation, you summon swarms of Psychic Wisps into your army. Striking from a distance with mind warping psychic attacks, these energy beings swiftly decimate your enemies.",
-    "attributes": ["summon", "selfOnly"],
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
     "researchCost": 500,
     "castingCost": 6600,
     "castingTurn": 1,
@@ -117,27 +179,43 @@
     "effects": [
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["psychicWisp"],
+        "unitIds": [
+          "psychicWisp"
+        ],
         "summonType": "all",
         "summonNetPower": 70000,
         "rule": "spellLevelScaled",
         "magic": {
-          "ascendant": { "value": 1.0 },
-          "verdant": { "value": 0.6 },
-          "eradication": { "value": 0.2 },
-          "nether": { "value": 0.2 },
-          "phantasm": { "value": 0.6 }
+          "ascendant": {
+            "value": 1
+          },
+          "verdant": {
+            "value": 0.6
+          },
+          "eradication": {
+            "value": 0.2
+          },
+          "nether": {
+            "value": 0.2
+          },
+          "phantasm": {
+            "value": 0.6
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Oneiria"
   },
   {
     "id": "summonSylph",
-    "name": "Summon Sylph",
+    "name": "Convocar Sílfide de Sueño",
     "magic": "phantasm",
     "rank": "simple",
     "description": "This spell will summon beautiful sylphs from crystal blue lakes in nearby mountains. The enemy soldiers will stand smitten and mesmerized as their limbs get torn apart by these heartless creatures.",
-    "attributes": ["summon", "selfOnly"],
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
     "researchCost": 1500,
     "castingCost": 8100,
     "castingTurn": 2,
@@ -145,27 +223,42 @@
     "effects": [
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["psychicWisp"],
+        "unitIds": [
+          "psychicWisp"
+        ],
         "summonType": "all",
         "summonNetPower": 150000,
         "rule": "spellLevelScaled",
         "magic": {
-          "ascendant": { "value": 1.0 },
-          "verdant": { "value": 0.6 },
-          "eradication": { "value": 0.2 },
-          "nether": { "value": 0.2 },
-          "phantasm": { "value": 0.6 }
+          "ascendant": {
+            "value": 1
+          },
+          "verdant": {
+            "value": 0.6
+          },
+          "eradication": {
+            "value": 0.2
+          },
+          "nether": {
+            "value": 0.2
+          },
+          "phantasm": {
+            "value": 0.6
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Oneiria"
   },
   {
     "id": "sleep",
-    "name": "Sleep",
+    "name": "Letargo",
     "magic": "phantasm",
     "rank": "simple",
     "description": "This spell will put enemy units to sleep, severely hindering their ability to fight in the battle",
-    "attributes": ["battle"],
+    "attributes": [
+      "battle"
+    ],
     "researchCost": 500,
     "castingCost": 700,
     "castingTurn": 0,
@@ -185,11 +278,21 @@
               "attackResistances": {
                 "rule": "spellLevelScaled",
                 "magic": {
-                  "ascendant": { "value": -19 }, 
-                  "verdant": { "value": -9 },
-                  "eradication": { "value": -9 },
-                  "nether": { "value": -9 },
-                  "phantasm": { "value": -38 }
+                  "ascendant": {
+                    "value": -19
+                  },
+                  "verdant": {
+                    "value": -9
+                  },
+                  "eradication": {
+                    "value": -9
+                  },
+                  "nether": {
+                    "value": -9
+                  },
+                  "phantasm": {
+                    "value": -38
+                  }
                 }
               }
             }
@@ -210,41 +313,56 @@
               "efficiency": {
                 "rule": "add",
                 "magic": {
-                  "ascendant": { "value": -10 }, 
-                  "verdant": { "value": -10 },
-                  "eradication": { "value": -10 },
-                  "nether": { "value": -10 },
-                  "phantasm": { "value": -10 }
+                  "ascendant": {
+                    "value": -10
+                  },
+                  "verdant": {
+                    "value": -10
+                  },
+                  "eradication": {
+                    "value": -10
+                  },
+                  "nether": {
+                    "value": -10
+                  },
+                  "phantasm": {
+                    "value": -10
+                  }
                 }
               }
             }
           }
         ]
       }
-    ]
+    ],
+    "displaySchool": "Oneiria"
   },
   {
     "id": "scryingMirror",
-    "name" : "Scrying Mirror",
+    "name": "Espejo del Oráculo",
     "disabled": true,
     "magic": "phantasm",
     "rank": "average",
-    "description": "This is the most powerful Eradication spell. It will cause most violent volcanic eruptions in your enemy's country. It will destroy land, maim citizens, eradicate armies and leave your enemy thunderstruck with shock and dismay. Fortunately, the Council only allows 10 such spells to be used against any mage. In addition, this spell is most effective when used against enemy with close net power to the caster. It's effectivness drops as the difference in power increases.",
-    "attributes": ["instant"],
+    "description": "This is the most powerful Cineria spell. It will cause most violent volcanic eruptions in your enemy's country. It will destroy land, maim citizens, eradicate armies and leave your enemy thunderstruck with shock and dismay. Fortunately, the Council only allows 10 such spells to be used against any Arconte. In addition, this spell is most effective when used against enemy with close net power to the caster. It's effectivness drops as the difference in power increases.",
+    "attributes": [
+      "instant"
+    ],
     "researchCost": 1000,
     "castingCost": 5000,
     "castingTurn": 1,
     "upkeep": null,
-    "effects": [
-    ]
+    "effects": [],
+    "displaySchool": "Oneiria"
   },
   {
     "id": "confuse",
-    "name": "Confuse",
+    "name": "Laberinto Mental",
     "magic": "phantasm",
     "rank": "average",
     "description": "This enchantment will leave your enemy in a state of perpetual confusion. Your enemy will have difficulty casting spells as they cannot concentrate on their enchantments. It will also hinder his dispel ability.",
-    "attributes": ["enchantment"],
+    "attributes": [
+      "enchantment"
+    ],
     "researchCost": 2000,
     "castingCost": 15000,
     "castingTurn": 5,
@@ -260,22 +378,36 @@
         "rule": "spellLevel",
         "type": "castingSuccess",
         "magic": {
-          "ascendant": { "value": -0.03 },
-          "verdant": { "value": -0.02 },
-          "eradication": { "value": -0.02 },
-          "nether": { "value": -0.03 },
-          "phantasm": { "value": -0.08 }
+          "ascendant": {
+            "value": -0.03
+          },
+          "verdant": {
+            "value": -0.02
+          },
+          "eradication": {
+            "value": -0.02
+          },
+          "nether": {
+            "value": -0.03
+          },
+          "phantasm": {
+            "value": -0.08
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Oneiria"
   },
   {
     "id": "concentration",
-    "name": "Concentration",
+    "name": "Centro de la Mente",
     "magic": "phantasm",
     "rank": "average",
-    "description": "This is one of the most important spells for Phantasm mage. This enchantment will allow a mage to achieve a perfect equilibrium of mind. It will enhance the mage's ability of casting spells, researching and summoning effectivness.",
-    "attributes": ["enchantment", "selfOnly"],
+    "description": "This is one of the most important spells for Oneiria Arconte. This enchantment will allow a Arconte to achieve a perfect equilibrium of mind. It will enhance the del Arconte ability of casting spells, researching and summoning effectivness.",
+    "attributes": [
+      "enchantment",
+      "selfOnly"
+    ],
     "researchCost": 3000,
     "castingCost": 10000,
     "castingTurn": 5,
@@ -290,11 +422,21 @@
         "rule": "spellLevel",
         "production": "guilds",
         "magic": {
-          "ascendant": { "value": 0.0035 },
-          "verdant": { "value": 0.001 },
-          "eradication": { "value": 0.001 },
-          "nether": { "value": 0.0035 },
-          "phantasm": { "value": 0.011 }
+          "ascendant": {
+            "value": 0.0035
+          },
+          "verdant": {
+            "value": 0.001
+          },
+          "eradication": {
+            "value": 0.001
+          },
+          "nether": {
+            "value": 0.0035
+          },
+          "phantasm": {
+            "value": 0.011
+          }
         }
       },
       {
@@ -302,22 +444,35 @@
         "rule": "spellLevel",
         "type": "castingSuccess",
         "magic": {
-          "ascendant": { "value": 0.02 },
-          "verdant": { "value": 0.01 },
-          "eradication": { "value": 0.01 },
-          "nether": { "value": 0.02 },
-          "phantasm": { "value": 0.05 }
+          "ascendant": {
+            "value": 0.02
+          },
+          "verdant": {
+            "value": 0.01
+          },
+          "eradication": {
+            "value": 0.01
+          },
+          "nether": {
+            "value": 0.02
+          },
+          "phantasm": {
+            "value": 0.05
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Oneiria"
   },
   {
     "id": "mentalThrash",
-    "name": "Mental Thrash",
+    "name": "Ruptura Psíquica",
     "magic": "phantasm",
     "rank": "average",
-    "description": "This spell will blast the mind of enemy troops with overwhelming mental force, causing their brains to burst and resulting in painful death. This phantasm spell is very effective against weak creatures.",
-    "attributes": ["battle"],
+    "description": "This spell will blast the mind of enemy troops with overwhelming mental force, causing their brains to burst and resulting in painful death. This Oneiria spell is very effective against weak creatures.",
+    "attributes": [
+      "battle"
+    ],
     "researchCost": 2500,
     "castingCost": 20000,
     "castingTurn": 0,
@@ -333,28 +488,58 @@
           {
             "effectType": "UnitDamageEffect",
             "checkResistance": true,
-            "damageType": ["psychic"],
+            "damageType": [
+              "psychic"
+            ],
             "target": "damage",
             "rule": "spellLevel",
             "magic": {
-              "ascendant": { "value": { "min": 1000, "max": 1000 } },
-              "verdant": { "value": { "min": 700, "max": 700 } },
-              "eradication": { "value": { "min": 700, "max": 700 } },
-              "nether": { "value": { "min": 1000, "max": 1000 } },
-              "phantasm": { "value": { "min": 1600, "max": 1600 } }
+              "ascendant": {
+                "value": {
+                  "min": 1000,
+                  "max": 1000
+                }
+              },
+              "verdant": {
+                "value": {
+                  "min": 700,
+                  "max": 700
+                }
+              },
+              "eradication": {
+                "value": {
+                  "min": 700,
+                  "max": 700
+                }
+              },
+              "nether": {
+                "value": {
+                  "min": 1000,
+                  "max": 1000
+                }
+              },
+              "phantasm": {
+                "value": {
+                  "min": 1600,
+                  "max": 1600
+                }
+              }
             }
           }
         ]
       }
-    ]
+    ],
+    "displaySchool": "Oneiria"
   },
   {
     "id": "phaseStep",
-    "name": "Phase Step",
+    "name": "Paso Entre Velos",
     "magic": "phantasm",
     "rank": "average",
     "description": "This spell will give your units the ability to walk through walls and strike at unsuspecting enemies with greater ferocity. Area of effect: 1 random group.",
-    "attributes": ["battle"],
+    "attributes": [
+      "battle"
+    ],
     "researchCost": 3000,
     "castingCost": 8000,
     "castingTurn": 0,
@@ -374,11 +559,36 @@
               "abilities": {
                 "rule": "add",
                 "magic": {
-                  "ascendant": { "value": { "name": "siege", "extra": null } },
-                  "verdant": { "value": { "name": "siege", "extra": null } },
-                  "eradication": { "value": { "name": "siege", "extra": null } },
-                  "nether": { "value": { "name": "siege", "extra": null } },
-                  "phantasm": { "value": { "name": "siege", "extra": null } }
+                  "ascendant": {
+                    "value": {
+                      "name": "siege",
+                      "extra": null
+                    }
+                  },
+                  "verdant": {
+                    "value": {
+                      "name": "siege",
+                      "extra": null
+                    }
+                  },
+                  "eradication": {
+                    "value": {
+                      "name": "siege",
+                      "extra": null
+                    }
+                  },
+                  "nether": {
+                    "value": {
+                      "name": "siege",
+                      "extra": null
+                    }
+                  },
+                  "phantasm": {
+                    "value": {
+                      "name": "siege",
+                      "extra": null
+                    }
+                  }
                 }
               }
             }
@@ -399,22 +609,30 @@
               "abilities": {
                 "rule": "add",
                 "magic": {
-                  "phantasm": { "value": { "name": "criticalStrike", "extra": null } }
+                  "phantasm": {
+                    "value": {
+                      "name": "criticalStrike",
+                      "extra": null
+                    }
+                  }
                 }
               }
             }
           }
         ]
       }
-    ]
+    ],
+    "displaySchool": "Oneiria"
   },
   {
     "id": "doubleTime",
-    "name": "Double Time",
+    "name": "Pulso Acelerado",
     "magic": "phantasm",
     "rank": "average",
     "description": "This spell will cause your units to move more quickly and efficiently. The affected units will attack the enemy with greater accuracy and initiative. Area of effect: 1 random stack.",
-    "attributes": ["battle"],
+    "attributes": [
+      "battle"
+    ],
     "researchCost": 1500,
     "castingCost": 3500,
     "castingTurn": 0,
@@ -434,11 +652,21 @@
               "accuracy": {
                 "rule": "add",
                 "magic": {
-                  "ascendant": { "value": 6 },
-                  "verdant": { "value": 3 },
-                  "eradication": { "value": 3 },
-                  "nether": { "value": 6 },
-                  "phantasm": { "value": 12 }
+                  "ascendant": {
+                    "value": 6
+                  },
+                  "verdant": {
+                    "value": 3
+                  },
+                  "eradication": {
+                    "value": 3
+                  },
+                  "nether": {
+                    "value": 6
+                  },
+                  "phantasm": {
+                    "value": 12
+                  }
                 }
               }
             }
@@ -459,22 +687,27 @@
               "primaryAttackInit,secondaryAttackInit": {
                 "rule": "add",
                 "magic": {
-                  "phantasm": { "value": 1 }
+                  "phantasm": {
+                    "value": 1
+                  }
                 }
               }
             }
           }
         ]
       }
-    ]
+    ],
+    "displaySchool": "Oneiria"
   },
   {
     "id": "invisibility",
-    "name": "Invisibility",
+    "name": "Velo Invisible",
     "magic": "phantasm",
     "rank": "average",
     "description": "This spell will turn your units invisible and allow them to strike first. Such sudden magical effect can also daze one of enemy unit groups. Area of effect: 1 random group.",
-    "attributes": ["battle"],
+    "attributes": [
+      "battle"
+    ],
     "researchCost": 3000,
     "castingCost": 3000,
     "castingTurn": 0,
@@ -494,26 +727,40 @@
               "primaryAttackInit,secondaryAttackInit": {
                 "rule": "add",
                 "magic": {
-                  "ascendant": { "value": 0 },
-                  "verdant": { "value":0 },
-                  "eradication": { "value": 0 },
-                  "nether": { "value": 0 },
-                  "phantasm": { "value": 5 }
+                  "ascendant": {
+                    "value": 0
+                  },
+                  "verdant": {
+                    "value": 0
+                  },
+                  "eradication": {
+                    "value": 0
+                  },
+                  "nether": {
+                    "value": 0
+                  },
+                  "phantasm": {
+                    "value": 5
+                  }
                 }
               }
             }
           }
         ]
       }
-    ]
+    ],
+    "displaySchool": "Oneiria"
   },
   {
     "id": "callSirens",
-    "name": "Call Sirens",
+    "name": "Canto de las Voces Hundidas",
     "magic": "phantasm",
     "rank": "average",
     "description": "This spell will summon seductive sirenes from the rocks overlooking shallow oceans. These insidious creatures will sing bewitching songs to enemy troops to lure them to their destruction.",
-    "attributes": ["summon", "selfOnly"],
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
     "researchCost": 2100,
     "castingCost": 24500,
     "castingTurn": 3,
@@ -521,27 +768,43 @@
     "effects": [
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["siren"],
+        "unitIds": [
+          "siren"
+        ],
         "summonType": "all",
         "summonNetPower": 270000,
         "rule": "spellLevelScaled",
         "magic": {
-          "ascendant": { "value": 0.6 },
-          "verdant": { "value": 0.2 },
-          "eradication": { "value": 0.2 },
-          "nether": { "value": 0.6 },
-          "phantasm": { "value": 1.0 }
+          "ascendant": {
+            "value": 0.6
+          },
+          "verdant": {
+            "value": 0.2
+          },
+          "eradication": {
+            "value": 0.2
+          },
+          "nether": {
+            "value": 0.6
+          },
+          "phantasm": {
+            "value": 1
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Oneiria"
   },
   {
     "id": "summonMedusa",
-    "name": "Summon Medusa",
+    "name": "Convocar Mirada Serpentina",
     "magic": "phantasm",
     "rank": "average",
     "description": "When you cast this spell, a horde of Medusas slithers into your army. These beautiful yet fearsome half-women, half-snake will petrify your opponents with a mere glance.",
-    "attributes": ["summon", "selfOnly"],
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
     "researchCost": 2000,
     "castingCost": 27000,
     "castingTurn": 3,
@@ -549,27 +812,43 @@
     "effects": [
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["medusa"],
+        "unitIds": [
+          "medusa"
+        ],
         "summonType": "all",
         "summonNetPower": 275000,
         "rule": "spellLevelScaled",
         "magic": {
-          "ascendant": { "value": 0.6 },
-          "verdant": { "value": 0.2 },
-          "eradication": { "value": 0.2 },
-          "nether": { "value": 0.6 },
-          "phantasm": { "value": 1.0 }
+          "ascendant": {
+            "value": 0.6
+          },
+          "verdant": {
+            "value": 0.2
+          },
+          "eradication": {
+            "value": 0.2
+          },
+          "nether": {
+            "value": 0.6
+          },
+          "phantasm": {
+            "value": 1
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Oneiria"
   },
   {
     "id": "summonSnowBeast",
-    "name": "Summon Snow Beast",
+    "name": "Convocar Bestia de Escarcha",
     "magic": "phantasm",
     "rank": "average",
     "description": "This spell summons a ferocious snow beast from the icy tundras. These massive creatures are known for their incredible strength and resilience, making them formidable allies in battle.",
-    "attributes": ["summon", "selfOnly"],
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
     "researchCost": 2100,
     "castingCost": 35000,
     "castingTurn": 3,
@@ -577,27 +856,43 @@
     "effects": [
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["yeti"],
+        "unitIds": [
+          "yeti"
+        ],
         "summonType": "all",
         "summonNetPower": 260000,
         "rule": "spellLevelScaled",
         "magic": {
-          "ascendant": { "value": 0.6 },
-          "verdant": { "value": 0.2 },
-          "eradication": { "value": 0.2 },
-          "nether": { "value": 0.6 },
-          "phantasm": { "value": 1.0 }
+          "ascendant": {
+            "value": 0.6
+          },
+          "verdant": {
+            "value": 0.2
+          },
+          "eradication": {
+            "value": 0.2
+          },
+          "nether": {
+            "value": 0.6
+          },
+          "phantasm": {
+            "value": 1
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Oneiria"
   },
   {
     "id": "aureateConversion",
-    "name": "Aureate Conversion",
+    "name": "Transmutación Áurea",
     "magic": "phantasm",
     "rank": "complex",
     "description": "By releasing the stored magical potential of your geld, you are able to directly use your wealth to pay a portion of the mana upkeep cost of your army.",
-    "attributes": ["enchantment", "selfOnly"],
+    "attributes": [
+      "enchantment",
+      "selfOnly"
+    ],
     "researchCost": 4000,
     "castingCost": 50000,
     "castingTurn": 10,
@@ -612,11 +907,41 @@
         "filters": null,
         "rule": "spellLevelScaledPercentage",
         "magic": {
-          "ascendant": { "value": { "geld": 0, "mana": -0.05, "population": 0 } },
-          "verdant": { "value": { "geld": 0, "mana": -0.01, "population": 0 } },
-          "eradication": { "value": { "geld": 0, "mana": -0.01, "population": 0 } },
-          "nether": { "value": { "geld": 0, "mana": -0.05, "population": 0 } },
-          "phantasm": { "value": { "geld": 0, "mana": -0.10, "population": 0 } }
+          "ascendant": {
+            "value": {
+              "geld": 0,
+              "mana": -0.05,
+              "population": 0
+            }
+          },
+          "verdant": {
+            "value": {
+              "geld": 0,
+              "mana": -0.01,
+              "population": 0
+            }
+          },
+          "eradication": {
+            "value": {
+              "geld": 0,
+              "mana": -0.01,
+              "population": 0
+            }
+          },
+          "nether": {
+            "value": {
+              "geld": 0,
+              "mana": -0.05,
+              "population": 0
+            }
+          },
+          "phantasm": {
+            "value": {
+              "geld": 0,
+              "mana": -0.1,
+              "population": 0
+            }
+          }
         }
       },
       {
@@ -624,22 +949,35 @@
         "rule": "percentage",
         "production": "geld",
         "magic": {
-          "ascendant": { "value": -0.25 },
-          "verdant": { "value": -0.50 },
-          "eradication": { "value": -0.50 },
-          "nether": { "value": -0.25 },
-          "phantasm": { "value": -0.15 }
+          "ascendant": {
+            "value": -0.25
+          },
+          "verdant": {
+            "value": -0.5
+          },
+          "eradication": {
+            "value": -0.5
+          },
+          "nether": {
+            "value": -0.25
+          },
+          "phantasm": {
+            "value": -0.15
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Oneiria"
   },
   {
     "id": "flight",
-    "name": "Flight",
+    "name": "Ascenso Etéreo",
     "magic": "phantasm",
     "rank": "complex",
     "description": "This spell will grant your troops wings of eagles for the duration of the battle. Your enemy can only look up helplessly at the sight of this awesome display of power. However, because of this the unit affected by flight may become easy target for enemy units. Area of effect: 1 random group.",
-    "attributes": ["battle"],
+    "attributes": [
+      "battle"
+    ],
     "researchCost": 3000,
     "castingCost": 12000,
     "castingTurn": 0,
@@ -659,11 +997,36 @@
               "abilities": {
                 "rule": "add",
                 "magic": {
-                  "ascendant": { "value": { "name": "flying", "extra": null } },
-                  "verdant": { "value": { "name": "flying", "extra": null } },
-                  "eradication": { "value": { "name": "flying", "extra": null } },
-                  "nether": { "value": { "name": "flying", "extra": null } },
-                  "phantasm": { "value": { "name": "flying", "extra": null } }
+                  "ascendant": {
+                    "value": {
+                      "name": "flying",
+                      "extra": null
+                    }
+                  },
+                  "verdant": {
+                    "value": {
+                      "name": "flying",
+                      "extra": null
+                    }
+                  },
+                  "eradication": {
+                    "value": {
+                      "name": "flying",
+                      "extra": null
+                    }
+                  },
+                  "nether": {
+                    "value": {
+                      "name": "flying",
+                      "extra": null
+                    }
+                  },
+                  "phantasm": {
+                    "value": {
+                      "name": "flying",
+                      "extra": null
+                    }
+                  }
                 }
               }
             }
@@ -684,22 +1047,27 @@
               "accuracy": {
                 "rule": "add",
                 "magic": {
-                  "phantasm": { "value": -5 }
+                  "phantasm": {
+                    "value": -5
+                  }
                 }
               }
             }
           }
         ]
       }
-    ]
+    ],
+    "displaySchool": "Oneiria"
   },
   {
     "id": "lovesick",
-    "name": "Lovesick",
+    "name": "Encanto Irresistible",
     "magic": "phantasm",
     "rank": "complex",
     "description": "This spell will cause your troops to appear most irresistable and desirable to the enemy. Your enemy will be so forlorn with love that they will have difficulty even raising their weapons against you. This is truly powerful defensive spell. Area of effect: 1 random group.",
-    "attributes": ["battle"],
+    "attributes": [
+      "battle"
+    ],
     "researchCost": 4000,
     "castingCost": 8000,
     "castingTurn": 0,
@@ -719,7 +1087,10 @@
               "abilities": {
                 "rule": "add",
                 "magic": {
-                  "phantasm": { "value": "charm", "extra": null }
+                  "phantasm": {
+                    "value": "charm",
+                    "extra": null
+                  }
                 }
               }
             }
@@ -740,26 +1111,44 @@
               "abilities": {
                 "rule": "add",
                 "magic": {
-                  "ascendant": { "value": "beauty", "extra": null },
-                  "verdant": { "value": "beauty", "extra": null },
-                  "eradication": { "value": "beauty", "extra": null },
-                  "nether": { "value": "beauty", "extra": null },
-                  "phantasm": { "value": "beauty", "extra": null }
+                  "ascendant": {
+                    "value": "beauty",
+                    "extra": null
+                  },
+                  "verdant": {
+                    "value": "beauty",
+                    "extra": null
+                  },
+                  "eradication": {
+                    "value": "beauty",
+                    "extra": null
+                  },
+                  "nether": {
+                    "value": "beauty",
+                    "extra": null
+                  },
+                  "phantasm": {
+                    "value": "beauty",
+                    "extra": null
+                  }
                 }
               }
             }
           }
         ]
       }
-    ]
+    ],
+    "displaySchool": "Oneiria"
   },
   {
     "id": "laziness",
-    "name": "Laziness",
+    "name": "Sueño de Indolencia",
     "magic": "phantasm",
     "rank": "complex",
     "description": "This spell will cause the population of your enemy to turn to drinking, gambling and idling their life away. Your enemy's once productive fields will turn barren as the land is neglected and abandoned.",
-    "attributes": ["enchantment"],
+    "attributes": [
+      "enchantment"
+    ],
     "researchCost": 4000,
     "castingCost": 70000,
     "castingTurn": 10,
@@ -775,23 +1164,36 @@
         "rule": "spellLevelScaledPercentage",
         "production": "geld",
         "magic": {
-          "ascendant": { "value": -0.35 },
-          "verdant": { "value": -0.15 },
-          "eradication": { "value": -0.15 },
-          "nether": { "value": -0.35 },
-          "phantasm": { "value": -0.88 }
+          "ascendant": {
+            "value": -0.35
+          },
+          "verdant": {
+            "value": -0.15
+          },
+          "eradication": {
+            "value": -0.15
+          },
+          "nether": {
+            "value": -0.35
+          },
+          "phantasm": {
+            "value": -0.88
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Oneiria"
   },
   {
     "id": "temporalStasisField",
-    "name": "Temporal Stasis Field",
+    "name": "Cámara de Tiempo Quieto",
     "disabled": true,
     "magic": "phantasm",
     "rank": "complex",
     "description": "The spell will put a stasis field in an area, thus putting the recipent's country into an state of temporal suspension. Time will flow slower within the area.",
-    "attributes": ["enchantment"],
+    "attributes": [
+      "enchantment"
+    ],
     "researchCost": 4000,
     "castingCost": 20000,
     "castingTurn": 10,
@@ -800,16 +1202,18 @@
       "mana": 1000,
       "population": 0
     },
-    "effects": [
-    ]
+    "effects": [],
+    "displaySchool": "Oneiria"
   },
   {
     "id": "sunder",
-    "name": "Sunder",
+    "name": "Ruptura de Maná",
     "magic": "phantasm",
     "rank": "complex",
     "description": "The spell drains enemy mana",
-    "attributes": ["instant"],
+    "attributes": [
+      "instant"
+    ],
     "researchCost": 4000,
     "castingCost": 60000,
     "castingTurn": 3,
@@ -820,22 +1224,56 @@
         "rule": "spellLevelScaled",
         "target": "mana",
         "magic": {
-          "ascendant": { "value": { "min": 1000, "max": 15000, "stealPercent": null } },
-          "verdant": { "value": { "min": 300, "max": 8000, "stealPercent": null } },
-          "eradication": { "value": { "min": 300, "max": 8000, "stealPercent": null } },
-          "nether": { "value": { "min": 1000, "max": 15000, "stealPercent": null } },
-          "phantasm": { "value": { "min": 6000, "max": 30000, "stealPercent": null } }
+          "ascendant": {
+            "value": {
+              "min": 1000,
+              "max": 15000,
+              "stealPercent": null
+            }
+          },
+          "verdant": {
+            "value": {
+              "min": 300,
+              "max": 8000,
+              "stealPercent": null
+            }
+          },
+          "eradication": {
+            "value": {
+              "min": 300,
+              "max": 8000,
+              "stealPercent": null
+            }
+          },
+          "nether": {
+            "value": {
+              "min": 1000,
+              "max": 15000,
+              "stealPercent": null
+            }
+          },
+          "phantasm": {
+            "value": {
+              "min": 6000,
+              "max": 30000,
+              "stealPercent": null
+            }
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Oneiria"
   },
   {
     "id": "mindBar",
-    "name": "Mind Bar",
+    "name": "Cerrojo Mental",
     "magic": "phantasm",
     "rank": "complex",
-    "description": "This spell will lock up the mind of any enemy who dares afflict your empire with offensive enchantments or sorceries. In this way, Mind Bar effectively bestows resistance against all spells, particularly those of the Phantasm discipline.",
-    "attributes": ["enchantment", "selfOnly"],
+    "description": "This spell will lock up the mind of any enemy who dares afflict your empire with offensive enchantments or sorceries. In this way, Mind Bar effectively bestows resistance against all spells, particularly those of the Oneiria discipline.",
+    "attributes": [
+      "enchantment",
+      "selfOnly"
+    ],
     "researchCost": 4000,
     "castingCost": 100000,
     "castingTurn": 7,
@@ -850,11 +1288,21 @@
         "rule": "spellLevel",
         "resistance": "ascendant",
         "magic": {
-          "ascendant": { "value": 0.04 },
-          "verdant": { "value": 0.035 },
-          "eradication": { "value": 0.035 },
-          "nether": { "value": 0.04 },
-          "phantasm": { "value": 0.0765 }
+          "ascendant": {
+            "value": 0.04
+          },
+          "verdant": {
+            "value": 0.035
+          },
+          "eradication": {
+            "value": 0.035
+          },
+          "nether": {
+            "value": 0.04
+          },
+          "phantasm": {
+            "value": 0.0765
+          }
         }
       },
       {
@@ -862,11 +1310,21 @@
         "rule": "spellLevel",
         "resistance": "verdant",
         "magic": {
-          "ascendant": { "value": 0.04 },
-          "verdant": { "value": 0.035 },
-          "eradication": { "value": 0.035 },
-          "nether": { "value": 0.04 },
-          "phantasm": { "value": 0.0765 }
+          "ascendant": {
+            "value": 0.04
+          },
+          "verdant": {
+            "value": 0.035
+          },
+          "eradication": {
+            "value": 0.035
+          },
+          "nether": {
+            "value": 0.04
+          },
+          "phantasm": {
+            "value": 0.0765
+          }
         }
       },
       {
@@ -874,11 +1332,21 @@
         "rule": "spellLevel",
         "resistance": "eradication",
         "magic": {
-          "ascendant": { "value": 0.04 },
-          "verdant": { "value": 0.035 },
-          "eradication": { "value": 0.035 },
-          "nether": { "value": 0.04 },
-          "phantasm": { "value": 0.0765 }
+          "ascendant": {
+            "value": 0.04
+          },
+          "verdant": {
+            "value": 0.035
+          },
+          "eradication": {
+            "value": 0.035
+          },
+          "nether": {
+            "value": 0.04
+          },
+          "phantasm": {
+            "value": 0.0765
+          }
         }
       },
       {
@@ -886,11 +1354,21 @@
         "rule": "spellLevel",
         "resistance": "nether",
         "magic": {
-          "ascendant": { "value": 0.04 },
-          "verdant": { "value": 0.035 },
-          "eradication": { "value": 0.035 },
-          "nether": { "value": 0.04 },
-          "phantasm": { "value": 0.0765 }
+          "ascendant": {
+            "value": 0.04
+          },
+          "verdant": {
+            "value": 0.035
+          },
+          "eradication": {
+            "value": 0.035
+          },
+          "nether": {
+            "value": 0.04
+          },
+          "phantasm": {
+            "value": 0.0765
+          }
         }
       },
       {
@@ -898,22 +1376,35 @@
         "rule": "spellLevel",
         "resistance": "phantasm",
         "magic": {
-          "ascendant": { "value": 0.04 },
-          "verdant": { "value": 0.035 },
-          "eradication": { "value": 0.035 },
-          "nether": { "value": 0.04 },
-          "phantasm": { "value": 0.0765 }
+          "ascendant": {
+            "value": 0.04
+          },
+          "verdant": {
+            "value": 0.035
+          },
+          "eradication": {
+            "value": 0.035
+          },
+          "nether": {
+            "value": 0.04
+          },
+          "phantasm": {
+            "value": 0.0765
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Oneiria"
   },
   {
     "id": "stealArtifact",
-    "name" : "Steal Artifact",
+    "name": "Traslación de Reliquia",
     "magic": "phantasm",
     "rank": "complex",
-    "description": "Using this spell mage can cause one of target enemy's item to vanish and teleport directly to caster mage. However, this spell is too weak to transfer ancient artifacts.",
-    "attributes": ["instant"],
+    "description": "Using this spell Arconte can cause one of target enemy's item to vanish and teleport directly to caster Arconte. However, this spell is too weak to transfer ancient artifacts.",
+    "attributes": [
+      "instant"
+    ],
     "researchCost": 4000,
     "castingCost": 20000,
     "castingTurn": 2,
@@ -924,22 +1415,55 @@
         "rule": "spellLevelScaled",
         "target": "item",
         "magic": {
-          "ascendant": { "value": { "min": 1, "max": 1, "stealPercent": null } },
-          "verdant": { "value": { "min": 1, "max": 1, "stealPercent": null } },
-          "eradication": { "value": { "min": 1, "max": 1, "stealPercent": null } },
-          "nether": { "value": { "min": 1, "max": 1, "stealPercent": null } },
-          "phantasm": { "value": { "min": 1, "max": 1, "stealPercent": null } }
+          "ascendant": {
+            "value": {
+              "min": 1,
+              "max": 1,
+              "stealPercent": null
+            }
+          },
+          "verdant": {
+            "value": {
+              "min": 1,
+              "max": 1,
+              "stealPercent": null
+            }
+          },
+          "eradication": {
+            "value": {
+              "min": 1,
+              "max": 1,
+              "stealPercent": null
+            }
+          },
+          "nether": {
+            "value": {
+              "min": 1,
+              "max": 1,
+              "stealPercent": null
+            }
+          },
+          "phantasm": {
+            "value": {
+              "min": 1,
+              "max": 1,
+              "stealPercent": null
+            }
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Oneiria"
   },
   {
     "id": "paralyze",
-    "name": "Paralyze",
+    "name": "Prisión Nerviosa",
     "magic": "phantasm",
     "rank": "complex",
-    "description": "This powerfull spell hits an enemy unit with immense and crippling pain, causing them to fall to the ground, twitching and convulsing, unable to control their own bodies. Paralyze can strike 4 enemy groups at once. Paralyze is one of the more feared Phantasm spells on the battlefield.",
-    "attributes": ["battle"],
+    "description": "This powerfull spell hits an enemy unit with immense and crippling pain, causing them to fall to the ground, twitching and convulsing, unable to control their own bodies. Paralyze can strike 4 enemy groups at once. Paralyze is one of the more feared Oneiria spells on the battlefield.",
+    "attributes": [
+      "battle"
+    ],
     "researchCost": 3500,
     "castingCost": 10000,
     "castingTurn": 0,
@@ -959,7 +1483,9 @@
               "primaryAttackInit,secondaryAttackInit": {
                 "rule": "add",
                 "magic": {
-                  "phantasm": { "value": -6 }
+                  "phantasm": {
+                    "value": -6
+                  }
                 }
               }
             }
@@ -980,11 +1506,21 @@
               "primaryAttackPower": {
                 "rule": "percentage",
                 "magic": {
-                  "ascendant": { "value": -0.5 },
-                  "verdant": { "value": -0.20 },
-                  "eradication": { "value": -0.20 },
-                  "nether": { "value": -0.5 },
-                  "phantasm": { "value": -1 }
+                  "ascendant": {
+                    "value": -0.5
+                  },
+                  "verdant": {
+                    "value": -0.2
+                  },
+                  "eradication": {
+                    "value": -0.2
+                  },
+                  "nether": {
+                    "value": -0.5
+                  },
+                  "phantasm": {
+                    "value": -1
+                  }
                 }
               }
             }
@@ -1005,11 +1541,21 @@
               "counterAttackPower": {
                 "rule": "percentage",
                 "magic": {
-                  "ascendant": { "value": -0.5 },
-                  "verdant": { "value": -0.20 },
-                  "eradication": { "value": -0.20 },
-                  "nether": { "value": -0.5 },
-                  "phantasm": { "value": -1 }
+                  "ascendant": {
+                    "value": -0.5
+                  },
+                  "verdant": {
+                    "value": -0.2
+                  },
+                  "eradication": {
+                    "value": -0.2
+                  },
+                  "nether": {
+                    "value": -0.5
+                  },
+                  "phantasm": {
+                    "value": -1
+                  }
                 }
               }
             }
@@ -1030,26 +1576,54 @@
               "abilities": {
                 "rule": "remove",
                 "magic": {
-                  "ascendant": { "value": { "name": "bursting", "extra": null } },
-                  "verdant": { "value": { "name": "bursting", "extra": null } },
-                  "eradication": { "value": { "name": "bursting", "extra": null } },
-                  "nether": { "value": { "name": "bursting", "extra": null } },
-                  "phantasm": { "value": { "name": "bursting", "extra": null } }
+                  "ascendant": {
+                    "value": {
+                      "name": "bursting",
+                      "extra": null
+                    }
+                  },
+                  "verdant": {
+                    "value": {
+                      "name": "bursting",
+                      "extra": null
+                    }
+                  },
+                  "eradication": {
+                    "value": {
+                      "name": "bursting",
+                      "extra": null
+                    }
+                  },
+                  "nether": {
+                    "value": {
+                      "name": "bursting",
+                      "extra": null
+                    }
+                  },
+                  "phantasm": {
+                    "value": {
+                      "name": "bursting",
+                      "extra": null
+                    }
+                  }
                 }
               }
             }
           }
         ]
       }
-    ]
+    ],
+    "displaySchool": "Oneiria"
   },
   {
     "id": "slow",
-    "name": "Slow",
+    "name": "Tiempo Viscoso",
     "magic": "phantasm",
     "rank": "complex",
     "description": "This spell will cause enemy units to slow down dramatically as their mind and body become less aware of the passage of time. Slower creatures will not be able to attack at all for the duration of the battle",
-    "attributes": ["battle"],
+    "attributes": [
+      "battle"
+    ],
     "researchCost": 8000,
     "castingCost": 4000,
     "castingTurn": 0,
@@ -1069,22 +1643,28 @@
               "primaryAttackInit,secondaryAttackInit": {
                 "rule": "add",
                 "magic": {
-                  "phantasm": { "value": -1 }
+                  "phantasm": {
+                    "value": -1
+                  }
                 }
               }
             }
           }
         ]
       }
-    ]
+    ],
+    "displaySchool": "Oneiria"
   },
   {
     "id": "summonDjinni",
-    "name": "Summon Djinni",
+    "name": "Convocar Genio del Velo",
     "magic": "phantasm",
     "rank": "complex",
     "description": "Chanting this summon spell, Djinni will join your army. Flying high above the battlefield, these beings use their strong magical powers to attack your opponents, tossing lightnings at unfortunate enemies.",
-    "attributes": ["summon", "selfOnly"],
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
     "researchCost": 2500,
     "castingCost": 30000,
     "castingTurn": 4,
@@ -1092,27 +1672,43 @@
     "effects": [
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["djinni"],
+        "unitIds": [
+          "djinni"
+        ],
         "summonType": "all",
         "summonNetPower": 440000,
         "rule": "spellLevelScaled",
         "magic": {
-          "ascendant": { "value": 0.6 },
-          "verdant": { "value": 0.2 },
-          "eradication": { "value": 0.2 },
-          "nether": { "value": 0.6 },
-          "phantasm": { "value": 1.0 }
+          "ascendant": {
+            "value": 0.6
+          },
+          "verdant": {
+            "value": 0.2
+          },
+          "eradication": {
+            "value": 0.2
+          },
+          "nether": {
+            "value": 0.6
+          },
+          "phantasm": {
+            "value": 1
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Oneiria"
   },
   {
     "id": "summonMindRipper",
-    "name": "Summon Mind Ripper",
+    "name": "Convocar Desgarramentes",
     "magic": "phantasm",
     "rank": "complex",
     "description": "This spell will summon terrible mind rippers from the upper astral plane. These dreadful and terrifying monsters posses superior psychic abilities and relish feasting on the brains of their still-alive enemies.",
-    "attributes": ["summon", "selfOnly"],
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
     "researchCost": 8000,
     "castingCost": 65700,
     "castingTurn": 6,
@@ -1120,27 +1716,43 @@
     "effects": [
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["mindRipper"],
+        "unitIds": [
+          "mindRipper"
+        ],
         "summonType": "all",
         "summonNetPower": 650000,
         "rule": "spellLevelScaled",
         "magic": {
-          "ascendant": { "value": 0.6 },
-          "verdant": { "value": 0.2 },
-          "eradication": { "value": 0.2 },
-          "nether": { "value": 0.6 },
-          "phantasm": { "value": 1.0 }
+          "ascendant": {
+            "value": 0.6
+          },
+          "verdant": {
+            "value": 0.2
+          },
+          "eradication": {
+            "value": 0.2
+          },
+          "nether": {
+            "value": 0.6
+          },
+          "phantasm": {
+            "value": 1
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Oneiria"
   },
   {
     "id": "conjureElemental",
-    "name": "Conjure Elemental",
+    "name": "Tejer Elemental",
     "magic": "phantasm",
     "rank": "ultimate",
-    "description": "Delving deep into your store of energy, Summon Elemental calls upon the powers of the gods to send you their mightiest creatures, those created from the very fabric of Terra itself. The result of this spell is usually random, but can be controlled by experienced phantasm mages.",
-    "attributes": ["summon", "selfOnly"],
+    "description": "Delving deep into your store of energy, Summon Elemental calls upon the powers of the gods to send you their mightiest creatures, those created from the very fabric of las Tierras Arcanas itself. The result of this spell is usually random, but can be controlled by experienced Oneiria Arcontes.",
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
     "researchCost": 30000,
     "castingCost": 280000,
     "castingTurn": 9,
@@ -1148,27 +1760,45 @@
     "effects": [
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["iceElemental", "airElemental", "waterElemental"],
+        "unitIds": [
+          "iceElemental",
+          "airElemental",
+          "waterElemental"
+        ],
         "summonType": "random",
         "summonNetPower": 2100000,
         "rule": "spellLevelScaled",
         "magic": {
-          "ascendant": { "value": 0.0 },
-          "verdant": { "value": 0.0 },
-          "eradication": { "value": 0.0 },
-          "nether": { "value": 0.0 },
-          "phantasm": { "value": 1.0 }
+          "ascendant": {
+            "value": 0
+          },
+          "verdant": {
+            "value": 0
+          },
+          "eradication": {
+            "value": 0
+          },
+          "nether": {
+            "value": 0
+          },
+          "phantasm": {
+            "value": 1
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Oneiria"
   },
   {
     "id": "summonLeviathan",
-    "name": "Summon Leviathan",
+    "name": "Convocar Leviatán Onírico",
     "magic": "phantasm",
     "rank": "ultimate",
-    "description": "This spell allows you to control gigantic Leviathans, who answer your summons and come to join your army from the depths of the largest oceans of Terra.",
-    "attributes": ["summon", "selfOnly"],
+    "description": "This spell allows you to control gigantic Leviathans, who answer your summons and come to join your army from the depths of the largest oceans of las Tierras Arcanas.",
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
     "researchCost": 35000,
     "castingCost": 300000,
     "castingTurn": 10,
@@ -1176,27 +1806,43 @@
     "effects": [
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["leviathan"],
+        "unitIds": [
+          "leviathan"
+        ],
         "summonType": "random",
         "summonNetPower": 2400000,
         "rule": "spellLevelScaled",
         "magic": {
-          "ascendant": { "value": 0.0 },
-          "verdant": { "value": 0.0 },
-          "eradication": { "value": 0.0 },
-          "nether": { "value": 0.0 },
-          "phantasm": { "value": 1.0 }
+          "ascendant": {
+            "value": 0
+          },
+          "verdant": {
+            "value": 0
+          },
+          "eradication": {
+            "value": 0
+          },
+          "nether": {
+            "value": 0
+          },
+          "phantasm": {
+            "value": 1
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Oneiria"
   },
   {
     "id": "hallucination",
-    "name": "Hallucination",
+    "name": "Reino de Espejismos",
     "magic": "phantasm",
     "rank": "ultimate",
     "description": "This ultimate enchantment will create a powerful illusion capable of covering your entire country. Invading armies will have difficulty locating your country and will sometimes walk through the heart of your country without realizing it.",
-    "attributes": ["enchantment", "selfOnly"],
+    "attributes": [
+      "enchantment",
+      "selfOnly"
+    ],
     "researchCost": 40000,
     "castingCost": 200000,
     "castingTurn": 10,
@@ -1210,11 +1856,21 @@
         "effectType": "AvoidEffect",
         "target": "attack",
         "magic": {
-          "ascendant": { "value": 0 },
-          "verdant": { "value": 0 },
-          "eradication": { "value": 0 },
-          "nether": { "value": 0 },
-          "phantasm": { "value": 20 }
+          "ascendant": {
+            "value": 0
+          },
+          "verdant": {
+            "value": 0
+          },
+          "eradication": {
+            "value": 0
+          },
+          "nether": {
+            "value": 0
+          },
+          "phantasm": {
+            "value": 20
+          }
         }
       },
       {
@@ -1232,22 +1888,27 @@
               "efficiency": {
                 "rule": "add",
                 "magic": {
-                  "phantasm": { "value": -10 }
+                  "phantasm": {
+                    "value": -10
+                  }
                 }
               }
             }
           }
         ]
       }
-    ]
+    ],
+    "displaySchool": "Oneiria"
   },
   {
     "id": "foolsGold",
-    "name" : "Fools Gold",
+    "name": "Oro Espectral",
     "magic": "phantasm",
     "rank": "ultimate",
     "description": "This spell will magically transport geld from your enemy's coffers into your treasury and leave useless fool's gold behind to hide your gain. Some of the stolen geld, however, get lost to the void while being teleported.",
-    "attributes": ["instant"],
+    "attributes": [
+      "instant"
+    ],
     "researchCost": 10000,
     "castingCost": 100000,
     "castingTurn": 5,
@@ -1258,18 +1919,28 @@
         "rule": "spellLevelScaled",
         "target": "geld",
         "magic": {
-          "phantasm": { "value": { "min": 1000000, "max": 45000000, "stealPercent": 0.3 } }
+          "phantasm": {
+            "value": {
+              "min": 1000000,
+              "max": 45000000,
+              "stealPercent": 0.3
+            }
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Oneiria"
   },
   {
     "id": "wish",
-    "name" : "Wish",
+    "name": "Deseo Imposible",
     "magic": "phantasm",
     "rank": "ultimate",
     "description": "This ultimate spell will bequeath you a power beyond imagination if you know how to wish for it. Gold, artifacts, and charmed citizens will appear before your eyes. However the spell result is quite random, and can even create negative effects.",
-    "attributes": ["instant", "selfOnly"],
+    "attributes": [
+      "instant",
+      "selfOnly"
+    ],
     "researchCost": 30000,
     "castingCost": 100000,
     "castingTurn": 1,
@@ -1298,25 +1969,25 @@
             "target": "mana",
             "min": 50000,
             "max": 100000,
-            "weight":10 
+            "weight": 10
           },
           {
             "target": "population",
             "min": 100000,
             "max": 150000,
-            "weight":10 
+            "weight": 10
           },
           {
             "target": "turn",
             "min": 5,
             "max": 10,
-            "weight":10 
+            "weight": 10
           },
           {
             "target": "item",
             "min": 3,
             "max": 8,
-            "weight":10 
+            "weight": 10
           },
           {
             "target": "mana",
@@ -1334,10 +2005,11 @@
             "target": "turn",
             "min": -10,
             "max": -20,
-            "weight": 5 
+            "weight": 5
           }
         ]
       }
-    ]
+    ],
+    "displaySchool": "Oneiria"
   }
 ]
