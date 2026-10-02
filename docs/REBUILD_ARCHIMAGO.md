@@ -82,6 +82,23 @@ Orden del menú inicial:
 
 Se añadirán páginas cuando un sistema de Archimago no tenga equivalente actual.
 
+## Estado de integración · 2 de octubre de 2026
+
+Completado en la rama `rebuild/archimago-engine`:
+
+- motor, shared, data-adapter y server importados y typecheckeados en CI;
+- Dominio establecido como vista autenticada por defecto;
+- Personaje, Arena, Expediciones legacy y Guerra 1v1 retirados de navegación normal;
+- primera fachada ARCANUM sobre el motor creada en `packages/server/src/arcanum-domain.ts`;
+- endpoints ARCANUM nativos añadidos para estado de Dominio, Exploración, Oro, Maná y Construcción;
+- mapeo de escuelas heredadas encapsulado: Aurea, Viridia, Cineria, Nadir y Oneiria son los únicos nombres expuestos por la fachada;
+- regresiones E2E actualizadas para proteger la navegación Domain-first y las superficies retiradas;
+- prueba automática del adaptador ARCANUM añadida a CI;
+- nomenclatura visible de `Archimago`/`Personaje` eliminada de Dominio y Perfil social;
+- almacenamiento PGlite provisional renombrado a `arcanum-db`.
+
+Siguiente frontera técnica: conectar la UI de Dominio/Economía a la fachada nueva y sustituir la persistencia PGlite provisional por persistencia duradera antes de publicar el backend reconstruido.
+
 ## Estrategia de migración
 1. Importar el motor, shared, data, data-adapter y server.
 2. Hacer funcionar el backend sin UI.
