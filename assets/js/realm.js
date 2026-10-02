@@ -61,7 +61,7 @@ function paintRealmDomainIdentity(){
   const title=$("#realm-domain-name");
   const character=$("#realm-character-name");
   if(title)title.textContent=realmDomainRecord?.domain_name||realmState?.realm?.mage_name||"Dominio";
-  if(character)character.textContent="ARCHIMAGO · "+(realmState?.realm?.mage_name||"");
+  if(character)character.textContent="ARCONTE · "+(realmState?.realm?.mage_name||"");
 }
 async function editRealmDomainName(){
   const current=realmDomainRecord?.domain_name||realmState?.realm?.mage_name||"";
@@ -100,14 +100,14 @@ function renderRealm(){
           <h2 id="realm-domain-name" style="margin:0">${esc(domainName)}</h2>
           <button id="realm-domain-edit" class="small-action" type="button" title="Editar nombre del Dominio" aria-label="Editar nombre del Dominio">✎ EDITAR</button>
         </div>
-        <div id="realm-character-name" style="margin-top:7px;font-size:11px;letter-spacing:.14em;color:rgba(236,216,174,.72)">ARCHIMAGO · ${esc(r.mage_name)}</div>
+        <div id="realm-character-name" style="margin-top:7px;font-size:11px;letter-spacing:.14em;color:rgba(236,216,174,.72)">ARCONTE · ${esc(r.mage_name)}</div>
         <p>${esc(progression.name)} · ${n(r.land)} acres · Nivel Mágico ${n(r.spell_level)}</p>
         <div class="realm-status-line"><span>${n(realmState.known_spells.length)} hechizos conocidos</span></div>
         <div class="quick-actions">
           <button class="small-action" data-quick="economy">ECONOMÍA</button>
           <button class="small-action" data-quick="build">CONSTRUIR</button>
           <button class="small-action" data-quick="research">MAGIA</button>
-          <button class="small-action" data-quick="war">GUERRA</button>
+          <button class="small-action" data-quick="army">EJÉRCITO</button>
         </div>
       </div>
       <small class="realm-art-label">DOMINIO · REINO NIVEL 1</small>
