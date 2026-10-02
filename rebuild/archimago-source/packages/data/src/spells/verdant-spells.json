@@ -1,11 +1,14 @@
 [
   {
     "id": "animalSummoning",
-    "name": "Animal Summoning",
+    "name": "Llamada de la Manada",
     "magic": "verdant",
     "rank": "simple",
     "description": "This spell will summon fierce, powerful gorillas from the jungle to join your army. The gorillas are fiercely loyal and understand the commands of your officers. The number of gorillas summoned depends on your proficiency in magick.",
-    "attributes": ["summon", "selfOnly"],
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
     "researchCost": 500,
     "castingCost": 5600,
     "castingTurn": 1,
@@ -13,27 +16,43 @@
     "effects": [
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["gorilla"],
+        "unitIds": [
+          "gorilla"
+        ],
         "summonType": "all",
         "summonNetPower": 70000,
         "rule": "spellLevelScaled",
         "magic": {
-          "ascendant": { "value": 0.6 },
-          "verdant": { "value": 1.0 },
-          "eradication": { "value": 0.6 },
-          "nether": { "value": 0.2 },
-          "phantasm": { "value": 0.2 }
+          "ascendant": {
+            "value": 0.6
+          },
+          "verdant": {
+            "value": 1
+          },
+          "eradication": {
+            "value": 0.6
+          },
+          "nether": {
+            "value": 0.2
+          },
+          "phantasm": {
+            "value": 0.2
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Viridia"
   },
   {
     "id": "summonDryad",
-    "name": "Summon Dryad",
+    "name": "Despertar del Espíritu Arbóreo",
     "magic": "verdant",
     "rank": "simple",
     "description": "This spell calls upon the spirit of the trees, the dryads, from the forest to join your troops in battle. The dryads are especially good warriors of the forests and will server their magic to protect forest-lands.",
-    "attributes": ["summon", "selfOnly"],
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
     "researchCost": 900,
     "castingCost": 3000,
     "castingTurn": 1,
@@ -41,27 +60,43 @@
     "effects": [
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["dryad"],
+        "unitIds": [
+          "dryad"
+        ],
         "summonType": "all",
         "summonNetPower": 70000,
         "rule": "spellLevelScaled",
         "magic": {
-          "ascendant": { "value": 0.6 },
-          "verdant": { "value": 1.0 },
-          "eradication": { "value": 0.6 },
-          "nether": { "value": 0.2 },
-          "phantasm": { "value": 0.2 }
+          "ascendant": {
+            "value": 0.6
+          },
+          "verdant": {
+            "value": 1
+          },
+          "eradication": {
+            "value": 0.6
+          },
+          "nether": {
+            "value": 0.2
+          },
+          "phantasm": {
+            "value": 0.2
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Viridia"
   },
   {
     "id": "callCreepingVines",
-    "name": "Call Creeping Vines",
+    "name": "Zarzas Acechantes",
     "magic": "verdant",
     "rank": "simple",
-    "description": "A Verdant mage can commune not only with the animal kingdom, but the very forest as well. With a mere thought, scores of thorny vines creep stealthily and silently from the forest and through the battlefield to ensnare and strangle man and beast alike.",
-    "attributes": ["summon", "selfOnly"],
+    "description": "A Viridia Arconte can commune not only with the animal kingdom, but the very forest as well. With a mere thought, scores of thorny vines creep stealthily and silently from the forest and through the battlefield to ensnare and strangle man and beast alike.",
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
     "researchCost": 900,
     "castingCost": 3000,
     "castingTurn": 1,
@@ -69,27 +104,42 @@
     "effects": [
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["creepingVines"],
+        "unitIds": [
+          "creepingVines"
+        ],
         "summonType": "all",
         "summonNetPower": 70000,
         "rule": "spellLevelScaled",
         "magic": {
-          "ascendant": { "value": 0.6 },
-          "verdant": { "value": 1.0 },
-          "eradication": { "value": 0.6 },
-          "nether": { "value": 0.2 },
-          "phantasm": { "value": 0.2 }
+          "ascendant": {
+            "value": 0.6
+          },
+          "verdant": {
+            "value": 1
+          },
+          "eradication": {
+            "value": 0.6
+          },
+          "nether": {
+            "value": 0.2
+          },
+          "phantasm": {
+            "value": 0.2
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Viridia"
   },
   {
     "id": "eyeOfTheEagle",
-    "name": "Eye Of The Eagle",
+    "name": "Mirada del Halcón Verde",
     "magic": "verdant",
     "rank": "simple",
     "description": "This is a special spell that affects only elves, granting them the incredible eyesight of an eagle. All affected elves fight with higher efficiency and greater accuracy.",
-    "attributes": ["battle"],
+    "attributes": [
+      "battle"
+    ],
     "researchCost": 600,
     "castingCost": 600,
     "castingTurn": 0,
@@ -101,7 +151,9 @@
         "targetType": "all",
         "filters": [
           {
-          "race": ["elf"]
+            "race": [
+              "elf"
+            ]
           }
         ],
         "trigger": null,
@@ -113,26 +165,39 @@
               "accuracy": {
                 "rule": "add",
                 "magic": {
-                  "ascendant": { "value": 10 },
-                  "verdant": { "value": 10 },
-                  "eradication": { "value": 10 },
-                  "nether": { "value": 10 },
-                  "phantasm": { "value": 10 }
+                  "ascendant": {
+                    "value": 10
+                  },
+                  "verdant": {
+                    "value": 10
+                  },
+                  "eradication": {
+                    "value": 10
+                  },
+                  "nether": {
+                    "value": 10
+                  },
+                  "phantasm": {
+                    "value": 10
+                  }
                 }
               }
             }
           }
         ]
       }
-    ]
+    ],
+    "displaySchool": "Viridia"
   },
   {
     "id": "webOfTheSpiderWoman",
-    "name": "Web of the Spider Woman",
+    "name": "Red de la Tejedora Antigua",
     "magic": "verdant",
     "rank": "simple",
     "description": "By asking for the favour of the spider lady, you can entangle enemy units in sticky spider webs. Fast units will have to struggle to pass through the web, while slow units will be helplessly caught within the web. It is a very effective spell in slowing down your enemies in defence. Area of effect: 1 random enemy stack.",
-    "attributes": ["battle"],
+    "attributes": [
+      "battle"
+    ],
     "researchCost": 500,
     "castingCost": 600,
     "castingTurn": 0,
@@ -152,26 +217,39 @@
               "primaryAttackInit,secondaryAttackInit": {
                 "rule": "add",
                 "magic": {
-                  "ascendant": { "value": -1 },
-                  "verdant": { "value": -1 },
-                  "eradication": { "value": -1 },
-                  "nether": { "value": -1 },
-                  "phantasm": { "value": -1 }
+                  "ascendant": {
+                    "value": -1
+                  },
+                  "verdant": {
+                    "value": -1
+                  },
+                  "eradication": {
+                    "value": -1
+                  },
+                  "nether": {
+                    "value": -1
+                  },
+                  "phantasm": {
+                    "value": -1
+                  }
                 }
               }
             }
           }
         ]
       }
-    ]
+    ],
+    "displaySchool": "Viridia"
   },
   {
     "id": "woodenSoul",
-    "name": "Wooden Soul",
+    "name": "Corteza del Alma",
     "magic": "verdant",
     "rank": "simple",
     "description": "This spell toughens the skin and hides of your troops, making it akin to the bark of a tree. The appearance of the affected flesh is only subtly altered, etched and stiffened like the bark of a mighty oak or elm, its color turned slightly ashen. Area of Effect: 1 random group",
-    "attributes": ["battle"],
+    "attributes": [
+      "battle"
+    ],
     "researchCost": 400,
     "castingCost": 600,
     "castingTurn": 0,
@@ -191,26 +269,40 @@
               "hitPoints": {
                 "rule": "spellLevelScaledPercentage",
                 "magic": {
-                  "ascendant": { "value": 0.20 },
-                  "verdant": { "value": 0.37 },
-                  "eradication": { "value": 0.20 },
-                  "nether": { "value": 0.12 },
-                  "phantasm": { "value": 0.12 }
+                  "ascendant": {
+                    "value": 0.2
+                  },
+                  "verdant": {
+                    "value": 0.37
+                  },
+                  "eradication": {
+                    "value": 0.2
+                  },
+                  "nether": {
+                    "value": 0.12
+                  },
+                  "phantasm": {
+                    "value": 0.12
+                  }
                 }
               }
             }
           }
         ]
       }
-    ]
+    ],
+    "displaySchool": "Viridia"
   },
   {
     "id": "callMandrake",
-    "name": "Call Mandrake",
+    "name": "Canto de la Raíz Errante",
     "magic": "verdant",
     "rank": "average",
-    "description": "Though composed entirely of plant matter, mandrakes are highly intelligent, and can understand every nuance of speech from both elven and human language from birth. Originally they were enchanted by renowned elf-bard Sylii the Songstress' sweet voice and harmonious aura. After listening to her many tales of the world's woes, the mandrakes all agreed to assist the cause of the verdant mages and spread word to all of their kindred throughout Terra. Now, for a small expenditure of mana to carry the words of power through the surrounding lands, the mandrakes can be called to fight alongside and verdant mage.",
-    "attributes": ["summon", "selfOnly"],
+    "description": "Though composed entirely of plant matter, mandrakes are highly intelligent, and can understand every nuance of speech from both elven and human language from birth. Originally they were enchanted by renowned elf-bard Sylii the Songstress' sweet voice and harmonious aura. After listening to her many tales of the world's woes, the mandrakes all agreed to assist the cause of the Viridia Arcontes and spread word to all of their kindred throughout las Tierras Arcanas. Now, for a small expenditure of mana to carry the words of power through the surrounding lands, the mandrakes can be called to fight alongside and Viridia Arconte.",
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
     "researchCost": 1800,
     "castingCost": 29500,
     "castingTurn": 2,
@@ -218,27 +310,42 @@
     "effects": [
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["mandrake"],
+        "unitIds": [
+          "mandrake"
+        ],
         "summonType": "all",
         "summonNetPower": 180000,
         "rule": "spellLevelScaled",
         "magic": {
-          "ascendant": { "value": 0.6 },
-          "verdant": { "value": 1.0 },
-          "eradication": { "value": 0.6 },
-          "nether": { "value": 0.2 },
-          "phantasm": { "value": 0.2 }
+          "ascendant": {
+            "value": 0.6
+          },
+          "verdant": {
+            "value": 1
+          },
+          "eradication": {
+            "value": 0.6
+          },
+          "nether": {
+            "value": 0.2
+          },
+          "phantasm": {
+            "value": 0.2
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Viridia"
   },
   {
     "id": "naturesCure",
-    "name": "Natures Cure",
+    "name": "Savia Restauradora",
     "magic": "verdant",
     "rank": "average",
-    "description": "This spell uses the energy of nature to rejuvenate and heal damage of your troops. Grass and bushes grow tall and flowers bloom around your units, expanding their natural energy to heal all lost hit points. Area of effect: all your units.",
-    "attributes": ["battle"],
+    "description": "This spell uses the energy of nature to rejuvenate and heal daArconte of your troops. Grass and bushes grow tall and flowers bloom around your units, expanding their natural energy to heal all lost hit points. Area of effect: all your units.",
+    "attributes": [
+      "battle"
+    ],
     "researchCost": 1000,
     "castingCost": 2000,
     "castingTurn": 0,
@@ -257,24 +364,37 @@
             "healType": "points",
             "rule": "spellLevel",
             "magic": {
-              "ascendant": { "value": 0.004 },
-              "verdant": { "value": 0.008 },
-              "eradication": { "value": 0.004 },
-              "nether": { "value": 0.001 },
-              "phantasm": { "value": 0.001 }
+              "ascendant": {
+                "value": 0.004
+              },
+              "verdant": {
+                "value": 0.008
+              },
+              "eradication": {
+                "value": 0.004
+              },
+              "nether": {
+                "value": 0.001
+              },
+              "phantasm": {
+                "value": 0.001
+              }
             }
           }
         ]
       }
-    ]
+    ],
+    "displaySchool": "Viridia"
   },
   {
     "id": "stunningBeauty",
-    "name": "Stunning Beauty",
+    "name": "Esplendor Silvestre",
     "magic": "verdant",
     "rank": "average",
     "description": "This spell will only affect elven units. By showering them with the sparkling beauty of nature, they will shine with a stunning beauty, thus making enemies reluctant to attack them. Area of effect: all your elves.",
-    "attributes": ["battle"],
+    "attributes": [
+      "battle"
+    ],
     "researchCost": 1500,
     "castingCost": 3000,
     "castingTurn": 0,
@@ -286,7 +406,9 @@
         "targetType": "all",
         "filters": [
           {
-          "race": ["elf"]
+            "race": [
+              "elf"
+            ]
           }
         ],
         "trigger": null,
@@ -298,26 +420,55 @@
               "abilities": {
                 "rule": "add",
                 "magic": {
-                  "ascendant": { "value": { "name": "beauty", "extra": null } },
-                  "verdant": { "value": { "name": "beauty", "extra": null } },
-                  "eradication": { "value": { "name": "beauty", "extra": null } },
-                  "nether": { "value": { "name": "beauty", "extra": null } },
-                  "phantasm": { "value": { "name": "beauty", "extra": null } }
+                  "ascendant": {
+                    "value": {
+                      "name": "beauty",
+                      "extra": null
+                    }
+                  },
+                  "verdant": {
+                    "value": {
+                      "name": "beauty",
+                      "extra": null
+                    }
+                  },
+                  "eradication": {
+                    "value": {
+                      "name": "beauty",
+                      "extra": null
+                    }
+                  },
+                  "nether": {
+                    "value": {
+                      "name": "beauty",
+                      "extra": null
+                    }
+                  },
+                  "phantasm": {
+                    "value": {
+                      "name": "beauty",
+                      "extra": null
+                    }
+                  }
                 }
               }
             }
           }
         ]
       }
-    ]
+    ],
+    "displaySchool": "Viridia"
   },
   {
     "id": "summonNymph",
-    "name": "Summon Nymph",
+    "name": "Llamada de la Náyade Esmeralda",
     "magic": "verdant",
     "rank": "average",
     "description": "This spell will call a number of water spirits, nymphs, from their lakes to come to your side in battle. The highly magical nymphs are terrific warriors and cast their own magical influence over enemies. Although they appear as incredibly beautiful women, they posses magic of great power and often use it with great cruelty against their enemies.",
-    "attributes": ["summon", "selfOnly"],
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
     "researchCost": 1400,
     "castingCost": 7900,
     "castingTurn": 2,
@@ -325,27 +476,43 @@
     "effects": [
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["nymph"],
+        "unitIds": [
+          "nymph"
+        ],
         "summonType": "all",
         "summonNetPower": 180000,
         "rule": "spellLevelScaled",
         "magic": {
-          "ascendant": { "value": 0.6 },
-          "verdant": { "value": 1.0 },
-          "eradication": { "value": 0.6 },
-          "nether": { "value": 0.2 },
-          "phantasm": { "value": 0.2 }
+          "ascendant": {
+            "value": 0.6
+          },
+          "verdant": {
+            "value": 1
+          },
+          "eradication": {
+            "value": 0.6
+          },
+          "nether": {
+            "value": 0.2
+          },
+          "phantasm": {
+            "value": 0.2
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Viridia"
   },
   {
     "id": "summonWerebear",
-    "name": "Summon Werebear",
+    "name": "Convocar Guardián Ursino",
     "magic": "verdant",
     "rank": "average",
     "description": "This spell will summon fierce werebears--part human, part bear, and all power-- to join your army. The enormously powerful creatures are so ferocious warriors that frighten your soldiers as much as they frighten the enemy!",
-    "attributes": ["summon", "selfOnly"],
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
     "researchCost": 1800,
     "castingCost": 29500,
     "castingTurn": 2,
@@ -353,27 +520,43 @@
     "effects": [
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["werebear"],
+        "unitIds": [
+          "werebear"
+        ],
         "summonType": "all",
         "summonNetPower": 185000,
         "rule": "spellLevelScaled",
         "magic": {
-          "ascendant": { "value": 0.6 },
-          "verdant": { "value": 1.0 },
-          "eradication": { "value": 0.6 },
-          "nether": { "value": 0.2 },
-          "phantasm": { "value": 0.2 }
+          "ascendant": {
+            "value": 0.6
+          },
+          "verdant": {
+            "value": 1
+          },
+          "eradication": {
+            "value": 0.6
+          },
+          "nether": {
+            "value": 0.2
+          },
+          "phantasm": {
+            "value": 0.2
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Viridia"
   },
   {
     "id": "callGriffon",
-    "name": "Call Griffon",
+    "name": "Llamada del Alagrifo",
     "magic": "verdant",
     "rank": "complex",
-    "description": "The great wood-elf beastmaster Nefra Wildfire was the first to successfully befriend the deadly and highly intelligent griffons. She risked her life to save one of their injured young from a pack of orc wolf raiders, and further jeopardized herself by travelling to the mountain perch of the infant's clan, from which none had ever returned. Nefra spent many weeks with the clan, learning their ways and communing with them through her beast lore, never once asking them to leave their homes to fight in the Great Wars. As she bid the griffons farewell, the clan elder approached and presented her with a bundle of feathers collected from the wings of griffons from many clans. 'Merely hold a single feather aloft,' the great griffon said, 'and speak my name. The voice of whomever speaks shall ride the winds and reach the ears of all griffons, and we shall come to aid thee and thy bretheren.", 
-    "attributes": ["summon", "selfOnly"],
+    "description": "The great wood-elf beastmaster Nefra Wildfire was the first to successfully befriend the deadly and highly intelligent griffons. She risked her life to save one of their injured young from a pack of orc wolf raiders, and further jeopardized herself by travelling to the mountain perch of the infant's clan, from which none had ever returned. Nefra spent many weeks with the clan, learning their ways and communing with them through her beast lore, never once asking them to leave their homes to fight in the Great Wars. As she bid the griffons farewell, the clan elder approached and presented her with a bundle of feathers collected from the wings of griffons from many clans. 'Merely hold a single feather aloft,' the great griffon said, 'and speak my name. The voice of whomever speaks shall ride the winds and reach the ears of all griffons, and we shall come to aid thee and thy bretheren.",
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
     "researchCost": 3000,
     "castingCost": 34600,
     "castingTurn": 4,
@@ -381,27 +564,43 @@
     "effects": [
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["griffon"],
+        "unitIds": [
+          "griffon"
+        ],
         "summonType": "all",
         "summonNetPower": 450000,
         "rule": "spellLevelScaled",
         "magic": {
-          "ascendant": { "value": 0.6 },
-          "verdant": { "value": 1.0 },
-          "eradication": { "value": 0.6 },
-          "nether": { "value": 0.2 },
-          "phantasm": { "value": 0.2 }
+          "ascendant": {
+            "value": 0.6
+          },
+          "verdant": {
+            "value": 1
+          },
+          "eradication": {
+            "value": 0.6
+          },
+          "nether": {
+            "value": 0.2
+          },
+          "phantasm": {
+            "value": 0.2
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Viridia"
   },
   {
     "id": "callVenusFlyTraps",
-    "name": "Call Venus Flytraps",
+    "name": "Fauces de Rocío",
     "magic": "verdant",
     "rank": "complex",
     "description": "This spell calls Venus Flytraps to join your army. These plant creatures are particularly deceptive, somehow making their enemies attacks less effective before lashing out at them with deadly poison. As with all Treefolk, these plants are especially vulnerable to fire.",
-    "attributes": ["summon", "selfOnly"],
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
     "researchCost": 3200,
     "castingCost": 45000,
     "castingTurn": 5,
@@ -409,27 +608,43 @@
     "effects": [
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["venusFlytrap"],
+        "unitIds": [
+          "venusFlytrap"
+        ],
         "summonType": "all",
-        "summonNetPower": 540000, 
+        "summonNetPower": 540000,
         "rule": "spellLevelScaled",
         "magic": {
-          "ascendant": { "value": 0.6 },
-          "verdant": { "value": 1.0 },
-          "eradication": { "value": 0.6 },
-          "nether": { "value": 0.2 },
-          "phantasm": { "value": 0.2 }
+          "ascendant": {
+            "value": 0.6
+          },
+          "verdant": {
+            "value": 1
+          },
+          "eradication": {
+            "value": 0.6
+          },
+          "nether": {
+            "value": 0.2
+          },
+          "phantasm": {
+            "value": 0.2
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Viridia"
   },
   {
     "id": "callElvenBladeDancers",
-    "name": "Call Elven Blade Dancers",
+    "name": "Convocar Danzahojas",
     "magic": "verdant",
     "rank": "complex",
     "description": "",
-    "attributes": ["summon", "selfOnly"],
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
     "researchCost": 3100,
     "castingCost": 45000,
     "castingTurn": 5,
@@ -437,27 +652,43 @@
     "effects": [
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["elvenBladeDancer"],
+        "unitIds": [
+          "elvenBladeDancer"
+        ],
         "summonType": "all",
-        "summonNetPower": 510000, 
+        "summonNetPower": 510000,
         "rule": "spellLevelScaled",
         "magic": {
-          "ascendant": { "value": 0.6 },
-          "verdant": { "value": 1.0 },
-          "eradication": { "value": 0.6 },
-          "nether": { "value": 0.2 },
-          "phantasm": { "value": 0.2 }
+          "ascendant": {
+            "value": 0.6
+          },
+          "verdant": {
+            "value": 1
+          },
+          "eradication": {
+            "value": 0.6
+          },
+          "nether": {
+            "value": 0.2
+          },
+          "phantasm": {
+            "value": 0.2
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Viridia"
   },
   {
     "id": "callHighElves",
-    "name": "Call High Elves",
+    "name": "Convocar Altos Viridianos",
     "magic": "verdant",
     "rank": "complex",
     "description": "",
-    "attributes": ["summon", "selfOnly"],
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
     "researchCost": 2900,
     "castingCost": 40000,
     "castingTurn": 4,
@@ -465,27 +696,43 @@
     "effects": [
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["highElf"],
+        "unitIds": [
+          "highElf"
+        ],
         "summonType": "all",
-        "summonNetPower": 430000, 
+        "summonNetPower": 430000,
         "rule": "spellLevelScaled",
         "magic": {
-          "ascendant": { "value": 0.6 },
-          "verdant": { "value": 1.0 },
-          "eradication": { "value": 0.6 },
-          "nether": { "value": 0.2 },
-          "phantasm": { "value": 0.2 }
+          "ascendant": {
+            "value": 0.6
+          },
+          "verdant": {
+            "value": 1
+          },
+          "eradication": {
+            "value": 0.6
+          },
+          "nether": {
+            "value": 0.2
+          },
+          "phantasm": {
+            "value": 0.2
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Viridia"
   },
   {
     "id": "callTreant",
-    "name": "Call Treant",
+    "name": "Despertar del Anciano de Corteza",
     "magic": "verdant",
     "rank": "complex",
-    "description": "This spell will summon a number of treants to join your army. These ancient guardians of the forest are legendary for their fortitude and ferocity in battle and are a favorite among verdant mages.",
-    "attributes": ["summon", "selfOnly"],
+    "description": "This spell will summon a number of treants to join your army. These ancient guardians of the forest are legendary for their fortitude and ferocity in battle and are a favorite among Viridia Arcontes.",
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
     "researchCost": 3000,
     "castingCost": 34600,
     "castingTurn": 4,
@@ -493,27 +740,42 @@
     "effects": [
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["treant"],
+        "unitIds": [
+          "treant"
+        ],
         "summonType": "all",
-        "summonNetPower": 420000, 
+        "summonNetPower": 420000,
         "rule": "spellLevelScaled",
         "magic": {
-          "ascendant": { "value": 0.6 },
-          "verdant": { "value": 1.0 },
-          "eradication": { "value": 0.6 },
-          "nether": { "value": 0.2 },
-          "phantasm": { "value": 0.2 }
+          "ascendant": {
+            "value": 0.6
+          },
+          "verdant": {
+            "value": 1
+          },
+          "eradication": {
+            "value": 0.6
+          },
+          "nether": {
+            "value": 0.2
+          },
+          "phantasm": {
+            "value": 0.2
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Viridia"
   },
   {
     "id": "callHurricane",
-    "name": "Call Hurricane",
+    "name": "Tempestad de la Fronda",
     "magic": "verdant",
     "rank": "complex",
     "description": "The spell will summon a violent thunder storm. Strong Gale blows and heavy rainfall pours from the sky, which makes it impossible for most fliers to take flight under such bad weather, thus making most fliers a much more easier prey. Area of effect: all units in battle.",
-    "attributes": ["battle"],
+    "attributes": [
+      "battle"
+    ],
     "researchCost": 6000,
     "castingCost": 20000,
     "castingTurn": 0,
@@ -533,26 +795,55 @@
               "abilities": {
                 "rule": "remove",
                 "magic": {
-                  "ascendant": { "value": { "name": "flying", "extra": null } },
-                  "verdant": { "value": { "name": "flying", "extra": null } },
-                  "eradication": { "value": { "name": "flying", "extra": null } },
-                  "nether": { "value": { "name": "flying", "extra": null } },
-                  "phantasm": { "value": { "name": "flying", "extra": null } }
+                  "ascendant": {
+                    "value": {
+                      "name": "flying",
+                      "extra": null
+                    }
+                  },
+                  "verdant": {
+                    "value": {
+                      "name": "flying",
+                      "extra": null
+                    }
+                  },
+                  "eradication": {
+                    "value": {
+                      "name": "flying",
+                      "extra": null
+                    }
+                  },
+                  "nether": {
+                    "value": {
+                      "name": "flying",
+                      "extra": null
+                    }
+                  },
+                  "phantasm": {
+                    "value": {
+                      "name": "flying",
+                      "extra": null
+                    }
+                  }
                 }
               }
             }
           }
         ]
       }
-    ]
+    ],
+    "displaySchool": "Viridia"
   },
   {
     "id": "enlargeAnimal",
-    "name": "Enlarge Animal",
+    "name": "Gigantismo Feral",
     "magic": "verdant",
     "rank": "complex",
     "description": "This spell only affects animal units. It will temporary enlarge all your animal units, thus making them much more powerful. This is very effective spell when used on army with many animals.",
-    "attributes": ["enchantment", "selfOnly"],
+    "attributes": [
+      "enchantment",
+      "selfOnly"
+    ],
     "researchCost": 3000,
     "castingCost": 15000,
     "castingTurn": 5,
@@ -568,7 +859,9 @@
         "targetType": "all",
         "filters": [
           {
-            "race": ["animal"]
+            "race": [
+              "animal"
+            ]
           }
         ],
         "trigger": null,
@@ -580,26 +873,40 @@
               "primaryAttackPower,counterAttackPower": {
                 "rule": "spellLevelScaledPercentage",
                 "magic": {
-                  "ascendant": { "value": 0.04708 },
-                  "verdant": { "value": 0.4708 },
-                  "eradication": { "value": 0.04708 },
-                  "nether": { "value": 0.02354 },
-                  "phantasm": { "value": 0.02354 }
+                  "ascendant": {
+                    "value": 0.04708
+                  },
+                  "verdant": {
+                    "value": 0.4708
+                  },
+                  "eradication": {
+                    "value": 0.04708
+                  },
+                  "nether": {
+                    "value": 0.02354
+                  },
+                  "phantasm": {
+                    "value": 0.02354
+                  }
                 }
               }
             }
           }
         ]
       }
-    ]
+    ],
+    "displaySchool": "Viridia"
   },
   {
     "id": "plantGrowth",
-    "name": "Plant Growth",
+    "name": "Ascenso de la Arboleda",
     "magic": "verdant",
     "rank": "complex",
     "description": "This powerful spell is able to affect only treefolk creatures. It uses the energy of nature to make them grow to a considerable size, and maintain that size for as long as the spell is still in effect.",
-    "attributes": ["enchantment", "selfOnly"],
+    "attributes": [
+      "enchantment",
+      "selfOnly"
+    ],
     "researchCost": 3000,
     "castingCost": 30000,
     "castingTurn": 3,
@@ -615,7 +922,9 @@
         "targetType": "all",
         "filters": [
           {
-            "race": ["treefolk"]
+            "race": [
+              "treefolk"
+            ]
           }
         ],
         "trigger": null,
@@ -627,7 +936,9 @@
               "primaryAttackPower,counterAttackPower,hitPoints": {
                 "rule": "spellLevelScaledPercentage",
                 "magic": {
-                  "verdant": { "value": 0.9524 }
+                  "verdant": {
+                    "value": 0.9524
+                  }
                 }
               }
             }
@@ -638,7 +949,9 @@
         "effectType": "ArmyUpkeepEffect",
         "filters": [
           {
-            "race": ["treefolk"]
+            "race": [
+              "treefolk"
+            ]
           }
         ],
         "rule": "percentage",
@@ -646,21 +959,24 @@
           "verdant": {
             "value": {
               "geld": 0,
-              "mana": 0.20,
+              "mana": 0.2,
               "population": 0
             }
           }
         }
       }
-    ]
+    ],
+    "displaySchool": "Viridia"
   },
   {
     "id": "regeneration",
-    "name": "Regeneration",
+    "name": "Regeneración de Savia",
     "magic": "verdant",
     "rank": "complex",
     "description": "By borrowing from the natural energy of growth, you can grant your troops the ability of regeneration. Regenerating soldiers appear to grow back together with tiny vines and mossy bandages. Area of effect: all your units.",
-    "attributes": ["battle"],
+    "attributes": [
+      "battle"
+    ],
     "researchCost": 3000,
     "castingCost": 30000,
     "castingTurn": 0,
@@ -679,24 +995,37 @@
             "healType": "percentage",
             "rule": "set",
             "magic": {
-              "ascendant": { "value": 5 },
-              "verdant": { "value": 15 },
-              "eradication": { "value": 5 },
-              "nether": { "value": 2 },
-              "phantasm": { "value": 2 }
+              "ascendant": {
+                "value": 5
+              },
+              "verdant": {
+                "value": 15
+              },
+              "eradication": {
+                "value": 5
+              },
+              "nether": {
+                "value": 2
+              },
+              "phantasm": {
+                "value": 2
+              }
             }
           }
         ]
       }
-    ]
+    ],
+    "displaySchool": "Viridia"
   },
   {
     "id": "rustArmor",
-    "name": "Rust Armor",
+    "name": "Lluvia Corrosiva",
     "magic": "verdant",
     "rank": "complex",
     "description": "Calling upon the power of nature, the caster brings forth a shower of acidic rain upon the enemy. The rain will corrode any normal metal items upon contact. Thus, making those heavily armored much less resistant to melee attacks.",
-    "attributes": ["battle"],
+    "attributes": [
+      "battle"
+    ],
     "researchCost": 5000,
     "castingCost": 20000,
     "castingTurn": 0,
@@ -716,26 +1045,40 @@
               "attackResistances.melee": {
                 "rule": "spellLevelScaled",
                 "magic": {
-                  "ascendant": { "value": -14 },
-                  "verdant": { "value": -27.8 },
-                  "eradication": { "value": -14 },
-                  "nether": { "value": -7 },
-                  "phantasm": { "value": -7 }
+                  "ascendant": {
+                    "value": -14
+                  },
+                  "verdant": {
+                    "value": -27.8
+                  },
+                  "eradication": {
+                    "value": -14
+                  },
+                  "nether": {
+                    "value": -7
+                  },
+                  "phantasm": {
+                    "value": -7
+                  }
                 }
               }
             }
           }
         ]
       }
-    ]
+    ],
+    "displaySchool": "Viridia"
   },
   {
     "id": "sunray",
-    "name": "Sunray",
+    "name": "Sol de Hoja Clara",
     "magic": "verdant",
     "rank": "complex",
-    "description": "This enchantment spell will make the sun shine brighter in your country, thus giving mages higher resistance to dark or illusionary magic. It will increase your Nether and Phantasm resistances.",
-    "attributes": ["enchantment", "selfOnly"],
+    "description": "This enchantment spell will make the sun shine brighter in your country, thus giving Arcontes higher resistance to dark or illusionary magic. It will increase your Nadir and Oneiria resistances.",
+    "attributes": [
+      "enchantment",
+      "selfOnly"
+    ],
     "researchCost": 5000,
     "castingCost": 50000,
     "castingTurn": 10,
@@ -750,11 +1093,21 @@
         "rule": "spellLevel",
         "resistance": "nether",
         "magic": {
-          "ascendant": { "value": 0.02 },
-          "verdant": { "value": 0.085 },
-          "eradication": { "value": 0.02 },
-          "nether": { "value": 0.007 },
-          "phantasm": { "value": 0.007 }
+          "ascendant": {
+            "value": 0.02
+          },
+          "verdant": {
+            "value": 0.085
+          },
+          "eradication": {
+            "value": 0.02
+          },
+          "nether": {
+            "value": 0.007
+          },
+          "phantasm": {
+            "value": 0.007
+          }
         }
       },
       {
@@ -762,22 +1115,35 @@
         "rule": "spellLevel",
         "resistance": "phantasm",
         "magic": {
-          "ascendant": { "value": 0.02 },
-          "verdant": { "value": 0.085 },
-          "eradication": { "value": 0.02 },
-          "nether": { "value": 0.007 },
-          "phantasm": { "value": 0.007 }
+          "ascendant": {
+            "value": 0.02
+          },
+          "verdant": {
+            "value": 0.085
+          },
+          "eradication": {
+            "value": 0.02
+          },
+          "nether": {
+            "value": 0.007
+          },
+          "phantasm": {
+            "value": 0.007
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Viridia"
   },
   {
     "id": "summonLocustSwarm",
-    "name": "Summon Locust Swarm",
+    "name": "Plaga de Alas Hambrientas",
     "magic": "verdant",
     "rank": "complex",
     "description": "This spell will summon a horde of hungry locusts that you can send to plague another country. They will eat up whatever food they can find, thus leaving the peasants starving to death.",
-    "attributes": ["enchantment"],
+    "attributes": [
+      "enchantment"
+    ],
     "researchCost": 5000,
     "castingCost": 50000,
     "castingTurn": 4,
@@ -792,22 +1158,36 @@
         "rule": "spellLevel",
         "production": "farms",
         "magic": {
-          "ascendant": { "value": -0.34 },
-          "verdant": { "value": -0.67 },
-          "eradication": { "value": -0.34 },
-          "nether": { "value": -0.12 },
-          "phantasm": { "value": -0.12 }
+          "ascendant": {
+            "value": -0.34
+          },
+          "verdant": {
+            "value": -0.67
+          },
+          "eradication": {
+            "value": -0.34
+          },
+          "nether": {
+            "value": -0.12
+          },
+          "phantasm": {
+            "value": -0.12
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Viridia"
   },
   {
     "id": "weatherSummoning",
-    "name": "Weather Summoning",
+    "name": "Pacto del Cielo Fértil",
     "magic": "verdant",
     "rank": "complex",
     "description": "This spell will change the weather to the most favorable one, thus producing more fruit crop production and generating more income for your country.",
-    "attributes": ["enchantment", "selfOnly"],
+    "attributes": [
+      "enchantment",
+      "selfOnly"
+    ],
     "researchCost": 5000,
     "castingCost": 50000,
     "castingTurn": 8,
@@ -822,22 +1202,36 @@
         "rule": "spellLevel",
         "production": "farms",
         "magic": {
-          "ascendant": { "value": 0.140 },
-          "verdant": { "value": 0.313 },
-          "eradication": { "value": 0.140 },
-          "nether": { "value": 0.072 },
-          "phantasm": { "value": 0.072 }
+          "ascendant": {
+            "value": 0.14
+          },
+          "verdant": {
+            "value": 0.313
+          },
+          "eradication": {
+            "value": 0.14
+          },
+          "nether": {
+            "value": 0.072
+          },
+          "phantasm": {
+            "value": 0.072
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Viridia"
   },
   {
     "id": "callPhoenix",
-    "name": "Call Phoenix",
+    "name": "Convocar Ave de Renuevo",
     "magic": "verdant",
     "rank": "ultimate",
     "description": "This spell will summon the fire bird phoenix from its remote hiding place to join your army.",
-    "attributes": ["summon", "selfOnly"],
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
     "researchCost": 30000,
     "castingCost": 300000,
     "castingTurn": 8,
@@ -845,27 +1239,43 @@
     "effects": [
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["phoenix"],
+        "unitIds": [
+          "phoenix"
+        ],
         "summonType": "all",
-        "summonNetPower": 1900000, 
+        "summonNetPower": 1900000,
         "rule": "spellLevelScaled",
         "magic": {
-          "ascendant": { "value": 0.0 },
-          "verdant": { "value": 1.0 },
-          "eradication": { "value": 0.0 },
-          "nether": { "value": 0.0 },
-          "phantasm": { "value": 0.0 }
+          "ascendant": {
+            "value": 0
+          },
+          "verdant": {
+            "value": 1
+          },
+          "eradication": {
+            "value": 0
+          },
+          "nether": {
+            "value": 0
+          },
+          "phantasm": {
+            "value": 0
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Viridia"
   },
   {
     "id": "summonEarthElemental",
-    "name": "Summon Earth Elemental",
+    "name": "Alzar Corazón de Piedra",
     "magic": "verdant",
     "rank": "ultimate",
-    "description": "This spell summons Earth Elementals to your army. Born of the mother earth, these beings embody natures fury. The ground trembles with anticipation at the archmages call for the mountains to again rise up to the clash of a new war. The beauty of stone and the passion of soil have been embraced in the creation of these battle ready warriors, that only the strongest verdant trained mage can attain.",
-    "attributes": ["summon", "selfOnly"],
+    "description": "This spell summons Earth Elementals to your army. Born of the mother earth, these beings embody natures fury. The ground trembles with anticipation at the Arcontes call for the mountains to again rise up to the clash of a new war. The beauty of stone and the passion of soil have been embraced in the creation of these battle ready warriors, that only the strongest Viridia trained Arconte can attain.",
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
     "researchCost": 30000,
     "castingCost": 300000,
     "castingTurn": 8,
@@ -873,27 +1283,43 @@
     "effects": [
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["earthElemental"],
+        "unitIds": [
+          "earthElemental"
+        ],
         "summonType": "all",
-        "summonNetPower": 2000000, 
+        "summonNetPower": 2000000,
         "rule": "spellLevelScaled",
         "magic": {
-          "ascendant": { "value": 0.0 },
-          "verdant": { "value": 1.0 },
-          "eradication": { "value": 0.0 },
-          "nether": { "value": 0.0 },
-          "phantasm": { "value": 0.0 }
+          "ascendant": {
+            "value": 0
+          },
+          "verdant": {
+            "value": 1
+          },
+          "eradication": {
+            "value": 0
+          },
+          "nether": {
+            "value": 0
+          },
+          "phantasm": {
+            "value": 0
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Viridia"
   },
   {
     "id": "naturesFavor",
-    "name": "Natures Favor",
+    "name": "Favor de la Raíz Madre",
     "magic": "verdant",
     "rank": "ultimate",
-    "description": "The mage will be granted the favour of nature after this spell is chanted. The population will grow faster, your people will generate more gold, and creatures will come and join your army.",
-    "attributes": ["enchantment", "selfOnly"],
+    "description": "The Arconte will be granted the favour of nature after this spell is chanted. The population will grow faster, your people will generate more gold, and creatures will come and join your army.",
+    "attributes": [
+      "enchantment",
+      "selfOnly"
+    ],
     "researchCost": 30000,
     "castingCost": 100000,
     "castingTurn": 8,
@@ -905,12 +1331,18 @@
     "effects": [
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["dryad", "nymph", "treant"],
+        "unitIds": [
+          "dryad",
+          "nymph",
+          "treant"
+        ],
         "summonType": "all",
         "summonNetPower": 5000,
         "rule": "spellLevelScaled",
         "magic": {
-          "verdant": { "value": 1.0 }
+          "verdant": {
+            "value": 1
+          }
         }
       },
       {
@@ -918,7 +1350,9 @@
         "rule": "spellLevel",
         "production": "farms",
         "magic": {
-          "verdant": { "value": 0.2 }
+          "verdant": {
+            "value": 0.2
+          }
         }
       },
       {
@@ -926,18 +1360,24 @@
         "rule": "percentage",
         "production": "population",
         "magic": {
-          "verdant": { "value": 0.15 }
+          "verdant": {
+            "value": 0.15
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Viridia"
   },
   {
     "id": "naturesLore",
-    "name": "Natures Lore",
+    "name": "Sabiduría de los Anillos",
     "magic": "verdant",
     "rank": "ultimate",
-    "description": "The most treasured secret of the Elder Druids, only the most enlightened mage who are well versed in the arts of the woods are gifted with this ancient lore. It is a reminder to protect the land and its mysterious powers can grant longevity to any kingdom. It will increase amount of land you explore.",
-    "attributes": ["enchantment", "selfOnly"],
+    "description": "The most treasured secret of the Elder Druids, only the most enlightened Arconte who are well versed in the arts of the woods are gifted with this ancient lore. It is a reminder to protect the land and its mysterious powers can grant longevity to any kingdom. It will increase amount of land you explore.",
+    "attributes": [
+      "enchantment",
+      "selfOnly"
+    ],
     "researchCost": 30000,
     "castingCost": 300000,
     "castingTurn": 10,
@@ -953,7 +1393,9 @@
         "targetType": "all",
         "filters": [
           {
-          "race": ["elf"]
+            "race": [
+              "elf"
+            ]
           }
         ],
         "trigger": null,
@@ -965,7 +1407,9 @@
               "primaryAttackPower,secondaryAttackPower": {
                 "rule": "spellLevelScaledPercentage",
                 "magic": {
-                  "verdant": { "value": 0.13 }
+                  "verdant": {
+                    "value": 0.13
+                  }
                 }
               }
             }
@@ -977,7 +1421,9 @@
               "accuracy": {
                 "rule": "spellLevelScaled",
                 "magic": {
-                  "verdant": { "value": 7 }
+                  "verdant": {
+                    "value": 7
+                  }
                 }
               }
             }
@@ -990,7 +1436,9 @@
         "targetType": "all",
         "filters": [
           {
-          "race": ["animal"]
+            "race": [
+              "animal"
+            ]
           }
         ],
         "trigger": null,
@@ -1002,7 +1450,9 @@
               "primaryAttackPower": {
                 "rule": "spellLevelScaledPercentage",
                 "magic": {
-                  "verdant": { "value": 0.23 }
+                  "verdant": {
+                    "value": 0.23
+                  }
                 }
               }
             }
@@ -1014,7 +1464,9 @@
               "hitPoints": {
                 "rule": "spellLevelScaledPercentage",
                 "magic": {
-                  "verdant": { "value": 0.20 }
+                  "verdant": {
+                    "value": 0.2
+                  }
                 }
               }
             }
@@ -1026,23 +1478,28 @@
         "rule": "percentage",
         "production": "land",
         "magic": {
-          "verdant": { "value": 0.50 }
+          "verdant": {
+            "value": 0.5
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Viridia"
   },
   {
     "id": "serenity",
-    "name": "Serenity",
+    "name": "Quietud del Bosque",
     "magic": "verdant",
     "rank": "ultimate",
     "description": "This spell will restore the balance of everything, thus dispelling most existing enchantment spells, beneficial or harmful, in a specific place.",
-    "attributes": ["instant"],
+    "attributes": [
+      "instant"
+    ],
     "researchCost": 30000,
     "castingCost": 300000,
     "castingTurn": 8,
     "upkeep": null,
-    "effects": [
-    ]
+    "effects": [],
+    "displaySchool": "Viridia"
   }
 ]
