@@ -36,7 +36,6 @@
     "packages/engine/src/magic.ts": "020014f83933a64cc46feecf4e4dd6f7082ed170",
     "packages/engine/src/random.ts": "b1460fe84e4f342717ebe60ace8947f2c17402c7",
     "packages/engine/src/util.ts": "3139f7f26854061497b989fb71137179b816dde7",
-    "packages/engine/src/war.ts": "65460ae3115096156b652b480c3145d5c1bc7d1d",
     "packages/shared/src/api.ts": "d397f839b4eaaae91287b0dcee40c3852e27d1f8",
     "packages/shared/src/auth.ts": "ad6b53a386b58adf2dd220e8c769b52dbeabc81a",
     "packages/shared/src/battle.ts": "d8c85d05b48e8085c40504b5689196a8e7f96f6d",
@@ -75,5 +74,8 @@
     "lore",
     "displaySchool",
     "displayName"
-  ]
+  ],
+  "runtimeEquivalentFiles": {
+    "packages/engine/src/war.ts": "TypeScript-only casts preserve the original `droppingEffect.extra || 5` runtime fallback."
+  }
 }
