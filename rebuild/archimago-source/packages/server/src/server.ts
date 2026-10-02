@@ -37,7 +37,7 @@ import { PGliteDataAdapter } from 'data-adapter/src/pglite-data-adapter';
 import { Engine } from 'engine/src/engine';
 import { MAX_AGE, verifyAccessToken } from 'shared/src/auth';
 import { NameError } from 'shared/src/errors';
-import { toArcanumDomain } from './arcanum-domain';
+import { toArcanumDomain, toEngineBuildingPlan } from './arcanum-domain';
 
 
 const PORT = 3000;
@@ -143,12 +143,37 @@ router.post('/api/arcanum/build', async (req: any, res) => {
   if (!mage) return;
 
   try {
-    await engine.build(mage, req.body);
+    const plan = toEngineBuildingPlan(req.body);
+    const beforeTurns = mage.currentTurn;
+    await engine.build(mage, plan);
     mage = await engine.getMageByUser(req.user.username);
-    res.status(200).json({ domain: toArcanumDomain(mage) });
+    res.status(200).json({
+      domain: toArcanumDomain(mage),
+      turnsSpent: beforeTurns - mage.currentTurn,
+    });
   } catch (err) {
     console.error(err);
     res.status(400).json({ error: 'BUILD_FAILED', message: 'No se pudo completar la construcción.' });
+  }
+});
+
+router.post('/api/arcanum/destroy', async (req: any, res) => {
+  let mage = await getPlayerDomain(req, res);
+  if (!mage) return;
+
+  try {
+    const plan = toEngineBuildingPlan(req.body);
+    const reclaimedLand = Object.values(plan).reduce((sum, amount) => sum + Math.max(0, amount), 0);
+    await engine.destroy(mage, plan);
+    mage = await engine.getMageByUser(req.user.username);
+    res.status(200).json({
+      domain: toArcanumDomain(mage),
+      turnsSpent: 1,
+      reclaimedLand,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ error: 'DESTROY_FAILED', message: 'No se pudo completar la demolición.' });
   }
 });
 
