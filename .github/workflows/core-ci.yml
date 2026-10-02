@@ -2,7 +2,7 @@ name: ARCANUM Core CI
 
 on:
   push:
-    branches: [main, rebuild/archimago-engine]
+    branches: [main]
   pull_request:
     branches: [main]
 
