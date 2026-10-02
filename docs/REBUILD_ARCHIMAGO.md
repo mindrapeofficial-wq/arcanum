@@ -9,6 +9,35 @@
 ## Objetivo
 Rehacer ARCANUM utilizando el motor y la funcionalidad de Archimago como base, manteniendo la identidad visual y narrativa propia de ARCANUM.
 
+## Invariante de fidelidad mecánica
+
+La reconstrucción toma como referencia normativa el commit fijado de Archimago `e84237e6a7624c0be71cce6a92cbabbe81471a9f`.
+
+**ARCANUM puede cambiar:**
+- nombres visibles, lore, traducción y textos;
+- branding, imágenes, audio, layout y UX;
+- nombres públicos de escuelas y edificios;
+- envoltorios de API necesarios para no filtrar nomenclatura heredada.
+
+**ARCANUM no puede cambiar sin una decisión explícita de diseño:**
+- fórmulas;
+- probabilidades;
+- costes;
+- resistencias;
+- tasas de producción;
+- límites;
+- consumo y regeneración de turnos;
+- reglas de construcción y demolición;
+- investigación;
+- reclutamiento, mantenimiento y disolución;
+- magia, objetos y dispel;
+- mercado, pujas, comisiones y expiraciones;
+- cálculos de combate y efectos.
+
+El CI contiene un candado de paridad. Los archivos nucleares que no requieren adaptación deben permanecer byte-idénticos al commit fijado. Los catálogos rebrandeados pueden cambiar sus campos de presentación, pero cualquier cambio mecánico hace fallar la build.
+
+Cuando exista una discrepancia entre una implementación histórica de ARCANUM y el motor fijado, el motor fijado es la fuente de verdad para la reconstrucción salvo que este documento indique expresamente una excepción.
+
 ## Regla principal
 Clonar la funcionalidad del juego original al 100% en cuanto a sistemas jugables, pero no su identidad narrativa ni visual.
 
