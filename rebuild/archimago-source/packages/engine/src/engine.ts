@@ -304,7 +304,7 @@ class Engine {
     for (const itemId of Object.keys(mage.items)) {
       const item = uniqueItems.find(d => d.id === itemId);
       if (item && item.attributes.includes('oneUse') === false) {
-        activeUniqueItems.push(item);
+        activeUniqueItems.push(item as Item);
       }
     }
 
