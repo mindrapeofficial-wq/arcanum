@@ -9,7 +9,7 @@ const version=JSON.parse(read("version.json"));
 const jsFiles=[
   "assets/js/immersive.js","assets/js/state.js","assets/js/auth.js","assets/js/archmage.js","assets/js/combat-profile.js","assets/js/items.js","assets/js/inventory.js","assets/js/archmage-sheet.js","assets/js/profile.js","assets/js/realm-state.js","assets/js/router.js",
   "assets/js/community.js","assets/js/realm.js","assets/js/economy.js","assets/js/construction.js",
-  "assets/js/magic.js","assets/js/army.js","assets/js/edition.js","assets/js/realm-tools.js","assets/js/luck-support.js","assets/js/war.js","assets/js/arena.js","assets/js/pve.js","assets/js/tutorial.js","assets/js/ui.js"
+  "assets/js/magic.js","assets/js/army.js","assets/js/edition.js","assets/js/realm-tools.js","assets/js/luck-support.js","assets/js/black-market.js","assets/js/war.js","assets/js/arena.js","assets/js/pve.js","assets/js/tutorial.js","assets/js/ui.js"
 ];
 const js=jsFiles.map(read).join("\n");
 const uiAssets=[
@@ -698,4 +698,32 @@ test("Classic build injects the edition flag and keeps the ARCANUM identity",asy
   const manifest=JSON.parse(classicManifest(read("manifest.webmanifest")));
   assert.equal(manifest.name,"ARCANUM: Las Cinco Escuelas");
   assert.throws(()=>classicIndexHtml("<html><title>ARCANUM</title></html>"),/edition\.js/);
+});
+
+test("Black Market client formats values, only calls its RPCs and never stores state locally",()=>{
+  const context={document:{addEventListener(){}}};
+  vm.createContext(context);
+  vm.runInContext(read("assets/js/black-market.js"),context);
+  assert.equal(vm.runInContext("bmMinutesText(0)",context),"0 min");
+  assert.equal(vm.runInContext("bmMinutesText(90)",context),"1 h 30 min");
+  assert.equal(vm.runInContext("bmMinutesText(120)",context),"2 h");
+  assert.match(vm.runInContext("bmError(new Error(\"BID_TOO_LOW\"))",context),/5 %/);
+  const src=read("assets/js/black-market.js");
+  assert.doesNotMatch(src,/localStorage|sessionStorage/,"auction state is server canonical");
+  const allowed=new Set(["bm_list_lots","bm_place_bids","bm_my_bids"]);
+  const used=[...src.matchAll(/rpc\("([a-z_]+)"/g)].map(m=>m[1]);
+  assert.ok(used.length>=3);
+  for(const name of used)assert.ok(allowed.has(name),"unexpected RPC: "+name);
+  assert.match(html,/id="black-market-button"[^>]*hidden|hidden[^>]*id="black-market-button"/,"button hidden until the server enables the market");
+  assert.match(html,/assets\/js\/black-market\.js/);
+});
+
+test("Black Market migration is flagged off, RLS-protected and service-only for lot creation",()=>{
+  const sql=read("supabase/migrations/20261002120000_black_market.sql");
+  assert.match(sql,/enable row level security/);
+  assert.match(sql,/revoke all on public\.bm_lots, public\.bm_bids from anon, authenticated/);
+  assert.match(sql,/, 'false'\) = 'true'/,"absent flag means OFF");
+  assert.match(sql,/revoke all on function private\.bm_spawn_lot/);
+  assert.doesNotMatch(sql,/grant execute on function private\./,"private helpers are never granted");
+  assert.match(sql,/grant execute on function public\.bm_list_lots\(text\), public\.bm_place_bids\(jsonb\), public\.bm_my_bids\(\) to authenticated/);
 });
