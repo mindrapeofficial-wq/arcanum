@@ -697,7 +697,7 @@ export const battle = (battleType: string, attacker: Combatant, defender: Combat
       const droppingEffect = stack.unit.abilities.find(d => d.name === 'dropping');
       stack.unit.abilities = stack.unit.abilities.filter(d => d.name !== 'flying');
 
-      const damagePerUnit = droppingEffect.extra || 5;
+      const damagePerUnit = (droppingEffect.extra as number) || 5;
       const resist = calcResistance(stack.unit, ['melee']);
       const damage = damagePerUnit * stack.size * ((100 - resist) / 100);
 
@@ -722,7 +722,7 @@ export const battle = (battleType: string, attacker: Combatant, defender: Combat
       const droppingEffect = stack.unit.abilities.find(d => d.name === 'dropping');
       stack.unit.abilities = stack.unit.abilities.filter(d => d.name !== 'flying');
 
-      const damagePerUnit = droppingEffect.extra || 5;
+      const damagePerUnit = (droppingEffect.extra as number) || 5;
       const resist = calcResistance(stack.unit, ['melee']);
       const damage = damagePerUnit * stack.size * ((100 - resist) / 100);
 
