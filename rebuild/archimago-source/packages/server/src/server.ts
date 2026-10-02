@@ -37,7 +37,7 @@ import { PGliteDataAdapter } from 'data-adapter/src/pglite-data-adapter';
 import { Engine } from 'engine/src/engine';
 import { MAX_AGE, verifyAccessToken } from 'shared/src/auth';
 import { NameError } from 'shared/src/errors';
-import { arcanumSchool, engineSchool, toArcanumDomain, toArcanumRank, toEngineBuildingPlan } from './arcanum-domain';
+import { arcanumSchool, describeMarketAsset, engineSchool, toArcanumDispelPreview, toArcanumDomain, toArcanumMagicState, toArcanumRank, toEngineBuildingPlan } from './arcanum-domain';
 
 
 const PORT = 3000;
@@ -249,6 +249,153 @@ router.get('/api/arcanum/clock', async (_req: any, res) => {
 
 router.get('/api/arcanum/rules', async (_req: any, res) => {
   res.status(200).json(await engine.getGameTable());
+});
+
+router.get('/api/arcanum/magic', async (req: any, res) => {
+  const mage = await getPlayerDomain(req, res);
+  if (!mage) return;
+  res.status(200).json({ magic: toArcanumMagicState(mage) });
+});
+
+router.get('/api/arcanum/dispel-preview', async (req: any, res) => {
+  const mage = await getPlayerDomain(req, res);
+  if (!mage) return;
+  const enchantId = String(req.query?.enchantId ?? '');
+  const mana = Math.max(0, Number(req.query?.mana ?? 0));
+  const preview = toArcanumDispelPreview(mage, enchantId, mana);
+  if (!preview) return res.status(404).json({ error: 'ENCHANTMENT_NOT_FOUND' });
+  res.status(200).json(preview);
+});
+
+router.post('/api/arcanum/spell', async (req: any, res) => {
+  let mage = await getPlayerDomain(req, res);
+  if (!mage) return;
+  const spellId = String(req.body?.spellId ?? '');
+  const count = readTurns(req.body?.count ?? req.body?.num);
+  if (count === null) return res.status(400).json({ error: 'INVALID_COUNT' });
+  const targetId = Number(req.body?.targetId ?? req.body?.target?.id ?? 0) || 0;
+
+  try {
+    const result = await engine.castSpell(mage, spellId, count, targetId);
+    mage = await engine.getMageByUser(req.user.username);
+    res.status(200).json({
+      domain: toArcanumDomain(mage),
+      magic: toArcanumMagicState(mage),
+      result,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ error: 'CAST_FAILED', message: 'No se pudo completar el lanzamiento.' });
+  }
+});
+
+router.post('/api/arcanum/dispel', async (req: any, res) => {
+  let mage = await getPlayerDomain(req, res);
+  if (!mage) return;
+  const enchantId = String(req.body?.enchantId ?? '');
+  const mana = Number(req.body?.mana ?? 0);
+
+  try {
+    const success = await engine.dispel(mage, enchantId, mana);
+    mage = await engine.getMageByUser(req.user.username);
+    res.status(200).json({
+      success,
+      domain: toArcanumDomain(mage),
+      magic: toArcanumMagicState(mage),
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ error: 'DISPEL_FAILED', message: 'No se pudo completar la disipación.' });
+  }
+});
+
+router.post('/api/arcanum/item', async (req: any, res) => {
+  let mage = await getPlayerDomain(req, res);
+  if (!mage) return;
+  const itemId = String(req.body?.itemId ?? '');
+  const count = readTurns(req.body?.count ?? req.body?.num);
+  if (count === null) return res.status(400).json({ error: 'INVALID_COUNT' });
+  const targetId = Number(req.body?.targetId ?? req.body?.target?.id ?? 0) || 0;
+
+  try {
+    const result = await engine.useItem(mage, itemId, count, targetId);
+    mage = await engine.getMageByUser(req.user.username);
+    res.status(200).json({
+      domain: toArcanumDomain(mage),
+      magic: toArcanumMagicState(mage),
+      result,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ error: 'ITEM_USE_FAILED', message: 'No se pudo usar el objeto.' });
+  }
+});
+
+router.get('/api/arcanum/market', async (req: any, res) => {
+  const mage = await getPlayerDomain(req, res);
+  if (!mage) return;
+  const [prices, items, rules] = await Promise.all([
+    engine.getMarketPrices(),
+    engine.getMarketItems(),
+    engine.getGameTable(),
+  ]);
+  const priceById = new Map(prices.map(row => [row.id, row]));
+  res.status(200).json({
+    rules: rules.blackmarket,
+    prices: prices.map(row => ({
+      ...row,
+      asset: describeMarketAsset(row.id, row.type),
+    })),
+    items: items.map(row => ({
+      ...row,
+      asset: describeMarketAsset(row.priceId, priceById.get(row.priceId)?.type ?? 'item'),
+    })),
+    inventory: toArcanumMagicState(mage).items,
+    gold: mage.currentGeld,
+  });
+});
+
+router.get('/api/arcanum/market/bids/:priceId', async (req: any, res) => {
+  const mage = await getPlayerDomain(req, res);
+  if (!mage) return;
+  const bids = await engine.getMarketBids(String(req.params.priceId));
+  res.status(200).json({
+    bids: bids.map(row => ({
+      marketId: row.marketId,
+      bid: row.bid,
+      mine: row.mageId === mage.id,
+    })),
+  });
+});
+
+router.post('/api/arcanum/market/bids', async (req: any, res) => {
+  let mage = await getPlayerDomain(req, res);
+  if (!mage) return;
+  const bids = Array.isArray(req.body) ? req.body : req.body?.bids;
+  if (!Array.isArray(bids)) return res.status(400).json({ error: 'INVALID_BIDS' });
+
+  try {
+    mage = await engine.makeMarketBids(mage.id, bids);
+    res.status(200).json({ domain: toArcanumDomain(mage) });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ error: 'BID_FAILED', message: 'No se pudieron registrar las pujas.' });
+  }
+});
+
+router.post('/api/arcanum/market/sell', async (req: any, res) => {
+  let mage = await getPlayerDomain(req, res);
+  if (!mage) return;
+  const items = Array.isArray(req.body) ? req.body : req.body?.items;
+  if (!Array.isArray(items)) return res.status(400).json({ error: 'INVALID_ITEMS' });
+
+  try {
+    mage = await engine.sellItems(mage.id, items);
+    res.status(200).json({ domain: toArcanumDomain(mage) });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ error: 'SELL_FAILED', message: 'No se pudieron poner los objetos en el mercado.' });
+  }
 });
 
 router.post('/api/explore', async (req: any, res) => {
