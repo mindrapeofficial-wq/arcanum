@@ -41,6 +41,36 @@ export function arcanumSchool(magic: AllowedMagic) {
   return ARCANUM_SCHOOLS[magic];
 }
 
+export function engineSchool(code: string): AllowedMagic {
+  const normalized = String(code || '').trim().toLowerCase();
+  for (const [magic, school] of Object.entries(ARCANUM_SCHOOLS)) {
+    if (school.code === normalized || magic === normalized) return magic as AllowedMagic;
+  }
+  throw new Error(`Unknown ARCANUM school: ${code}`);
+}
+
+export function toArcanumRank(row: {
+  id: number;
+  name: string;
+  magic: string;
+  rank: number;
+  status: string;
+  land: number;
+  netPower: number;
+  forts: number;
+}) {
+  return {
+    id: row.id,
+    name: row.name,
+    school: arcanumSchool(engineSchool(row.magic)),
+    rank: row.rank,
+    status: row.status,
+    land: row.land,
+    power: row.netPower,
+    fortresses: row.forts,
+  };
+}
+
 export function toEngineBuildingPlan(
   input: Record<string, unknown> | null | undefined,
 ): BuildPayload & DestroyPayload {
@@ -127,10 +157,29 @@ export function toArcanumDomain(mage: Mage) {
     progression: {
       spellLevel: currentSpellLevel(mage),
       skillPoints: mage.skillPoints,
+      focusResearch: mage.focusResearch,
+      research: Object.fromEntries(
+        Object.entries(mage.currentResearch).map(([magic, item]) => [
+          arcanumSchool(engineSchool(magic)).code,
+          item ? {
+            spellId: item.id,
+            remainingCost: item.remainingCost,
+            active: item.active,
+          } : null,
+        ]),
+      ),
+      knownSpells: Object.fromEntries(
+        Object.entries(mage.spellbook).map(([magic, spellIds]) => [
+          arcanumSchool(engineSchool(magic)).code,
+          spellIds,
+        ]),
+      ),
     },
     army: {
       stacks: mage.army.length,
       units: unitCount,
+      formations: mage.army.map(stack => ({ id: stack.id, size: stack.size })),
+      recruitments: mage.recruitments.map(stack => ({ id: stack.id, size: stack.size })),
     },
     power: totalNetPower(mage),
   };
