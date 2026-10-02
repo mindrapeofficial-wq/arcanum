@@ -111,7 +111,7 @@ test('Domain view exposes original engine rates without browser reimplementation
 
   assert.equal(domain.rates.goldPerTurn, 13345);
   assert.equal(domain.rates.populationPerTurn, Math.floor(12345 * 0.015 + 50));
-  assert.equal(domain.rates.researchPerTurn, Math.floor(Math.sqrt(5) * 10));
+  assert.equal(domain.rates.researchPerTurn, Math.floor(Math.sqrt(5) * 20));
   assert.equal(domain.resources.manaCapacity, 3000);
 
   const fortress = domain.territory.buildingCatalog.find(row => row.id === 'fortresses');
