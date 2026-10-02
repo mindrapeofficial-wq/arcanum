@@ -47,3 +47,5 @@ jobs:
         run: yarn workspace engine exec tsc --noEmit -p tsconfig.json
       - name: Typecheck server
         run: yarn workspace engine exec tsc --noEmit -p ../server/tsconfig.json
+      - name: Test ARCANUM Domain adapter
+        run: yarn workspace server exec tsx --test test/arcanum-domain.test.ts
