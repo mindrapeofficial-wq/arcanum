@@ -1,32 +1,36 @@
 [
   {
     "id": "dryad",
-    "name": "Dryad",
+    "name": "Espíritu Arbóreo",
     "magic": "verdant",
-    "description": "Dryads are beautiful tree sprites. They look like elf maidens in outer appearance. They are intelligent, elusive, yet alluring. They have high cheek bones and dark green eyes. A dryad's complexion and hair color changes according to the season, which allows them to blend into the background. Their home is a large living oak. They are non-violent creatures. They do not fight but they have certain Druidic abilities, which they will employ to ward off intruders. Also, they can use a powerful charm spell on enemies. Whenever they see a handsome male, they will try to charm him and take him home as an amorous slave.",
+    "description": "Espíritu Arbóreos are beautiful tree sprites. They look like elf maidens in outer appearance. They are intelligent, elusive, yet alluring. They have high cheek bones and dark green eyes. A dryad's complexion and hair color changes according to the season, which allows them to blend into the background. Their home is a large living oak. They are non-violent creatures. They do not fight but they have certain Custodio de la Raízic abilities, which they will employ to ward off intruders. Also, they can use a powerful charm spell on enemies. Whenever they see a handsome male, they will try to charm him and take him home as an amorous slave.",
     "powerRank": 23,
     "hitPoints": 70,
-    "race": ["pixie"],
-    "attributes": ["summon"],
-
+    "race": [
+      "pixie"
+    ],
+    "attributes": [
+      "summon"
+    ],
     "primaryAttackPower": 240,
-    "primaryAttackType": ["magic", "ranged"],
+    "primaryAttackType": [
+      "magic",
+      "ranged"
+    ],
     "primaryAttackInit": 3,
     "counterAttackPower": 0,
-
     "secondaryAttackPower": 0,
     "secondaryAttackType": [],
     "secondaryAttackInit": 0,
-
-    "recruitCost": { 
+    "recruitCost": {
       "geld": 0,
       "mana": 0,
-      "population": 0 
+      "population": 0
     },
     "upkeepCost": {
       "geld": 0.8,
       "mana": 0.02,
-      "population": 0 
+      "population": 0
     },
     "spellResistances": {
       "ascendant": 0,
@@ -50,38 +54,47 @@
       "holy": 0
     },
     "abilities": [
-      { "name": "beauty", "extra": null },
-      { "name": "charm", "extra": null }
+      {
+        "name": "beauty",
+        "extra": null
+      },
+      {
+        "name": "charm",
+        "extra": null
+      }
     ]
   },
   {
     "id": "gorilla",
-    "name": "Gorilla",
+    "name": "Coloso de Jungla",
     "magic": "verdant",
     "description": "A gorilla is a large ape. They are non-aggressive and shy mammals, but they will fight fiercely when forced into combat. They are strong and like to fight with their fists and arms in combat.",
     "powerRank": 34,
     "hitPoints": 450,
-    "race": ["animal"],
-    "attributes": ["summon"],
-
+    "race": [
+      "animal"
+    ],
+    "attributes": [
+      "summon"
+    ],
     "primaryAttackPower": 240,
-    "primaryAttackType": ["melee"],
+    "primaryAttackType": [
+      "melee"
+    ],
     "primaryAttackInit": 1,
     "counterAttackPower": 80,
-
     "secondaryAttackPower": 0,
     "secondaryAttackType": [],
     "secondaryAttackInit": 0,
-
-    "recruitCost": { 
+    "recruitCost": {
       "geld": 0,
       "mana": 0,
-      "population": 0 
+      "population": 0
     },
     "upkeepCost": {
       "geld": 2.7,
       "mana": 0.04,
-      "population": 0 
+      "population": 0
     },
     "spellResistances": {
       "ascendant": 0,
@@ -104,37 +117,39 @@
       "psychic": 0,
       "holy": 0
     },
-    "abilities": [
-    ]
+    "abilities": []
   },
   {
     "id": "creepingVines",
-    "name": "Creeping Vines",
+    "name": "Zarzas Vivientes",
     "magic": "verdant",
-    "description": "Creeping Vines are sometimes referred to as the fingers of nature. It is said that they come forth at night to strangle those that have mistreated nature and claim the bodies of their victims for fertilizer. Sadly, this fable is only partly true... they are also active during the day!",
+    "description": "Zarzas Vivientes are sometimes referred to as the fingers of nature. It is said that they come forth at night to strangle those that have mistreated nature and claim the bodies of their victims for fertilizer. Sadly, this fable is only partly true... they are also active during the day!",
     "powerRank": 40,
     "hitPoints": 336,
-    "race": ["treefolk"],
-    "attributes": ["summon"],
-
+    "race": [
+      "treefolk"
+    ],
+    "attributes": [
+      "summon"
+    ],
     "primaryAttackPower": 336,
-    "primaryAttackType": ["melee"],
+    "primaryAttackType": [
+      "melee"
+    ],
     "primaryAttackInit": 1,
     "counterAttackPower": 118,
-
     "secondaryAttackPower": 0,
     "secondaryAttackType": [],
     "secondaryAttackInit": 0,
-
-    "recruitCost": { 
+    "recruitCost": {
       "geld": 0,
       "mana": 0,
-      "population": 0 
+      "population": 0
     },
     "upkeepCost": {
-      "geld": 2.0,
+      "geld": 2,
       "mana": 0.06,
-      "population": 0 
+      "population": 0
     },
     "spellResistances": {
       "ascendant": 0,
@@ -158,46 +173,59 @@
       "holy": 0
     },
     "abilities": [
-      { "name": "regeneration", "extra": null },
-      { "name": "stealLife", "extra": 5 },
-      { "name": "weakness", "extra": "fire" }
+      {
+        "name": "regeneration",
+        "extra": null
+      },
+      {
+        "name": "stealLife",
+        "extra": 5
+      },
+      {
+        "name": "weakness",
+        "extra": "fire"
+      }
     ]
   },
   {
     "id": "nymph",
-    "name": "Nymph",
+    "name": "Náyade Esmeralda",
     "magic": "verdant",
-    "description": "This lake sprite is so beautiful that a glimpse of her can kill or blind a person. She resembles an eternally young woman with flowing long hair, radiant and perfect skin, full lips, and gentle eyes. Her voice is musical, her scent delightful, her beauty beyond words. She lives in isolated wilderness, preferably in a clear lake or stream. She does not fight, but she has limited Druidic ability which she can employ at will. Also, since a nymph is so beautiful, a nude nymph can blind or kill an onlooker.",
+    "description": "This lake sprite is so beautiful that a glimpse of her can kill or blind a person. She resembles an eternally young woman with flowing long hair, radiant and perfect skin, full lips, and gentle eyes. Her voice is musical, her scent delightful, her beauty beyond words. She lives in isolated wilderness, preferably in a clear lake or stream. She does not fight, but she has limited Custodio de la Raízic ability which she can employ at will. Also, since a nymph is so beautiful, a nude nymph can blind or kill an onlooker.",
     "powerRank": 62,
     "hitPoints": 150,
-    "race": ["pixie"],
-    "attributes": ["summon"],
-
+    "race": [
+      "pixie"
+    ],
+    "attributes": [
+      "summon"
+    ],
     "primaryAttackPower": 940,
-    "primaryAttackType": ["psychic", "ranged"],
+    "primaryAttackType": [
+      "psychic",
+      "ranged"
+    ],
     "primaryAttackInit": 3,
     "counterAttackPower": 0,
-
     "secondaryAttackPower": 0,
     "secondaryAttackType": [],
     "secondaryAttackInit": 0,
-
-    "recruitCost": { 
+    "recruitCost": {
       "geld": 0,
       "mana": 0,
-      "population": 0 
+      "population": 0
     },
     "upkeepCost": {
-      "geld": 0.0,
+      "geld": 0,
       "mana": 0.15,
-      "population": 0 
+      "population": 0
     },
     "spellResistances": {
       "ascendant": 0,
       "verdant": 0,
       "eradication": 25,
       "nether": 25,
-      "phantasm":15 
+      "phantasm": 15
     },
     "attackResistances": {
       "missile": 50,
@@ -211,48 +239,57 @@
       "cold": 0,
       "paralyse": 0,
       "psychic": 40,
-      "holy": 25 
+      "holy": 25
     },
     "abilities": [
-      { "name": "beauty", "extra": null },
-      { "name": "charm", "extra": null }
+      {
+        "name": "beauty",
+        "extra": null
+      },
+      {
+        "name": "charm",
+        "extra": null
+      }
     ]
   },
   {
     "id": "werebear",
-    "name": "Werebear",
+    "name": "Guardián Ursino",
     "magic": "verdant",
-    "description": "Werebears are shapeshifters who live in the wilderness. In human form, they are large, muscular, and have thick hair. When under attack, they take the form of a large brown bear with immense strength. One swipe of their large claws can rip open armor and tear what lies underneath. Their thick fur protects them from many attacks and werebear can be devastating when attacking in large numbers. However, fire and lightning, and noxious vapors create large casualties among them. Psychic and paralysis attacks are also devastating.",
+    "description": "Guardián Ursinos are shapeshifters who live in the wilderness. In human form, they are large, muscular, and have thick hair. When under attack, they take the form of a large brown bear with immense strength. One swipe of their large claws can rip open armor and tear what lies underneath. Their thick fur protects them from many attacks and werebear can be devastating when attacking in large numbers. However, fire and lightning, and noxious vapors create large casualties among them. Psychic and paralysis attacks are also devastating.",
     "powerRank": 161,
     "hitPoints": 1500,
-    "race": ["animal"],
-    "attributes": ["summon"],
-
+    "race": [
+      "animal"
+    ],
+    "attributes": [
+      "summon"
+    ],
     "primaryAttackPower": 2300,
-    "primaryAttackType": ["melee"],
+    "primaryAttackType": [
+      "melee"
+    ],
     "primaryAttackInit": 1,
     "counterAttackPower": 300,
-
     "secondaryAttackPower": 0,
     "secondaryAttackType": [],
     "secondaryAttackInit": 0,
-
-    "recruitCost": { 
+    "recruitCost": {
       "geld": 0,
       "mana": 0,
-      "population": 0 
+      "population": 0
     },
     "upkeepCost": {
-      "geld": 20.80,
-      "mana": 0.30,
-      "population": 0 
+      "geld": 20.8,
+      "mana": 0.3,
+      "population": 0
     },
     "spellResistances": {
       "ascendant": 0,
       "verdant": 0,
       "eradication": 0,
       "nether": 0,
-      "phantasm": 0 
+      "phantasm": 0
     },
     "attackResistances": {
       "missile": 50,
@@ -266,48 +303,57 @@
       "cold": 75,
       "paralyse": 0,
       "psychic": 0,
-      "holy": 25 
+      "holy": 25
     },
     "abilities": [
-      { "name": "endurance", "extra": null },
-      { "name": "piercing", "extra": null }
+      {
+        "name": "endurance",
+        "extra": null
+      },
+      {
+        "name": "piercing",
+        "extra": null
+      }
     ]
   },
   {
     "id": "mandrake",
-    "name": "Mandrake",
+    "name": "Raíz Errante",
     "magic": "verdant",
     "description": "This is a race of humanoid plant creatures composed of roots from the heart of the deepest forests. They grapple their opponents, entangling them with their vegetative appendages. Even when defeated, they can regenerate and return to fight again.",
     "powerRank": 180,
     "hitPoints": 1344,
-    "race": ["treefolk"],
-    "attributes": ["summon"],
-
+    "race": [
+      "treefolk"
+    ],
+    "attributes": [
+      "summon"
+    ],
     "primaryAttackPower": 1680,
-    "primaryAttackType": ["melee"],
+    "primaryAttackType": [
+      "melee"
+    ],
     "primaryAttackInit": 1,
     "counterAttackPower": 672,
-
     "secondaryAttackPower": 0,
     "secondaryAttackType": [],
     "secondaryAttackInit": 0,
-
-    "recruitCost": { 
+    "recruitCost": {
       "geld": 0,
       "mana": 0,
-      "population": 0 
+      "population": 0
     },
     "upkeepCost": {
       "geld": 0.42,
       "mana": 0.42,
-      "population": 0 
+      "population": 0
     },
     "spellResistances": {
       "ascendant": 0,
       "verdant": 0,
       "eradication": 0,
       "nether": 0,
-      "phantasm": 0 
+      "phantasm": 0
     },
     "attackResistances": {
       "missile": 50,
@@ -321,50 +367,67 @@
       "cold": 40,
       "paralyse": 50,
       "psychic": 0,
-      "holy": 25 
+      "holy": 25
     },
     "abilities": [
-      { "name": "additionalStrike", "extra": null },
-      { "name": "endurance", "extra": null },
-      { "name": "regeneration", "extra": null },
-      { "name": "weakness", "extra": "fire" }
+      {
+        "name": "additionalStrike",
+        "extra": null
+      },
+      {
+        "name": "endurance",
+        "extra": null
+      },
+      {
+        "name": "regeneration",
+        "extra": null
+      },
+      {
+        "name": "weakness",
+        "extra": "fire"
+      }
     ]
   },
   {
     "id": "treant",
-    "name": "Treant",
+    "name": "Anciano de Corteza",
     "magic": "verdant",
-    "description": "Treants are peaceful in nature, but they hate evil of any sort. They are indistinguishable from normal trees, and normally they are thirty to eighty feet tall. Their skin is thick bark and their limbs are the branches of trees. If you inspect them closely, you can find the feature of the face in the trunk of the tree. They have a special hatred towards orcs and tend to be very suspicious of anyone who carries an axe. They are very intelligent and have a long lifespan. When they become older and older, they become slower and less agile. When they die, they turn into normal trees. Fire is their only weakness and they hate anyone who uses fire without any restraints.",
+    "description": "Anciano de Cortezas are peaceful in nature, but they hate evil of any sort. They are indistinguishable from normal trees, and normally they are thirty to eighty feet tall. Their skin is thick bark and their limbs are the branches of trees. If you inspect them closely, you can find the feature of the face in the trunk of the tree. They have a special hatred towards orcs and tend to be very suspicious of anyone who carries an axe. They are very intelligent and have a long lifespan. When they become older and older, they become slower and less agile. When they die, they turn into normal trees. Fire is their only weakness and they hate anyone who uses fire without any restraints.",
     "powerRank": 423,
     "hitPoints": 4200,
-    "race": ["treefolk"],
-    "attributes": ["summon"],
-
+    "race": [
+      "treefolk"
+    ],
+    "attributes": [
+      "summon"
+    ],
     "primaryAttackPower": 4200,
-    "primaryAttackType": ["melee"],
+    "primaryAttackType": [
+      "melee"
+    ],
     "primaryAttackInit": 1,
     "counterAttackPower": 1680,
-
     "secondaryAttackPower": 2500,
-    "secondaryAttackType": ["melee"],
+    "secondaryAttackType": [
+      "melee"
+    ],
     "secondaryAttackInit": 1,
-
-    "recruitCost": { 
+    "recruitCost": {
       "geld": 0,
       "mana": 0,
-      "population": 0 
+      "population": 0
     },
     "upkeepCost": {
-      "geld": 0.0,
+      "geld": 0,
       "mana": 1.26,
-      "population": 0 
+      "population": 0
     },
     "spellResistances": {
       "ascendant": 0,
       "verdant": 0,
       "eradication": 0,
       "nether": 0,
-      "phantasm": 80 
+      "phantasm": 80
     },
     "attackResistances": {
       "missile": 67,
@@ -378,49 +441,63 @@
       "cold": 80,
       "paralyse": 75,
       "psychic": 75,
-      "holy": 50 
+      "holy": 50
     },
     "abilities": [
-      { "name": "additionalStrike", "extra": null },
-      { "name": "endurance", "extra": null },
-      { "name": "weakness", "extra": "fire" }
+      {
+        "name": "additionalStrike",
+        "extra": null
+      },
+      {
+        "name": "endurance",
+        "extra": null
+      },
+      {
+        "name": "weakness",
+        "extra": "fire"
+      }
     ]
   },
   {
     "id": "griffon",
-    "name": "Griffon",
+    "name": "Alagrifo",
     "magic": "verdant",
-    "description": "Griffons are horse-sized creatures that have the front of a giant eagle (including wings) and the hind of a lion. They feed primarily on horse flesh, but will settle for any meaty foe. They attack with razor sharp claws, raking their opponents in high speed dives. They can also bite a horse's head clean off with their powerful beaks. There are rumors of those that can ride these creatures as mounts.",
+    "description": "Alagrifos are horse-sized creatures that have the front of a giant eagle (including wings) and the hind of a lion. They feed primarily on horse flesh, but will settle for any meaty foe. They attack with razor sharp claws, raking their opponents in high speed dives. They can also bite a horse's head clean off with their powerful beaks. There are rumors of those that can ride these creatures as mounts.",
     "powerRank": 399,
     "hitPoints": 3750,
-    "race": ["animal"],
-    "attributes": ["summon"],
-
+    "race": [
+      "animal"
+    ],
+    "attributes": [
+      "summon"
+    ],
     "primaryAttackPower": 2750,
-    "primaryAttackType": ["melee"],
+    "primaryAttackType": [
+      "melee"
+    ],
     "primaryAttackInit": 1,
     "counterAttackPower": 500,
-
     "secondaryAttackPower": 3450,
-    "secondaryAttackType": ["melee"],
+    "secondaryAttackType": [
+      "melee"
+    ],
     "secondaryAttackInit": 3,
-
-    "recruitCost": { 
+    "recruitCost": {
       "geld": 0,
       "mana": 0,
-      "population": 0 
+      "population": 0
     },
     "upkeepCost": {
-      "geld": 48.0,
-      "mana": 1.20,
-      "population": 0 
+      "geld": 48,
+      "mana": 1.2,
+      "population": 0
     },
     "spellResistances": {
       "ascendant": 0,
       "verdant": 0,
       "eradication": 20,
       "nether": 50,
-      "phantasm": 40 
+      "phantasm": 40
     },
     "attackResistances": {
       "missile": 60,
@@ -434,48 +511,61 @@
       "cold": 30,
       "paralyse": 0,
       "psychic": 25,
-      "holy": 50 
+      "holy": 50
     },
     "abilities": [
-      { "name": "flying", "extra": null },
-      { "name": "endurance", "extra": null }
+      {
+        "name": "flying",
+        "extra": null
+      },
+      {
+        "name": "endurance",
+        "extra": null
+      }
     ]
   },
   {
     "id": "venusFlytrap",
-    "name": "Venus Flytrap",
+    "name": "Fauce de Rocío",
     "magic": "verdant",
-    "description": "Venus Flytraps are the assassins of the forest. They move slowly, preferring to lure their prey with guile and deception. When a target is in sight the Venus Flytrap uses its tentacles to entangle and hold it tight while poisons immobilize it. For targets further away the Venus Flytrap has deadly spines that can be shot with expert precision. Even flying creatures can be brought down by the ranged poison attack. Approach these plants with caution.",
+    "description": "Fauce de Rocíos are the assassins of the forest. They move slowly, preferring to lure their prey with guile and deception. When a target is in sight the Fauce de Rocío uses its tentacles to entangle and hold it tight while poisons immobilize it. For targets further away the Fauce de Rocío has deadly spines that can be shot with expert precision. Even flying creatures can be brought down by the ranged poison attack. Approach these plants with caution.",
     "powerRank": 380,
     "hitPoints": 1344,
-    "race": ["treefolk"],
-    "attributes": ["summon"],
-
+    "race": [
+      "treefolk"
+    ],
+    "attributes": [
+      "summon"
+    ],
     "primaryAttackPower": 1754,
-    "primaryAttackType": ["ranged", "poison"],
+    "primaryAttackType": [
+      "ranged",
+      "poison"
+    ],
     "primaryAttackInit": 1,
     "counterAttackPower": 336,
-
     "secondaryAttackPower": 3000,
-    "secondaryAttackType": ["ranged", "poison"],
+    "secondaryAttackType": [
+      "ranged",
+      "poison"
+    ],
     "secondaryAttackInit": 3,
-
-    "recruitCost": { 
+    "recruitCost": {
       "geld": 0,
       "mana": 0,
-      "population": 0 
+      "population": 0
     },
     "upkeepCost": {
-      "geld": 2.40,
+      "geld": 2.4,
       "mana": 0.69,
-      "population": 0 
+      "population": 0
     },
     "spellResistances": {
       "ascendant": 0,
       "verdant": 40,
       "eradication": 0,
       "nether": 40,
-      "phantasm": 40 
+      "phantasm": 40
     },
     "attackResistances": {
       "missile": 67,
@@ -489,49 +579,65 @@
       "cold": 40,
       "paralyse": 75,
       "psychic": 85,
-      "holy": 40 
+      "holy": 40
     },
     "abilities": [
-      { "name": "charm", "extra": null },
-      { "name": "regeneration", "extra": null },
-      { "name": "weakness", "extra": "fire" }
+      {
+        "name": "charm",
+        "extra": null
+      },
+      {
+        "name": "regeneration",
+        "extra": null
+      },
+      {
+        "name": "weakness",
+        "extra": "fire"
+      }
     ]
   },
   {
     "id": "highElf",
-    "name": "High Elf",
+    "name": "Alto Viridiano",
     "magic": "verdant",
     "description": "High elves are taller than the average elf with bronze coloured skin, green eyes and golden hair. They are noted for their intellectual prowess and cultural elitism. They prefer ranged combat and are the greatest practitioners of elven magic, both arcane and divine. They are known to be the ancestors of dark elves.",
     "powerRank": 1542,
     "hitPoints": 5000,
-    "race": ["elf"],
-    "attributes": ["summon"],
-
+    "race": [
+      "elf"
+    ],
+    "attributes": [
+      "summon"
+    ],
     "primaryAttackPower": 13000,
-    "primaryAttackType": ["ranged", "paralyse"],
+    "primaryAttackType": [
+      "ranged",
+      "paralyse"
+    ],
     "primaryAttackInit": 3,
     "counterAttackPower": 0,
-
     "secondaryAttackPower": 7500,
-    "secondaryAttackType": ["ranged", "lightning"],
+    "secondaryAttackType": [
+      "ranged",
+      "lightning"
+    ],
     "secondaryAttackInit": 3,
-
-    "recruitCost": { 
+    "recruitCost": {
       "geld": 0,
       "mana": 0,
-      "population": 0 
+      "population": 0
     },
     "upkeepCost": {
-      "geld": 38.0,
+      "geld": 38,
       "mana": 2.86,
-      "population": 0 
+      "population": 0
     },
     "spellResistances": {
       "ascendant": 0,
       "verdant": 0,
       "eradication": 75,
       "nether": 50,
-      "phantasm": 40 
+      "phantasm": 40
     },
     "attackResistances": {
       "missile": 70,
@@ -545,48 +651,60 @@
       "cold": 20,
       "paralyse": 70,
       "psychic": 50,
-      "holy": 40 
+      "holy": 40
     },
     "abilities": [
-      { "name": "beauty", "extra": null },
-      { "name": "swift", "extra": null }
+      {
+        "name": "beauty",
+        "extra": null
+      },
+      {
+        "name": "swift",
+        "extra": null
+      }
     ]
   },
   {
     "id": "elvenBladeDancer",
-    "name": "Elven Blade Dancer",
+    "name": "Danzahoja Viridiana",
     "magic": "verdant",
     "description": "Armed with the finest twin blades forged in elven kingdoms, these warriors live for duels. Unlike their brethren, the High Elves, they do not care for ranged combat. They weave through the battlefield with speed and grace, and deftly cut down foes captivated by their movement. Their light armor provides excellent protection against melee and many ranged attacks, but provides no protection from poison, paralysis, or the cold.",
     "powerRank": 1850,
     "hitPoints": 6500,
-    "race": ["elf"],
-    "attributes": ["summon"],
-
+    "race": [
+      "elf"
+    ],
+    "attributes": [
+      "summon"
+    ],
     "primaryAttackPower": 9000,
-    "primaryAttackType": ["melee"],
+    "primaryAttackType": [
+      "melee"
+    ],
     "primaryAttackInit": 4,
     "counterAttackPower": 1500,
-
     "secondaryAttackPower": 13500,
-    "secondaryAttackType": ["ranged", "paralyse"],
+    "secondaryAttackType": [
+      "ranged",
+      "paralyse"
+    ],
     "secondaryAttackInit": 1,
-
-    "recruitCost": { 
+    "recruitCost": {
       "geld": 0,
       "mana": 0,
-      "population": 0 
+      "population": 0
     },
     "upkeepCost": {
-      "geld": 45.0,
-      "mana": 3.0,
-      "population": 0 
+      "geld": 45,
+      "mana": 3,
+      "population": 0
     },
     "spellResistances": {
       "ascendant": 0,
       "verdant": 80,
       "eradication": 80,
       "nether": 0,
-      "phantasm": 0 
+      "phantasm": 0
     },
     "attackResistances": {
       "missile": 75,
@@ -600,52 +718,82 @@
       "cold": 0,
       "paralyse": 0,
       "psychic": 40,
-      "holy": 20 
+      "holy": 20
     },
     "abilities": [
-      { "name": "beauty", "extra": null },
-      { "name": "swift", "extra": null },
-      { "name": "additionalStrike", "extra": null },
-      { "name": "weakness", "extra": "cold" },
-      { "name": "racialEnemy", "extra": "angel" },
-      { "name": "bursting", "extra": { "type": ["melee"], "value": 3000 } }
+      {
+        "name": "beauty",
+        "extra": null
+      },
+      {
+        "name": "swift",
+        "extra": null
+      },
+      {
+        "name": "additionalStrike",
+        "extra": null
+      },
+      {
+        "name": "weakness",
+        "extra": "cold"
+      },
+      {
+        "name": "racialEnemy",
+        "extra": "angel"
+      },
+      {
+        "name": "bursting",
+        "extra": {
+          "type": [
+            "melee"
+          ],
+          "value": 3000
+        }
+      }
     ]
   },
   {
     "id": "earthElemental",
-    "name": "Earth Elemental",
+    "name": "Corazón de Piedra",
     "magic": "verdant",
     "description": "These massive elementals, who are as old as the hills, are the ultimate expression of nature's unbridled wrath. Using their incredible power to crush components, they demonstrate that nature can be a real mother. Composed of rocks and other minerals, they demand a diet rich of nutrients to maintain their existence on the mortal plane.",
     "powerRank": 22000,
     "hitPoints": 100000,
-    "race": ["elemental"],
-    "attributes": ["summon", "noMarket"],
-
+    "race": [
+      "elemental"
+    ],
+    "attributes": [
+      "summon",
+      "noMarket"
+    ],
     "primaryAttackPower": 100000,
-    "primaryAttackType": ["melee"],
+    "primaryAttackType": [
+      "melee"
+    ],
     "primaryAttackInit": 1,
     "counterAttackPower": 15000,
-
     "secondaryAttackPower": 550000,
-    "secondaryAttackType": ["ranged", "magic"],
+    "secondaryAttackType": [
+      "ranged",
+      "magic"
+    ],
     "secondaryAttackInit": 3,
-
-    "recruitCost": { 
+    "recruitCost": {
       "geld": 0,
       "mana": 0,
-      "population": 0 
+      "population": 0
     },
     "upkeepCost": {
-      "geld": 0.0,
-      "mana": 72.0,
-      "population": 0 
+      "geld": 0,
+      "mana": 72,
+      "population": 0
     },
     "spellResistances": {
       "ascendant": 0,
       "verdant": 40,
       "eradication": 50,
       "nether": 60,
-      "phantasm": 40 
+      "phantasm": 40
     },
     "attackResistances": {
       "missile": 90,
@@ -659,47 +807,57 @@
       "cold": 40,
       "paralyse": 95,
       "psychic": 80,
-      "holy": 80 
+      "holy": 80
     },
     "abilities": [
-      { "name": "endurance", "extra": null }
+      {
+        "name": "endurance",
+        "extra": null
+      }
     ]
   },
   {
     "id": "phoenix",
-    "name": "Phoenix",
+    "name": "Ave de Renuevo",
     "magic": "verdant",
-    "description": "Phoenix is an large extra-planar bird related to the element of fire. It has a forty-foot wingspan with bright, multi-colored feathers. Its beak and claws are violet in color. It has deep red eyes. It is the symbol of rebirth and freedom. It is a mortal creature with attatchment to the ultimate immortal nature. When it dies, it immolates itself into flames, and a young phoenix will be born from the ashes. It has many magical abilities which it can employ at will. In combat, it can attack with its claws and beak, or use its magical abilities. It is a champion of good and a symbol of creation through destruction.",
+    "description": "Ave de Renuevo is an large extra-planar bird related to the element of fire. It has a forty-foot wingspan with bright, multi-colored feathers. Its beak and claws are violet in color. It has deep red eyes. It is the symbol of rebirth and freedom. It is a mortal creature with attatchment to the ultimate immortal nature. When it dies, it immolates itself into flames, and a young phoenix will be born from the ashes. It has many magical abilities which it can employ at will. In combat, it can attack with its claws and beak, or use its magical abilities. It is a champion of good and a symbol of creation through destruction.",
     "powerRank": 36883,
     "hitPoints": 70000,
-    "race": ["elemental"],
-    "attributes": ["summon", "noMarket"],
-
+    "race": [
+      "elemental"
+    ],
+    "attributes": [
+      "summon",
+      "noMarket"
+    ],
     "primaryAttackPower": 200000,
-    "primaryAttackType": ["magic"],
+    "primaryAttackType": [
+      "magic"
+    ],
     "primaryAttackInit": 1,
     "counterAttackPower": 40000,
-
     "secondaryAttackPower": 600000,
-    "secondaryAttackType": ["ranged", "magic"],
+    "secondaryAttackType": [
+      "ranged",
+      "magic"
+    ],
     "secondaryAttackInit": 5,
-
-    "recruitCost": { 
+    "recruitCost": {
       "geld": 0,
       "mana": 0,
-      "population": 0 
+      "population": 0
     },
     "upkeepCost": {
-      "geld": 0.0,
-      "mana": 120.0,
-      "population": 0 
+      "geld": 0,
+      "mana": 120,
+      "population": 0
     },
     "spellResistances": {
       "ascendant": 0,
       "verdant": 0,
       "eradication": 80,
       "nether": 75,
-      "phantasm": 50 
+      "phantasm": 50
     },
     "attackResistances": {
       "missile": 90,
@@ -713,49 +871,67 @@
       "cold": 80,
       "paralyse": 80,
       "psychic": 80,
-      "holy": 80 
+      "holy": 80
     },
     "abilities": [
-      { "name": "flying", "extra": null },
-      { "name": "regeneration", "extra": null },
-      { "name": "bursting", "extra": { "type": ["fire"], "value": 50000 } }
+      {
+        "name": "flying",
+        "extra": null
+      },
+      {
+        "name": "regeneration",
+        "extra": null
+      },
+      {
+        "name": "bursting",
+        "extra": {
+          "type": [
+            "fire"
+          ],
+          "value": 50000
+        }
+      }
     ]
   },
   {
     "id": "elvenArcher",
-    "name": "Elven Archer",
+    "name": "Arquero Viridiano",
     "magic": "verdant",
     "description": "Elves are sylvan humanoids. They stand five feet tall and have pointed ears. In appearance, they look like beautiful humans. They are pale-skinned, slender, and agile. They live in the wild and are especially adept at using bows and swords of all kinds. They have strong wills and are magical in nature. Elven archers are especially noted for their keen marksmanship. Elves have a longer life span than any other humanoid, so their world views are very different from most humanoids. They also highly value individual freedom and enjoy the beauty of music and nature.",
     "powerRank": 20,
     "hitPoints": 100,
-    "race": ["elf"],
-    "attributes": ["special"],
-
+    "race": [
+      "elf"
+    ],
+    "attributes": [
+      "special"
+    ],
     "primaryAttackPower": 120,
-    "primaryAttackType": ["missile", "ranged"],
+    "primaryAttackType": [
+      "missile",
+      "ranged"
+    ],
     "primaryAttackInit": 3,
     "counterAttackPower": 0,
-
     "secondaryAttackPower": 0,
     "secondaryAttackType": [],
     "secondaryAttackInit": 0,
-
-    "recruitCost": { 
-      "geld": 70.0,
+    "recruitCost": {
+      "geld": 70,
       "mana": 0.05,
-      "population": 1.0 
+      "population": 1
     },
     "upkeepCost": {
       "geld": 1.04,
       "mana": 0.01,
-      "population": 0 
+      "population": 0
     },
     "spellResistances": {
       "ascendant": 0,
       "verdant": 0,
       "eradication": 0,
       "nether": 5,
-      "phantasm": 0 
+      "phantasm": 0
     },
     "attackResistances": {
       "missile": 0,
@@ -769,49 +945,62 @@
       "cold": 0,
       "paralyse": 90,
       "psychic": 0,
-      "holy": 0 
+      "holy": 0
     },
     "abilities": [
-      { "name": "marksmanship", "extra": null },
-      { "name": "swift", "extra": null },
-      { "name": "recruitSpeed", "extra": -10 }
+      {
+        "name": "marksmanship",
+        "extra": null
+      },
+      {
+        "name": "swift",
+        "extra": null
+      },
+      {
+        "name": "recruitSpeed",
+        "extra": -10
+      }
     ]
   },
   {
     "id": "elvenMagician",
-    "name": "Elven Magician",
+    "name": "Teúrgo Viridiano",
     "magic": "verdant",
     "description": "Elves are highly magical by their very nature, and many of them develop this inborn gift to become powerful magicians. Like their brethren, the elven archers, elven magicians are slender, agile, and have excellent vision. Their attacks are cast with unforgiving accuracy, and their clothing is infused with powerful enchantments that provide excellent protection from many types of attacks, except cold, poison, and noxious vapors.",
     "powerRank": 41,
     "hitPoints": 100,
-    "race": ["elf"],
-    "attributes": ["special"],
-
+    "race": [
+      "elf"
+    ],
+    "attributes": [
+      "special"
+    ],
     "primaryAttackPower": 500,
-    "primaryAttackType": ["magic", "ranged"],
+    "primaryAttackType": [
+      "magic",
+      "ranged"
+    ],
     "primaryAttackInit": 3,
     "counterAttackPower": 0,
-
     "secondaryAttackPower": 0,
     "secondaryAttackType": [],
     "secondaryAttackInit": 0,
-
-    "recruitCost": { 
-      "geld": 300.0,
+    "recruitCost": {
+      "geld": 300,
       "mana": 0.75,
-      "population": 2.0 
+      "population": 2
     },
     "upkeepCost": {
-      "geld": 8.0,
+      "geld": 8,
       "mana": 0.07,
-      "population": 0 
+      "population": 0
     },
     "spellResistances": {
       "ascendant": 0,
       "verdant": 0,
       "eradication": 10,
       "nether": 60,
-      "phantasm": 5 
+      "phantasm": 5
     },
     "attackResistances": {
       "missile": 80,
@@ -825,49 +1014,62 @@
       "cold": 0,
       "paralyse": 80,
       "psychic": 90,
-      "holy": 50 
+      "holy": 50
     },
     "abilities": [
-      { "name": "marksmanship", "extra": null },
-      { "name": "swift", "extra": null },
-      { "name": "recruitSpeed", "extra": -10 }
+      {
+        "name": "marksmanship",
+        "extra": null
+      },
+      {
+        "name": "swift",
+        "extra": null
+      },
+      {
+        "name": "recruitSpeed",
+        "extra": -10
+      }
     ]
   },
   {
     "id": "faerieDragon",
-    "name": "Faerie Dragon",
+    "name": "Draco Feérico",
     "magic": "verdant",
     "description": "Faerie dragons are very small dragons with butterfly wings. Their body colors range from red to black, and they have a thin tail. They like practical jokes, and appear to be smiling all the time. They do not breathe fire, but they can become invisible at will and use their breath to ward off intruders. Their magical abilities provide immunity against several types of magic.",
     "powerRank": 34,
     "hitPoints": 60,
-    "race": ["dragon"],
-    "attributes": ["special"],
-
+    "race": [
+      "dragon"
+    ],
+    "attributes": [
+      "special"
+    ],
     "primaryAttackPower": 300,
-    "primaryAttackType": ["magic", "breath"],
+    "primaryAttackType": [
+      "magic",
+      "breath"
+    ],
     "primaryAttackInit": 5,
     "counterAttackPower": 0,
-
     "secondaryAttackPower": 0,
     "secondaryAttackType": [],
     "secondaryAttackInit": 0,
-
-    "recruitCost": { 
-      "geld": 120.0,
-      "mana": 0.50,
-      "population": 2.0 
+    "recruitCost": {
+      "geld": 120,
+      "mana": 0.5,
+      "population": 2
     },
     "upkeepCost": {
       "geld": 5.6,
       "mana": 0.06,
-      "population": 0 
+      "population": 0
     },
     "spellResistances": {
       "ascendant": 0,
       "verdant": 0,
       "eradication": 400,
       "nether": 400,
-      "phantasm": 400 
+      "phantasm": 400
     },
     "attackResistances": {
       "missile": 90,
@@ -881,49 +1083,62 @@
       "cold": 0,
       "paralyse": 0,
       "psychic": 0,
-      "holy": 50 
+      "holy": 50
     },
     "abilities": [
-      { "name": "flying", "extra": null },
-      { "name": "swift", "extra": null },
-      { "name": "recruitSpeed", "extra": -30 }
+      {
+        "name": "flying",
+        "extra": null
+      },
+      {
+        "name": "swift",
+        "extra": null
+      },
+      {
+        "name": "recruitSpeed",
+        "extra": -30
+      }
     ]
   },
   {
     "id": "druid",
-    "name": "Druid",
+    "name": "Custodio de la Raíz",
     "magic": "verdant",
-    "description": "Druids are priests of nature and they view the earth as the mother and source of all life. They are the guardians of the forest, nature, and wilderness. They employ Druidic magic, which originates from nature itself.",
+    "description": "Custodio de la Raízs are priests of nature and they view the earth as the mother and source of all life. They are the guardians of the forest, nature, and wilderness. They employ Custodio de la Raízic magic, which originates from nature itself.",
     "powerRank": 40,
     "hitPoints": 180,
-    "race": ["elf"],
-    "attributes": ["special"],
-
+    "race": [
+      "elf"
+    ],
+    "attributes": [
+      "special"
+    ],
     "primaryAttackPower": 440,
-    "primaryAttackType": ["magic", "ranged"],
+    "primaryAttackType": [
+      "magic",
+      "ranged"
+    ],
     "primaryAttackInit": 3,
     "counterAttackPower": 60,
-
     "secondaryAttackPower": 0,
     "secondaryAttackType": [],
     "secondaryAttackInit": 0,
-
-    "recruitCost": { 
-      "geld": 150.0,
-      "mana": 0.50,
-      "population": 2.0 
+    "recruitCost": {
+      "geld": 150,
+      "mana": 0.5,
+      "population": 2
     },
     "upkeepCost": {
       "geld": 0.8,
-      "mana": 0.10,
-      "population": 0 
+      "mana": 0.1,
+      "population": 0
     },
     "spellResistances": {
       "ascendant": 0,
       "verdant": 0,
       "eradication": 50,
       "nether": 50,
-      "phantasm": 25 
+      "phantasm": 25
     },
     "attackResistances": {
       "missile": 50,
@@ -937,47 +1152,54 @@
       "cold": 25,
       "paralyse": 0,
       "psychic": 0,
-      "holy": 25 
+      "holy": 25
     },
     "abilities": [
-      { "name": "recruitSpeed", "extra": -15 }
+      {
+        "name": "recruitSpeed",
+        "extra": -15
+      }
     ]
   },
   {
     "id": "swanmay",
-    "name": "Swanmay",
+    "name": "Cambiapluma",
     "magic": "verdant",
-    "description": "Swanmays are female shape-shifters who can take the shape of swans. Their magical nature provides some resistance to magic, melee, and missile attacks. All swanmays can move silently through woodlands. In human form, they are indistinguishable from normal human beings. In swan form, they can deftly evade enemy attacks before attacking with weapons in human form.",
+    "description": "Cambiaplumas are female shape-shifters who can take the shape of swans. Their magical nature provides some resistance to magic, melee, and missile attacks. All swanmays can move silently through woodlands. In human form, they are indistinguishable from normal human beings. In swan form, they can deftly evade enemy attacks before attacking with weapons in human form.",
     "powerRank": 35,
     "hitPoints": 255,
-    "race": ["human", "animal"],
-    "attributes": ["special"],
-
+    "race": [
+      "human",
+      "animal"
+    ],
+    "attributes": [
+      "special"
+    ],
     "primaryAttackPower": 220,
-    "primaryAttackType": ["melee"],
+    "primaryAttackType": [
+      "melee"
+    ],
     "primaryAttackInit": 2,
     "counterAttackPower": 60,
-
     "secondaryAttackPower": 0,
     "secondaryAttackType": [],
     "secondaryAttackInit": 0,
-
-    "recruitCost": { 
-      "geld": 170.0,
-      "mana": 0.20,
-      "population": 1.0 
+    "recruitCost": {
+      "geld": 170,
+      "mana": 0.2,
+      "population": 1
     },
     "upkeepCost": {
       "geld": 1.6,
       "mana": 0.02,
-      "population": 0 
+      "population": 0
     },
     "spellResistances": {
       "ascendant": 0,
       "verdant": 0,
       "eradication": 10,
       "nether": 10,
-      "phantasm": 5 
+      "phantasm": 5
     },
     "attackResistances": {
       "missile": 15,
@@ -991,13 +1213,25 @@
       "cold": 0,
       "paralyse": 0,
       "psychic": 0,
-      "holy": 0 
+      "holy": 0
     },
     "abilities": [
-      { "name": "beauty", "extra": null },
-      { "name": "swift", "extra": null },
-      { "name": "marksmanship", "extra": null },
-      { "name": "recruitSpeed", "extra": -15 }
+      {
+        "name": "beauty",
+        "extra": null
+      },
+      {
+        "name": "swift",
+        "extra": null
+      },
+      {
+        "name": "marksmanship",
+        "extra": null
+      },
+      {
+        "name": "recruitSpeed",
+        "extra": -15
+      }
     ]
   }
 ]
