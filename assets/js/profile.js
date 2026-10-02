@@ -266,7 +266,7 @@ function renderPlayerProfile(profile,inbox=null,snapshot=null,target=null){
   if(profile.is_self){
     bioBlock='<textarea id="profile-bio-input" maxlength="500" placeholder="Cuenta quién eres en ARCANUM, qué buscas o cómo quieres que te conozcan otros jugadores…">'+esc(profile.bio||"")+'</textarea>'+
       '<div class="profile-edit-row"><button class="profile-action" id="profile-save-bio">GUARDAR PERFIL</button></div>'+
-      '<small class="profile-upload-note">La foto de perfil la determina automáticamente tu Escuela y nivel de personaje.</small>';
+      '<small class="profile-upload-note">La foto de perfil la determina automáticamente tu Escuela y el progreso de tu Dominio.</small>';
   }else{
     bioBlock='<p>'+(profile.bio?esc(profile.bio):'<span class="muted">Este jugador aún no ha escrito su presentación.</span>')+'</p>';
   }
@@ -373,7 +373,7 @@ async function saveOwnProfile(profile){
   if(btn){btn.disabled=true;btn.textContent="GUARDANDO…";}
   try{
     await rpc("update_my_profile",{p_bio:bio,p_avatar_path:null});
-    toast("Ficha de personaje actualizada.","success");
+    toast("Perfil social actualizado.","success");
     await refreshOwnCharacterSurface(profile);
     await refreshOwnProfileBadge(true);
   }catch(e){toast(humanError(e),"error");}
