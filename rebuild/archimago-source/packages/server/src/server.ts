@@ -37,7 +37,7 @@ import { PGliteDataAdapter } from 'data-adapter/src/pglite-data-adapter';
 import { Engine } from 'engine/src/engine';
 import { MAX_AGE, verifyAccessToken } from 'shared/src/auth';
 import { NameError } from 'shared/src/errors';
-import { toArcanumDomain, toEngineBuildingPlan } from './arcanum-domain';
+import { arcanumSchool, engineSchool, toArcanumDomain, toArcanumRank, toEngineBuildingPlan } from './arcanum-domain';
 
 
 const PORT = 3000;
@@ -175,6 +175,80 @@ router.post('/api/arcanum/destroy', async (req: any, res) => {
     console.error(err);
     res.status(400).json({ error: 'DESTROY_FAILED', message: 'No se pudo completar la demolición.' });
   }
+});
+
+router.post('/api/arcanum/research', async (req: any, res) => {
+  let mage = await getPlayerDomain(req, res);
+  if (!mage) return;
+  const turns = readTurns(req.body?.turns);
+  if (turns === null) return res.status(400).json({ error: 'INVALID_TURNS' });
+
+  try {
+    const magic = engineSchool(req.body?.school);
+    const focus = Boolean(req.body?.focus);
+    const learned = await engine.research(mage, magic, focus, turns);
+    mage = await engine.getMageByUser(req.user.username);
+    const learnedSpells = Object.fromEntries(
+      Object.entries(learned).map(([key, spellIds]) => [
+        arcanumSchool(engineSchool(key)).code,
+        spellIds,
+      ]),
+    );
+    res.status(200).json({
+      domain: toArcanumDomain(mage),
+      learnedSpells,
+      turnsSpent: turns,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ error: 'RESEARCH_FAILED', message: 'No se pudo completar la investigación.' });
+  }
+});
+
+router.post('/api/arcanum/recruitments', async (req: any, res) => {
+  let mage = await getPlayerDomain(req, res);
+  if (!mage) return;
+
+  try {
+    const recruitments = Array.isArray(req.body?.recruitments) ? req.body.recruitments : [];
+    await engine.setRecruitments(mage, recruitments);
+    mage = await engine.getMageByUser(req.user.username);
+    res.status(200).json({ domain: toArcanumDomain(mage) });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ error: 'RECRUITMENT_FAILED', message: 'No se pudo actualizar el reclutamiento.' });
+  }
+});
+
+router.post('/api/arcanum/disband', async (req: any, res) => {
+  let mage = await getPlayerDomain(req, res);
+  if (!mage) return;
+
+  try {
+    const raw = req.body?.disbands ?? req.body ?? {};
+    const disbands = Array.isArray(raw)
+      ? Object.fromEntries(raw.map((stack: any) => [stack.id, stack]))
+      : raw;
+    await engine.disbandUnits(mage, disbands);
+    mage = await engine.getMageByUser(req.user.username);
+    res.status(200).json({ domain: toArcanumDomain(mage) });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ error: 'DISBAND_FAILED', message: 'No se pudo disolver la formación.' });
+  }
+});
+
+router.get('/api/arcanum/ranking', async (_req: any, res) => {
+  const rankList = await engine.rankList('');
+  res.status(200).json({ ranking: rankList.map(toArcanumRank) });
+});
+
+router.get('/api/arcanum/clock', async (_req: any, res) => {
+  res.status(200).json(await engine.getServerClock());
+});
+
+router.get('/api/arcanum/rules', async (_req: any, res) => {
+  res.status(200).json(await engine.getGameTable());
 });
 
 router.post('/api/explore', async (req: any, res) => {
