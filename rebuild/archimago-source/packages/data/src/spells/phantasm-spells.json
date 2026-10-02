@@ -1,0 +1,1343 @@
+[
+  {
+    "id": "phantasmMagic",
+    "name": "Phantasm Magic",
+    "magic": "phantasm",
+    "rank": "simple",
+    "description": "This spell will create shadows that will strike the enemy. These shadows do not have corporeal forms and are mere illusions. However, those who fail to disbelieve the illusion will fall dead and never recover",
+    "attributes": ["battle"],
+    "researchCost": 600,
+    "castingCost": 800,
+    "castingTurn": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "opponent",
+        "targetType": "random",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitDamageEffect",
+            "checkResistance": true,
+            "damageType": ["psychic"],
+            "target": "damage",
+            "rule": "spellLevel",
+            "magic": {
+              "ascendant": { "value": { "min": 140, "max": 140 } },
+              "verdant": { "value": { "min": 90, "max": 90 } },
+              "eradication": { "value": { "min": 90, "max": 90 } },
+              "nether": { "value": { "min": 140, "max": 140 } },
+              "phantasm": { "value": { "min": 230, "max": 230 } }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "fogCloud",
+    "name": "Fog Clound",
+    "magic": "phantasm",
+    "rank": "simple",
+    "description": "This spell will fill the battleground with a thick mist of fog, reducing visibility for the armies. All units will suffer as they will have difficulty finding their enemies.",
+    "attributes": ["battle"],
+    "researchCost": 900,
+    "castingCost": 950,
+    "castingTurn": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "opponent",
+        "targetType": "all",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": true,
+            "attributes": {
+              "accuracy": {
+                "rule": "spellLevelScaled",
+                "magic": {
+                  "ascendant": { "value": -5 },
+                  "verdant": { "value": -2 },
+                  "eradication": { "value": -2 },
+                  "nether": { "value": -5 },
+                  "phantasm": { "value": -10 }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "summonSprite",
+    "name": "Summon Sprite",
+    "magic": "phantasm",
+    "rank": "simple",
+    "description": "This spell will summon playful sprites from nearly springs and fountains. These pretty elfin creatures can be very irritating as they are elusive like a butterfly but sting like a bee.",
+    "attributes": ["summon", "selfOnly"],
+    "researchCost": 500,
+    "castingCost": 6600,
+    "castingTurn": 1,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "UnitSummonEffect",
+        "unitIds": ["sprite"],
+        "summonType": "all",
+        "summonNetPower": 70000,
+        "rule": "spellLevelScaled",
+        "magic": {
+          "ascendant": { "value": 1.0 },
+          "verdant": { "value": 0.6 },
+          "eradication": { "value": 0.2 },
+          "nether": { "value": 0.2 },
+          "phantasm": { "value": 0.6 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "summonPsychicWisp",
+    "name": "Summon Psychic Wisp",
+    "magic": "phantasm",
+    "rank": "simple",
+    "description": "By chanting this incantation, you summon swarms of Psychic Wisps into your army. Striking from a distance with mind warping psychic attacks, these energy beings swiftly decimate your enemies.",
+    "attributes": ["summon", "selfOnly"],
+    "researchCost": 500,
+    "castingCost": 6600,
+    "castingTurn": 1,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "UnitSummonEffect",
+        "unitIds": ["psychicWisp"],
+        "summonType": "all",
+        "summonNetPower": 70000,
+        "rule": "spellLevelScaled",
+        "magic": {
+          "ascendant": { "value": 1.0 },
+          "verdant": { "value": 0.6 },
+          "eradication": { "value": 0.2 },
+          "nether": { "value": 0.2 },
+          "phantasm": { "value": 0.6 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "summonSylph",
+    "name": "Summon Sylph",
+    "magic": "phantasm",
+    "rank": "simple",
+    "description": "This spell will summon beautiful sylphs from crystal blue lakes in nearby mountains. The enemy soldiers will stand smitten and mesmerized as their limbs get torn apart by these heartless creatures.",
+    "attributes": ["summon", "selfOnly"],
+    "researchCost": 1500,
+    "castingCost": 8100,
+    "castingTurn": 2,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "UnitSummonEffect",
+        "unitIds": ["psychicWisp"],
+        "summonType": "all",
+        "summonNetPower": 150000,
+        "rule": "spellLevelScaled",
+        "magic": {
+          "ascendant": { "value": 1.0 },
+          "verdant": { "value": 0.6 },
+          "eradication": { "value": 0.2 },
+          "nether": { "value": 0.2 },
+          "phantasm": { "value": 0.6 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "sleep",
+    "name": "Sleep",
+    "magic": "phantasm",
+    "rank": "simple",
+    "description": "This spell will put enemy units to sleep, severely hindering their ability to fight in the battle",
+    "attributes": ["battle"],
+    "researchCost": 500,
+    "castingCost": 700,
+    "castingTurn": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "opponent",
+        "targetType": "random",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": true,
+            "attributes": {
+              "attackResistances": {
+                "rule": "spellLevelScaled",
+                "magic": {
+                  "ascendant": { "value": -19 }, 
+                  "verdant": { "value": -9 },
+                  "eradication": { "value": -9 },
+                  "nether": { "value": -9 },
+                  "phantasm": { "value": -38 }
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "effectType": "BattleEffect",
+        "target": "opponent",
+        "targetType": "random",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": true,
+            "attributes": {
+              "efficiency": {
+                "rule": "add",
+                "magic": {
+                  "ascendant": { "value": -10 }, 
+                  "verdant": { "value": -10 },
+                  "eradication": { "value": -10 },
+                  "nether": { "value": -10 },
+                  "phantasm": { "value": -10 }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "scryingMirror",
+    "name" : "Scrying Mirror",
+    "disabled": true,
+    "magic": "phantasm",
+    "rank": "average",
+    "description": "This is the most powerful Eradication spell. It will cause most violent volcanic eruptions in your enemy's country. It will destroy land, maim citizens, eradicate armies and leave your enemy thunderstruck with shock and dismay. Fortunately, the Council only allows 10 such spells to be used against any mage. In addition, this spell is most effective when used against enemy with close net power to the caster. It's effectivness drops as the difference in power increases.",
+    "attributes": ["instant"],
+    "researchCost": 1000,
+    "castingCost": 5000,
+    "castingTurn": 1,
+    "upkeep": null,
+    "effects": [
+    ]
+  },
+  {
+    "id": "confuse",
+    "name": "Confuse",
+    "magic": "phantasm",
+    "rank": "average",
+    "description": "This enchantment will leave your enemy in a state of perpetual confusion. Your enemy will have difficulty casting spells as they cannot concentrate on their enchantments. It will also hinder his dispel ability.",
+    "attributes": ["enchantment"],
+    "researchCost": 2000,
+    "castingCost": 15000,
+    "castingTurn": 5,
+    "life": 50,
+    "upkeep": {
+      "geld": 0,
+      "mana": 300,
+      "population": 0
+    },
+    "effects": [
+      {
+        "effectType": "CastingEffect",
+        "rule": "spellLevel",
+        "type": "castingSuccess",
+        "magic": {
+          "ascendant": { "value": -0.03 },
+          "verdant": { "value": -0.02 },
+          "eradication": { "value": -0.02 },
+          "nether": { "value": -0.03 },
+          "phantasm": { "value": -0.08 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "concentration",
+    "name": "Concentration",
+    "magic": "phantasm",
+    "rank": "average",
+    "description": "This is one of the most important spells for Phantasm mage. This enchantment will allow a mage to achieve a perfect equilibrium of mind. It will enhance the mage's ability of casting spells, researching and summoning effectivness.",
+    "attributes": ["enchantment", "selfOnly"],
+    "researchCost": 3000,
+    "castingCost": 10000,
+    "castingTurn": 5,
+    "upkeep": {
+      "geld": 0,
+      "mana": 150,
+      "population": 0
+    },
+    "effects": [
+      {
+        "effectType": "ProductionEffect",
+        "rule": "spellLevel",
+        "production": "guilds",
+        "magic": {
+          "ascendant": { "value": 0.0035 },
+          "verdant": { "value": 0.001 },
+          "eradication": { "value": 0.001 },
+          "nether": { "value": 0.0035 },
+          "phantasm": { "value": 0.011 }
+        }
+      },
+      {
+        "effectType": "CastingEffect",
+        "rule": "spellLevel",
+        "type": "castingSuccess",
+        "magic": {
+          "ascendant": { "value": 0.02 },
+          "verdant": { "value": 0.01 },
+          "eradication": { "value": 0.01 },
+          "nether": { "value": 0.02 },
+          "phantasm": { "value": 0.05 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "mentalThrash",
+    "name": "Mental Thrash",
+    "magic": "phantasm",
+    "rank": "average",
+    "description": "This spell will blast the mind of enemy troops with overwhelming mental force, causing their brains to burst and resulting in painful death. This phantasm spell is very effective against weak creatures.",
+    "attributes": ["battle"],
+    "researchCost": 2500,
+    "castingCost": 20000,
+    "castingTurn": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "opponent",
+        "targetType": "random",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitDamageEffect",
+            "checkResistance": true,
+            "damageType": ["psychic"],
+            "target": "damage",
+            "rule": "spellLevel",
+            "magic": {
+              "ascendant": { "value": { "min": 1000, "max": 1000 } },
+              "verdant": { "value": { "min": 700, "max": 700 } },
+              "eradication": { "value": { "min": 700, "max": 700 } },
+              "nether": { "value": { "min": 1000, "max": 1000 } },
+              "phantasm": { "value": { "min": 1600, "max": 1600 } }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "phaseStep",
+    "name": "Phase Step",
+    "magic": "phantasm",
+    "rank": "average",
+    "description": "This spell will give your units the ability to walk through walls and strike at unsuspecting enemies with greater ferocity. Area of effect: 1 random group.",
+    "attributes": ["battle"],
+    "researchCost": 3000,
+    "castingCost": 8000,
+    "castingTurn": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "self",
+        "targetType": "weightedRandom",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "abilities": {
+                "rule": "add",
+                "magic": {
+                  "ascendant": { "value": { "name": "siege", "extra": null } },
+                  "verdant": { "value": { "name": "siege", "extra": null } },
+                  "eradication": { "value": { "name": "siege", "extra": null } },
+                  "nether": { "value": { "name": "siege", "extra": null } },
+                  "phantasm": { "value": { "name": "siege", "extra": null } }
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "effectType": "BattleEffect",
+        "target": "self",
+        "targetType": "weightedRandom",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "abilities": {
+                "rule": "add",
+                "magic": {
+                  "phantasm": { "value": { "name": "criticalStrike", "extra": null } }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "doubleTime",
+    "name": "Double Time",
+    "magic": "phantasm",
+    "rank": "average",
+    "description": "This spell will cause your units to move more quickly and efficiently. The affected units will attack the enemy with greater accuracy and initiative. Area of effect: 1 random stack.",
+    "attributes": ["battle"],
+    "researchCost": 1500,
+    "castingCost": 3500,
+    "castingTurn": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "self",
+        "targetType": "random",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "accuracy": {
+                "rule": "add",
+                "magic": {
+                  "ascendant": { "value": 6 },
+                  "verdant": { "value": 3 },
+                  "eradication": { "value": 3 },
+                  "nether": { "value": 6 },
+                  "phantasm": { "value": 12 }
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "effectType": "BattleEffect",
+        "target": "self",
+        "targetType": "random",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "primaryAttackInit,secondaryAttackInit": {
+                "rule": "add",
+                "magic": {
+                  "phantasm": { "value": 1 }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "invisibility",
+    "name": "Invisibility",
+    "magic": "phantasm",
+    "rank": "average",
+    "description": "This spell will turn your units invisible and allow them to strike first. Such sudden magical effect can also daze one of enemy unit groups. Area of effect: 1 random group.",
+    "attributes": ["battle"],
+    "researchCost": 3000,
+    "castingCost": 3000,
+    "castingTurn": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "self",
+        "targetType": "random",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "primaryAttackInit,secondaryAttackInit": {
+                "rule": "add",
+                "magic": {
+                  "ascendant": { "value": 0 },
+                  "verdant": { "value":0 },
+                  "eradication": { "value": 0 },
+                  "nether": { "value": 0 },
+                  "phantasm": { "value": 5 }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "callSirens",
+    "name": "Call Sirens",
+    "magic": "phantasm",
+    "rank": "average",
+    "description": "This spell will summon seductive sirenes from the rocks overlooking shallow oceans. These insidious creatures will sing bewitching songs to enemy troops to lure them to their destruction.",
+    "attributes": ["summon", "selfOnly"],
+    "researchCost": 2100,
+    "castingCost": 24500,
+    "castingTurn": 3,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "UnitSummonEffect",
+        "unitIds": ["siren"],
+        "summonType": "all",
+        "summonNetPower": 270000,
+        "rule": "spellLevelScaled",
+        "magic": {
+          "ascendant": { "value": 0.6 },
+          "verdant": { "value": 0.2 },
+          "eradication": { "value": 0.2 },
+          "nether": { "value": 0.6 },
+          "phantasm": { "value": 1.0 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "summonMedusa",
+    "name": "Summon Medusa",
+    "magic": "phantasm",
+    "rank": "average",
+    "description": "When you cast this spell, a horde of Medusas slithers into your army. These beautiful yet fearsome half-women, half-snake will petrify your opponents with a mere glance.",
+    "attributes": ["summon", "selfOnly"],
+    "researchCost": 2000,
+    "castingCost": 27000,
+    "castingTurn": 3,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "UnitSummonEffect",
+        "unitIds": ["medusa"],
+        "summonType": "all",
+        "summonNetPower": 275000,
+        "rule": "spellLevelScaled",
+        "magic": {
+          "ascendant": { "value": 0.6 },
+          "verdant": { "value": 0.2 },
+          "eradication": { "value": 0.2 },
+          "nether": { "value": 0.6 },
+          "phantasm": { "value": 1.0 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "summonSnowBeast",
+    "name": "Summon Snow Beast",
+    "magic": "phantasm",
+    "rank": "average",
+    "description": "This spell summons a ferocious snow beast from the icy tundras. These massive creatures are known for their incredible strength and resilience, making them formidable allies in battle.",
+    "attributes": ["summon", "selfOnly"],
+    "researchCost": 2100,
+    "castingCost": 35000,
+    "castingTurn": 3,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "UnitSummonEffect",
+        "unitIds": ["yeti"],
+        "summonType": "all",
+        "summonNetPower": 260000,
+        "rule": "spellLevelScaled",
+        "magic": {
+          "ascendant": { "value": 0.6 },
+          "verdant": { "value": 0.2 },
+          "eradication": { "value": 0.2 },
+          "nether": { "value": 0.6 },
+          "phantasm": { "value": 1.0 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "aureateConversion",
+    "name": "Aureate Conversion",
+    "magic": "phantasm",
+    "rank": "complex",
+    "description": "By releasing the stored magical potential of your geld, you are able to directly use your wealth to pay a portion of the mana upkeep cost of your army.",
+    "attributes": ["enchantment", "selfOnly"],
+    "researchCost": 4000,
+    "castingCost": 50000,
+    "castingTurn": 10,
+    "upkeep": {
+      "geld": 0,
+      "mana": 100,
+      "population": 0
+    },
+    "effects": [
+      {
+        "effectType": "ArmyUpkeepEffect",
+        "filters": null,
+        "rule": "spellLevelScaledPercentage",
+        "magic": {
+          "ascendant": { "value": { "geld": 0, "mana": -0.05, "population": 0 } },
+          "verdant": { "value": { "geld": 0, "mana": -0.01, "population": 0 } },
+          "eradication": { "value": { "geld": 0, "mana": -0.01, "population": 0 } },
+          "nether": { "value": { "geld": 0, "mana": -0.05, "population": 0 } },
+          "phantasm": { "value": { "geld": 0, "mana": -0.10, "population": 0 } }
+        }
+      },
+      {
+        "effectType": "ProductionEffect",
+        "rule": "percentage",
+        "production": "geld",
+        "magic": {
+          "ascendant": { "value": -0.25 },
+          "verdant": { "value": -0.50 },
+          "eradication": { "value": -0.50 },
+          "nether": { "value": -0.25 },
+          "phantasm": { "value": -0.15 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "flight",
+    "name": "Flight",
+    "magic": "phantasm",
+    "rank": "complex",
+    "description": "This spell will grant your troops wings of eagles for the duration of the battle. Your enemy can only look up helplessly at the sight of this awesome display of power. However, because of this the unit affected by flight may become easy target for enemy units. Area of effect: 1 random group.",
+    "attributes": ["battle"],
+    "researchCost": 3000,
+    "castingCost": 12000,
+    "castingTurn": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "self",
+        "targetType": "weightedRandom",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "abilities": {
+                "rule": "add",
+                "magic": {
+                  "ascendant": { "value": { "name": "flying", "extra": null } },
+                  "verdant": { "value": { "name": "flying", "extra": null } },
+                  "eradication": { "value": { "name": "flying", "extra": null } },
+                  "nether": { "value": { "name": "flying", "extra": null } },
+                  "phantasm": { "value": { "name": "flying", "extra": null } }
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "effectType": "BattleEffect",
+        "target": "opponent",
+        "targetType": "random",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "accuracy": {
+                "rule": "add",
+                "magic": {
+                  "phantasm": { "value": -5 }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "lovesick",
+    "name": "Lovesick",
+    "magic": "phantasm",
+    "rank": "complex",
+    "description": "This spell will cause your troops to appear most irresistable and desirable to the enemy. Your enemy will be so forlorn with love that they will have difficulty even raising their weapons against you. This is truly powerful defensive spell. Area of effect: 1 random group.",
+    "attributes": ["battle"],
+    "researchCost": 4000,
+    "castingCost": 8000,
+    "castingTurn": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "self",
+        "targetType": "random",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": true,
+            "attributes": {
+              "abilities": {
+                "rule": "add",
+                "magic": {
+                  "phantasm": { "value": "charm", "extra": null }
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "effectType": "BattleEffect",
+        "target": "self",
+        "targetType": "random",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": true,
+            "attributes": {
+              "abilities": {
+                "rule": "add",
+                "magic": {
+                  "ascendant": { "value": "beauty", "extra": null },
+                  "verdant": { "value": "beauty", "extra": null },
+                  "eradication": { "value": "beauty", "extra": null },
+                  "nether": { "value": "beauty", "extra": null },
+                  "phantasm": { "value": "beauty", "extra": null }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "laziness",
+    "name": "Laziness",
+    "magic": "phantasm",
+    "rank": "complex",
+    "description": "This spell will cause the population of your enemy to turn to drinking, gambling and idling their life away. Your enemy's once productive fields will turn barren as the land is neglected and abandoned.",
+    "attributes": ["enchantment"],
+    "researchCost": 4000,
+    "castingCost": 70000,
+    "castingTurn": 10,
+    "life": 50,
+    "upkeep": {
+      "geld": 0,
+      "mana": 500,
+      "population": 0
+    },
+    "effects": [
+      {
+        "effectType": "ProductionEffect",
+        "rule": "spellLevelScaledPercentage",
+        "production": "geld",
+        "magic": {
+          "ascendant": { "value": -0.35 },
+          "verdant": { "value": -0.15 },
+          "eradication": { "value": -0.15 },
+          "nether": { "value": -0.35 },
+          "phantasm": { "value": -0.88 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "temporalStasisField",
+    "name": "Temporal Stasis Field",
+    "disabled": true,
+    "magic": "phantasm",
+    "rank": "complex",
+    "description": "The spell will put a stasis field in an area, thus putting the recipent's country into an state of temporal suspension. Time will flow slower within the area.",
+    "attributes": ["enchantment"],
+    "researchCost": 4000,
+    "castingCost": 20000,
+    "castingTurn": 10,
+    "upkeep": {
+      "geld": 0,
+      "mana": 1000,
+      "population": 0
+    },
+    "effects": [
+    ]
+  },
+  {
+    "id": "sunder",
+    "name": "Sunder",
+    "magic": "phantasm",
+    "rank": "complex",
+    "description": "The spell drains enemy mana",
+    "attributes": ["instant"],
+    "researchCost": 4000,
+    "castingCost": 60000,
+    "castingTurn": 3,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "StealEffect",
+        "rule": "spellLevelScaled",
+        "target": "mana",
+        "magic": {
+          "ascendant": { "value": { "min": 1000, "max": 15000, "stealPercent": null } },
+          "verdant": { "value": { "min": 300, "max": 8000, "stealPercent": null } },
+          "eradication": { "value": { "min": 300, "max": 8000, "stealPercent": null } },
+          "nether": { "value": { "min": 1000, "max": 15000, "stealPercent": null } },
+          "phantasm": { "value": { "min": 6000, "max": 30000, "stealPercent": null } }
+        }
+      }
+    ]
+  },
+  {
+    "id": "mindBar",
+    "name": "Mind Bar",
+    "magic": "phantasm",
+    "rank": "complex",
+    "description": "This spell will lock up the mind of any enemy who dares afflict your empire with offensive enchantments or sorceries. In this way, Mind Bar effectively bestows resistance against all spells, particularly those of the Phantasm discipline.",
+    "attributes": ["enchantment", "selfOnly"],
+    "researchCost": 4000,
+    "castingCost": 100000,
+    "castingTurn": 7,
+    "upkeep": {
+      "geld": 0,
+      "mana": 500,
+      "population": 0
+    },
+    "effects": [
+      {
+        "effectType": "KingdomResistanceEffect",
+        "rule": "spellLevel",
+        "resistance": "ascendant",
+        "magic": {
+          "ascendant": { "value": 0.04 },
+          "verdant": { "value": 0.035 },
+          "eradication": { "value": 0.035 },
+          "nether": { "value": 0.04 },
+          "phantasm": { "value": 0.0765 }
+        }
+      },
+      {
+        "effectType": "KingdomResistanceEffect",
+        "rule": "spellLevel",
+        "resistance": "verdant",
+        "magic": {
+          "ascendant": { "value": 0.04 },
+          "verdant": { "value": 0.035 },
+          "eradication": { "value": 0.035 },
+          "nether": { "value": 0.04 },
+          "phantasm": { "value": 0.0765 }
+        }
+      },
+      {
+        "effectType": "KingdomResistanceEffect",
+        "rule": "spellLevel",
+        "resistance": "eradication",
+        "magic": {
+          "ascendant": { "value": 0.04 },
+          "verdant": { "value": 0.035 },
+          "eradication": { "value": 0.035 },
+          "nether": { "value": 0.04 },
+          "phantasm": { "value": 0.0765 }
+        }
+      },
+      {
+        "effectType": "KingdomResistanceEffect",
+        "rule": "spellLevel",
+        "resistance": "nether",
+        "magic": {
+          "ascendant": { "value": 0.04 },
+          "verdant": { "value": 0.035 },
+          "eradication": { "value": 0.035 },
+          "nether": { "value": 0.04 },
+          "phantasm": { "value": 0.0765 }
+        }
+      },
+      {
+        "effectType": "KingdomResistanceEffect",
+        "rule": "spellLevel",
+        "resistance": "phantasm",
+        "magic": {
+          "ascendant": { "value": 0.04 },
+          "verdant": { "value": 0.035 },
+          "eradication": { "value": 0.035 },
+          "nether": { "value": 0.04 },
+          "phantasm": { "value": 0.0765 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "stealArtifact",
+    "name" : "Steal Artifact",
+    "magic": "phantasm",
+    "rank": "complex",
+    "description": "Using this spell mage can cause one of target enemy's item to vanish and teleport directly to caster mage. However, this spell is too weak to transfer ancient artifacts.",
+    "attributes": ["instant"],
+    "researchCost": 4000,
+    "castingCost": 20000,
+    "castingTurn": 2,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "StealEffect",
+        "rule": "spellLevelScaled",
+        "target": "item",
+        "magic": {
+          "ascendant": { "value": { "min": 1, "max": 1, "stealPercent": null } },
+          "verdant": { "value": { "min": 1, "max": 1, "stealPercent": null } },
+          "eradication": { "value": { "min": 1, "max": 1, "stealPercent": null } },
+          "nether": { "value": { "min": 1, "max": 1, "stealPercent": null } },
+          "phantasm": { "value": { "min": 1, "max": 1, "stealPercent": null } }
+        }
+      }
+    ]
+  },
+  {
+    "id": "paralyze",
+    "name": "Paralyze",
+    "magic": "phantasm",
+    "rank": "complex",
+    "description": "This powerfull spell hits an enemy unit with immense and crippling pain, causing them to fall to the ground, twitching and convulsing, unable to control their own bodies. Paralyze can strike 4 enemy groups at once. Paralyze is one of the more feared Phantasm spells on the battlefield.",
+    "attributes": ["battle"],
+    "researchCost": 3500,
+    "castingCost": 10000,
+    "castingTurn": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "opponent",
+        "targetType": "weightedRandom",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": true,
+            "attributes": {
+              "primaryAttackInit,secondaryAttackInit": {
+                "rule": "add",
+                "magic": {
+                  "phantasm": { "value": -6 }
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "effectType": "BattleEffect",
+        "target": "opponent",
+        "targetType": "random",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": true,
+            "attributes": {
+              "primaryAttackPower": {
+                "rule": "percentage",
+                "magic": {
+                  "ascendant": { "value": -0.5 },
+                  "verdant": { "value": -0.20 },
+                  "eradication": { "value": -0.20 },
+                  "nether": { "value": -0.5 },
+                  "phantasm": { "value": -1 }
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "effectType": "BattleEffect",
+        "target": "opponent",
+        "targetType": "random",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": true,
+            "attributes": {
+              "counterAttackPower": {
+                "rule": "percentage",
+                "magic": {
+                  "ascendant": { "value": -0.5 },
+                  "verdant": { "value": -0.20 },
+                  "eradication": { "value": -0.20 },
+                  "nether": { "value": -0.5 },
+                  "phantasm": { "value": -1 }
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "effectType": "BattleEffect",
+        "target": "opponent",
+        "targetType": "weightedRandom",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": true,
+            "attributes": {
+              "abilities": {
+                "rule": "remove",
+                "magic": {
+                  "ascendant": { "value": { "name": "bursting", "extra": null } },
+                  "verdant": { "value": { "name": "bursting", "extra": null } },
+                  "eradication": { "value": { "name": "bursting", "extra": null } },
+                  "nether": { "value": { "name": "bursting", "extra": null } },
+                  "phantasm": { "value": { "name": "bursting", "extra": null } }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "slow",
+    "name": "Slow",
+    "magic": "phantasm",
+    "rank": "complex",
+    "description": "This spell will cause enemy units to slow down dramatically as their mind and body become less aware of the passage of time. Slower creatures will not be able to attack at all for the duration of the battle",
+    "attributes": ["battle"],
+    "researchCost": 8000,
+    "castingCost": 4000,
+    "castingTurn": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "opponent",
+        "filters": null,
+        "trigger": null,
+        "targetType": "all",
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": true,
+            "attributes": {
+              "primaryAttackInit,secondaryAttackInit": {
+                "rule": "add",
+                "magic": {
+                  "phantasm": { "value": -1 }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "summonDjinni",
+    "name": "Summon Djinni",
+    "magic": "phantasm",
+    "rank": "complex",
+    "description": "Chanting this summon spell, Djinni will join your army. Flying high above the battlefield, these beings use their strong magical powers to attack your opponents, tossing lightnings at unfortunate enemies.",
+    "attributes": ["summon", "selfOnly"],
+    "researchCost": 2500,
+    "castingCost": 30000,
+    "castingTurn": 4,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "UnitSummonEffect",
+        "unitIds": ["djinni"],
+        "summonType": "all",
+        "summonNetPower": 440000,
+        "rule": "spellLevelScaled",
+        "magic": {
+          "ascendant": { "value": 0.6 },
+          "verdant": { "value": 0.2 },
+          "eradication": { "value": 0.2 },
+          "nether": { "value": 0.6 },
+          "phantasm": { "value": 1.0 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "summonMindRipper",
+    "name": "Summon Mind Ripper",
+    "magic": "phantasm",
+    "rank": "complex",
+    "description": "This spell will summon terrible mind rippers from the upper astral plane. These dreadful and terrifying monsters posses superior psychic abilities and relish feasting on the brains of their still-alive enemies.",
+    "attributes": ["summon", "selfOnly"],
+    "researchCost": 8000,
+    "castingCost": 65700,
+    "castingTurn": 6,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "UnitSummonEffect",
+        "unitIds": ["mindRipper"],
+        "summonType": "all",
+        "summonNetPower": 650000,
+        "rule": "spellLevelScaled",
+        "magic": {
+          "ascendant": { "value": 0.6 },
+          "verdant": { "value": 0.2 },
+          "eradication": { "value": 0.2 },
+          "nether": { "value": 0.6 },
+          "phantasm": { "value": 1.0 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "conjureElemental",
+    "name": "Conjure Elemental",
+    "magic": "phantasm",
+    "rank": "ultimate",
+    "description": "Delving deep into your store of energy, Summon Elemental calls upon the powers of the gods to send you their mightiest creatures, those created from the very fabric of Terra itself. The result of this spell is usually random, but can be controlled by experienced phantasm mages.",
+    "attributes": ["summon", "selfOnly"],
+    "researchCost": 30000,
+    "castingCost": 280000,
+    "castingTurn": 9,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "UnitSummonEffect",
+        "unitIds": ["iceElemental", "airElemental", "waterElemental"],
+        "summonType": "random",
+        "summonNetPower": 2100000,
+        "rule": "spellLevelScaled",
+        "magic": {
+          "ascendant": { "value": 0.0 },
+          "verdant": { "value": 0.0 },
+          "eradication": { "value": 0.0 },
+          "nether": { "value": 0.0 },
+          "phantasm": { "value": 1.0 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "summonLeviathan",
+    "name": "Summon Leviathan",
+    "magic": "phantasm",
+    "rank": "ultimate",
+    "description": "This spell allows you to control gigantic Leviathans, who answer your summons and come to join your army from the depths of the largest oceans of Terra.",
+    "attributes": ["summon", "selfOnly"],
+    "researchCost": 35000,
+    "castingCost": 300000,
+    "castingTurn": 10,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "UnitSummonEffect",
+        "unitIds": ["leviathan"],
+        "summonType": "random",
+        "summonNetPower": 2400000,
+        "rule": "spellLevelScaled",
+        "magic": {
+          "ascendant": { "value": 0.0 },
+          "verdant": { "value": 0.0 },
+          "eradication": { "value": 0.0 },
+          "nether": { "value": 0.0 },
+          "phantasm": { "value": 1.0 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "hallucination",
+    "name": "Hallucination",
+    "magic": "phantasm",
+    "rank": "ultimate",
+    "description": "This ultimate enchantment will create a powerful illusion capable of covering your entire country. Invading armies will have difficulty locating your country and will sometimes walk through the heart of your country without realizing it.",
+    "attributes": ["enchantment", "selfOnly"],
+    "researchCost": 40000,
+    "castingCost": 200000,
+    "castingTurn": 10,
+    "upkeep": {
+      "geld": 0,
+      "mana": 500,
+      "population": 0
+    },
+    "effects": [
+      {
+        "effectType": "AvoidEffect",
+        "target": "attack",
+        "magic": {
+          "ascendant": { "value": 0 },
+          "verdant": { "value": 0 },
+          "eradication": { "value": 0 },
+          "nether": { "value": 0 },
+          "phantasm": { "value": 20 }
+        }
+      },
+      {
+        "effectType": "BattleEffect",
+        "target": "opponent",
+        "filters": null,
+        "trigger": null,
+        "targetType": "all",
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": true,
+            "activation": "defence",
+            "attributes": {
+              "efficiency": {
+                "rule": "add",
+                "magic": {
+                  "phantasm": { "value": -10 }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foolsGold",
+    "name" : "Fools Gold",
+    "magic": "phantasm",
+    "rank": "ultimate",
+    "description": "This spell will magically transport geld from your enemy's coffers into your treasury and leave useless fool's gold behind to hide your gain. Some of the stolen geld, however, get lost to the void while being teleported.",
+    "attributes": ["instant"],
+    "researchCost": 10000,
+    "castingCost": 100000,
+    "castingTurn": 5,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "StealEffect",
+        "rule": "spellLevelScaled",
+        "target": "geld",
+        "magic": {
+          "phantasm": { "value": { "min": 1000000, "max": 45000000, "stealPercent": 0.3 } }
+        }
+      }
+    ]
+  },
+  {
+    "id": "wish",
+    "name" : "Wish",
+    "magic": "phantasm",
+    "rank": "ultimate",
+    "description": "This ultimate spell will bequeath you a power beyond imagination if you know how to wish for it. Gold, artifacts, and charmed citizens will appear before your eyes. However the spell result is quite random, and can even create negative effects.",
+    "attributes": ["instant", "selfOnly"],
+    "researchCost": 30000,
+    "castingCost": 100000,
+    "castingTurn": 1,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "WishEffect",
+        "trigger": {
+          "min": 1,
+          "max": 1
+        },
+        "rolls": [
+          {
+            "target": null,
+            "min": 0,
+            "max": 0,
+            "weight": 30
+          },
+          {
+            "target": "geld",
+            "min": 15000000,
+            "max": 50000000,
+            "weight": 10
+          },
+          {
+            "target": "mana",
+            "min": 50000,
+            "max": 100000,
+            "weight":10 
+          },
+          {
+            "target": "population",
+            "min": 100000,
+            "max": 150000,
+            "weight":10 
+          },
+          {
+            "target": "turn",
+            "min": 5,
+            "max": 10,
+            "weight":10 
+          },
+          {
+            "target": "item",
+            "min": 3,
+            "max": 8,
+            "weight":10 
+          },
+          {
+            "target": "mana",
+            "min": -80000,
+            "max": -100000,
+            "weight": 5
+          },
+          {
+            "target": "population",
+            "min": -100000,
+            "max": -100000,
+            "weight": 5
+          },
+          {
+            "target": "turn",
+            "min": -10,
+            "max": -20,
+            "weight": 5 
+          }
+        ]
+      }
+    ]
+  }
+]

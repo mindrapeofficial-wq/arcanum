@@ -1,0 +1,600 @@
+[
+  {
+    "id": "militia",
+    "name": "Militia",
+    "magic": "plain",
+    "description": "Usually, militias are made up of the citizens of a country. They are given a limited amount of basic training and are provided with basic equipment. They are cheap to recruit and maintain but their fighting power is limited. They can be handy in times of war.",
+    "powerRank": 9,
+    "hitPoints": 80,
+    "race": ["human"],
+    "attributes": ["basic", "special"],
+
+    "primaryAttackPower": 80,
+    "primaryAttackType": ["melee"],
+    "primaryAttackInit": 1,
+    "counterAttackPower": 20,
+
+    "secondaryAttackPower": 0,
+    "secondaryAttackType": [],
+    "secondaryAttackInit": 0,
+
+    "recruitCost": {
+      "geld": 20,
+      "mana": 0,
+      "population": 1
+    },
+    "upkeepCost": {
+      "geld": 0.32,
+      "mana": 0,
+      "population": 0
+    },
+
+    "spellResistances": {
+      "ascendant": 0,
+      "verdant": 0,
+      "eradication": 0,
+      "nether": 0,
+      "phantasm": 0
+    },
+    "attackResistances": {
+      "missile": 0,
+      "fire": 0,
+      "poison": 0,
+      "breath": 0,
+      "magic": 0,
+      "melee": 0,
+      "ranged": 0,
+      "lightning": 0,
+      "cold": 0,
+      "paralyse": 0,
+      "psychic": 0,
+      "holy": 0
+    },
+    "abilities": [
+      { "name": "clumsiness", "extra": null },
+      { "name": "recruitSpeed", "extra": 100 }
+    ]
+  },
+  {
+    "id": "archer",
+    "name": "Archer",
+    "magic": "plain",
+    "description": "Archers are trained bowmen from the barracks. They are trained to shoot arrows towards the target. They can inflict a fair amount of ranged damages on the opponents without any fear of counter attack. However, they usually do not receive any formal training or equipments in melee combat. So, they are virtually useless in close battles.",
+    "powerRank": 12,
+    "hitPoints": 80,
+    "race": ["human"],
+    "attributes": ["basic", "special"],
+
+    "primaryAttackPower": 80,
+    "primaryAttackType": ["missile", "ranged"],
+    "primaryAttackInit": 3,
+    "counterAttackPower": 0,
+
+    "secondaryAttackPower": 0,
+    "secondaryAttackType": [],
+    "secondaryAttackInit": 0,
+
+    "recruitCost": {
+      "geld": 40,
+      "mana": 0,
+      "population": 1
+    },
+    "upkeepCost": {
+      "geld": 0.64,
+      "mana": 0,
+      "population": 0
+    },
+
+    "spellResistances": {
+      "ascendant": 0,
+      "verdant": 0,
+      "eradication": 0,
+      "nether": 0,
+      "phantasm": 0
+    },
+    "attackResistances": {
+      "missile": 0,
+      "fire": 0,
+      "poison": 0,
+      "breath": 0,
+      "magic": 0,
+      "melee": 0,
+      "ranged": 0,
+      "lightning": 0,
+      "cold": 0,
+      "paralyse": 0,
+      "psychic": 0,
+      "holy": 0
+    },
+    "abilities": [
+    ]
+  },
+  {
+    "id": "phalanx",
+    "name": "Phalanx",
+    "magic": "plain",
+    "description": "Phalanx are trained soldiers from the barracks. They are given a period of formal training and provided with better equipments than the militia. They fill the post of patrolling and standing guard in the city. However, their fighting power is not usually very high.",
+    "powerRank": 14,
+    "hitPoints": 100,
+    "race": ["human"],
+    "attributes": ["basic", "special"],
+
+    "primaryAttackPower": 90,
+    "primaryAttackType": ["melee"],
+    "primaryAttackInit": 1,
+    "counterAttackPower": 30,
+
+    "secondaryAttackPower": 0,
+    "secondaryAttackType": [],
+    "secondaryAttackInit": 0,
+
+    "recruitCost": {
+      "geld": 38,
+      "mana": 0,
+      "population": 1
+    },
+    "upkeepCost": {
+      "geld": 0.80,
+      "mana": 0,
+      "population": 0
+    },
+
+    "spellResistances": {
+      "ascendant": 0,
+      "verdant": 0,
+      "eradication": 0,
+      "nether": 0,
+      "phantasm": 0
+    },
+    "attackResistances": {
+      "missile": 0,
+      "fire": 0,
+      "poison": 0,
+      "breath": 0,
+      "magic": 0,
+      "melee": 0,
+      "ranged": 0,
+      "lightning": 0,
+      "cold": 0,
+      "paralyse": 0,
+      "psychic": 0,
+      "holy": 0
+    },
+    "abilities": [
+      { "name": "largeShield", "extra": null }
+    ]
+  },
+  {
+    "id": "pikeman",
+    "name": "Pikeman",
+    "magic": "plain",
+    "description": "Pikeman are trained soldiers from the barracks. They are given a period of formal training and provided with better equipments than the militia. They are specially trained to use pikes in combat. This type of unit is designed to fight against the cavalry with their pikes.",
+    "powerRank": 12,
+    "hitPoints": 90,
+    "race": ["human"],
+    "attributes": ["basic", "special"],
+
+    "primaryAttackPower": 100,
+    "primaryAttackType": ["melee"],
+    "primaryAttackInit": 1,
+    "counterAttackPower": 40,
+
+    "secondaryAttackPower": 0,
+    "secondaryAttackType": [],
+    "secondaryAttackInit": 0,
+
+    "recruitCost": {
+      "geld": 36,
+      "mana": 0,
+      "population": 1
+    },
+    "upkeepCost": {
+      "geld": 0.72,
+      "mana": 0,
+      "population": 0
+    },
+
+    "spellResistances": {
+      "ascendant": 0,
+      "verdant": 0,
+      "eradication": 0,
+      "nether": 0,
+      "phantasm": 0
+    },
+    "attackResistances": {
+      "missile": 0,
+      "fire": 0,
+      "poison": 0,
+      "breath": 0,
+      "magic": 0,
+      "melee": 0,
+      "ranged": 0,
+      "lightning": 0,
+      "cold": 0,
+      "paralyse": 0,
+      "psychic": 0,
+      "holy": 0
+    },
+    "abilities": [
+      { "name": "pike", "extra": null }
+    ]
+  },
+  {
+    "id": "calvary",
+    "name": "Calvary",
+    "magic": "plain",
+    "description": "Cavalry are trained horsemen from the barracks. To train and maintain a cavalry is very expensive because one has to train and maintain both soldier and horse. But, the cavalry offers higher fighting power and mobility than a normal infantry.",
+    "powerRank": 18,
+    "hitPoints": 120,
+    "race": ["human"],
+    "attributes": ["basic", "special"],
+
+    "primaryAttackPower": 180,
+    "primaryAttackType": ["melee"],
+    "primaryAttackInit": 2,
+    "counterAttackPower": 30,
+
+    "secondaryAttackPower": 0,
+    "secondaryAttackType": [],
+    "secondaryAttackInit": 0,
+
+    "recruitCost": {
+      "geld": 70,
+      "mana": 0,
+      "population": 1
+    },
+    "upkeepCost": {
+      "geld": 1.44,
+      "mana": 0,
+      "population": 0
+    },
+
+    "spellResistances": {
+      "ascendant": 0,
+      "verdant": 0,
+      "eradication": 0,
+      "nether": 0,
+      "phantasm": 0
+    },
+    "attackResistances": {
+      "missile": 0,
+      "fire": 0,
+      "poison": 0,
+      "breath": 0,
+      "magic": 0,
+      "melee": 0,
+      "ranged": 0,
+      "lightning": 0,
+      "cold": 0,
+      "paralyse": 0,
+      "psychic": 0,
+      "holy": 0
+    },
+    "abilities": [
+    ]
+  },
+  {
+    "id": "capsuleMonster",
+    "name": "Capsule Monster",
+    "magic": "plain",
+    "description": "These monsters look like baby dragons in all aspects; however, they will dissolve into a tree-sap-like material after they have been released from the capsule for some time, or when they are hit.",
+    "powerRank": 21,
+    "hitPoints": 1,
+    "race": ["human"],
+    "attributes": ["special", "temporary", "noMarket"],
+
+    "primaryAttackPower": 500,
+    "primaryAttackType": ["melee"],
+    "primaryAttackInit": 2,
+    "counterAttackPower": 0,
+
+    "secondaryAttackPower": 0,
+    "secondaryAttackType": [],
+    "secondaryAttackInit": 0,
+
+    "recruitCost": {
+      "geld": 0,
+      "mana": 0,
+      "population": 0
+    },
+    "upkeepCost": {
+      "geld": 0,
+      "mana": 0,
+      "population": 0
+    },
+    "spellResistances": {
+      "ascendant": 0,
+      "verdant": 0,
+      "eradication": 0,
+      "nether": 0,
+      "phantasm": 0
+    },
+    "attackResistances": {
+      "missile": 0,
+      "fire": 0,
+      "poison": 0,
+      "breath": 0,
+      "magic": 0,
+      "melee": 0,
+      "ranged": 0,
+      "lightning": 0,
+      "cold": 0,
+      "paralyse": 0,
+      "psychic": 100,
+      "holy": 0
+    },
+    "abilities": [
+      { "name": "flying", "extra": null }
+    ]
+  },
+  {
+    "id": "frog",
+    "name": "Frog",
+    "magic": "plain",
+    "description": "Frogs are amphibious animals that swim rapidly, and take long leaps on land. Many of the species utter loud notes in the springtime.",
+    "powerRank": 1,
+    "hitPoints": 10,
+    "race": ["animal"],
+    "attributes": ["special", "noMarket"],
+
+    "primaryAttackPower": 10,
+    "primaryAttackType": ["melee"],
+    "primaryAttackInit": 1,
+    "counterAttackPower": 0,
+
+    "secondaryAttackPower": 0,
+    "secondaryAttackType": [],
+    "secondaryAttackInit": 0,
+
+    "recruitCost": {
+      "geld": 0,
+      "mana": 0,
+      "population": 0
+    },
+    "upkeepCost": {
+      "geld": 0,
+      "mana": 0,
+      "population": 0
+    },
+    "spellResistances": {
+      "ascendant": 0,
+      "verdant": 0,
+      "eradication": 0,
+      "nether": 0,
+      "phantasm": 0
+    },
+    "attackResistances": {
+      "missile": 0,
+      "fire": 0,
+      "poison": 0,
+      "breath": 0,
+      "magic": 0,
+      "melee": 0,
+      "ranged": 0,
+      "lightning": 0,
+      "cold": 0,
+      "paralyse": 0,
+      "psychic": 100,
+      "holy": 0
+    },
+    "abilities": [
+    ]
+  },
+  {
+    "id": "squirrel",
+    "name": "Squirrel",
+    "magic": "plain",
+    "description": "Squirrels generally have a bushy tail, large erect ears, and strong hind legs. They are commonly arboreal in their habits, but many species live in burrows.",
+    "powerRank": 1,
+    "hitPoints": 10,
+    "race": ["animal"],
+    "attributes": ["special", "noMarket"],
+
+    "primaryAttackPower": 10,
+    "primaryAttackType": ["melee"],
+    "primaryAttackInit": 1,
+    "counterAttackPower": 0,
+
+    "secondaryAttackPower": 0,
+    "secondaryAttackType": [],
+    "secondaryAttackInit": 0,
+
+    "recruitCost": {
+      "geld": 0,
+      "mana": 0,
+      "population": 0
+    },
+    "upkeepCost": {
+      "geld": 0,
+      "mana": 0,
+      "population": 0
+    },
+    "spellResistances": {
+      "ascendant": 0,
+      "verdant": 0,
+      "eradication": 0,
+      "nether": 0,
+      "phantasm": 0
+    },
+    "attackResistances": {
+      "missile": 0,
+      "fire": 0,
+      "poison": 0,
+      "breath": 0,
+      "magic": 0,
+      "melee": 0,
+      "ranged": 0,
+      "lightning": 0,
+      "cold": 0,
+      "paralyse": 0,
+      "psychic": 100,
+      "holy": 0
+    },
+    "abilities": [
+      { "name": "flying", "extra": null }
+    ]
+  },
+  {
+    "id": "sheep",
+    "name": "Sheep",
+    "magic": "plain",
+    "description": "A domestic animal, sheep vary much in size, in the length and texture of their wool, the form and size of their horns, the length of their tail, etc. Sheep have many distinct breeds and are well known for their fine wool.",
+    "powerRank": 1,
+    "hitPoints": 10,
+    "race": ["animal"],
+    "attributes": ["special", "noMarket"],
+
+    "primaryAttackPower": 10,
+    "primaryAttackType": ["melee"],
+    "primaryAttackInit": 1,
+    "counterAttackPower": 0,
+
+    "secondaryAttackPower": 0,
+    "secondaryAttackType": [],
+    "secondaryAttackInit": 0,
+
+    "recruitCost": {
+      "geld": 0,
+      "mana": 0,
+      "population": 0
+    },
+    "upkeepCost": {
+      "geld": 0,
+      "mana": 0,
+      "population": 0
+    },
+    "spellResistances": {
+      "ascendant": 0,
+      "verdant": 0,
+      "eradication": 0,
+      "nether": 0,
+      "phantasm": 0
+    },
+    "attackResistances": {
+      "missile": 0,
+      "fire": 0,
+      "poison": 0,
+      "breath": 0,
+      "magic": 0,
+      "melee": 0,
+      "ranged": 0,
+      "lightning": 0,
+      "cold": 0,
+      "paralyse": 0,
+      "psychic": 100,
+      "holy": 0
+    },
+    "abilities": [
+    ]
+  },
+  {
+    "id": "fanatic",
+    "name": "Fanatic",
+    "magic": "plain",
+    "description": "These are devoted worshippers of their god. They will fight to defend their religion with zeal and ferocity. They are frenzied in battles and their fighting abilities are well known. They will not tolerate any blasphemy and will hack any violaters into pieces without mercy. They are more feared than respected among the majority. Alternative name: 'zealots'.",
+    "powerRank": 12,
+    "hitPoints": 500,
+    "race": ["human"],
+    "attributes": ["special"],
+
+    "primaryAttackPower": 500,
+    "primaryAttackType": ["holy"],
+    "primaryAttackInit": 1,
+    "counterAttackPower": 500,
+
+    "secondaryAttackPower": 0,
+    "secondaryAttackType": [],
+    "secondaryAttackInit": 0,
+
+    "recruitCost": {
+      "geld": 0,
+      "mana": 0,
+      "population": 0
+    },
+    "upkeepCost": {
+      "geld": 0,
+      "mana": 0,
+      "population": 0
+    },
+    "spellResistances": {
+      "ascendant": 0,
+      "verdant": 0,
+      "eradication": 50,
+      "nether": 50,
+      "phantasm": 25
+    },
+    "attackResistances": {
+      "missile": 50,
+      "fire": 50,
+      "poison": 50,
+      "breath": 50,
+      "magic": 50,
+      "melee": 50,
+      "ranged": 50,
+      "lightning": 50,
+      "cold": 50,
+      "paralyse": 50,
+      "psychic": 50,
+      "holy": 50
+    },
+    "abilities": [
+      { "name": "additionalStrike", "extra": null }
+    ]
+  },
+  {
+    "id": "stoneGolem",
+    "name": "Stone Golem",
+    "magic": "plain",
+    "description": "Stone Golem stands twelve feet tall and is made of dark granite. He resembles a huge human, and weighs around five thousand pounds. He is mindless and fearless, and will only obey the command of his master. He cannot be hurt by normal or fire attacks. In combat, he will use either his fists, or a weapon if one is available. He has the strength of the strongest giants and can damage buildings easily. Sometimes, he will be used as a siege weapon in order to batter down the gates or the city walls.",
+    "powerRank": 1984,
+    "hitPoints": 15000,
+    "race": ["golem"],
+    "attributes": ["summon"],
+
+    "primaryAttackPower": 20000,
+    "primaryAttackType": ["melee"],
+    "primaryAttackInit": 1,
+    "counterAttackPower": 20000,
+
+    "secondaryAttackPower": 0,
+    "secondaryAttackType": [],
+    "secondaryAttackInit": 0,
+
+    "recruitCost": {
+      "geld": 0,
+      "mana": 0,
+      "population": 0
+    },
+    "upkeepCost": {
+      "geld": 0,
+      "mana": 10,
+      "population": 0
+    },
+    "spellResistances": {
+      "ascendant": 75,
+      "verdant": 75,
+      "eradication": 75,
+      "nether": 75,
+      "phantasm": 75
+    },
+    "attackResistances": {
+      "missile": 99,
+      "fire": 50,
+      "poison": 100,
+      "breath": 0,
+      "magic": 50,
+      "melee": 99,
+      "ranged": 99,
+      "lightning": 0,
+      "cold": 0,
+      "paralyse": 100,
+      "psychic": 100,
+      "holy": 100
+    },
+    "abilities": [
+      { "name": "clumsiness", "extra": null },
+      { "name": "siege", "extra": null },
+      { "name": "endurance", "extra": null }
+    ]
+  }
+]
