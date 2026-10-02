@@ -52,8 +52,8 @@ export const matchesFilterByUnitId = (id: string, filter: UnitFilter) => {
 export const matchesFilter = (unit: Unit, filter: UnitFilter) => {
   if (!filter) return true;
 
-  if (filter.magic) {
-    if (!filter.magic.includes(unit.magic)) {
+  if (filter.magick) {
+    if (!filter.magick.includes(unit.magic)) {
       return false;
     }
   }
