@@ -37,6 +37,7 @@ import { PGliteDataAdapter } from 'data-adapter/src/pglite-data-adapter';
 import { Engine } from 'engine/src/engine';
 import { MAX_AGE, verifyAccessToken } from 'shared/src/auth';
 import { NameError } from 'shared/src/errors';
+import { toArcanumDomain } from './arcanum-domain';
 
 
 const PORT = 3000;
@@ -51,6 +52,105 @@ app.use(verifyAccessToken);
 
 const dataAdapter = new PGliteDataAdapter();
 const engine = new Engine(dataAdapter);
+
+const readTurns = (value: unknown) => {
+  const turns = Number(value);
+  if (!Number.isInteger(turns) || turns < 1) return null;
+  return turns;
+};
+
+const getPlayerDomain = async (req: any, res: any) => {
+  const username = req.user?.username;
+  if (!username) {
+    res.status(401).json({ error: 'AUTH_REQUIRED' });
+    return null;
+  }
+  const mage = await engine.getMageByUser(username);
+  if (!mage) {
+    res.status(404).json({ error: 'DOMAIN_NOT_FOUND' });
+    return null;
+  }
+  return mage;
+};
+
+// ARCANUM-native façade. These routes deliberately avoid exposing inherited
+// world terminology so the browser can migrate one Domain system at a time.
+router.get('/api/arcanum/domain', async (req: any, res) => {
+  const mage = await getPlayerDomain(req, res);
+  if (!mage) return;
+  res.status(200).json({ domain: toArcanumDomain(mage) });
+});
+
+router.post('/api/arcanum/explore', async (req: any, res) => {
+  let mage = await getPlayerDomain(req, res);
+  if (!mage) return;
+  const turns = readTurns(req.body?.turns);
+  if (turns === null) return res.status(400).json({ error: 'INVALID_TURNS' });
+
+  try {
+    const landGained = await engine.exploreLand(mage, turns);
+    mage = await engine.getMageByUser(req.user.username);
+    res.status(200).json({
+      domain: toArcanumDomain(mage),
+      landGained,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ error: 'EXPLORE_FAILED', message: 'No se pudo completar la exploración.' });
+  }
+});
+
+router.post('/api/arcanum/economy/gold', async (req: any, res) => {
+  let mage = await getPlayerDomain(req, res);
+  if (!mage) return;
+  const turns = readTurns(req.body?.turns);
+  if (turns === null) return res.status(400).json({ error: 'INVALID_TURNS' });
+
+  try {
+    const goldGained = await engine.gelding(mage, turns);
+    mage = await engine.getMageByUser(req.user.username);
+    res.status(200).json({
+      domain: toArcanumDomain(mage),
+      goldGained,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ error: 'GOLD_COLLECTION_FAILED', message: 'No se pudo completar la recaudación.' });
+  }
+});
+
+router.post('/api/arcanum/economy/mana', async (req: any, res) => {
+  let mage = await getPlayerDomain(req, res);
+  if (!mage) return;
+  const turns = readTurns(req.body?.turns);
+  if (turns === null) return res.status(400).json({ error: 'INVALID_TURNS' });
+
+  try {
+    const manaGained = await engine.manaCharge(mage, turns);
+    mage = await engine.getMageByUser(req.user.username);
+    res.status(200).json({
+      domain: toArcanumDomain(mage),
+      manaGained,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ error: 'MANA_CHANNEL_FAILED', message: 'No se pudo completar la canalización de maná.' });
+  }
+});
+
+router.post('/api/arcanum/build', async (req: any, res) => {
+  let mage = await getPlayerDomain(req, res);
+  if (!mage) return;
+
+  try {
+    await engine.build(mage, req.body);
+    mage = await engine.getMageByUser(req.user.username);
+    res.status(200).json({ domain: toArcanumDomain(mage) });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ error: 'BUILD_FAILED', message: 'No se pudo completar la construcción.' });
+  }
+});
 
 router.post('/api/explore', async (req: any, res) => {
   let mage = await engine.getMageByUser(req.user.username);
@@ -471,7 +571,7 @@ app.use(router);
 app.listen(PORT, ()=>{
   console.log(`App is listening on port ${PORT}`);
   console.log('================================');
-  console.log('Archmage Reimagined');
+  console.log('ARCANUM rebuilt engine');
   console.log('================================');
 });
 
