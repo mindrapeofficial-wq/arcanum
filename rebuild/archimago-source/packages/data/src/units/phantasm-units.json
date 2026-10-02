@@ -1,37 +1,40 @@
 [
   {
     "id": "sprite",
-    "name": "Sprite",
+    "name": "Chispa Feérica",
     "magic": "phantasm",
-    "description": "Sprites are shy fairy folk who are very mischievous in nature. Only two-feet tall, they resemble small elves with a pair of butterfly wings. They are incredibly swift. When engaged in battle, they blow darts infused with magical hallucinogens. These weapons do limited damage, but sprites are invaluable because they are very difficult to hit due to their erratic movements through the air.",
+    "description": "Chispa Feéricas are shy fairy folk who are very mischievous in nature. Only two-feet tall, they resemble small elves with a pair of butterfly wings. They are incredibly swift. When engaged in battle, they blow darts infused with magical hallucinogens. These weapons do limited daArconte, but sprites are invaluable because they are very difficult to hit due to their erratic movements through the air.",
     "powerRank": 38,
     "hitPoints": 75,
-    "race": ["pixie"],
-    "attributes": ["summon"],
-
+    "race": [
+      "pixie"
+    ],
+    "attributes": [
+      "summon"
+    ],
     "primaryAttackPower": 400,
-    "primaryAttackType": ["magic"],
+    "primaryAttackType": [
+      "magic"
+    ],
     "primaryAttackInit": 5,
     "counterAttackPower": 0,
-
     "secondaryAttackPower": 0,
     "secondaryAttackType": [],
     "secondaryAttackInit": 0,
-
-    "recruitCost": { 
+    "recruitCost": {
       "geld": 0,
       "mana": 0,
-      "population": 0 
+      "population": 0
     },
     "upkeepCost": {
-      "geld": 0.00,
+      "geld": 0,
       "mana": 0.07,
-      "population": 0 
+      "population": 0
     },
     "spellResistances": {
       "ascendant": 0,
       "verdant": 0,
-      "eradication": 25, 
+      "eradication": 25,
       "nether": 25,
       "phantasm": 10
     },
@@ -50,44 +53,57 @@
       "holy": 0
     },
     "abilities": [
-      { "name": "beauty", "extra": null },
-      { "name": "flying", "extra": null },
-      { "name": "swift", "extra": null }
+      {
+        "name": "beauty",
+        "extra": null
+      },
+      {
+        "name": "flying",
+        "extra": null
+      },
+      {
+        "name": "swift",
+        "extra": null
+      }
     ]
   },
   {
     "id": "psychicWisp",
-    "name": "Psychic Wisp",
+    "name": "Fulgor Psíquico",
     "magic": "phantasm",
     "description": "These balls of energy float in remote areas and often lure the curious to their death. They use psychic attacks to combat their enemies.",
     "powerRank": 40,
     "hitPoints": 100,
-    "race": ["elemental"],
-    "attributes": ["summon"],
-
+    "race": [
+      "elemental"
+    ],
+    "attributes": [
+      "summon"
+    ],
     "primaryAttackPower": 460,
-    "primaryAttackType": ["ranged", "psychic"],
+    "primaryAttackType": [
+      "ranged",
+      "psychic"
+    ],
     "primaryAttackInit": 3,
     "counterAttackPower": 200,
-
     "secondaryAttackPower": 0,
     "secondaryAttackType": [],
     "secondaryAttackInit": 0,
-
-    "recruitCost": { 
+    "recruitCost": {
       "geld": 0,
       "mana": 0,
-      "population": 0 
+      "population": 0
     },
     "upkeepCost": {
-      "geld": 0.00,
+      "geld": 0,
       "mana": 0.06,
-      "population": 0 
+      "population": 0
     },
     "spellResistances": {
       "ascendant": 0,
       "verdant": 0,
-      "eradication": 25, 
+      "eradication": 25,
       "nether": 25,
       "phantasm": 0
     },
@@ -106,44 +122,50 @@
       "holy": 0
     },
     "abilities": [
-      { "name": "swift", "extra": null }
+      {
+        "name": "swift",
+        "extra": null
+      }
     ]
   },
   {
     "id": "sylph",
-    "name": "Sylph",
+    "name": "Sílfide de Sueño",
     "magic": "phantasm",
-    "description": "Sylphs are beautiful, humanoid women with wings like dragonflies. Their translucent wings are four feet long, their long hair blue or green. Their voices are extremely musical. They are related to the elemental plane of air. They do not fight, but their magical nature allows them to use magic to ward off intruders. Since all sylphs are female, they must seek out human males in order to mate.",
+    "description": "Sílfide de Sueños are beautiful, humanoid women with wings like dragonflies. Their translucent wings are four feet long, their long hair blue or green. Their voices are extremely musical. They are related to the elemental plane of air. They do not fight, but their magical nature allows them to use magic to ward off intruders. Since all sylphs are female, they must seek out human males in order to mate.",
     "powerRank": 68,
     "hitPoints": 150,
-    "race": ["elemental"],
-    "attributes": ["summon"],
-
+    "race": [
+      "elemental"
+    ],
+    "attributes": [
+      "summon"
+    ],
     "primaryAttackPower": 1000,
-    "primaryAttackType": ["magic"],
+    "primaryAttackType": [
+      "magic"
+    ],
     "primaryAttackInit": 3,
     "counterAttackPower": 0,
-
     "secondaryAttackPower": 0,
     "secondaryAttackType": [],
     "secondaryAttackInit": 0,
-
-    "recruitCost": { 
+    "recruitCost": {
       "geld": 0,
       "mana": 0,
-      "population": 0 
+      "population": 0
     },
     "upkeepCost": {
-      "geld": 0.0,
+      "geld": 0,
       "mana": 0.12,
-      "population": 0 
+      "population": 0
     },
     "spellResistances": {
       "ascendant": 0,
       "verdant": 0,
-      "eradication": 33, 
+      "eradication": 33,
       "nether": 33,
-      "phantasm": 15 
+      "phantasm": 15
     },
     "attackResistances": {
       "missile": 0,
@@ -160,46 +182,60 @@
       "holy": 0
     },
     "abilities": [
-      { "name": "swift", "extra": null },
-      { "name": "beauty", "extra": null },
-      { "name": "flying", "extra": null }
+      {
+        "name": "swift",
+        "extra": null
+      },
+      {
+        "name": "beauty",
+        "extra": null
+      },
+      {
+        "name": "flying",
+        "extra": null
+      }
     ]
   },
   {
     "id": "siren",
-    "name": "Siren",
+    "name": "Voz Hundida",
     "magic": "phantasm",
-    "description": "A Siren is a mermaid, whose upper body is of a fascinating woman. Her voice is charming, but her mind is twisted with malice. She sits in the center of the coral reefs and charms unaware sailors and passengers with her song. To see ships sinking and people drowning is her great delight.",
+    "description": "A Voz Hundida is a mermaid, whose upper body is of a fascinating woman. Her voice is charming, but her mind is twisted with malice. She sits in the center of the coral reefs and charms unaware sailors and passengers with her song. To see ships sinking and people drowning is her great delight.",
     "powerRank": 176,
     "hitPoints": 600,
-    "race": ["pixie"],
-    "attributes": ["summon"],
-
+    "race": [
+      "pixie"
+    ],
+    "attributes": [
+      "summon"
+    ],
     "primaryAttackPower": 3400,
-    "primaryAttackType": ["psychic"],
+    "primaryAttackType": [
+      "psychic"
+    ],
     "primaryAttackInit": 2,
     "counterAttackPower": 0,
-
     "secondaryAttackPower": 600,
-    "secondaryAttackType": ["melee"],
+    "secondaryAttackType": [
+      "melee"
+    ],
     "secondaryAttackInit": 1,
-
-    "recruitCost": { 
+    "recruitCost": {
       "geld": 0,
       "mana": 0,
-      "population": 0 
+      "population": 0
     },
     "upkeepCost": {
-      "geld": 0.0,
-      "mana": 0.30,
-      "population": 0 
+      "geld": 0,
+      "mana": 0.3,
+      "population": 0
     },
     "spellResistances": {
       "ascendant": 0,
       "verdant": 0,
-      "eradication": 0, 
+      "eradication": 0,
       "nether": 0,
-      "phantasm": 25 
+      "phantasm": 25
     },
     "attackResistances": {
       "missile": 0,
@@ -213,48 +249,60 @@
       "cold": 0,
       "paralyse": 0,
       "psychic": 50,
-      "holy": 25 
+      "holy": 25
     },
     "abilities": [
-      { "name": "beauty", "extra": null },
-      { "name": "charm", "extra": null }
+      {
+        "name": "beauty",
+        "extra": null
+      },
+      {
+        "name": "charm",
+        "extra": null
+      }
     ]
   },
   {
     "id": "yeti",
-    "name": "Yeti",
+    "name": "Bestia Nívea",
     "magic": "phantasm",
-    "description": "Yetis are abominable ape-like beasts that live in the top of snowy mountains. They are large, resilient creatures covered in frost and snow, and their white fur enables them to ambush their prey. Their large feet permit them to move quickly and quietly through snow. Their touch brings frostbite and their icy breath quickly induces hypothermia. Because of their long years in freezing temperatures, Yetis strongly resist cold and are conversely weak to fire. They also possess a strong immunity to the attacks of angelic beings.",
+    "description": "Bestia Níveas are abominable ape-like beasts that live in the top of snowy mountains. They are large, resilient creatures covered in frost and snow, and their white fur enables them to ambush their prey. Their large feet permit them to move quickly and quietly through snow. Their touch brings frostbite and their icy breath quickly induces hypothermia. Because of their long years in freezing temperatures, Bestia Níveas strongly resist cold and are conversely weak to fire. They also possess a strong immunity to the attacks of angelic beings.",
     "powerRank": 180,
     "hitPoints": 1000,
-    "race": ["giant"],
-    "attributes": ["summon"],
-
+    "race": [
+      "giant"
+    ],
+    "attributes": [
+      "summon"
+    ],
     "primaryAttackPower": 500,
-    "primaryAttackType": ["cold"],
+    "primaryAttackType": [
+      "cold"
+    ],
     "primaryAttackInit": 2,
     "counterAttackPower": 500,
-
     "secondaryAttackPower": 1400,
-    "secondaryAttackType": ["cold", "breath"],
+    "secondaryAttackType": [
+      "cold",
+      "breath"
+    ],
     "secondaryAttackInit": 2,
-
-    "recruitCost": { 
+    "recruitCost": {
       "geld": 0,
       "mana": 0,
-      "population": 0 
+      "population": 0
     },
     "upkeepCost": {
-      "geld": 10.0,
-      "mana": 0.30,
-      "population": 0 
+      "geld": 10,
+      "mana": 0.3,
+      "population": 0
     },
     "spellResistances": {
       "ascendant": 50,
       "verdant": 0,
-      "eradication": 40, 
+      "eradication": 40,
       "nether": 0,
-      "phantasm": 80 
+      "phantasm": 80
     },
     "attackResistances": {
       "missile": 0,
@@ -268,49 +316,64 @@
       "cold": 80,
       "paralyse": 10,
       "psychic": 0,
-      "holy": 85 
+      "holy": 85
     },
     "abilities": [
-      { "name": "marksmanship", "extra": null },
-      { "name": "swift", "extra": null },
-      { "name": "weakness", "extra": "fire" }
+      {
+        "name": "marksmanship",
+        "extra": null
+      },
+      {
+        "name": "swift",
+        "extra": null
+      },
+      {
+        "name": "weakness",
+        "extra": "fire"
+      }
     ]
   },
   {
     "id": "medusa",
-    "name": "Medusa",
+    "name": "Mirada Serpentina",
     "magic": "phantasm",
-    "description": "These creatures have the upper torsos of beautiful women and the lower bodies of giant snakes. Their seductive gazes not only freeze men in their tracks, but petrify their very bodies. Styling their hair of poisonous snakes, Medusas are perhaps the most vain of Terra's creatures, but they are also some of the deadliest.",
+    "description": "These creatures have the upper torsos of beautiful women and the lower bodies of giant snakes. Their seductive gazes not only freeze men in their tracks, but petrify their very bodies. Styling their hair of poisonous snakes, Mirada Serpentinas are perhaps the most vain of las Tierras Arcanas's creatures, but they are also some of the deadliest.",
     "powerRank": 200,
     "hitPoints": 650,
-    "race": ["reptile"],
-    "attributes": ["summon"],
-
+    "race": [
+      "reptile"
+    ],
+    "attributes": [
+      "summon"
+    ],
     "primaryAttackPower": 2000,
-    "primaryAttackType": ["paralyse"],
+    "primaryAttackType": [
+      "paralyse"
+    ],
     "primaryAttackInit": 2,
     "counterAttackPower": 300,
-
     "secondaryAttackPower": 1000,
-    "secondaryAttackType": ["poison", "ranged"],
+    "secondaryAttackType": [
+      "poison",
+      "ranged"
+    ],
     "secondaryAttackInit": 1,
-
-    "recruitCost": { 
+    "recruitCost": {
       "geld": 0,
       "mana": 0,
-      "population": 0 
+      "population": 0
     },
     "upkeepCost": {
-      "geld": 0.0,
+      "geld": 0,
       "mana": 0.38,
-      "population": 0 
+      "population": 0
     },
     "spellResistances": {
       "ascendant": 0,
       "verdant": 0,
-      "eradication": 30, 
+      "eradication": 30,
       "nether": 40,
-      "phantasm": 30 
+      "phantasm": 30
     },
     "attackResistances": {
       "missile": 0,
@@ -324,48 +387,62 @@
       "cold": 0,
       "paralyse": 50,
       "psychic": 0,
-      "holy": 0 
+      "holy": 0
     },
     "abilities": [
-      { "name": "fear", "extra": null },
-      { "name": "scales", "extra": null }
+      {
+        "name": "fear",
+        "extra": null
+      },
+      {
+        "name": "scales",
+        "extra": null
+      }
     ]
   },
   {
     "id": "mindRipper",
-    "name": "Mind Ripper",
+    "name": "Desgarramentes",
     "magic": "phantasm",
-    "description": "A Mind Ripper is a six-foot-tall humanoid with an octopus head and four tentacles situated around its mouth. They have four reddish fingers on each hand, and hideous mauve skin. Mind Rippers feed on brains, vastly preferring those of sentient creatures. These abominations prefer to directly attack the minds of their opponents with a withering blast of psychic energy, often inflicting permanent brain damage on those 'fortunate' enough to withstand it. In addition to their incredible psionic capabilities, many possess great arcane power. When forced into melee, they can attack with their tentacles and attempt to suck the brains out of their opponents.",
+    "description": "A Desgarramentes is a six-foot-tall humanoid with an octopus head and four tentacles situated around its mouth. They have four reddish fingers on each hand, and hideous mauve skin. Desgarramentess feed on brains, vastly preferring those of sentient creatures. These abominations prefer to directly attack the minds of their opponents with a withering blast of psychic energy, often inflicting permanent brain daArconte on those 'fortunate' enough to withstand it. In addition to their incredible psionic capabilities, many possess great arcane power. When forced into melee, they can attack with their tentacles and attempt to suck the brains out of their opponents.",
     "powerRank": 1154,
     "hitPoints": 5000,
-    "race": ["telepath"],
-    "attributes": ["summon", "undisbandable"],
-
+    "race": [
+      "telepath"
+    ],
+    "attributes": [
+      "summon",
+      "undisbandable"
+    ],
     "primaryAttackPower": 8000,
-    "primaryAttackType": ["magic", "ranged"],
+    "primaryAttackType": [
+      "magic",
+      "ranged"
+    ],
     "primaryAttackInit": 3,
     "counterAttackPower": 4000,
-
     "secondaryAttackPower": 16000,
-    "secondaryAttackType": ["psychic", "ranged"],
+    "secondaryAttackType": [
+      "psychic",
+      "ranged"
+    ],
     "secondaryAttackInit": 3,
-
-    "recruitCost": { 
+    "recruitCost": {
       "geld": 0,
       "mana": 0,
-      "population": 0 
+      "population": 0
     },
     "upkeepCost": {
-      "geld": 0.0,
-      "mana": 2.50,
-      "population": 3.0 
+      "geld": 0,
+      "mana": 2.5,
+      "population": 3
     },
     "spellResistances": {
       "ascendant": 0,
       "verdant": 75,
-      "eradication": 75, 
+      "eradication": 75,
       "nether": 75,
-      "phantasm": 30 
+      "phantasm": 30
     },
     "attackResistances": {
       "missile": 75,
@@ -379,46 +456,51 @@
       "cold": 30,
       "paralyse": 50,
       "psychic": 90,
-      "holy": 50 
+      "holy": 50
     },
-    "abilities": [
-    ]
+    "abilities": []
   },
   {
     "id": "djinni",
-    "name": "Djinni",
+    "name": "Genio del Velo",
     "magic": "phantasm",
-    "description": "When an ancient mage of lore wished for more wishes from a Djinni in a lamp, the last thing he expected was for more Djinni to appear in the mortal realm of Terra; as the sages say, people should be careful what they wish for. Djinni are magical beings that fight for their masters until they are freed from their duty, either by their masters granting their freedom or through their own deaths.",
+    "description": "When an ancient Arconte of lore wished for more wishes from a Genio del Velo in a lamp, the last thing he expected was for more Genio del Velo to appear in the mortal realm of las Tierras Arcanas; as the sages say, people should be careful what they wish for. Genio del Velo are magical beings that fight for their masters until they are freed from their duty, either by their masters granting their freedom or through their own deaths.",
     "powerRank": 1700,
     "hitPoints": 7650,
-    "race": ["elemental"],
-    "attributes": ["summon"],
-
+    "race": [
+      "elemental"
+    ],
+    "attributes": [
+      "summon"
+    ],
     "primaryAttackPower": 8000,
-    "primaryAttackType": ["magic"],
+    "primaryAttackType": [
+      "magic"
+    ],
     "primaryAttackInit": 2,
     "counterAttackPower": 1200,
-
     "secondaryAttackPower": 12000,
-    "secondaryAttackType": ["lightning", "ranged"],
+    "secondaryAttackType": [
+      "lightning",
+      "ranged"
+    ],
     "secondaryAttackInit": 3,
-
-    "recruitCost": { 
+    "recruitCost": {
       "geld": 0,
       "mana": 0,
-      "population": 0 
+      "population": 0
     },
     "upkeepCost": {
-      "geld": 0.0,
-      "mana": 5.00,
-      "population": 0.0 
+      "geld": 0,
+      "mana": 5,
+      "population": 0
     },
     "spellResistances": {
       "ascendant": 0,
       "verdant": 0,
-      "eradication": 50, 
+      "eradication": 50,
       "nether": 65,
-      "phantasm": 20 
+      "phantasm": 20
     },
     "attackResistances": {
       "missile": 80,
@@ -432,48 +514,61 @@
       "cold": 50,
       "paralyse": 40,
       "psychic": 50,
-      "holy": 50 
+      "holy": 50
     },
     "abilities": [
-      { "name": "flying", "extra": null },
-      { "name": "marksmanship", "extra": null }
+      {
+        "name": "flying",
+        "extra": null
+      },
+      {
+        "name": "marksmanship",
+        "extra": null
+      }
     ]
   },
   {
     "id": "airElemental",
-    "name": "Air Elemental",
+    "name": "Esencia del Viento",
     "magic": "phantasm",
     "description": "Air elementals appear as rotating thunderstorms, measuring ten feet in diameter at the bottom and thirty feet in diameter at the top. Massive bolts of lightning emanate from the clouds and powerful magic drives the high winds that sweep away everything in its path.",
     "powerRank": 25000,
     "hitPoints": 65000,
-    "race": ["elemental"],
-    "attributes": ["summon", "noMarket"],
-
+    "race": [
+      "elemental"
+    ],
+    "attributes": [
+      "summon",
+      "noMarket"
+    ],
     "primaryAttackPower": 300000,
-    "primaryAttackType": ["lightning", "ranged"],
+    "primaryAttackType": [
+      "lightning",
+      "ranged"
+    ],
     "primaryAttackInit": 4,
     "counterAttackPower": 6500,
-
     "secondaryAttackPower": 200000,
-    "secondaryAttackType": ["magic"],
+    "secondaryAttackType": [
+      "magic"
+    ],
     "secondaryAttackInit": 1,
-
-    "recruitCost": { 
+    "recruitCost": {
       "geld": 0,
       "mana": 0,
-      "population": 0 
+      "population": 0
     },
     "upkeepCost": {
-      "geld": 0.0,
+      "geld": 0,
       "mana": 68,
-      "population": 0.0 
+      "population": 0
     },
     "spellResistances": {
       "ascendant": 0,
       "verdant": 0,
-      "eradication": 80, 
+      "eradication": 80,
       "nether": 75,
-      "phantasm": 35 
+      "phantasm": 35
     },
     "attackResistances": {
       "missile": 95,
@@ -487,48 +582,62 @@
       "cold": 0,
       "paralyse": 20,
       "psychic": 50,
-      "holy": 80 
+      "holy": 80
     },
     "abilities": [
-      { "name": "flying", "extra": null },
-      { "name": "swift", "extra": null }
+      {
+        "name": "flying",
+        "extra": null
+      },
+      {
+        "name": "swift",
+        "extra": null
+      }
     ]
   },
   {
     "id": "iceElemental",
-    "name": "Ice Elemental",
+    "name": "Esencia de Escarcha",
     "magic": "phantasm",
     "description": "Ice elementals hail from an other-worldly plane covered in ice and snow. They stand 20 feet high, glistening with the reflection from their slowly melting bodies. Immune to cold, poison, and paralysis, they are greatly harmed by fire and breath. In battle, they exhale massive clouds of ice and freezing rain.",
     "powerRank": 21800,
     "hitPoints": 90000,
-    "race": ["elemental"],
-    "attributes": ["summon", "noMarket"],
-
+    "race": [
+      "elemental"
+    ],
+    "attributes": [
+      "summon",
+      "noMarket"
+    ],
     "primaryAttackPower": 200000,
-    "primaryAttackType": ["cold", "ranged"],
+    "primaryAttackType": [
+      "cold",
+      "ranged"
+    ],
     "primaryAttackInit": 1,
     "counterAttackPower": 10000,
-
     "secondaryAttackPower": 300000,
-    "secondaryAttackType": ["cold", "ranged"],
+    "secondaryAttackType": [
+      "cold",
+      "ranged"
+    ],
     "secondaryAttackInit": 3,
-
-    "recruitCost": { 
+    "recruitCost": {
       "geld": 0,
       "mana": 0,
-      "population": 0 
+      "population": 0
     },
     "upkeepCost": {
-      "geld": 0.0,
+      "geld": 0,
       "mana": 70,
-      "population": 0.0 
+      "population": 0
     },
     "spellResistances": {
       "ascendant": 0,
       "verdant": 0,
-      "eradication": 80, 
+      "eradication": 80,
       "nether": 75,
-      "phantasm": 35 
+      "phantasm": 35
     },
     "attackResistances": {
       "missile": 85,
@@ -542,47 +651,55 @@
       "cold": 100,
       "paralyse": 100,
       "psychic": 50,
-      "holy": 80 
+      "holy": 80
     },
     "abilities": [
-      { "name": "weakness", "extra": "fire" }
+      {
+        "name": "weakness",
+        "extra": "fire"
+      }
     ]
   },
   {
     "id": "waterElemental",
-    "name": "Water Elemental",
+    "name": "Esencia de Marea",
     "magic": "phantasm",
-    "description": "From the depths of the deepest sea, water elementals are sent by the great god of the oceans to aid in your conquest. Poisonous to the touch and impervious to five types of attacks, water elementals are the bane of Terra.",
+    "description": "From the depths of the deepest sea, water elementals are sent by the great god of the oceans to aid in your conquest. Poisonous to the touch and impervious to five types of attacks, water elementals are the bane of las Tierras Arcanas.",
     "powerRank": 19406,
     "hitPoints": 72000,
-    "race": ["elemental"],
-    "attributes": ["summon", "noMarket"],
-
+    "race": [
+      "elemental"
+    ],
+    "attributes": [
+      "summon",
+      "noMarket"
+    ],
     "primaryAttackPower": 400000,
-    "primaryAttackType": ["poison", "ranged"],
+    "primaryAttackType": [
+      "poison",
+      "ranged"
+    ],
     "primaryAttackInit": 2,
     "counterAttackPower": 5000,
-
     "secondaryAttackPower": 0,
     "secondaryAttackType": [],
     "secondaryAttackInit": 0,
-
-    "recruitCost": { 
+    "recruitCost": {
       "geld": 0,
       "mana": 0,
-      "population": 0 
+      "population": 0
     },
     "upkeepCost": {
-      "geld": 0.0,
+      "geld": 0,
       "mana": 60,
-      "population": 0.0 
+      "population": 0
     },
     "spellResistances": {
       "ascendant": 0,
       "verdant": 0,
-      "eradication": 80, 
+      "eradication": 80,
       "nether": 75,
-      "phantasm": 35 
+      "phantasm": 35
     },
     "attackResistances": {
       "missile": 100,
@@ -596,47 +713,57 @@
       "cold": 25,
       "paralyse": 100,
       "psychic": 50,
-      "holy": 80 
+      "holy": 80
     },
     "abilities": [
-      { "name": "endurance", "extra": null }
+      {
+        "name": "endurance",
+        "extra": null
+      }
     ]
   },
   {
     "id": "leviathan",
-    "name": "Leviathan",
+    "name": "Leviatán Onírico",
     "magic": "phantasm",
-    "description": "These gargantuan sea creatures are summoned from the depths of the largest oceans of Terra. Their incredible mass is matched only by the range of their poisonous stinger attacks.",
+    "description": "These gargantuan sea creatures are summoned from the depths of the largest oceans of las Tierras Arcanas. Their incredible mass is matched only by the range of their poisonous stinger attacks.",
     "powerRank": 49500,
     "hitPoints": 100000,
-    "race": ["giant"],
-    "attributes": ["summon", "noMarket"],
-
+    "race": [
+      "giant"
+    ],
+    "attributes": [
+      "summon",
+      "noMarket"
+    ],
     "primaryAttackPower": 200000,
-    "primaryAttackType": ["melee"],
+    "primaryAttackType": [
+      "melee"
+    ],
     "primaryAttackInit": 2,
     "counterAttackPower": 50000,
-
     "secondaryAttackPower": 300000,
-    "secondaryAttackType": ["ranged", "poison"],
+    "secondaryAttackType": [
+      "ranged",
+      "poison"
+    ],
     "secondaryAttackInit": 3,
-
-    "recruitCost": { 
+    "recruitCost": {
       "geld": 0,
       "mana": 0,
-      "population": 0 
+      "population": 0
     },
     "upkeepCost": {
       "geld": 6400,
       "mana": 120,
-      "population": 0.0 
+      "population": 0
     },
     "spellResistances": {
       "ascendant": 50,
       "verdant": 75,
-      "eradication": 75, 
+      "eradication": 75,
       "nether": 90,
-      "phantasm": 80 
+      "phantasm": 80
     },
     "attackResistances": {
       "missile": 95,
@@ -650,50 +777,66 @@
       "cold": 80,
       "paralyse": 90,
       "psychic": 70,
-      "holy": 80 
+      "holy": 80
     },
     "abilities": [
-      { "name": "additionalStrike", "extra": null },
-      { "name": "endurance", "extra": null },
-      { "name": "marksmanship", "extra": null },
-      { "name": "scales", "extra": null }
+      {
+        "name": "additionalStrike",
+        "extra": null
+      },
+      {
+        "name": "endurance",
+        "extra": null
+      },
+      {
+        "name": "marksmanship",
+        "extra": null
+      },
+      {
+        "name": "scales",
+        "extra": null
+      }
     ]
   },
   {
     "id": "phantom",
-    "name": "Phantom",
+    "name": "Eco Irreal",
     "magic": "phantasm",
-    "description": "Phantoms are sorcerers who have traded their mortal bodies for an ethereal presence that radiates fear. Although immune to normal and psychic attacks, their conversion has left these sorcerers with little power of attack. However, any who dare to attack them will suffer painful hallucinations that can lead to convulsions and even death.",
+    "description": "Eco Irreals are sorcerers who have traded their mortal bodies for an ethereal presence that radiates fear. Although immune to normal and psychic attacks, their conversion has left these sorcerers with little power of attack. However, any who dare to attack them will suffer painful hallucinations that can lead to convulsions and even death.",
     "powerRank": 20,
     "hitPoints": 130,
-    "race": ["illusion"],
-    "attributes": ["special"],
-
+    "race": [
+      "illusion"
+    ],
+    "attributes": [
+      "special"
+    ],
     "primaryAttackPower": 100,
-    "primaryAttackType": ["ranged", "psychic"],
+    "primaryAttackType": [
+      "ranged",
+      "psychic"
+    ],
     "primaryAttackInit": 1,
     "counterAttackPower": 350,
-
     "secondaryAttackPower": 0,
     "secondaryAttackType": [],
     "secondaryAttackInit": 0,
-
-    "recruitCost": { 
+    "recruitCost": {
       "geld": 50,
       "mana": 1.25,
-      "population": 1 
+      "population": 1
     },
     "upkeepCost": {
       "geld": 0,
       "mana": 0.03,
-      "population": 0.0 
+      "population": 0
     },
     "spellResistances": {
       "ascendant": 0,
       "verdant": 0,
-      "eradication": 0, 
+      "eradication": 0,
       "nether": 0,
-      "phantasm": 0 
+      "phantasm": 0
     },
     "attackResistances": {
       "missile": 0,
@@ -707,10 +850,13 @@
       "cold": 0,
       "paralyse": 0,
       "psychic": 100,
-      "holy": 50 
+      "holy": 50
     },
     "abilities": [
-      { "name": "fear", "extra": null }
+      {
+        "name": "fear",
+        "extra": null
+      }
     ]
   }
 ]
