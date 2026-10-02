@@ -67,7 +67,9 @@ const NumberFilterExprSchema = z.object({
 });
 
 export const UnitFilterSchema = z.object({
-  // magic: z.array(z.string()).optional(),
+  // The source data uses "magic". Keep "magick" only as a compatibility alias
+  // for the historical schema typo so the imported rules preserve original behaviour.
+  magic: AllowedMagicSchema.or(z.literal('plain')).array().optional(),
   magick: AllowedMagicSchema.or(z.literal('plain')).array().optional(),
 
   race: z.array(z.string()).optional(),
