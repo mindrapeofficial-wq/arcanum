@@ -205,19 +205,14 @@ test("Gear provenance is visible to the player",()=>{
 });
 
 
-test("personal PvE expeditions are server-authoritative and persistent",()=>{
+test("legacy personal PvE is retired from rebuild navigation",()=>{
   const pve=read("assets/js/pve.js");
   const router=read("assets/js/router.js");
-  assert.match(html,/data-view="pve"/);
-  assert.match(router,/pve:\{name:"renderPve"/);
-  assert.match(router,/view==="pve"\) await renderPve/);
-  assert.match(pve,/stateApi\("\/pve\/start"/);
-  assert.match(pve,/stateApi\("\/pve\/fight"/);
-  assert.match(pve,/stateApi\("\/pve\/retreat"/);
-  assert.match(pve,/stateApi\("\/pve\/choose"/);
-  assert.match(pve,/VIDA DEL ARCONTE/);
-  assert.match(pve,/pve-room-track/);
-  assert.match(pve,/Botín de expedición/);
+  assert.doesNotMatch(html,/data-view="pve"/);
+  assert.doesNotMatch(router,/pve:\{name:"renderPve"/);
+  assert.doesNotMatch(router,/view==="pve"\) await renderPve/);
+  assert.match(router,/RETIRED_VIEWS=new Set\(\[[^\]]*"pve"/);
+  assert.match(pve,/stateApi\("\/pve\/start"/,"dormant legacy code remains server-authoritative until removed");
   assert.doesNotMatch(pve,/localStorage\.setItem/);
 });
 
@@ -302,20 +297,13 @@ test("Combat migrations and SQL suite are present and keep their safety guards",
 });
 
 
-test("PvP ranking is routed, server-authoritative and shows competitive stats",()=>{
+test("individual PvP ranking is retired from rebuild routing",()=>{
   const router=read("assets/js/router.js");
   const ranking=read("assets/js/pvp-ranking.js");
-  const stateFn=read("supabase/functions/arcanum-state/index.ts");
-  assert.match(router,/"pvp-ranking":\{name:"renderPvpRanking"/);
-  assert.match(router,/view==="pvp-ranking"\) await renderPvpRanking/);
-  assert.doesNotThrow(()=>new vm.Script(ranking,{filename:"assets/js/pvp-ranking.js"}));
-  assert.match(ranking,/stateApi\("\/arena\/ranking"\)/);
-  assert.match(ranking,/VICTORIAS/);
-  assert.match(ranking,/DERROTAS/);
-  assert.match(ranking,/ELO/);
-  assert.match(stateFn,/p\[0\]==="arena"&&p\[1\]==="ranking"/);
-  assert.match(stateFn,/defender_user_id:String\(targetRealm\.player_id\)/);
-  assert.match(stateFn,/defenderUpdate\[sim\.won\?"losses":"wins"\]/);
+  assert.doesNotMatch(router,/"pvp-ranking":\{name:"renderPvpRanking"/);
+  assert.doesNotMatch(router,/view==="pvp-ranking"\) await renderPvpRanking/);
+  assert.match(router,/RETIRED_VIEWS=new Set\(\[[^\]]*"pvp-ranking"/);
+  assert.doesNotThrow(()=>new vm.Script(ranking,{filename:"assets/js/pvp-ranking.js"}),"dormant legacy module stays syntactically valid while migration proceeds");
 });
 
 
@@ -621,14 +609,21 @@ test("Pillage is a third attack mode, server-driven and never a land grab", () =
 });
 
 
-test("navigation is grouped into Arconte, Reino and Comunidad",()=>{
+test("navigation is Domain-first with Reino and Comunidad only",()=>{
   const html=read("index.html");
-  for(const group of ["arconte","reino","comunidad"]){
+  const router=read("assets/js/router.js");
+  for(const group of ["reino","comunidad"]){
     assert.match(html,new RegExp(`data-nav-group="${group}"`));
     assert.match(html,new RegExp(`data-nav-group-trigger="${group}"`));
     assert.match(html,new RegExp(`data-mobile-nav-group="${group}"`));
   }
-  assert.match(read("assets/js/router.js"),/NAV_GROUP_BY_VIEW/);
+  assert.doesNotMatch(html,/data-nav-group="arconte"/);
+  assert.doesNotMatch(html,/data-nav-group-trigger="arconte"/);
+  assert.doesNotMatch(html,/data-mobile-nav-group="arconte"/);
+  assert.match(html,/class="active" data-view="realm"/);
+  assert.match(html,/data-view="research"/);
+  assert.match(router,/currentView="realm"/);
+  assert.match(router,/research:"reino"/);
   assert.match(read("assets/js/ui.js"),/toggleMobileNavGroup/);
 });
 
