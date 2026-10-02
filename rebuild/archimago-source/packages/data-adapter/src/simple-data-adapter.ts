@@ -82,11 +82,10 @@ export class SimpleDataAdapter extends DataAdapter {
     const isValid = await bcrypt.compare(password, user.hash);
     if (!isValid) return null;
     const token = getToken(username);
-    this.userTable.get(username).token = token;
+    user.token = token;
+    this.userTable.set(username, user);
 
-    return {
-      user: this.userTable.get(username)
-    };
+    return { user };
   }
 
   async logout() { }
@@ -153,9 +152,9 @@ export class SimpleDataAdapter extends DataAdapter {
     });
   }
 
-  async getMageByUser(username: string) {
+  async getMageByUser(username: string): Promise<Mage | null> {
     const mage = this.mageTable.find(d => d.name === username);
-    return mage;
+    return mage ?? null;
   }
 
   async getAllMages() {
@@ -228,9 +227,9 @@ export class SimpleDataAdapter extends DataAdapter {
     }).sort((a, b) => b.timestamp - a.timestamp);
   }
 
-  async getBattleReport(id: string) {
+  async getBattleReport(id: string): Promise<BattleReport | null> {
     const br = this.battleReportTable.find(d => d.id === id);
-    return br;
+    return br ?? null;
   }
 
   async saveChronicles(data: ChronicleTurn[]) {
@@ -283,7 +282,9 @@ export class SimpleDataAdapter extends DataAdapter {
   }
 
   async getMarketItem(id: string): Promise<MarketItem> {
-    return this.marketItemTable.find(d => d.id === id);
+    const item = this.marketItemTable.find(d => d.id === id);
+    if (!item) throw new Error(`Market item ${id} not found`);
+    return item;
   }
 
   async removeMarketItem(ids: string[]): Promise<void> {
@@ -351,6 +352,7 @@ export class SimpleDataAdapter extends DataAdapter {
 
     return bids.filter(d => {
       const entry = tracker[d.marketId];
+      if (!entry) return false;
 
       return entry.mageIds.length === 1 &&
         entry.mageIds.includes(d.mageId);
@@ -428,7 +430,7 @@ export class SimpleDataAdapter extends DataAdapter {
   async getAvailableUniqueItems(): Promise<string[]> {
     const ids: string[] = [];
     for (const id of this.uniqueItemTable.keys()) {
-      if (this.uniqueItemTable.get(id) > 0) {
+      if ((this.uniqueItemTable.get(id) ?? 0) > 0) {
         ids.push(id);
       }
     }
