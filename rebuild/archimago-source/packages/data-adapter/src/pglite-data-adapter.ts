@@ -896,7 +896,7 @@ WHERE username = '${user.username}'
       SELECT * FROM winning_bids;
     `;
 
-    const result = await this.db.query(query);
+    const result = await this.db.query<Record<string, any>>(query);
     return result.rows.map(toCamelCase<MarketBid>);
   }
 
@@ -907,7 +907,7 @@ WHERE username = '${user.username}'
         SELECT id from market where expiration = ${turn}
       )
     `;
-    const result = await this.db.query(query);
+    const result = await this.db.query<Record<string, any>>(query);
     return result.rows.map(toCamelCase<MarketBid>);
   }
 
