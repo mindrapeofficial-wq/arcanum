@@ -1,0 +1,175 @@
+[
+  {
+    "id": "hearth",
+    "name": "Hearth",
+    "magic": "eradication",
+    "description": "Increase mana production by 200 per level",
+    "maxLevel": 10,
+    "prereqs": {},
+    "effects": [
+      {
+        "effectType": "ProductionEffect",
+        "rule": "add",
+        "production": "mana",
+        "magic": {
+          "ascendant": { "value": 200 },
+          "verdant": { "value": 200 },
+          "eradication": { "value": 200 },
+          "nether": { "value": 200 },
+          "phantasm": { "value": 200 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "fireMastery",
+    "name": "Fire Mastery",
+    "magic": "eradication",
+    "description": "Increase fire-based attack",
+    "maxLevel": 10,
+    "prereqs": {
+      "hearth": 3
+    },
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "self",
+        "targetType": "all",
+        "filters": [
+          { "allAttackType": [ "fire"] }
+        ],
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "primaryAttackPower,secondaryAttackPower": {
+                "rule": "percentage",
+                "magic": {
+                  "ascendant": { "value": 0.02 },
+                  "verdant": { "value": 0.02 },
+                  "eradication": { "value": 0.02 },
+                  "nether": { "value": 0.02 },
+                  "phantasm": { "value": 0.02 }
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "effectType": "ArmyUpkeepEffect",
+        "filters": [
+          {
+            "allAttackType": ["fire"]
+          }
+        ],
+        "rule": "percentage",
+        "magic": {
+          "verdant": {
+            "value": {
+              "geld": -0.02,
+              "mana": -0.02,
+              "population": 0
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "resilence",
+    "name": "Resilence",
+    "magic": "eradication",
+    "description": "Increase the abilities of your dwarven troops",
+    "maxLevel": 10,
+    "prereqs": {
+      "hearth": 3
+    },
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "self",
+        "targetType": "all",
+        "filters": [
+          { "race": [ "dwarf"] }
+        ],
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "hitPoints": {
+                "rule": "percentage",
+                "magic": {
+                  "ascendant": { "value": 0.03 },
+                  "verdant": { "value": 0.03 },
+                  "eradication": { "value": 0.03 },
+                  "nether": { "value": 0.03 },
+                  "phantasm": { "value": 0.03 }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "songOfMight",
+    "name": "Song of Might",
+    "magic": "eradication",
+    "description": "Increase the abilities of your giants",
+    "maxLevel": 10,
+    "prereqs": {
+      "resilence": 3
+    },
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "self",
+        "targetType": "all",
+        "filters": [
+          { "race": [ "giant"] }
+        ],
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "hitPoints": {
+                "rule": "percentage",
+                "magic": {
+                  "ascendant": { "value": 0.01 },
+                  "verdant": { "value": 0.01 },
+                  "eradication": { "value": 0.01 },
+                  "nether": { "value": 0.01 },
+                  "phantasm": { "value": 0.01 }
+                }
+              }
+            }
+          },
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "primaryAttackPower,secondaryAttackPower": {
+                "rule": "percentage",
+                "magic": {
+                  "ascendant": { "value": 0.03 },
+                  "verdant": { "value": 0.03 },
+                  "eradication": { "value": 0.03 },
+                  "nether": { "value": 0.03 },
+                  "phantasm": { "value": 0.03 }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

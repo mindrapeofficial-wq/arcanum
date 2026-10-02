@@ -1,0 +1,80 @@
+[
+  {
+    "id": "spellMastery",
+    "name": "Spell Mastery",
+    "magic": "phantasm",
+    "description": "Reduce spell casting cost",
+    "maxLevel": 15,
+    "prereqs": {},
+    "effects": [
+      {
+        "effectType": "CastingCostEffect",
+        "rule": "percentage",
+        "magic": {
+          "ascendant": { 
+            "value": { "innate": -0.01, "adjacent": -0.02, "opposite": -0.03 }
+          },
+          "verdant": { 
+            "value": { "innate": -0.01, "adjacent": -0.02, "opposite": -0.03 }
+          },
+          "eradication": { 
+            "value": { "innate": -0.01, "adjacent": -0.02, "opposite": -0.03 }
+          },
+          "nether": { 
+            "value": { "innate": -0.01, "adjacent": -0.02, "opposite": -0.03 }
+          },
+          "phantasm": { 
+            "value": { "innate": -0.01, "adjacent": -0.02, "opposite": -0.03 }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "blizzard",
+    "name": "Blizzard",
+    "magic": "phantasm",
+    "description": "Conjure ice shards to strike your opponents from above",
+    "maxLevel": 5,
+    "prereqs": {
+      "spellMastery": 3
+    },
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "opponent",
+        "targetType": "random",
+        "filters": null,
+        "trigger": {
+          "min": 2,
+          "max": 4
+        },
+        "effects": [
+          {
+            "effectType": "UnitDamageEffect",
+            "checkResistance": false,
+            "damageType": [ "cold" ],
+            "rule": "direct",
+            "magic": {
+              "ascendant": {
+                "value": { "min": 40000, "max": 60000 }
+              },
+              "verdant": {
+                "value": { "min": 40000, "max": 60000 }
+              },
+              "eradication": {
+                "value": { "min": 40000, "max": 60000 }
+              },
+              "nether": {
+                "value": { "min": 40000, "max": 60000 }
+              },
+              "phantasm": {
+                "value": { "min": 40000, "max": 60000 }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+]
