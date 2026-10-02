@@ -348,7 +348,7 @@ WHERE username = '${user.username}'
     const token = getToken(username);
 
     // check duplicates names
-    const res = await this.db.query(`
+    const res = await this.db.query<Record<string, any>>(`
       SELECT * from archmage_user where username = '${username}'
     `);
     if (res && res.rows.length > 0) {
@@ -380,9 +380,10 @@ WHERE username = '${user.username}'
   async nextMageId(): Promise<number> {
     // Auto generated id
     const seqSQL = `SELECT nextval('mage_seq')`;
-    const r = await this.db.query(seqSQL);
-    const newId = r.rows[0]['nextval'];
-    return newId;
+    const r = await this.db.query<{ nextval: number | string }>(seqSQL);
+    const row = r.rows[0];
+    if (!row) throw new Error('Unable to allocate next Domain id');
+    return Number(row.nextval);
   }
 
   async createMage(username: string, mage: Mage) {
@@ -434,10 +435,10 @@ WHERE username = '${user.username}'
 
   async removeMage(id: number): Promise<void> {
     // TODO: Transfer mage to graveyard
-    await this.db.query(`
+    await this.db.query<Record<string, any>>(`
       DELETE from rank where id = ${id}
     `);
-    await this.db.query(`
+    await this.db.query<Record<string, any>>(`
       DELETE from mage where id = ${id}
     `);
     return;
@@ -452,7 +453,7 @@ WHERE username = '${user.username}'
     return result.rows.map(toCamelCase<MageRank>);
   }
 
-  async getMageByUser(username: string) {
+  async getMageByUser(username: string): Promise<Mage | null> {
     const result = await this.db.query<MageTable>(`
       SELECT mage from mage where username = '${username}'
     `);
@@ -589,10 +590,10 @@ WHERE username = '${user.username}'
 
     // paging and order
     sqlQuery += ' ORDER BY timestamp desc ';
-    if (options.limit > 0) {
+    if ((options.limit ?? 0) > 0) {
       sqlQuery += ` LIMIT ${options.limit} `;
     }
-    if (options.from > 0) {
+    if ((options.from ?? 0) > 0) {
       sqlQuery += ` OFFSET ${options.from} `;
     }
     const result = await this.db.query<any>(sqlQuery);
@@ -600,7 +601,7 @@ WHERE username = '${user.username}'
     return result.rows.map(toCamelCase<BattleReportSummary>);
   }
 
-  async getBattleReport(id: string) {
+  async getBattleReport(id: string): Promise<BattleReport | null> {
     const result = await this.db.query<BattleReportTable>(`
       SELECT * from battle_report
       WHERE id = '${id}'
@@ -717,10 +718,10 @@ WHERE username = '${user.username}'
 
     // paging and order
     sqlQuery += ' ORDER BY timestamp desc ';
-    if (options.limit > 0) {
+    if ((options.limit ?? 0) > 0) {
       sqlQuery += ` LIMIT ${options.limit} `;
     }
-    if (options.from > 0) {
+    if ((options.from ?? 0) > 0) {
       sqlQuery += ` OFFSET ${options.from} `;
     }
 
@@ -730,7 +731,7 @@ WHERE username = '${user.username}'
 
 
   async nextTurn(options: TurnOptions) {
-    await this.db.query(`
+    await this.db.query<Record<string, any>>(`
       UPDATE mage
       SET mage = jsonb_set(
           mage::jsonb,
@@ -749,7 +750,7 @@ WHERE username = '${user.username}'
 
 
     /*
-    await this.db.query(`
+    await this.db.query<Record<string, any>>(`
       UPDATE mage
       SET mage = json_set(
           mage,
@@ -763,7 +764,7 @@ WHERE username = '${user.username}'
 
   async createMarketPrice(id: string, type: string, price: number): Promise<void> {
 
-    await this.db.query(`
+    await this.db.query<Record<string, any>>(`
       INSERT INTO market_price (id, type, price)
       VALUES (
         ${Q(id)},
@@ -774,7 +775,7 @@ WHERE username = '${user.username}'
   }
 
   async updateMarketPrice(id: string, price: number) {
-    await this.db.query(`
+    await this.db.query<Record<string, any>>(`
       UPDATE market_price 
       SET price = ${price}
       where id = ${Q(id)}
@@ -782,7 +783,7 @@ WHERE username = '${user.username}'
   }
 
   async getMarketPrices(): Promise<MarketPrice[]> {
-    const result = await this.db.query(`
+    const result = await this.db.query<Record<string, any>>(`
       SELECT * from market_price
     `)
     return result.rows.map(toCamelCase<MarketPrice>);
@@ -804,14 +805,14 @@ WHERE username = '${user.username}'
   }
 
   async getMarketItem(id: string): Promise<MarketItem> {
-    const result = await this.db.query(`
+    const result = await this.db.query<Record<string, any>>(`
       SELECT * from market where id = ${Q(id)}
     `);
     return result.rows.map(toCamelCase<MarketItem>)[0];
   }
 
   async getMarketItems(): Promise<MarketItem[]> {
-    const result = await this.db.query(`
+    const result = await this.db.query<Record<string, any>>(`
       SELECT * from market
     `);
     return result.rows.map(toCamelCase<MarketItem>);
@@ -843,7 +844,7 @@ WHERE username = '${user.username}'
   }
 
   async getMarketBids(priceId: string): Promise<MarketBid[]> {
-    const result = await this.db.query(`
+    const result = await this.db.query<Record<string, any>>(`
       SELECT * from market_bid where market_id IN ( 
         SELECT id from market where price_id = ${Q(priceId)}
       )
