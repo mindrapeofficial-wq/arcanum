@@ -1,0 +1,332 @@
+[
+  {
+    "id": "bountifulHarvest",
+    "name": "Cosecha de Savia",
+    "magic": "verdant",
+    "description": "Aumenta la riqueza del Dominio gracias a excedentes y ciclos de cultivo más fértiles.",
+    "maxLevel": 10,
+    "prereqs": {},
+    "effects": [
+      {
+        "effectType": "ProductionEffect",
+        "rule": "add",
+        "production": "geld",
+        "magic": {
+          "ascendant": {
+            "value": 5000
+          },
+          "verdant": {
+            "value": 5000
+          },
+          "eradication": {
+            "value": 5000
+          },
+          "nether": {
+            "value": 5000
+          },
+          "phantasm": {
+            "value": 5000
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "forestWatch",
+    "name": "Vigilia de la Fronda",
+    "magic": "verdant",
+    "description": "Hostiga a las fuerzas enemigas antes de que alcancen la línea principal de combate.",
+    "maxLevel": 10,
+    "prereqs": {
+      "bountifulHarvest": 2
+    },
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "opponent",
+        "targetType": "random",
+        "filters": null,
+        "trigger": {
+          "min": 3,
+          "max": 7
+        },
+        "effects": [
+          {
+            "effectType": "UnitDamageEffect",
+            "checkResistance": true,
+            "damageType": [
+              "poison",
+              "ranged"
+            ],
+            "rule": "direct",
+            "magic": {
+              "ascendant": {
+                "value": {
+                  "min": 15000,
+                  "max": 31000
+                }
+              },
+              "verdant": {
+                "value": {
+                  "min": 15000,
+                  "max": 31000
+                }
+              },
+              "eradication": {
+                "value": {
+                  "min": 15000,
+                  "max": 31000
+                }
+              },
+              "nether": {
+                "value": {
+                  "min": 15000,
+                  "max": 31000
+                }
+              },
+              "phantasm": {
+                "value": {
+                  "min": 15000,
+                  "max": 31000
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "animalMastery",
+    "name": "Dominio Feral",
+    "magic": "verdant",
+    "description": "Fortalece la potencia y resistencia de las criaturas animales de Viridia.",
+    "maxLevel": 20,
+    "prereqs": {
+      "bountifulHarvest": 4
+    },
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "self",
+        "targetType": "all",
+        "filters": [
+          {
+            "race": [
+              "animal"
+            ]
+          }
+        ],
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "primaryAttackPower,secondaryAttackPower,hitPoints": {
+                "rule": "percentage",
+                "magic": {
+                  "ascendant": {
+                    "value": 0.01
+                  },
+                  "verdant": {
+                    "value": 0.01
+                  },
+                  "eradication": {
+                    "value": 0.01
+                  },
+                  "nether": {
+                    "value": 0.01
+                  },
+                  "phantasm": {
+                    "value": 0.01
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "naturesFury",
+    "name": "Furia de la Raíz",
+    "magic": "verdant",
+    "description": "Desata el instinto ofensivo de las criaturas salvajes y mejora su capacidad para atravesar defensas.",
+    "maxLevel": 3,
+    "prereqs": {
+      "animalMastery": 10
+    },
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "self",
+        "targetType": "all",
+        "filters": [
+          {
+            "race": [
+              "animal"
+            ]
+          }
+        ],
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "accuracy": {
+                "rule": "add",
+                "magic": {
+                  "ascendant": {
+                    "value": 0.5
+                  },
+                  "verdant": {
+                    "value": 0.5
+                  },
+                  "eradication": {
+                    "value": 0.5
+                  },
+                  "nether": {
+                    "value": 0.5
+                  },
+                  "phantasm": {
+                    "value": 0.5
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "effectType": "BattleEffect",
+        "target": "self",
+        "targetType": "all",
+        "filters": [
+          {
+            "race": [
+              "animal"
+            ]
+          }
+        ],
+        "trigger": {
+          "min": 1,
+          "max": 2
+        },
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "abilities": {
+                "rule": "add",
+                "magic": {
+                  "ascendant": {
+                    "value": {
+                      "name": "piercing",
+                      "extra": null
+                    }
+                  },
+                  "verdant": {
+                    "value": {
+                      "name": "piercing",
+                      "extra": null
+                    }
+                  },
+                  "eradication": {
+                    "value": {
+                      "name": "piercing",
+                      "extra": null
+                    }
+                  },
+                  "nether": {
+                    "value": {
+                      "name": "piercing",
+                      "extra": null
+                    }
+                  },
+                  "phantasm": {
+                    "value": {
+                      "name": "piercing",
+                      "extra": null
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "sylvanVeil",
+    "name": "Velo Silvestre",
+    "magic": "verdant",
+    "description": "Concede a las fuerzas de Viridia una mayor capacidad para evitar ataques.",
+    "maxLevel": 5,
+    "prereqs": {
+      "forestWatch": 5
+    },
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "self",
+        "targetType": "all",
+        "filters": [
+          {
+            "magic": [
+              "verdant"
+            ]
+          }
+        ],
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "abilities": {
+                "rule": "add",
+                "magic": {
+                  "ascendant": {
+                    "value": {
+                      "name": "evade",
+                      "extra": 0.01
+                    }
+                  },
+                  "verdant": {
+                    "value": {
+                      "name": "evade",
+                      "extra": 0.01
+                    }
+                  },
+                  "eradication": {
+                    "value": {
+                      "name": "evade",
+                      "extra": 0.01
+                    }
+                  },
+                  "nether": {
+                    "value": {
+                      "name": "evade",
+                      "extra": 0.01
+                    }
+                  },
+                  "phantasm": {
+                    "value": {
+                      "name": "evade",
+                      "extra": 0.01
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,252 @@
+[
+  {
+    "id": "pouchOfInfiniteWealth",
+    "name": "Cáliz del Alba",
+    "description": "Una copa de metal pálido que condensa la primera luz del día en diminutas escamas de oro. Mientras permanezca bajo custodia del Dominio, sus arcas reciben un flujo constante de riqueza.",
+    "attributes": [
+      "unique"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "ProductionEffect",
+        "rule": "add",
+        "production": "geld",
+        "magic": {
+          "ascendant": {
+            "value": 300000
+          },
+          "verdant": {
+            "value": 300000
+          },
+          "eradication": {
+            "value": 300000
+          },
+          "nether": {
+            "value": 300000
+          },
+          "phantasm": {
+            "value": 300000
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "theCrystalOfTear",
+    "name": "Prisma del Firmamento",
+    "description": "Un prisma azul atravesado por vetas que brillan bajo el cielo abierto. Absorbe corrientes arcanas de las alturas y las devuelve al Dominio en forma de maná utilizable.",
+    "attributes": [
+      "unique"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "ProductionEffect",
+        "rule": "add",
+        "production": "mana",
+        "magic": {
+          "ascendant": {
+            "value": 4000
+          },
+          "verdant": {
+            "value": 4000
+          },
+          "eradication": {
+            "value": 4000
+          },
+          "nether": {
+            "value": 4000
+          },
+          "phantasm": {
+            "value": 4000
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "excalibur",
+    "name": "Corona del Bosque Primigenio",
+    "description": "Una corona viva de madera fósil y hojas que nunca se marchitan. Su presencia despierta el instinto ancestral de las huestes y vuelve más feroces sus ataques.",
+    "attributes": [
+      "battle",
+      "unique"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "self",
+        "targetType": "all",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "primaryAttackPower,secondaryAttackPower": {
+                "rule": "percentage",
+                "magic": {
+                  "ascendant": {
+                    "value": 0.15
+                  },
+                  "verdant": {
+                    "value": 0.15
+                  },
+                  "eradication": {
+                    "value": 0.15
+                  },
+                  "nether": {
+                    "value": 0.15
+                  },
+                  "phantasm": {
+                    "value": 0.15
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pansFlue",
+    "name": "Lira del Silencio",
+    "description": "Sus cuerdas no producen una melodía audible, sino una quietud sobrenatural que apaga el ímpetu enemigo y debilita la fuerza de sus ataques.",
+    "attributes": [
+      "battle",
+      "unique"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "opponent",
+        "targetType": "all",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "primaryAttackPower,secondaryAttackPower,counterAttackPower": {
+                "rule": "percentage",
+                "magic": {
+                  "ascendant": {
+                    "value": -0.1
+                  },
+                  "verdant": {
+                    "value": -0.1
+                  },
+                  "eradication": {
+                    "value": -0.1
+                  },
+                  "nether": {
+                    "value": -0.1
+                  },
+                  "phantasm": {
+                    "value": -0.1
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "theApparatus",
+    "name": "Crisol de las Cuatro Bestias",
+    "description": "Una cámara arcana de placas antiguas y válvulas sin inscripción. Cuando despierta, vierte materia viva que adopta formas monstruosas y se somete temporalmente a la voluntad del Dominio.",
+    "attributes": [
+      "unique"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "UnitSummonEffect",
+        "unitIds": [
+          "chimera",
+          "hydra"
+        ],
+        "summonType": "all",
+        "summonNetPower": 40,
+        "rule": "set",
+        "magic": {
+          "ascendant": {
+            "value": 1
+          },
+          "eradication": {
+            "value": 1
+          },
+          "nether": {
+            "value": 1
+          },
+          "phantasm": {
+            "value": 1
+          },
+          "verdant": {
+            "value": 1
+          }
+        }
+      },
+      {
+        "effectType": "UnitSummonEffect",
+        "unitIds": [
+          "hellHound",
+          "salamander"
+        ],
+        "summonType": "all",
+        "summonNetPower": 80,
+        "rule": "set",
+        "magic": {
+          "ascendant": {
+            "value": 1
+          },
+          "eradication": {
+            "value": 1
+          },
+          "nether": {
+            "value": 1
+          },
+          "phantasm": {
+            "value": 1
+          },
+          "verdant": {
+            "value": 1
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "tomeOfTheYetis",
+    "name": "Códice del Invierno Escarlata",
+    "description": "Un volumen cubierto de escarcha que nunca se derrite. Sus páginas muestran glifos rojos y criaturas de tierras imposibles; su verdadero propósito continúa sellado para los eruditos de ARCANUM.",
+    "attributes": [
+      "oneUse",
+      "instant",
+      "selfOnly",
+      "unique"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": []
+  }
+]

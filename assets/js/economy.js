@@ -88,7 +88,6 @@ function renderEconomy(){
         <label class="economy-turn-picker">TURNOS<input id="econ-turns" type="number" min="1" max="50" value="1" inputmode="numeric"></label>
       </div>
       <div class="economy-action-grid">
-        ${economyActionCard("NONE","Desarrollo equilibrado","Procesa turnos sin forzar una prioridad extraordinaria. Úsalo cuando no necesites concentrar la economía.","assets/ui/resources/poblacion.png?v="+BUILD_VERSION,"NORMAL")}
         ${economyActionCard("TAX","Recaudar impuestos","Orienta la acción económica hacia el Oro. Útil antes de reclutar, comerciar o afrontar gastos militares.","assets/ui/resources/oro.png?v="+BUILD_VERSION,"RECAUDAR")}
         ${economyActionCard("MP_CHARGE","Cargar maná","Orienta la acción económica hacia la reserva de Maná para invocaciones, unidades mágicas y comercio.","assets/ui/resources/mana.png?v="+BUILD_VERSION,"CARGAR MANÁ")}
       </div>
@@ -113,7 +112,7 @@ function renderEconomy(){
       <div class="economy-explore-copy">
         <span class="section-kicker">EXPANSIÓN TERRITORIAL</span>
         <h3>Explorar nuevas tierras</h3>
-        <p>Explorar convierte <b>turnos</b> en <b>tierra salvaje</b>. Esa tierra todavía no produce nada: sólo adquiere función cuando la conviertes en edificios. El rendimiento disminuye al acercarte a <b>3.500 acres</b>.</p>
+        <p>Explorar convierte <b>turnos</b> en <b>tierra salvaje</b>. Esa tierra todavía no produce nada: sólo adquiere función cuando la conviertes en edificios. El rendimiento disminuye progresivamente hasta el límite original de <b>6.000 acres</b>.</p>
         <div class="economy-explore-tip">Cadena económica: <b>Explorar → Tierra salvaje → Construir → Capacidad/producción → Gastar en magia, ejército o comercio.</b></div>
       </div>
       <div class="economy-explore-action">

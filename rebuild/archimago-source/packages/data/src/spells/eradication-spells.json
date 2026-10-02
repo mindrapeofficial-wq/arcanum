@@ -1,0 +1,1803 @@
+[
+  {
+    "id": "blaze",
+    "name": "Ascua",
+    "magic": "eradication",
+    "rank": "simple",
+    "description": "This basic Cineria spell shoots blazes of fire towards your enemy. The blaze automatically seeks out the enemy and never misses, though it does not do much daArconte to more powerful units. At night you can see bright light glowing, as the blazes of fire fly cut through the sky.",
+    "attributes": [
+      "battle"
+    ],
+    "researchCost": 500,
+    "castingCost": 1000,
+    "castingTurn": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "opponent",
+        "targetType": "random",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitDamageEffect",
+            "checkResistance": true,
+            "damageType": [
+              "fire"
+            ],
+            "rule": "spellLevel",
+            "target": "damage",
+            "magic": {
+              "ascendant": {
+                "value": {
+                  "min": 100,
+                  "max": 100
+                }
+              },
+              "verdant": {
+                "value": {
+                  "min": 180,
+                  "max": 180
+                }
+              },
+              "eradication": {
+                "value": {
+                  "min": 250,
+                  "max": 250
+                }
+              },
+              "nether": {
+                "value": {
+                  "min": 180,
+                  "max": 180
+                }
+              },
+              "phantasm": {
+                "value": {
+                  "min": 100,
+                  "max": 100
+                }
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "displaySchool": "Cineria"
+  },
+  {
+    "id": "callLizardmen",
+    "name": "Convocar Escamados de Ceniza",
+    "magic": "eradication",
+    "rank": "simple",
+    "description": "This spell will create lizardmen, who are half-human, half-lizard monstrosities. These abominations will serve mostly as ground fodder troops in the battleground, their casaulties usually ignored by Cineria Arcontes.",
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
+    "researchCost": 400,
+    "castingCost": 6800,
+    "castingTurn": 1,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "UnitSummonEffect",
+        "unitIds": [
+          "lizardman"
+        ],
+        "summonType": "all",
+        "summonNetPower": 70000,
+        "rule": "spellLevelScaled",
+        "magic": {
+          "ascendant": {
+            "value": 0.2
+          },
+          "verdant": {
+            "value": 0.6
+          },
+          "eradication": {
+            "value": 1
+          },
+          "nether": {
+            "value": 0.6
+          },
+          "phantasm": {
+            "value": 0.2
+          }
+        }
+      }
+    ],
+    "displaySchool": "Cineria"
+  },
+  {
+    "id": "callDwarvenDeathseeker",
+    "name": "Llamada del Buscamuerte de Forja",
+    "magic": "eradication",
+    "rank": "simple",
+    "description": "This spell calls dwarven outcasts, the Deathseekers to your army. They strike with poison-tipped weapons before igniting the crude explosives strapped to their bodies.",
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
+    "researchCost": 400,
+    "castingCost": 6800,
+    "castingTurn": 1,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "UnitSummonEffect",
+        "unitIds": [
+          "dwarvenDeathSeeker"
+        ],
+        "summonType": "all",
+        "summonNetPower": 70000,
+        "rule": "spellLevelScaled",
+        "magic": {
+          "ascendant": {
+            "value": 0.2
+          },
+          "verdant": {
+            "value": 0.6
+          },
+          "eradication": {
+            "value": 1
+          },
+          "nether": {
+            "value": 0.6
+          },
+          "phantasm": {
+            "value": 0.2
+          }
+        }
+      }
+    ],
+    "displaySchool": "Cineria"
+  },
+  {
+    "id": "lureGoblin",
+    "name": "Señuelo de Trasgos",
+    "magic": "eradication",
+    "rank": "simple",
+    "description": "This spell lures Goblins to join your army.",
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
+    "researchCost": 173,
+    "castingCost": 4500,
+    "castingTurn": 1,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "UnitSummonEffect",
+        "unitIds": [
+          "goblin"
+        ],
+        "summonType": "all",
+        "summonNetPower": 70000,
+        "rule": "spellLevelScaled",
+        "magic": {
+          "ascendant": {
+            "value": 0.2
+          },
+          "verdant": {
+            "value": 0.6
+          },
+          "eradication": {
+            "value": 1
+          },
+          "nether": {
+            "value": 0.6
+          },
+          "phantasm": {
+            "value": 0.2
+          }
+        }
+      }
+    ],
+    "displaySchool": "Cineria"
+  },
+  {
+    "id": "flameArrow",
+    "name": "Saeta Ígnea",
+    "magic": "eradication",
+    "rank": "simple",
+    "description": "This spell will cause your arrows and missiles to burst in flames when they hit the target, causing heavy fire daArcontes. Area of effect: all units with missile attack.",
+    "attributes": [
+      "battle"
+    ],
+    "researchCost": 400,
+    "castingCost": 700,
+    "castingTurn": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "self",
+        "targetType": "random",
+        "filters": [
+          {
+            "allAttackType": [
+              "missile"
+            ]
+          }
+        ],
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "primaryAttackType,secondaryAttackType": {
+                "rule": "add",
+                "magic": {
+                  "ascendant": {
+                    "value": "fire"
+                  },
+                  "verdant": {
+                    "value": "fire"
+                  },
+                  "eradication": {
+                    "value": "fire"
+                  },
+                  "nether": {
+                    "value": "fire"
+                  },
+                  "phantasm": {
+                    "value": "fire"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "displaySchool": "Cineria"
+  },
+  {
+    "id": "forceBolt",
+    "name": "Proyectil Cinético",
+    "magic": "eradication",
+    "rank": "simple",
+    "description": "This basic spell will cause flashing lightning bolts to fly towards your enemy. The impact will kill and stun enemy units, making them fight less effectively.",
+    "attributes": [
+      "battle"
+    ],
+    "researchCost": 600,
+    "castingCost": 700,
+    "castingTurn": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "opponent",
+        "targetType": "random",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitDamageEffect",
+            "checkResistance": true,
+            "damageType": [
+              "lightning"
+            ],
+            "rule": "spellLevel",
+            "target": "damage",
+            "magic": {
+              "ascendant": {
+                "value": {
+                  "min": 80,
+                  "max": 80
+                }
+              },
+              "verdant": {
+                "value": {
+                  "min": 150,
+                  "max": 150
+                }
+              },
+              "eradication": {
+                "value": {
+                  "min": 200,
+                  "max": 200
+                }
+              },
+              "nether": {
+                "value": {
+                  "min": 150,
+                  "max": 150
+                }
+              },
+              "phantasm": {
+                "value": {
+                  "min": 80,
+                  "max": 80
+                }
+              }
+            }
+          },
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": true,
+            "attributes": {
+              "primaryAttackPower,secondaryAttackPower,counterAttackPower": {
+                "rule": "spellLevelScaledPercentage",
+                "magic": {
+                  "ascendant": {
+                    "value": -0.01
+                  },
+                  "verdant": {
+                    "value": -0.02
+                  },
+                  "eradication": {
+                    "value": -0.048
+                  },
+                  "nether": {
+                    "value": -0.02
+                  },
+                  "phantasm": {
+                    "value": -0.01
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "displaySchool": "Cineria"
+  },
+  {
+    "id": "lightningStrike",
+    "name": "Descarga Escarlata",
+    "magic": "eradication",
+    "rank": "average",
+    "description": "This spell shoots a bolt of lightning into the middle of enemy troops, causing heavy lightning daArcontes. The shock effect will cause the enemy unit to attack less effectively. Area of effect: 1 random enemy group.",
+    "attributes": [
+      "battle"
+    ],
+    "researchCost": 3000,
+    "castingCost": 40000,
+    "castingTurn": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "opponent",
+        "targetType": "random",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitDamageEffect",
+            "checkResistance": true,
+            "damageType": [
+              "lightning"
+            ],
+            "target": "perUnitDamage",
+            "rule": "spellLevel",
+            "magic": {
+              "ascendant": {
+                "value": {
+                  "min": 0.04,
+                  "max": 0.04
+                }
+              },
+              "verdant": {
+                "value": {
+                  "min": 0.11,
+                  "max": 0.11
+                }
+              },
+              "eradication": {
+                "value": {
+                  "min": 0.19,
+                  "max": 0.19
+                }
+              },
+              "nether": {
+                "value": {
+                  "min": 0.11,
+                  "max": 0.11
+                }
+              },
+              "phantasm": {
+                "value": {
+                  "min": 0.04,
+                  "max": 0.04
+                }
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "displaySchool": "Cineria"
+  },
+  {
+    "id": "summonWyvern",
+    "name": "Convocar Draco Alado",
+    "magic": "eradication",
+    "rank": "average",
+    "description": "Using this spell will summon the vicious Wyverns into your army. These minor dragons bite your opponents savagely and poison them with the stinger on their tails.",
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
+    "researchCost": 2000,
+    "castingCost": 28900,
+    "castingTurn": 3,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "UnitSummonEffect",
+        "unitIds": [
+          "wyvern"
+        ],
+        "summonType": "all",
+        "summonNetPower": 270000,
+        "rule": "spellLevelScaled",
+        "magic": {
+          "ascendant": {
+            "value": 0.2
+          },
+          "verdant": {
+            "value": 0.6
+          },
+          "eradication": {
+            "value": 1
+          },
+          "nether": {
+            "value": 0.6
+          },
+          "phantasm": {
+            "value": 0.2
+          }
+        }
+      }
+    ],
+    "displaySchool": "Cineria"
+  },
+  {
+    "id": "summonSalamander",
+    "name": "Convocar Salamandra de Magma",
+    "magic": "eradication",
+    "rank": "average",
+    "description": "This spell will summon salamanders from the elemental plane of fire. These fire-immune, magical creatures use burning fire attacks which can cause tremendous amount of daArcontes to opposing units. However, they die easily to cold attacks.",
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
+    "researchCost": 2000,
+    "castingCost": 28900,
+    "castingTurn": 3,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "UnitSummonEffect",
+        "unitIds": [
+          "salamander"
+        ],
+        "summonType": "all",
+        "summonNetPower": 270000,
+        "rule": "spellLevelScaled",
+        "magic": {
+          "ascendant": {
+            "value": 0.2
+          },
+          "verdant": {
+            "value": 0.6
+          },
+          "eradication": {
+            "value": 1
+          },
+          "nether": {
+            "value": 0.6
+          },
+          "phantasm": {
+            "value": 0.2
+          }
+        }
+      }
+    ],
+    "displaySchool": "Cineria"
+  },
+  {
+    "id": "summonHellhound",
+    "name": "Convocar Sabueso de Brasa",
+    "magic": "eradication",
+    "rank": "average",
+    "description": "This spell will summon war hounds from the pits of infernal el Abismo. These fierce creatures breathe deadly fire and create much havoc in the battleground.",
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
+    "researchCost": 2000,
+    "castingCost": 24400,
+    "castingTurn": 3,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "UnitSummonEffect",
+        "unitIds": [
+          "hellHound"
+        ],
+        "summonType": "all",
+        "summonNetPower": 260000,
+        "rule": "spellLevelScaled",
+        "magic": {
+          "ascendant": {
+            "value": 0.2
+          },
+          "verdant": {
+            "value": 0.6
+          },
+          "eradication": {
+            "value": 1
+          },
+          "nether": {
+            "value": 0.6
+          },
+          "phantasm": {
+            "value": 0.2
+          }
+        }
+      }
+    ],
+    "displaySchool": "Cineria"
+  },
+  {
+    "id": "fireball",
+    "name": "Orbe de Incendio",
+    "magic": "eradication",
+    "rank": "average",
+    "description": "This spell shoots a huge flaming ball of fire into the middle of enemy troops, causing heavy fire daArcontes. Although not very complex magic, this spell is very powerful Cineria weapon. Area of effect: 1 enemy group.",
+    "attributes": [
+      "battle"
+    ],
+    "researchCost": 2500,
+    "castingCost": 20000,
+    "castingTurn": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "opponent",
+        "targetType": "random",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitDamageEffect",
+            "checkResistance": true,
+            "damageType": [
+              "fire"
+            ],
+            "rule": "spellLevel",
+            "target": "damage",
+            "magic": {
+              "ascendant": {
+                "value": {
+                  "min": 800,
+                  "max": 800
+                }
+              },
+              "verdant": {
+                "value": {
+                  "min": 1000,
+                  "max": 1000
+                }
+              },
+              "eradication": {
+                "value": {
+                  "min": 1700,
+                  "max": 1700
+                }
+              },
+              "nether": {
+                "value": {
+                  "min": 1000,
+                  "max": 1000
+                }
+              },
+              "phantasm": {
+                "value": {
+                  "min": 800,
+                  "max": 800
+                }
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "displaySchool": "Cineria"
+  },
+  {
+    "id": "giantStrength",
+    "name": "Fuerza del Coloso",
+    "magic": "eradication",
+    "rank": "average",
+    "description": "This spell will endow your troops with the power and strength of giants, increasing their attack power. Area of effect: all your units.",
+    "attributes": [
+      "battle"
+    ],
+    "researchCost": 1500,
+    "castingCost": 3000,
+    "castingTurn": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "self",
+        "targetType": "all",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "primaryAttackPower,secondaryAttackPower,counterAttackPower": {
+                "rule": "spellLevelScaledPercentage",
+                "magic": {
+                  "ascendant": {
+                    "value": 0.05
+                  },
+                  "verdant": {
+                    "value": 0.1
+                  },
+                  "eradication": {
+                    "value": 0.2
+                  },
+                  "nether": {
+                    "value": 0.1
+                  },
+                  "phantasm": {
+                    "value": 0.05
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "displaySchool": "Cineria"
+  },
+  {
+    "id": "chainLightning",
+    "name": "Relámpago Encadenado",
+    "magic": "eradication",
+    "rank": "complex",
+    "description": "This is an advanced level spell of the lightning blast spell. It will shoot a powerful bolt of lightning at one enemy group causing heavy lightning daArconte, leaving it in state of shock which will hinder it's ability to fight. After that, it will split into secondary lightning bolts which will sweep through the battlefield, harming everything in their way. This spell is very effective against massive amounts of weak units, although it has to be used with care. Area of effect: all enemy units.",
+    "attributes": [
+      "battle"
+    ],
+    "researchCost": 5000,
+    "castingCost": 100000,
+    "castingTurn": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "opponent",
+        "filters": null,
+        "targetType": "random",
+        "trigger": {
+          "min": 3,
+          "max": 7
+        },
+        "effects": [
+          {
+            "effectType": "UnitDamageEffect",
+            "checkResistance": true,
+            "damageType": [
+              "lightning"
+            ],
+            "rule": "spellLevel",
+            "target": "damage",
+            "magic": {
+              "ascendant": {
+                "value": {
+                  "min": 1000,
+                  "max": 1000
+                }
+              },
+              "verdant": {
+                "value": {
+                  "min": 2000,
+                  "max": 2000
+                }
+              },
+              "eradication": {
+                "value": {
+                  "min": 5000,
+                  "max": 5000
+                }
+              },
+              "nether": {
+                "value": {
+                  "min": 2000,
+                  "max": 2000
+                }
+              },
+              "phantasm": {
+                "value": {
+                  "min": 1000,
+                  "max": 1000
+                }
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "displaySchool": "Cineria"
+  },
+  {
+    "id": "battleChant",
+    "name": "Cántico de Ruptura",
+    "magic": "eradication",
+    "rank": "complex",
+    "description": "The spell drives your armies into a state of frenzy. It squeezes the life force of the units out and enhances their power and strength. Hordes of Goblins are attracted to your Kingdom whilst this spell is in effect. The only drawback of the spell is your units will be exhausted too easily and will not be able to last long in a battle.",
+    "attributes": [
+      "enchantment",
+      "selfOnly"
+    ],
+    "researchCost": 7000,
+    "castingCost": 50000,
+    "castingTurn": 10,
+    "upkeep": {
+      "geld": 0,
+      "mana": 350,
+      "population": 0
+    },
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "self",
+        "targetType": "all",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "primaryAttackPower,secondaryAttackPower,counterAttackPower": {
+                "rule": "spellLevelScaledPercentage",
+                "magic": {
+                  "ascendant": {
+                    "value": 0.05
+                  },
+                  "verdant": {
+                    "value": 0.1
+                  },
+                  "eradication": {
+                    "value": 0.22
+                  },
+                  "nether": {
+                    "value": 0.1
+                  },
+                  "phantasm": {
+                    "value": 0.05
+                  }
+                }
+              }
+            }
+          },
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "hitPoints": {
+                "rule": "spellLevelScaledPercentage",
+                "magic": {
+                  "ascendant": {
+                    "value": -0.025
+                  },
+                  "verdant": {
+                    "value": -0.05
+                  },
+                  "eradication": {
+                    "value": -0.1
+                  },
+                  "nether": {
+                    "value": -0.05
+                  },
+                  "phantasm": {
+                    "value": -0.025
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "effectType": "PostbattleEffect",
+        "target": "opponent",
+        "condition": "win",
+        "activation": "attack",
+        "effects": [
+          {
+            "effectType": "StealEffect",
+            "rule": "spellLevelScaledPercentage",
+            "target": "geld",
+            "magic": {
+              "eradication": {
+                "value": {
+                  "min": 0.02,
+                  "max": 0.08,
+                  "stealPercent": 1
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "effectType": "UnitSummonEffect",
+        "unitIds": [
+          "goblin"
+        ],
+        "summonType": "all",
+        "summonNetPower": 5500,
+        "rule": "none",
+        "magic": {
+          "eradication": {
+            "value": 1
+          }
+        }
+      }
+    ],
+    "displaySchool": "Cineria"
+  },
+  {
+    "id": "callLightning",
+    "name": "Invocar Tormenta Roja",
+    "magic": "eradication",
+    "rank": "complex",
+    "description": "This spell will send a magical lightning storm above your enemy. This enchantment will kill enemy citizens with deadly lightning bolts and leave your enemy's country in ruin. This enchantment takes effect when your enemy is making turns.",
+    "attributes": [
+      "enchantment"
+    ],
+    "researchCost": 5000,
+    "castingCost": 30000,
+    "castingTurn": 10,
+    "life": 50,
+    "upkeep": {
+      "geld": 0,
+      "mana": 1000,
+      "population": 0
+    },
+    "effects": [
+      {
+        "effectType": "KingdomResourcesEffect",
+        "rule": "spellLevelScaled",
+        "target": "population",
+        "magic": {
+          "ascendant": {
+            "value": {
+              "min": -1200,
+              "max": -3000
+            }
+          },
+          "verdant": {
+            "value": {
+              "min": -2000,
+              "max": -7000
+            }
+          },
+          "eradication": {
+            "value": {
+              "min": -4000,
+              "max": -15000
+            }
+          },
+          "nether": {
+            "value": {
+              "min": -2000,
+              "max": -7000
+            }
+          },
+          "phantasm": {
+            "value": {
+              "min": -1200,
+              "max": -3000
+            }
+          }
+        }
+      },
+      {
+        "effectType": "KingdomResourcesEffect",
+        "rule": "spellLevelScaled",
+        "target": "mana",
+        "magic": {
+          "ascendant": {
+            "value": {
+              "min": -1200,
+              "max": -2000
+            }
+          },
+          "verdant": {
+            "value": {
+              "min": -2000,
+              "max": -4000
+            }
+          },
+          "eradication": {
+            "value": {
+              "min": -4000,
+              "max": -10000
+            }
+          },
+          "nether": {
+            "value": {
+              "min": -2000,
+              "max": -4000
+            }
+          },
+          "phantasm": {
+            "value": {
+              "min": -1200,
+              "max": -2000
+            }
+          }
+        }
+      }
+    ],
+    "displaySchool": "Cineria"
+  },
+  {
+    "id": "disintegrate",
+    "name": "Deshacer Materia",
+    "magic": "eradication",
+    "rank": "complex",
+    "description": "This spell will turn a number of enemy units into a pile of dust. This spell is extremely powerful against strong units. Area of effect: 1 enemy group.",
+    "attributes": [
+      "battle"
+    ],
+    "researchCost": 7000,
+    "castingCost": 40000,
+    "castingTurn": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "opponent",
+        "targetType": "random",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitDamageEffect",
+            "checkResistance": true,
+            "damageType": [
+              "fire"
+            ],
+            "target": "unit",
+            "rule": "spellLevel",
+            "magic": {
+              "ascendant": {
+                "value": {
+                  "min": 0.019,
+                  "max": 0.019
+                }
+              },
+              "verdant": {
+                "value": {
+                  "min": 0.035,
+                  "max": 0.035
+                }
+              },
+              "eradication": {
+                "value": {
+                  "min": 0.06,
+                  "max": 0.06
+                }
+              },
+              "nether": {
+                "value": {
+                  "min": 0.035,
+                  "max": 0.035
+                }
+              },
+              "phantasm": {
+                "value": {
+                  "min": 0.019,
+                  "max": 0.019
+                }
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "displaySchool": "Cineria"
+  },
+  {
+    "id": "flameBlade",
+    "name": "Hoja Incandescente",
+    "magic": "eradication",
+    "rank": "complex",
+    "description": "This spell will cause the blades of your troops with glow red hot with fire, allowing your troops to hit with higher accuracy and inflict fire daArcontes. Area of effect: all units with melee attack.",
+    "attributes": [
+      "battle"
+    ],
+    "researchCost": 5000,
+    "castingCost": 20000,
+    "castingTurn": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "self",
+        "targetType": "all",
+        "filters": [
+          {
+            "allAttackType": [
+              "melee",
+              "fire"
+            ]
+          }
+        ],
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "primaryAttackPower,secondaryAttackPower,counterAttackPower": {
+                "rule": "spellLevelScaledPercentage",
+                "magic": {
+                  "ascendant": {
+                    "value": 0.02
+                  },
+                  "verdant": {
+                    "value": 0.04
+                  },
+                  "eradication": {
+                    "value": 0.08
+                  },
+                  "nether": {
+                    "value": 0.04
+                  },
+                  "phantasm": {
+                    "value": 0.02
+                  }
+                }
+              }
+            }
+          },
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "primaryAttackType": {
+                "rule": "add",
+                "magic": {
+                  "ascendant": {
+                    "value": "fire"
+                  },
+                  "verdant": {
+                    "value": "fire"
+                  },
+                  "eradication": {
+                    "value": "fire"
+                  },
+                  "nether": {
+                    "value": "fire"
+                  },
+                  "phantasm": {
+                    "value": "fire"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "accuracy": {
+                "rule": "add",
+                "magic": {
+                  "ascendant": {
+                    "value": 1
+                  },
+                  "verdant": {
+                    "value": 2
+                  },
+                  "eradication": {
+                    "value": 3
+                  },
+                  "nether": {
+                    "value": 2
+                  },
+                  "phantasm": {
+                    "value": 1
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "displaySchool": "Cineria"
+  },
+  {
+    "id": "gravityPull",
+    "name": "Pozo Gravitatorio",
+    "magic": "eradication",
+    "rank": "complex",
+    "description": "Drawing the power from the earth elements, this spell doubles the gravity force within an area. Any flying creatures caught within the area of effect will fall from the sky, to their doom by the suddenly increased gravity pull. Only the strongest fliers are able to fly to their safety. Area of effect: all enemy units",
+    "attributes": [
+      "battle"
+    ],
+    "researchCost": 7000,
+    "castingCost": 30000,
+    "castingTurn": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "opponent",
+        "targetType": "all",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": true,
+            "attributes": {
+              "abilities": {
+                "rule": "add",
+                "magic": {
+                  "ascendant": {
+                    "value": {
+                      "name": "dropping",
+                      "extra": 21
+                    }
+                  },
+                  "verdant": {
+                    "value": {
+                      "name": "dropping",
+                      "extra": 50
+                    }
+                  },
+                  "eradication": {
+                    "value": {
+                      "name": "dropping",
+                      "extra": 95
+                    }
+                  },
+                  "nether": {
+                    "value": {
+                      "name": "dropping",
+                      "extra": 50
+                    }
+                  },
+                  "phantasm": {
+                    "value": {
+                      "name": "dropping",
+                      "extra": 21
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "displaySchool": "Cineria"
+  },
+  {
+    "id": "meteorStorm",
+    "name": "Lluvia de Astros Rotos",
+    "magic": "eradication",
+    "rank": "complex",
+    "description": "This spell will call a series of meteor storms from the el Firmamentos to hit your enemies, demolishing their buildings and turning them into pile of rubble. This enchantment will harm the enemy while they're taking turns.",
+    "attributes": [
+      "enchantment"
+    ],
+    "researchCost": 5000,
+    "castingCost": 35000,
+    "castingTurn": 8,
+    "life": 50,
+    "upkeep": {
+      "geld": 0,
+      "mana": 2000,
+      "population": 0
+    },
+    "effects": [
+      {
+        "effectType": "KingdomBuildingsEffect",
+        "rule": "spellLevelScaled",
+        "target": "all",
+        "magic": {
+          "ascendant": {
+            "value": {
+              "min": 0.1,
+              "max": 0.5
+            }
+          },
+          "verdant": {
+            "value": {
+              "min": 0.2,
+              "max": 1.3
+            }
+          },
+          "eradication": {
+            "value": {
+              "min": 0.5,
+              "max": 3
+            }
+          },
+          "nether": {
+            "value": {
+              "min": 0.2,
+              "max": 1.3
+            }
+          },
+          "phantasm": {
+            "value": {
+              "min": 0.1,
+              "max": 0.5
+            }
+          }
+        }
+      }
+    ],
+    "displaySchool": "Cineria"
+  },
+  {
+    "id": "stun",
+    "name": "Impacto Aturdidor",
+    "magic": "eradication",
+    "rank": "complex",
+    "description": "By uttering the ultimate word of all and nothingness, you can stun your enemy and make them too dizzy to fight. This will reduce their attack power and resistances. Area of effect: all enemy units.",
+    "attributes": [
+      "battle"
+    ],
+    "researchCost": 3500,
+    "castingCost": 14000,
+    "castingTurn": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "opponent",
+        "targetType": "all",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": true,
+            "attributes": {
+              "attackResistances": {
+                "rule": "spellLevelScaled",
+                "magic": {
+                  "ascendant": {
+                    "value": -4.5
+                  },
+                  "verdant": {
+                    "value": -9
+                  },
+                  "eradication": {
+                    "value": -30
+                  },
+                  "nether": {
+                    "value": -9
+                  },
+                  "phantasm": {
+                    "value": -4.5
+                  }
+                }
+              }
+            }
+          },
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": true,
+            "attributes": {
+              "efficiency": {
+                "rule": "spellLevelScaled",
+                "magic": {
+                  "ascendant": {
+                    "value": -5
+                  },
+                  "verdant": {
+                    "value": -11
+                  },
+                  "eradication": {
+                    "value": -20
+                  },
+                  "nether": {
+                    "value": -11
+                  },
+                  "phantasm": {
+                    "value": -5
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "displaySchool": "Cineria"
+  },
+  {
+    "id": "summonChimera",
+    "name": "Convocar Quimera Escarlata",
+    "magic": "eradication",
+    "rank": "complex",
+    "description": "This spell will summon fearsome chimeras with claws of lions, wings of eagles, and hindlegs of goats. They will breathe deadly fire on your enemies causing heavy daArcontes and shred them to pieces with their sharp claws.",
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
+    "researchCost": 4000,
+    "castingCost": 46800,
+    "castingTurn": 4,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "UnitSummonEffect",
+        "unitIds": [
+          "chimera"
+        ],
+        "summonType": "all",
+        "summonNetPower": 430000,
+        "rule": "spellLevelScaled",
+        "magic": {
+          "ascendant": {
+            "value": 0.2
+          },
+          "verdant": {
+            "value": 0.6
+          },
+          "eradication": {
+            "value": 1
+          },
+          "nether": {
+            "value": 0.6
+          },
+          "phantasm": {
+            "value": 0.2
+          }
+        }
+      }
+    ],
+    "displaySchool": "Cineria"
+  },
+  {
+    "id": "summonEfreeti",
+    "name": "Convocar Ifrit de la Forja",
+    "magic": "eradication",
+    "rank": "complex",
+    "description": "This spell summons the deadly Efreeti into your army. Encompassed in el Abismo fire, these powerful creatures scorch the earth as they travel onto the battlefield, destroying your enemies with an explosive mix of fire and magic.",
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
+    "researchCost": 4000,
+    "castingCost": 46800,
+    "castingTurn": 4,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "UnitSummonEffect",
+        "unitIds": [
+          "efreeti"
+        ],
+        "summonType": "all",
+        "summonNetPower": 440000,
+        "rule": "spellLevelScaled",
+        "magic": {
+          "ascendant": {
+            "value": 0.2
+          },
+          "verdant": {
+            "value": 0.6
+          },
+          "eradication": {
+            "value": 1
+          },
+          "nether": {
+            "value": 0.6
+          },
+          "phantasm": {
+            "value": 0.2
+          }
+        }
+      }
+    ],
+    "displaySchool": "Cineria"
+  },
+  {
+    "id": "summonHydra",
+    "name": "Convocar Hidra de Escoria",
+    "magic": "eradication",
+    "rank": "complex",
+    "description": "This spell will summon monstrous nine-headed hydras from the bowels of Earth. Each time one of their head is cut off, another will grow in its place. These creatures are most deadly and difficult to kill.",
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
+    "researchCost": 4000,
+    "castingCost": 41700,
+    "castingTurn": 5,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "UnitSummonEffect",
+        "unitIds": [
+          "hydra"
+        ],
+        "summonType": "all",
+        "summonNetPower": 540000,
+        "rule": "spellLevelScaled",
+        "magic": {
+          "ascendant": {
+            "value": 0.2
+          },
+          "verdant": {
+            "value": 0.6
+          },
+          "eradication": {
+            "value": 1
+          },
+          "nether": {
+            "value": 0.6
+          },
+          "phantasm": {
+            "value": 0.2
+          }
+        }
+      }
+    ],
+    "displaySchool": "Cineria"
+  },
+  {
+    "id": "callDwarvenShaman",
+    "name": "Llamada del Chamán de Forja",
+    "magic": "eradication",
+    "rank": "complex",
+    "description": "TODO",
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
+    "researchCost": 4000,
+    "castingCost": 40000,
+    "castingTurn": 4,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "UnitSummonEffect",
+        "unitIds": [
+          "dwarvenShaman"
+        ],
+        "summonType": "all",
+        "summonNetPower": 440000,
+        "rule": "spellLevelScaled",
+        "magic": {
+          "ascendant": {
+            "value": 0.2
+          },
+          "verdant": {
+            "value": 0.6
+          },
+          "eradication": {
+            "value": 1
+          },
+          "nether": {
+            "value": 0.6
+          },
+          "phantasm": {
+            "value": 0.2
+          }
+        }
+      }
+    ],
+    "displaySchool": "Cineria"
+  },
+  {
+    "id": "callStormGiant",
+    "name": "Convocar Gigante de Tormenta",
+    "magic": "eradication",
+    "rank": "complex",
+    "description": "TODO",
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
+    "researchCost": 5000,
+    "castingCost": 50000,
+    "castingTurn": 5,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "UnitSummonEffect",
+        "unitIds": [
+          "stormGiant"
+        ],
+        "summonType": "all",
+        "summonNetPower": 550000,
+        "rule": "spellLevelScaled",
+        "magic": {
+          "ascendant": {
+            "value": 0.2
+          },
+          "verdant": {
+            "value": 0.6
+          },
+          "eradication": {
+            "value": 1
+          },
+          "nether": {
+            "value": 0.6
+          },
+          "phantasm": {
+            "value": 0.2
+          }
+        }
+      }
+    ],
+    "displaySchool": "Cineria"
+  },
+  {
+    "id": "summonFireElemental",
+    "name": "Alzar Núcleo Ígneo",
+    "magic": "eradication",
+    "rank": "ultimate",
+    "description": "This spell summons the essence of fire itself, Fire Elelemntals, which will incinerate your enemies with their ravaging infernal attacks.",
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
+    "researchCost": 30000,
+    "castingCost": 300000,
+    "castingTurn": 8,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "UnitSummonEffect",
+        "unitIds": [
+          "fireElemental"
+        ],
+        "summonType": "all",
+        "summonNetPower": 2000000,
+        "rule": "spellLevelScaled",
+        "magic": {
+          "ascendant": {
+            "value": 0
+          },
+          "verdant": {
+            "value": 0
+          },
+          "eradication": {
+            "value": 1
+          },
+          "nether": {
+            "value": 0
+          },
+          "phantasm": {
+            "value": 0
+          }
+        }
+      }
+    ],
+    "displaySchool": "Cineria"
+  },
+  {
+    "id": "summonRedDragon",
+    "name": "Convocar Draco Carmesí",
+    "magic": "eradication",
+    "rank": "ultimate",
+    "description": "This spell will summon red dragons, the most powerful creatures in the realm. They have immunity to most attacks, and their devastating fire breath can burn your enemies into ashes. Only a very powerful Arconte may be able to summon and sustain red dragons.",
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
+    "researchCost": 40000,
+    "castingCost": 300000,
+    "castingTurn": 10,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "UnitSummonEffect",
+        "unitIds": [
+          "redDragon"
+        ],
+        "summonType": "all",
+        "summonNetPower": 2500000,
+        "rule": "spellLevelScaled",
+        "magic": {
+          "ascendant": {
+            "value": 0
+          },
+          "verdant": {
+            "value": 0
+          },
+          "eradication": {
+            "value": 1
+          },
+          "nether": {
+            "value": 0
+          },
+          "phantasm": {
+            "value": 0
+          }
+        }
+      }
+    ],
+    "displaySchool": "Cineria"
+  },
+  {
+    "id": "flameShield",
+    "name": "Escudo de Brasas",
+    "magic": "eradication",
+    "rank": "ultimate",
+    "description": "The powerful spell creates a flaming barrier surrounding the target. It grants the target immunity to fire, and any creature who strikes the protected unit will suffer severe burning daArconte.",
+    "attributes": [
+      "battle"
+    ],
+    "researchCost": 30000,
+    "castingCost": 250000,
+    "castingTurn": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "PrebattleEffect",
+        "target": "self",
+        "targetType": "all",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "attackResistances.fire": {
+                "rule": "set",
+                "magic": {
+                  "eradication": {
+                    "value": 100
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "effectType": "BattleEffect",
+        "target": "self",
+        "targetType": "all",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "abilities": {
+                "rule": "add",
+                "magic": {
+                  "eradication": {
+                    "value": {
+                      "name": "bursting",
+                      "extra": {
+                        "type": [
+                          "fire"
+                        ],
+                        "value": null
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "displaySchool": "Cineria"
+  },
+  {
+    "id": "inferno",
+    "name": "Mar de Fuego",
+    "magic": "eradication",
+    "rank": "ultimate",
+    "description": "This is the most devastating attack spell of all. This spell will summon eternal flame from the deepest layers of el Abismo and ignite everything in sight. It will kill most weaker creatures and can deliver mortal daArconte even to the most powerful units. Not even most ardent prayers will save those creatures without resistance to fire. Area of effect: all enemy units.",
+    "attributes": [
+      "battle"
+    ],
+    "researchCost": 40000,
+    "castingCost": 500000,
+    "castingTurn": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "opponent",
+        "targetType": "all",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitDamageEffect",
+            "checkResistance": true,
+            "damageType": [
+              "fire"
+            ],
+            "target": "perUnitDamage",
+            "rule": "spellLevel",
+            "magic": {
+              "eradication": {
+                "value": {
+                  "min": 0.33,
+                  "max": 0.33
+                }
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "displaySchool": "Cineria"
+  },
+  {
+    "id": "volcanoEruption",
+    "name": "Ruptura del Corazón Ígneo",
+    "magic": "eradication",
+    "rank": "ultimate",
+    "description": "This is the most powerful Cineria spell. It will cause most violent volcanic eruptions in your enemy's country. It will destroy land, maim citizens, eradicate armies and leave your enemy thunderstruck with shock and dismay. Fortunately, the Council only allows 10 such spells to be used against any Arconte. In addition, this spell is most effective when used against enemy with close net power to the caster. It's effectivness drops as the difference in power increases.",
+    "attributes": [
+      "instant"
+    ],
+    "researchCost": 30000,
+    "castingCost": 200000,
+    "castingTurn": 10,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "KingdomBuildingsEffect",
+        "rule": "ranged",
+        "target": "all",
+        "magic": {
+          "eradication": {
+            "value": {
+              "min": 1.5,
+              "max": 5.5
+            }
+          }
+        }
+      },
+      {
+        "effectType": "KingdomArmyEffect",
+        "rule": "spellLevelScaledPercentage",
+        "filters": null,
+        "checkResistance": false,
+        "magic": {
+          "eradication": {
+            "value": {
+              "min": -0.02,
+              "max": -0.05
+            }
+          }
+        }
+      }
+    ],
+    "displaySchool": "Cineria"
+  }
+]

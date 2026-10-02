@@ -1,0 +1,832 @@
+/*
+import { createServer } from 'http';
+import { Server, Socket } from 'socket.io';
+
+import { info } from './logger';
+
+// Main update loop
+const TICK = 1000 * 60 * 2; // Every two minute
+const updateLoop = () => {
+  info('Update loop');
+  // TODO: Update everything
+  setTimeout(updateLoop, TICK);
+};
+updateLoop();
+
+const httpServer = createServer();
+const io = new Server(httpServer, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST']
+  }
+});
+
+io.on('connection', (socket: Socket) => {
+  console.log('connected', socket.id);
+  socket.send({ message: 'hello there' })
+});
+
+httpServer.listen(3000);
+*/
+
+import express from 'express';
+import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
+
+import { PGliteDataAdapter } from 'data-adapter/src/pglite-data-adapter';
+import { Engine } from 'engine/src/engine';
+import { MAX_AGE, verifyAccessToken } from 'shared/src/auth';
+import { NameError } from 'shared/src/errors';
+import { arcanumSchool, describeMarketAsset, engineSchool, toArcanumDispelPreview, toArcanumDomain, toArcanumMagicState, toArcanumRank, toEngineBuildingPlan } from './arcanum-domain';
+
+
+const PORT = 3000;
+const app = express();
+const router = express.Router();
+
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use(verifyAccessToken);
+
+const dataAdapter = new PGliteDataAdapter();
+const engine = new Engine(dataAdapter);
+
+const readTurns = (value: unknown) => {
+  const turns = Number(value);
+  if (!Number.isInteger(turns) || turns < 1) return null;
+  return turns;
+};
+
+const getPlayerDomain = async (req: any, res: any) => {
+  const username = req.user?.username;
+  if (!username) {
+    res.status(401).json({ error: 'AUTH_REQUIRED' });
+    return null;
+  }
+  const mage = await engine.getMageByUser(username);
+  if (!mage) {
+    res.status(404).json({ error: 'DOMAIN_NOT_FOUND' });
+    return null;
+  }
+  return mage;
+};
+
+// ARCANUM-native façade. These routes deliberately avoid exposing inherited
+// world terminology so the browser can migrate one Domain system at a time.
+router.get('/api/arcanum/domain', async (req: any, res) => {
+  const mage = await getPlayerDomain(req, res);
+  if (!mage) return;
+  res.status(200).json({ domain: toArcanumDomain(mage) });
+});
+
+router.post('/api/arcanum/explore', async (req: any, res) => {
+  let mage = await getPlayerDomain(req, res);
+  if (!mage) return;
+  const turns = readTurns(req.body?.turns);
+  if (turns === null) return res.status(400).json({ error: 'INVALID_TURNS' });
+
+  try {
+    const landGained = await engine.exploreLand(mage, turns);
+    mage = await engine.getMageByUser(req.user.username);
+    res.status(200).json({
+      domain: toArcanumDomain(mage),
+      landGained,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ error: 'EXPLORE_FAILED', message: 'No se pudo completar la exploración.' });
+  }
+});
+
+router.post('/api/arcanum/economy/gold', async (req: any, res) => {
+  let mage = await getPlayerDomain(req, res);
+  if (!mage) return;
+  const turns = readTurns(req.body?.turns);
+  if (turns === null) return res.status(400).json({ error: 'INVALID_TURNS' });
+
+  try {
+    const goldGained = await engine.gelding(mage, turns);
+    mage = await engine.getMageByUser(req.user.username);
+    res.status(200).json({
+      domain: toArcanumDomain(mage),
+      goldGained,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ error: 'GOLD_COLLECTION_FAILED', message: 'No se pudo completar la recaudación.' });
+  }
+});
+
+router.post('/api/arcanum/economy/mana', async (req: any, res) => {
+  let mage = await getPlayerDomain(req, res);
+  if (!mage) return;
+  const turns = readTurns(req.body?.turns);
+  if (turns === null) return res.status(400).json({ error: 'INVALID_TURNS' });
+
+  try {
+    const manaGained = await engine.manaCharge(mage, turns);
+    mage = await engine.getMageByUser(req.user.username);
+    res.status(200).json({
+      domain: toArcanumDomain(mage),
+      manaGained,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ error: 'MANA_CHANNEL_FAILED', message: 'No se pudo completar la canalización de maná.' });
+  }
+});
+
+router.post('/api/arcanum/build', async (req: any, res) => {
+  let mage = await getPlayerDomain(req, res);
+  if (!mage) return;
+
+  try {
+    const plan = toEngineBuildingPlan(req.body);
+    const beforeTurns = mage.currentTurn;
+    await engine.build(mage, plan);
+    mage = await engine.getMageByUser(req.user.username);
+    res.status(200).json({
+      domain: toArcanumDomain(mage),
+      turnsSpent: beforeTurns - mage.currentTurn,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ error: 'BUILD_FAILED', message: 'No se pudo completar la construcción.' });
+  }
+});
+
+router.post('/api/arcanum/destroy', async (req: any, res) => {
+  let mage = await getPlayerDomain(req, res);
+  if (!mage) return;
+
+  try {
+    const plan = toEngineBuildingPlan(req.body);
+    const reclaimedLand = Object.values(plan).reduce((sum, amount) => sum + Math.max(0, amount), 0);
+    await engine.destroy(mage, plan);
+    mage = await engine.getMageByUser(req.user.username);
+    res.status(200).json({
+      domain: toArcanumDomain(mage),
+      turnsSpent: 1,
+      reclaimedLand,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ error: 'DESTROY_FAILED', message: 'No se pudo completar la demolición.' });
+  }
+});
+
+router.post('/api/arcanum/research', async (req: any, res) => {
+  let mage = await getPlayerDomain(req, res);
+  if (!mage) return;
+  const turns = readTurns(req.body?.turns);
+  if (turns === null) return res.status(400).json({ error: 'INVALID_TURNS' });
+
+  try {
+    const magic = engineSchool(req.body?.school);
+    const focus = Boolean(req.body?.focus);
+    const learned = await engine.research(mage, magic, focus, turns);
+    mage = await engine.getMageByUser(req.user.username);
+    const learnedSpells = Object.fromEntries(
+      Object.entries(learned).map(([key, spellIds]) => [
+        arcanumSchool(engineSchool(key)).code,
+        spellIds,
+      ]),
+    );
+    res.status(200).json({
+      domain: toArcanumDomain(mage),
+      learnedSpells,
+      turnsSpent: turns,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ error: 'RESEARCH_FAILED', message: 'No se pudo completar la investigación.' });
+  }
+});
+
+router.post('/api/arcanum/recruitments', async (req: any, res) => {
+  let mage = await getPlayerDomain(req, res);
+  if (!mage) return;
+
+  try {
+    const recruitments = Array.isArray(req.body?.recruitments) ? req.body.recruitments : [];
+    await engine.setRecruitments(mage, recruitments);
+    mage = await engine.getMageByUser(req.user.username);
+    res.status(200).json({ domain: toArcanumDomain(mage) });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ error: 'RECRUITMENT_FAILED', message: 'No se pudo actualizar el reclutamiento.' });
+  }
+});
+
+router.post('/api/arcanum/disband', async (req: any, res) => {
+  let mage = await getPlayerDomain(req, res);
+  if (!mage) return;
+
+  try {
+    const raw = req.body?.disbands ?? req.body ?? {};
+    const disbands = Array.isArray(raw)
+      ? Object.fromEntries(raw.map((stack: any) => [stack.id, stack]))
+      : raw;
+    await engine.disbandUnits(mage, disbands);
+    mage = await engine.getMageByUser(req.user.username);
+    res.status(200).json({ domain: toArcanumDomain(mage) });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ error: 'DISBAND_FAILED', message: 'No se pudo disolver la formación.' });
+  }
+});
+
+router.get('/api/arcanum/ranking', async (_req: any, res) => {
+  const rankList = await engine.rankList('');
+  res.status(200).json({ ranking: rankList.map(toArcanumRank) });
+});
+
+router.get('/api/arcanum/clock', async (_req: any, res) => {
+  res.status(200).json(await engine.getServerClock());
+});
+
+router.get('/api/arcanum/rules', async (_req: any, res) => {
+  res.status(200).json(await engine.getGameTable());
+});
+
+router.get('/api/arcanum/magic', async (req: any, res) => {
+  const mage = await getPlayerDomain(req, res);
+  if (!mage) return;
+  res.status(200).json({ magic: toArcanumMagicState(mage) });
+});
+
+router.get('/api/arcanum/dispel-preview', async (req: any, res) => {
+  const mage = await getPlayerDomain(req, res);
+  if (!mage) return;
+  const enchantId = String(req.query?.enchantId ?? '');
+  const mana = Math.max(0, Number(req.query?.mana ?? 0));
+  const preview = toArcanumDispelPreview(mage, enchantId, mana);
+  if (!preview) return res.status(404).json({ error: 'ENCHANTMENT_NOT_FOUND' });
+  res.status(200).json(preview);
+});
+
+router.post('/api/arcanum/spell', async (req: any, res) => {
+  let mage = await getPlayerDomain(req, res);
+  if (!mage) return;
+  const spellId = String(req.body?.spellId ?? '');
+  const count = readTurns(req.body?.count ?? req.body?.num);
+  if (count === null) return res.status(400).json({ error: 'INVALID_COUNT' });
+  const targetId = Number(req.body?.targetId ?? req.body?.target?.id ?? 0) || 0;
+
+  try {
+    const result = await engine.castSpell(mage, spellId, count, targetId);
+    mage = await engine.getMageByUser(req.user.username);
+    res.status(200).json({
+      domain: toArcanumDomain(mage),
+      magic: toArcanumMagicState(mage),
+      result,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ error: 'CAST_FAILED', message: 'No se pudo completar el lanzamiento.' });
+  }
+});
+
+router.post('/api/arcanum/dispel', async (req: any, res) => {
+  let mage = await getPlayerDomain(req, res);
+  if (!mage) return;
+  const enchantId = String(req.body?.enchantId ?? '');
+  const mana = Number(req.body?.mana ?? 0);
+
+  try {
+    const success = await engine.dispel(mage, enchantId, mana);
+    mage = await engine.getMageByUser(req.user.username);
+    res.status(200).json({
+      success,
+      domain: toArcanumDomain(mage),
+      magic: toArcanumMagicState(mage),
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ error: 'DISPEL_FAILED', message: 'No se pudo completar la disipación.' });
+  }
+});
+
+router.post('/api/arcanum/item', async (req: any, res) => {
+  let mage = await getPlayerDomain(req, res);
+  if (!mage) return;
+  const itemId = String(req.body?.itemId ?? '');
+  const count = readTurns(req.body?.count ?? req.body?.num);
+  if (count === null) return res.status(400).json({ error: 'INVALID_COUNT' });
+  const targetId = Number(req.body?.targetId ?? req.body?.target?.id ?? 0) || 0;
+
+  try {
+    const result = await engine.useItem(mage, itemId, count, targetId);
+    mage = await engine.getMageByUser(req.user.username);
+    res.status(200).json({
+      domain: toArcanumDomain(mage),
+      magic: toArcanumMagicState(mage),
+      result,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ error: 'ITEM_USE_FAILED', message: 'No se pudo usar el objeto.' });
+  }
+});
+
+router.get('/api/arcanum/market', async (req: any, res) => {
+  const mage = await getPlayerDomain(req, res);
+  if (!mage) return;
+  const [prices, items, rules] = await Promise.all([
+    engine.getMarketPrices(),
+    engine.getMarketItems(),
+    engine.getGameTable(),
+  ]);
+  const priceById = new Map(prices.map(row => [row.id, row]));
+  res.status(200).json({
+    rules: rules.blackmarket,
+    prices: prices.map(row => ({
+      ...row,
+      asset: describeMarketAsset(row.id, row.type),
+    })),
+    items: items.map(row => ({
+      ...row,
+      asset: describeMarketAsset(row.priceId, priceById.get(row.priceId)?.type ?? 'item'),
+    })),
+    inventory: toArcanumMagicState(mage).items,
+    gold: mage.currentGeld,
+  });
+});
+
+router.get('/api/arcanum/market/bids/:priceId', async (req: any, res) => {
+  const mage = await getPlayerDomain(req, res);
+  if (!mage) return;
+  const bids = await engine.getMarketBids(String(req.params.priceId));
+  res.status(200).json({
+    bids: bids.map(row => ({
+      marketId: row.marketId,
+      bid: row.bid,
+      mine: row.mageId === mage.id,
+    })),
+  });
+});
+
+router.post('/api/arcanum/market/bids', async (req: any, res) => {
+  let mage = await getPlayerDomain(req, res);
+  if (!mage) return;
+  const bids = Array.isArray(req.body) ? req.body : req.body?.bids;
+  if (!Array.isArray(bids)) return res.status(400).json({ error: 'INVALID_BIDS' });
+
+  try {
+    mage = await engine.makeMarketBids(mage.id, bids);
+    res.status(200).json({ domain: toArcanumDomain(mage) });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ error: 'BID_FAILED', message: 'No se pudieron registrar las pujas.' });
+  }
+});
+
+router.post('/api/arcanum/market/sell', async (req: any, res) => {
+  let mage = await getPlayerDomain(req, res);
+  if (!mage) return;
+  const items = Array.isArray(req.body) ? req.body : req.body?.items;
+  if (!Array.isArray(items)) return res.status(400).json({ error: 'INVALID_ITEMS' });
+
+  try {
+    mage = await engine.sellItems(mage.id, items);
+    res.status(200).json({ domain: toArcanumDomain(mage) });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ error: 'SELL_FAILED', message: 'No se pudieron poner los objetos en el mercado.' });
+  }
+});
+
+router.post('/api/explore', async (req: any, res) => {
+  let mage = await engine.getMageByUser(req.user.username);
+  const { turns } = req.body;
+  try {
+    const landGained = await engine.exploreLand(mage, turns);
+
+    mage = await engine.getMageByUser(req.user.username);
+    res.status(200).json({ mage, landGained });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ message: err.message });
+  }
+});
+
+router.post('/api/geld', async (req: any, res) => {
+  let mage = await engine.getMageByUser(req.user.username);
+  const { turns } = req.body;
+  try {
+    const geldGained = await engine.gelding(mage, turns);
+
+    mage = await engine.getMageByUser(req.user.username);
+    res.status(200).json({ mage, geldGained });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ message: err.message });
+  }
+});
+
+router.post('/api/charge', async (req: any, res) => {
+  let mage = await engine.getMageByUser(req.user.username);
+  const { turns } = req.body;
+  try {
+    const manaGained = await engine.manaCharge(mage, turns);
+
+    mage = await engine.getMageByUser(req.user.username);
+    res.status(200).json({ mage, manaGained });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ message: err.message });
+  }
+});
+
+router.post('/api/build', async (req: any, res) => {
+  let mage = await engine.getMageByUser(req.user.username);
+  const payload = req.body;
+  try {
+    await engine.build(mage, payload);
+
+    mage = await engine.getMageByUser(req.user.username);
+    res.status(200).json({ mage });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ message: err.message });
+  }
+});
+
+router.post('/api/destroy', async (req: any, res) => {
+  let mage = await engine.getMageByUser(req.user.username);
+  const payload = req.body;
+  try {
+    await engine.destroy(mage, payload);
+
+    mage = await engine.getMageByUser(req.user.username);
+    res.status(200).json({ mage });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ message: err.message });
+  }
+});
+
+router.get('/api/ranklist', async (_req: any, res) => {
+  const rankList = await engine.rankList('');
+  res.status(200).json({ rankList });
+});
+
+router.post('/api/spell', async (req: any, res) => {
+  let mage = await engine.getMageByUser(req.user.username);
+  const { spellId, num, target } = req.body;
+  const result = await engine.castSpell(mage, spellId, num, target);
+
+  mage = await engine.getMageByUser(req.user.username);
+  res.status(200).json({ result, mage });
+});
+
+router.post('/api/dispel', async (req: any, res) => {
+  let mage = await engine.getMageByUser(req.user.username);
+  const { enchantId, mana } = req.body;
+  try {
+    const result = await engine.dispel(mage, enchantId, mana);
+
+    mage = await engine.getMageByUser(req.user.username);
+    res.status(200).json({ result, mage });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ message: err.message });
+  }
+});
+
+router.post('/api/defence-assignment', async (req: any, res) => {
+  let mage = await engine.getMageByUser(req.user.username);
+  const assignment = req.body;
+
+  await engine.setAssignment(mage, assignment);
+  mage = await engine.getMageByUser(req.user.username);
+  res.status(200).json({ mage });
+});
+
+router.post('/api/recruitments', async (req: any, res) => {
+  const mage = await engine.getMageByUser(req.user.username);
+  const body = req.body;
+
+  try {
+    await engine.setRecruitments(mage, body.recruitments);
+    res.status(200).json({ mage });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ message: err.message });
+  }
+});
+
+router.post('/api/disband', async (req: any, res) => {
+  let mage = await engine.getMageByUser(req.user.username);
+  const body = req.body;
+
+  try {
+    await engine.disbandUnits(mage, body.disbands);
+
+    mage = await engine.getMageByUser(req.user.username);
+    res.status(200).json({ mage });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ message: err.message });
+  }
+});
+
+router.post('/api/item', async (req: any, res) => {
+  let mage = await engine.getMageByUser(req.user.username);
+  const { itemId, num, target } = req.body;
+  const r = await engine.useItem(mage, itemId, num, target);
+
+  mage = await engine.getMageByUser(req.user.username);
+  res.status(200).json({ r, mage });
+});
+
+
+router.post('/api/research', async (req: any, res) => {
+  let mage = await engine.getMageByUser(req.user.username);
+  const { magic, focus, turns } = req.body;
+
+  try {
+    const result = await engine.research(mage, magic, focus, turns);
+
+    mage = await engine.getMageByUser(req.user.username);
+    res.status(200).json({ result, mage });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+router.post('/api/war', async (req: any, res) => {
+  let mage = await engine.getMageByUser(req.user.username);
+  const { spellId, itemId, stackIds, targetId, battleType } = req.body;
+
+  // Do not proceed if there are errors
+  const errors = await engine.preBattleCheck(mage, +targetId, battleType);
+  if (errors.length > 0) {
+    res.status(200).json({ errors, reportId: null, mage });
+    return;
+  }
+
+  try {
+    const result = await engine.doBattle(mage, +targetId, battleType, stackIds, spellId, itemId);
+    mage = await engine.getMageByUser(req.user.username);
+    res.status(200).json({ errors: result.errors, reportId: result.battleReport?.id, mage });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+
+});
+
+router.get('/api/report/:id', async (req: any, res) => {
+  const mage = await engine.getMageByUser(req.user.username);
+  const reportId = req.params.id;
+  const report = await engine.getBattleReport(mage, reportId);
+  res.status(200).json({ report });
+});
+
+router.get('/api/mage-battles', async (req: any, res) => {
+  const mage = await engine.getMageByUser(req.user.username);
+  const battles = await engine.getMageBattles(mage, {
+    targetId: req.query.targetId,
+    window: req.query.window
+  });
+  res.status(200).json({ battles });
+});
+
+
+router.get('/api/chronicles', async (req: any, res) => {
+  const mage = await engine.getMageByUser(req.user.username);
+  const chronicles = await engine.getChronicles(mage);
+  res.status(200).json({ chronicles });
+})
+
+
+router.post('/api/register', async (req, res) => {
+  const { username, password } = req.body;
+
+  try {
+    const { user } = await engine.register(username, password);
+    res.cookie('amr-jwt', user.token, {
+      httpOnly: true,
+      maxAge: MAX_AGE * 1000
+    });
+    console.log('register', user.username);
+    res.status(200).json({ username: user.username });
+  } catch (err) {
+    if (err instanceof NameError) {
+      res.status(409).json({ error: err.message });
+    }
+  }
+});
+
+router.post('/api/login', async (req, res) => {
+  const { username, password } = req.body;
+  const { user } = await engine.login(username, password);
+
+  if (!user) {
+    return res.status(200).json(null);
+  }
+
+  res.cookie('amr-jwt', user.token, {
+    httpOnly: true,
+    maxAge: MAX_AGE * 1000
+  });
+  res.status(200).json({ username: user.username });
+});
+
+router.post('/api/logout', async (req, res) => {
+  res.clearCookie('amr-jwt');
+  res.status(200).json({})
+});
+
+router.get('/api/login-check', async (req: any, res) => {
+  if (req.user && req.user.username) {
+    res.status(200).json({ username: req.user.username });
+  } else {
+    res.status(400).json({ message: 'something weird happened' });
+  }
+});
+
+
+router.post('/api/mage', async (req: any, res) => {
+  const username = req.user.username;
+  const { mageName, magic } = req.body;
+  if (username && magic) {
+    const mage = await engine.createNewMage(username, mageName, magic);
+    res.status(200).json({ mage });
+  }
+});
+
+router.get('/api/mage', async (req: any, res) => {
+  // console.log('cookies!!! ', req.user.username);
+  const mage = await engine.getMageByUser(req.user.username);
+  res.status(200).json({ mage });
+});
+
+router.delete('/api/mage', async (req: any, res) => {
+  const mage = await engine.getMageByUser(req.user.username);
+
+  try {
+    if (mage) {
+      await engine.removeMage(mage);
+    }
+    res.status(200).json({});
+  } catch(err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+
+router.get('/api/search-mage', async (req: any, res) => {
+  const mage = await engine.getMageByUser(req.user.username);
+  if (!mage) {
+    res.status(401).json({ message: 'Must login to access search capabilities' });
+  }
+
+  const searchStr = req.query.searchStr;
+  const results = await engine.findMages(searchStr);
+  res.status(200).json(results);
+});
+
+
+router.get('/api/mage/:id', async (req: any, res) => {
+  const id = +(req.params.id);
+  const mage = await engine.getMageSummary(id);
+  res.status(200).json({ mageSummary: mage });
+});
+
+router.post('/api/mages', async (req: any, res) => {
+  const { ids } = req.body;
+  const mages = await engine.getMages(ids);
+  res.status(200).json({ mages });
+});
+
+router.get('/api/game-table', async (_req: any, res) => {
+  const settings = await engine.getGameTable();
+  res.status(200).json(settings);
+});
+
+router.get('/api/server-clock', async (_req: any, res) => {
+  const clock = await engine.getServerClock();
+  res.status(200).json(clock);
+});
+
+router.get('/api/market-prices', async (_req, res) => {
+  const result = await engine.getMarketPrices();
+  res.status(200).json(result);
+})
+
+router.get('/api/market-items', async (_req, res) => {
+  const result = await engine.getMarketItems();
+  res.status(200).json(result);
+});
+
+router.get('/api/market-bids/:priceId', async (req, res) => {
+  // const id = req.params.priceId;
+  // const result = await engine.getMarketBids(id);
+  // res.status(200).json(result);
+  
+  const ids = req.params.priceId.split(',').map(d => d.trim());
+  let result = [];
+  for (const id of ids) {
+    const r = await engine.getMarketBids(id);
+    result = result.concat(r);
+  }
+  res.status(200).json(result);
+});
+
+router.post('/api/market-bids', async (req: any, res) => {
+  const bids = req.body;
+  let mage = await engine.getMageByUser(req.user.username);
+  mage = await engine.makeMarketBids(mage.id, bids);
+
+  res.status(200).json({ mage });
+});
+
+
+router.post('/api/sell-item', async (req: any, res) => {
+  let mage = await engine.getMageByUser(req.user.username);
+
+  try {
+    const sellItems = req.body;
+    mage = await engine.sellItems(mage.id, sellItems);
+    res.status(200).json({ mage });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ message: err.message });
+  }
+});
+
+
+router.post('/api/skill', async (req: any, res) => {
+  const { skillId } = req.body;
+  let mage = await engine.getMageByUser(req.user.username);
+
+  try {
+    mage = await engine.addSkill(mage, skillId);
+    res.status(200).json({ mage });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ message: err.message });
+  }
+});
+
+
+router.post('/api/mails', async (req: any, res) => {
+  const mail = req.body.mail;
+  let mage = await engine.getMageByUser(req.user.username);
+
+  try {
+    const result = await engine.saveMail(mage, mail);
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+
+});
+
+router.get('/api/mails', async (req: any, res) => {
+  let mage = await engine.getMageByUser(req.user.username);
+  const mails = await engine.getMails(mage);
+  res.status(200).json({ mails });
+});
+
+router.post('/api/read-mails', async (req: any, res) => {
+  let mage = await engine.getMageByUser(req.user.username);
+  const ids = req.body.ids;
+  await engine.markAsRead(mage, ids);
+  res.status(200).json({});
+});
+
+router.post('/api/delete-mails', async (req: any, res) => {
+  let mage = await engine.getMageByUser(req.user.username);
+  const ids = req.body.ids;
+  await engine.deleteMails(mage, ids);
+  res.status(200).json({});
+});
+
+// router.route('/api/test').get(verifyAccessToken, async (req: any, res) => {
+//   console.log('cookies!!! ', req.user);
+//   res.status(200).json({ user: req.user });
+// });
+//
+
+app.use(router);
+
+app.listen(PORT, ()=>{
+  console.log(`App is listening on port ${PORT}`);
+  console.log('================================');
+  console.log('ARCANUM rebuilt engine');
+  console.log('================================');
+});
+
+
+// Simple parsing
+let restart = process.argv[2] || 'true';
+
+async function run() {
+  await engine.initialize(restart === 'true' ? true : false);
+}
+
+run();

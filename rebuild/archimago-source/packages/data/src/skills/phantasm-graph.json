@@ -1,0 +1,117 @@
+[
+  {
+    "id": "spellMastery",
+    "name": "Maestría del Velo",
+    "magic": "phantasm",
+    "description": "Reduce el coste de lanzamiento de conjuros mediante una comprensión más profunda de Oneiria.",
+    "maxLevel": 15,
+    "prereqs": {},
+    "effects": [
+      {
+        "effectType": "CastingCostEffect",
+        "rule": "percentage",
+        "magic": {
+          "ascendant": {
+            "value": {
+              "innate": -0.01,
+              "adjacent": -0.02,
+              "opposite": -0.03
+            }
+          },
+          "verdant": {
+            "value": {
+              "innate": -0.01,
+              "adjacent": -0.02,
+              "opposite": -0.03
+            }
+          },
+          "eradication": {
+            "value": {
+              "innate": -0.01,
+              "adjacent": -0.02,
+              "opposite": -0.03
+            }
+          },
+          "nether": {
+            "value": {
+              "innate": -0.01,
+              "adjacent": -0.02,
+              "opposite": -0.03
+            }
+          },
+          "phantasm": {
+            "value": {
+              "innate": -0.01,
+              "adjacent": -0.02,
+              "opposite": -0.03
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "blizzard",
+    "name": "Tormenta de Cristal",
+    "magic": "phantasm",
+    "description": "Hace caer fragmentos de hielo sobre grupos enemigos desde el Velo.",
+    "maxLevel": 5,
+    "prereqs": {
+      "spellMastery": 3
+    },
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "opponent",
+        "targetType": "random",
+        "filters": null,
+        "trigger": {
+          "min": 2,
+          "max": 4
+        },
+        "effects": [
+          {
+            "effectType": "UnitDamageEffect",
+            "checkResistance": false,
+            "damageType": [
+              "cold"
+            ],
+            "rule": "direct",
+            "magic": {
+              "ascendant": {
+                "value": {
+                  "min": 40000,
+                  "max": 60000
+                }
+              },
+              "verdant": {
+                "value": {
+                  "min": 40000,
+                  "max": 60000
+                }
+              },
+              "eradication": {
+                "value": {
+                  "min": 40000,
+                  "max": 60000
+                }
+              },
+              "nether": {
+                "value": {
+                  "min": 40000,
+                  "max": 60000
+                }
+              },
+              "phantasm": {
+                "value": {
+                  "min": 40000,
+                  "max": 60000
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

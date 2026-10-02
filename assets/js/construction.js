@@ -15,7 +15,6 @@ function activeWorkshopCount(){
   return Math.max(0,Math.floor(Number(realmState?.buildings?.workshops)||0));
 }
 function buildTurnLabel(key){
-  if(key==="barriers") return "No se combina con otros edificios";
   const workshops=activeWorkshopCount();
   if(!workshops) return "Sin Talleres: se aplica el coste base";
   return `Rebaja activa por ${n(workshops)} ${workshops===1?"Taller":"Talleres"} · el total final será menor`;
@@ -57,7 +56,7 @@ function buildCard(key,meta,buildings){
   </article>`;
 }
 function refreshBuildPlan(){
-  let total=0,types=0,hasBarriers=false,hasOthers=false,baseCost=0;
+  let total=0,types=0,baseCost=0;
   const plan={};
   $$("[data-building]").forEach(input=>{
     const q=Math.max(0,Math.floor(Number(input.value)||0));
@@ -66,22 +65,20 @@ function refreshBuildPlan(){
     if(q>0){
       total+=q; types+=1; plan[key]=q;
       baseCost+=q*(parseInt(buildMeta[key]?.[2],10)||1);
-      if(key==="barriers") hasBarriers=true;
-      else hasOthers=true;
+
     }
   });
-  const mixed=hasBarriers&&hasOthers;
-  const estimatedTurns=mixed?0:estimateBuildTurns(plan);
+  const estimatedTurns=estimateBuildTurns(plan);
   const summary=$("#build-plan-summary");
   const warning=$("#build-plan-warning");
   const button=$("#build-button");
   if(summary){
     summary.innerHTML=total
-      ? `<span>LOTE PREPARADO</span><strong>${n(total)} unidades</strong><small>${n(types)} ${types===1?"tipo seleccionado":"tipos seleccionados"} · coste base ≈ ${n(baseCost)} turnos${mixed?"":` · coste estimado ${n(estimatedTurns)} con Talleres`}</small>`
+      ? `<span>LOTE PREPARADO</span><strong>${n(total)} unidades</strong><small>${n(types)} ${types===1?"tipo seleccionado":"tipos seleccionados"} · coste base ≈ ${n(baseCost)} turnos · coste estimado ${n(estimatedTurns)} con Talleres</small>`
       : `<span>LOTE PREPARADO</span><strong>Sin selección</strong><small>Indica cuántos edificios quieres levantar.</small>`;
   }
-  warning?.classList.toggle("hidden",!mixed);
-  if(button) button.disabled=!total||mixed;
+  warning?.classList.add("hidden");
+  if(button) button.disabled=!total;
 }
 function renderBuild(){
   const b=realmState.buildings,r=realmState.realm;
@@ -119,10 +116,10 @@ function renderBuild(){
       <div class="construction-section-mark" aria-hidden="true">⌂</div>
     </div>
     <div class="building-grid">${cards}</div>
-    <div id="build-plan-warning" class="notice error hidden construction-warning">Las Barreras deben construirse en una orden separada. Retira los demás edificios del lote para continuar.</div>
+    <div id="build-plan-warning" class="notice error hidden construction-warning"></div>
     <div class="construction-turn-note">
       <div class="construction-note-icon" aria-hidden="true">✦</div>
-      <div><strong>Cómo se gastan los turnos</strong><span>Las Barreras consumen 1 turno por unidad. En los demás edificios, el coste mostrado es la base: si tienes Talleres verás la flecha ↓ y el aviso de rebaja activa. El servidor aplica la reducción al total del lote al construir.</span></div>
+      <div><strong>Cómo se gastan los turnos</strong><span>Las Barreras consumen 1 turno por unidad. Los demás edificios usan la tasa original del motor según tus Talleres. Si mezclas tipos, todos sus costes se suman y el total se redondea al alza una sola vez, igual que en el original.</span></div>
     </div>
     <div class="construction-actionbar">
       <div id="build-plan-summary" class="build-plan-summary"><span>LOTE PREPARADO</span><strong>Sin selección</strong><small>Indica cuántos edificios quieres levantar.</small></div>
@@ -135,12 +132,16 @@ function renderBuild(){
   refreshBuildPlan();
 }
 function estimateBuildTurns(plan){
-  if(Number(plan?.barriers||0)>0)return Math.max(0,Math.floor(Number(plan.barriers)||0));
   const costs={farms:5,barracks:5,workshops:10,guilds:20,towns:30,nodes:30,fortresses:300};
-  let capacityCost=0;
-  for(const [key,qty] of Object.entries(plan||{}))capacityCost+=(costs[key]||0)*Math.max(0,Math.floor(Number(qty)||0));
   const workshops=Math.max(0,Math.floor(Number(realmState?.buildings?.workshops)||0));
-  return capacityCost>0?Math.ceil(capacityCost/(workshops+1)):0;
+  let turns=0;
+  for(const [key,qtyRaw] of Object.entries(plan||{})){
+    const qty=Math.max(0,Math.floor(Number(qtyRaw)||0));
+    if(!qty)continue;
+    if(key==="barriers")turns+=qty;
+    else turns+=(qty*(costs[key]||0))/(workshops+1);
+  }
+  return Math.ceil(turns);
 }
 async function doBuild(btn){
   const plan={};
@@ -149,7 +150,6 @@ async function doBuild(btn){
     if(q) plan[input.dataset.building]=q;
   });
   if(!Object.keys(plan).length){toast("Indica al menos un edificio.","error");return;}
-  if(plan.barriers && Object.keys(plan).some(key=>key!=="barriers")){toast("Las Barreras deben construirse en una orden separada.","error");return;}
   const turns=estimateBuildTurns(plan);
   const available=Math.max(0,Math.floor(Number(realmState?.realm?.turns)||0));
   if(turns>available){toast(`Este lote requiere ${n(turns)} turnos y tienes ${n(available)}.`,"error");return;}

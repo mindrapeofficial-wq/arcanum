@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  core:
+  legacy-core:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -17,5 +17,37 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 24
-      - name: Core smoke tests
+      - name: Existing ARCANUM smoke tests
         run: npm test
+
+  rebuilt-engine:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: rebuild/archimago-source
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Enable Yarn 4
+        run: corepack enable
+      - name: Install imported engine workspace
+        run: yarn install --immutable
+      - name: Typecheck shared
+        run: yarn workspace shared exec tsc --noEmit -p tsconfig.json
+      - name: Typecheck data adapter
+        run: yarn workspace data-adapter exec tsc --noEmit -p tsconfig.json
+      - name: Typecheck engine
+        run: yarn workspace engine exec tsc --noEmit -p tsconfig.json
+      - name: Typecheck server
+        run: yarn workspace engine exec tsc --noEmit -p ../server/tsconfig.json
+      - name: Test ARCANUM Domain adapter
+        run: yarn workspace server exec tsx --test test/arcanum-domain.test.ts
+      - name: Lock original mechanics parity
+        run: node --test test/original-parity.test.mjs

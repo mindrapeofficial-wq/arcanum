@@ -1,0 +1,1642 @@
+[
+  {
+    "id": "skeleton",
+    "name": "Osamenta Vinculada",
+    "magic": "nether",
+    "description": "Osamenta Vinculadas are animated magical undead monsters created by powerful evil Arcontes or priests. They are skeletal bones joined together by magic. They wield a weapon in their skeletal hands. They don't have a mind of their own and will follow the orders of their creator.",
+    "powerRank": 10,
+    "hitPoints": 70,
+    "race": [
+      "undead"
+    ],
+    "attributes": [
+      "summon"
+    ],
+    "primaryAttackPower": 100,
+    "primaryAttackType": [
+      "melee"
+    ],
+    "primaryAttackInit": 1,
+    "counterAttackPower": 40,
+    "secondaryAttackPower": 0,
+    "secondaryAttackType": [],
+    "secondaryAttackInit": 0,
+    "recruitCost": {
+      "geld": 0,
+      "mana": 0,
+      "population": 0
+    },
+    "upkeepCost": {
+      "geld": 0,
+      "mana": 0.01,
+      "population": 0
+    },
+    "spellResistances": {
+      "ascendant": 0,
+      "verdant": 0,
+      "eradication": 0,
+      "nether": 0,
+      "phantasm": 0
+    },
+    "attackResistances": {
+      "missile": 50,
+      "fire": 0,
+      "poison": 100,
+      "breath": 0,
+      "magic": 0,
+      "melee": 0,
+      "ranged": 50,
+      "lightning": 0,
+      "cold": 0,
+      "paralyse": 100,
+      "psychic": 100,
+      "holy": 0
+    },
+    "abilities": [
+      {
+        "name": "weakness",
+        "extra": "holy"
+      }
+    ]
+  },
+  {
+    "id": "zombie",
+    "name": "Resto Caminante",
+    "magic": "nether",
+    "description": "Resto Caminantes are mindless corpses animated by powerful evil Arcontes or priests using the corpses of fresh dead bodies. Usually they are in terrible shape with at least one broken or missing limb. They may have ragged clothing on their bodies, and they attack with their teeth and rotten hands. They are so clumsy that they react very slowly.",
+    "powerRank": 15,
+    "hitPoints": 170,
+    "race": [
+      "undead"
+    ],
+    "attributes": [
+      "summon"
+    ],
+    "primaryAttackPower": 100,
+    "primaryAttackType": [
+      "melee"
+    ],
+    "primaryAttackInit": 1,
+    "counterAttackPower": 40,
+    "secondaryAttackPower": 0,
+    "secondaryAttackType": [],
+    "secondaryAttackInit": 0,
+    "recruitCost": {
+      "geld": 0,
+      "mana": 0,
+      "population": 0
+    },
+    "upkeepCost": {
+      "geld": 0,
+      "mana": 0.02,
+      "population": 0
+    },
+    "spellResistances": {
+      "ascendant": 0,
+      "verdant": 0,
+      "eradication": 0,
+      "nether": 0,
+      "phantasm": 0
+    },
+    "attackResistances": {
+      "missile": 0,
+      "fire": 0,
+      "poison": 100,
+      "breath": 0,
+      "magic": 0,
+      "melee": 0,
+      "ranged": 0,
+      "lightning": 0,
+      "cold": 0,
+      "paralyse": 100,
+      "psychic": 100,
+      "holy": 0
+    },
+    "abilities": [
+      {
+        "name": "weakness",
+        "extra": "holy"
+      },
+      {
+        "name": "clumsiness",
+        "extra": null
+      }
+    ]
+  },
+  {
+    "id": "shadow",
+    "name": "Sombra Hueca",
+    "magic": "nether",
+    "description": "These undead creatures come from the darkest planes and haunt the darkest corners of las Tierras Arcanas. Their evil magic can be potent in the night, as well as the battle field. When summoned in vast numbers they will use their magic to extend the darkness into las Tierras Arcanas, making their presence a continual threat to those who live in the light. These creatures evolved from millennia of imprisonment in the dark corners of the Spire of Lost Souls, the gulag that jailed most of las Tierras Arcanas's darkest creatures.",
+    "powerRank": 40,
+    "hitPoints": 250,
+    "race": [
+      "undead"
+    ],
+    "attributes": [
+      "summon"
+    ],
+    "primaryAttackPower": 600,
+    "primaryAttackType": [
+      "magic"
+    ],
+    "primaryAttackInit": 2,
+    "counterAttackPower": 0,
+    "secondaryAttackPower": 0,
+    "secondaryAttackType": [],
+    "secondaryAttackInit": 0,
+    "recruitCost": {
+      "geld": 0,
+      "mana": 0,
+      "population": 0
+    },
+    "upkeepCost": {
+      "geld": 0,
+      "mana": 0.1,
+      "population": 0
+    },
+    "spellResistances": {
+      "ascendant": 0,
+      "verdant": 0,
+      "eradication": 0,
+      "nether": 0,
+      "phantasm": 0
+    },
+    "attackResistances": {
+      "missile": 100,
+      "fire": 0,
+      "poison": 40,
+      "breath": 0,
+      "magic": 0,
+      "melee": 100,
+      "ranged": 20,
+      "lightning": 0,
+      "cold": 0,
+      "paralyse": 100,
+      "psychic": 25,
+      "holy": 0
+    },
+    "abilities": [
+      {
+        "name": "weakness",
+        "extra": "holy"
+      },
+      {
+        "name": "stealLife",
+        "extra": 5
+      }
+    ]
+  },
+  {
+    "id": "ghoul",
+    "name": "Devoracadáveres",
+    "magic": "nether",
+    "description": "Undead that feed on the flesh of corpse, ghouls were once human, but the change from life to unlife destroyed their minds. Their tongues are long and tough, their teeth and nails sharp like claws. The touch of a ghoul is poisonous and can paralyze the victim, thus allowing the ghoul to dine without trouble. Their once-human-like appearance is now disfigured. Those who are slain by ghouls will become a ghoul themselves.",
+    "powerRank": 35,
+    "hitPoints": 400,
+    "race": [
+      "undead"
+    ],
+    "attributes": [
+      "summon",
+      "undisbandable"
+    ],
+    "primaryAttackPower": 600,
+    "primaryAttackType": [
+      "melee",
+      "paralyse"
+    ],
+    "primaryAttackInit": 1,
+    "counterAttackPower": 200,
+    "secondaryAttackPower": 0,
+    "secondaryAttackType": [],
+    "secondaryAttackInit": 0,
+    "recruitCost": {
+      "geld": 0,
+      "mana": 0,
+      "population": 0
+    },
+    "upkeepCost": {
+      "geld": 0,
+      "mana": 0.1,
+      "population": 0.03
+    },
+    "spellResistances": {
+      "ascendant": 0,
+      "verdant": 0,
+      "eradication": 0,
+      "nether": 0,
+      "phantasm": 0
+    },
+    "attackResistances": {
+      "missile": 0,
+      "fire": 0,
+      "poison": 100,
+      "breath": 0,
+      "magic": 0,
+      "melee": 0,
+      "ranged": 0,
+      "lightning": 0,
+      "cold": 0,
+      "paralyse": 100,
+      "psychic": 100,
+      "holy": 0
+    },
+    "abilities": [
+      {
+        "name": "weakness",
+        "extra": "holy"
+      },
+      {
+        "name": "stealLife",
+        "extra": 5
+      }
+    ]
+  },
+  {
+    "id": "hornedDemon",
+    "name": "Astado Abisal",
+    "magic": "nether",
+    "description": "These barbaric servants of el Abismo stand eight feet tall when hunched and are adorned with menacing horns that protrude grotesquely from their bodies. The corruption of their souls extends to their physical forms, making their tusks poisonous to mortals. Although they will fight for any Arconte that summons them, their true goal is to collect souls for their masters in el Abismo. Príncipe Abisals consider Astado Abisals to be non-evolved, gorilla-like versions of their eloquent selves; Astado Abisals, in response, flex their venom-tipped spikes. Millennia of infighting inside the prison that is the Spire of Lost Souls have made these manifestations of el Abismo deadlier than ever.",
+    "powerRank": 170,
+    "hitPoints": 950,
+    "race": [
+      "demon"
+    ],
+    "attributes": [
+      "summon",
+      "undisbandable"
+    ],
+    "primaryAttackPower": 2750,
+    "primaryAttackType": [
+      "melee",
+      "poison"
+    ],
+    "primaryAttackInit": 1,
+    "counterAttackPower": 450,
+    "secondaryAttackPower": 0,
+    "secondaryAttackType": [],
+    "secondaryAttackInit": 0,
+    "recruitCost": {
+      "geld": 0,
+      "mana": 0,
+      "population": 0
+    },
+    "upkeepCost": {
+      "geld": 0,
+      "mana": 0.25,
+      "population": 0.2
+    },
+    "spellResistances": {
+      "ascendant": 0,
+      "verdant": 0,
+      "eradication": 0,
+      "nether": 0,
+      "phantasm": 0
+    },
+    "attackResistances": {
+      "missile": 50,
+      "fire": 50,
+      "poison": 75,
+      "breath": 0,
+      "magic": 25,
+      "melee": 50,
+      "ranged": 50,
+      "lightning": 0,
+      "cold": 0,
+      "paralyse": 20,
+      "psychic": 0,
+      "holy": 25
+    },
+    "abilities": [
+      {
+        "name": "additionalStrike",
+        "extra": null
+      },
+      {
+        "name": "swift",
+        "extra": null
+      }
+    ]
+  },
+  {
+    "id": "wraith",
+    "name": "Espectro del Umbral",
+    "magic": "nether",
+    "description": "Undead spirits of once-powerful humans, Espectro del Umbrals seek to absorb life energy. These horrid creatures are usually seen as a black man-shaped cloud. They have no true substance, but usually tend to take the shape of a human, with 2 upper limbs, a torso, and glowing red eyes. Their presence will drain the life energy away from any creature.",
+    "powerRank": 160,
+    "hitPoints": 1000,
+    "race": [
+      "undead"
+    ],
+    "attributes": [
+      "summon",
+      "undisbandable"
+    ],
+    "primaryAttackPower": 2400,
+    "primaryAttackType": [
+      "magic",
+      "paralyse"
+    ],
+    "primaryAttackInit": 2,
+    "counterAttackPower": 0,
+    "secondaryAttackPower": 0,
+    "secondaryAttackType": [],
+    "secondaryAttackInit": 0,
+    "recruitCost": {
+      "geld": 0,
+      "mana": 0,
+      "population": 0
+    },
+    "upkeepCost": {
+      "geld": 0,
+      "mana": 0.3,
+      "population": 0.2
+    },
+    "spellResistances": {
+      "ascendant": 0,
+      "verdant": 0,
+      "eradication": 0,
+      "nether": 0,
+      "phantasm": 0
+    },
+    "attackResistances": {
+      "missile": 40,
+      "fire": 0,
+      "poison": 50,
+      "breath": 0,
+      "magic": 20,
+      "melee": 60,
+      "ranged": 40,
+      "lightning": 0,
+      "cold": 0,
+      "paralyse": 50,
+      "psychic": 50,
+      "holy": 0
+    },
+    "abilities": [
+      {
+        "name": "stealLife",
+        "extra": 5
+      },
+      {
+        "name": "weakness",
+        "extra": "holy"
+      }
+    ]
+  },
+  {
+    "id": "vampire",
+    "name": "Sangrante Nocturno",
+    "magic": "nether",
+    "description": "Sangrante Nocturnos are creatures of the night. They hunt at night and sleep in their coffins in the daytime. They look exactly like normal human beings, although they cast no shadows, and do not have reflections in mirrors. They move swiftly and in complete silence. Those who are bitten by a vampire will themselves turn into a vampire within a few nights. Their gaze can charm any normal human being, and their touch can drain the life energy of any creature. They hate holy symbols and garlic, and will not approach anywhere where they are present. They are especially fond of drinking the blood of virgin girls. They can take the shape of a bat or a raven. They will merely turn into gaseous form when \"killed.\" A vampire can only truly be destroyed by exposing it to direct sunlight, immersing it in running water, or by driving a wooden stake through its heart.",
+    "powerRank": 2058,
+    "hitPoints": 4500,
+    "race": [
+      "undead"
+    ],
+    "attributes": [
+      "summon",
+      "undisbandable"
+    ],
+    "primaryAttackPower": 9000,
+    "primaryAttackType": [
+      "magic",
+      "paralyse"
+    ],
+    "primaryAttackInit": 2,
+    "counterAttackPower": 2000,
+    "secondaryAttackPower": 12000,
+    "secondaryAttackType": [
+      "magic",
+      "ranged"
+    ],
+    "secondaryAttackInit": 3,
+    "recruitCost": {
+      "geld": 0,
+      "mana": 0,
+      "population": 0
+    },
+    "upkeepCost": {
+      "geld": 0,
+      "mana": 2.5,
+      "population": 5
+    },
+    "spellResistances": {
+      "ascendant": 0,
+      "verdant": 0,
+      "eradication": 50,
+      "nether": 50,
+      "phantasm": 25
+    },
+    "attackResistances": {
+      "missile": 95,
+      "fire": 75,
+      "poison": 75,
+      "breath": 50,
+      "magic": 50,
+      "melee": 95,
+      "ranged": 95,
+      "lightning": 50,
+      "cold": 50,
+      "paralyse": 75,
+      "psychic": 75,
+      "holy": 0
+    },
+    "abilities": [
+      {
+        "name": "flying",
+        "extra": null
+      },
+      {
+        "name": "stealLife",
+        "extra": 5
+      },
+      {
+        "name": "weakness",
+        "extra": "holy"
+      },
+      {
+        "name": "charm",
+        "extra": null
+      },
+      {
+        "name": "marksmanship",
+        "extra": null
+      },
+      {
+        "name": "swift",
+        "extra": null
+      }
+    ]
+  },
+  {
+    "id": "lich",
+    "name": "Sabio Exánime",
+    "magic": "nether",
+    "description": "A lich resembles a mummy in skeletal form. A lich's eyes are empty and black but give out pinpoints of red light. An aura of cold and darkness radiates from the lich, which makes it a fearsome sight to look at. The magical aura around a lich is so potent that any creature sensing its presence will flee in terror. Those that do not will face powerful magic and bone-chilling cold that radiate across a considerable distance. All liches are former high priests or great Arcontes who still maintain their magical power in their unlife.",
+    "powerRank": 2027,
+    "hitPoints": 7500,
+    "race": [
+      "undead"
+    ],
+    "attributes": [
+      "summon",
+      "undisbandable"
+    ],
+    "primaryAttackPower": 5500,
+    "primaryAttackType": [
+      "cold",
+      "ranged"
+    ],
+    "primaryAttackInit": 1,
+    "counterAttackPower": 2000,
+    "secondaryAttackPower": 16000,
+    "secondaryAttackType": [
+      "magic",
+      "ranged"
+    ],
+    "secondaryAttackInit": 3,
+    "recruitCost": {
+      "geld": 0,
+      "mana": 0,
+      "population": 0
+    },
+    "upkeepCost": {
+      "geld": 0,
+      "mana": 5,
+      "population": 2.5
+    },
+    "spellResistances": {
+      "ascendant": 0,
+      "verdant": 0,
+      "eradication": 65,
+      "nether": 65,
+      "phantasm": 40
+    },
+    "attackResistances": {
+      "missile": 95,
+      "fire": 75,
+      "poison": 50,
+      "breath": 25,
+      "magic": 75,
+      "melee": 95,
+      "ranged": 95,
+      "lightning": 50,
+      "cold": 75,
+      "paralyse": 75,
+      "psychic": 75,
+      "holy": 0
+    },
+    "abilities": [
+      {
+        "name": "weakness",
+        "extra": "holy"
+      },
+      {
+        "name": "fear",
+        "extra": null
+      }
+    ]
+  },
+  {
+    "id": "bulwarkHorror",
+    "name": "Horror Bastión",
+    "magic": "nether",
+    "description": "These unspeakable monstrosities were created by el Soberano del Abismo by fusing two horned demons and a lich in a bubbling vat of evil. The hideous result is surrounded by a layer of shadow creatures that serve as their armour. They wield a massive trident dipped in deadly toxins from the depths of el Abismo, and a cobalt shield that emits bone-chilling cold. The shield neutralizes many ranged attacks, and the shadow creatures resist the fiery breath of dragons. Their only desire is to slay and destroy anything and everything within las Tierras Arcanas in preparation for ArArconteddon.",
+    "powerRank": 2018,
+    "hitPoints": 10750,
+    "race": [
+      "demon"
+    ],
+    "attributes": [
+      "summon",
+      "undisbandable"
+    ],
+    "primaryAttackPower": 13600,
+    "primaryAttackType": [
+      "melee",
+      "poison"
+    ],
+    "primaryAttackInit": 1,
+    "counterAttackPower": 4500,
+    "secondaryAttackPower": 9000,
+    "secondaryAttackType": [
+      "cold",
+      "ranged"
+    ],
+    "secondaryAttackInit": 3,
+    "recruitCost": {
+      "geld": 0,
+      "mana": 0,
+      "population": 0
+    },
+    "upkeepCost": {
+      "geld": 0,
+      "mana": 4.75,
+      "population": 2.5
+    },
+    "spellResistances": {
+      "ascendant": 0,
+      "verdant": 75,
+      "eradication": 75,
+      "nether": 0,
+      "phantasm": 35
+    },
+    "attackResistances": {
+      "missile": 40,
+      "fire": 60,
+      "poison": 50,
+      "breath": 70,
+      "magic": 20,
+      "melee": 90,
+      "ranged": 40,
+      "lightning": 30,
+      "cold": 40,
+      "paralyse": 0,
+      "psychic": 30,
+      "holy": 50
+    },
+    "abilities": [
+      {
+        "name": "endurance",
+        "extra": null
+      },
+      {
+        "name": "largeShield",
+        "extra": null
+      },
+      {
+        "name": "pike",
+        "extra": null
+      }
+    ]
+  },
+  {
+    "id": "darkElfMagician",
+    "name": "Teúrgo Umbrío",
+    "magic": "nether",
+    "description": "Dark elves are elves who have been exiled from the forest into the underground. They have ebony skin and white hair, otherwise they look exactly like normal elves. They are slender and beautiful. They are very dexterous and intelligent. They have innate magical ability and most dark elves are magicians.",
+    "powerRank": 666,
+    "hitPoints": 4500,
+    "race": [
+      "elf"
+    ],
+    "attributes": [
+      "summon"
+    ],
+    "primaryAttackPower": 4500,
+    "primaryAttackType": [
+      "fire",
+      "ranged"
+    ],
+    "primaryAttackInit": 3,
+    "counterAttackPower": 0,
+    "secondaryAttackPower": 3000,
+    "secondaryAttackType": [
+      "lightning",
+      "ranged"
+    ],
+    "secondaryAttackInit": 4,
+    "recruitCost": {
+      "geld": 0,
+      "mana": 0,
+      "population": 0
+    },
+    "upkeepCost": {
+      "geld": 45,
+      "mana": 1.8,
+      "population": 0
+    },
+    "spellResistances": {
+      "ascendant": 50,
+      "verdant": 80,
+      "eradication": 80,
+      "nether": 0,
+      "phantasm": 25
+    },
+    "attackResistances": {
+      "missile": 85,
+      "fire": 70,
+      "poison": 0,
+      "breath": 0,
+      "magic": 90,
+      "melee": 90,
+      "ranged": 75,
+      "lightning": 0,
+      "cold": 0,
+      "paralyse": 40,
+      "psychic": 0,
+      "holy": 25
+    },
+    "abilities": [
+      {
+        "name": "marksmanship",
+        "extra": null
+      }
+    ]
+  },
+  {
+    "id": "demonKnight",
+    "name": "Caballero Abisal",
+    "magic": "nether",
+    "description": "Perverting the chivalric code of the Caballero del Albas of the Aurea Order, these demons adopt many of the characteristics of their counterparts, such as wearing armor, using weapons, and following their lords with utmost loyalty, though, being demons, they have added their own evil twists to their design. The fine, knightly armor they wear bears daemonic enchantments that grant them high resistances to certain types of daArconte. Their weapons are soul stealing runeblades that radiate the stark chill of the grave, but they prefer to cast vile magics from a distance, striking down their foes with withering hexes and blights. Whenever the forces of light face these Caballero Abisals in battle, they gaze upon the looking glass darkly, seeing a twisted mockery of everything they represent.",
+    "powerRank": 1850,
+    "hitPoints": 8500,
+    "race": [
+      "demon"
+    ],
+    "attributes": [
+      "summon"
+    ],
+    "primaryAttackPower": 10000,
+    "primaryAttackType": [
+      "cold",
+      "melee"
+    ],
+    "primaryAttackInit": 2,
+    "counterAttackPower": 6000,
+    "secondaryAttackPower": 8000,
+    "secondaryAttackType": [
+      "poison",
+      "ranged"
+    ],
+    "secondaryAttackInit": 3,
+    "recruitCost": {
+      "geld": 0,
+      "mana": 0,
+      "population": 0
+    },
+    "upkeepCost": {
+      "geld": 0,
+      "mana": 4.5,
+      "population": 3
+    },
+    "spellResistances": {
+      "ascendant": 0,
+      "verdant": 25,
+      "eradication": 60,
+      "nether": 0,
+      "phantasm": 20
+    },
+    "attackResistances": {
+      "missile": 70,
+      "fire": 60,
+      "poison": 75,
+      "breath": 0,
+      "magic": 60,
+      "melee": 85,
+      "ranged": 70,
+      "lightning": 70,
+      "cold": 75,
+      "paralyse": 60,
+      "psychic": 50,
+      "holy": 30
+    },
+    "abilities": [
+      {
+        "name": "additionalStrike",
+        "extra": null
+      },
+      {
+        "name": "endurance",
+        "extra": null
+      },
+      {
+        "name": "swift",
+        "extra": null
+      },
+      {
+        "name": "stealLife",
+        "extra": 5
+      }
+    ]
+  },
+  {
+    "id": "fallenAngel",
+    "name": "Custodio Caído",
+    "magic": "nether",
+    "description": "Custodio Caídos are corrupted angels who have been cast out from the el Firmamento. They look like ordinary angels except their wings are pitch black instead of the white feathers.",
+    "powerRank": 193,
+    "hitPoints": 1500,
+    "race": [
+      "angel"
+    ],
+    "attributes": [
+      "summon",
+      "undisbandable",
+      "noMarket"
+    ],
+    "primaryAttackPower": 2400,
+    "primaryAttackType": [
+      "magic"
+    ],
+    "primaryAttackInit": 2,
+    "counterAttackPower": 400,
+    "secondaryAttackPower": 0,
+    "secondaryAttackType": [],
+    "secondaryAttackInit": 0,
+    "recruitCost": {
+      "geld": 0,
+      "mana": 0,
+      "population": 0
+    },
+    "upkeepCost": {
+      "geld": 0,
+      "mana": 2,
+      "population": 0
+    },
+    "spellResistances": {
+      "ascendant": 50,
+      "verdant": 25,
+      "eradication": 25,
+      "nether": 50,
+      "phantasm": 25
+    },
+    "attackResistances": {
+      "missile": 50,
+      "fire": 50,
+      "poison": 25,
+      "breath": 25,
+      "magic": 50,
+      "melee": 50,
+      "ranged": 50,
+      "lightning": 55,
+      "cold": 50,
+      "paralyse": 25,
+      "psychic": 50,
+      "holy": 25
+    },
+    "abilities": [
+      {
+        "name": "beauty",
+        "extra": null
+      },
+      {
+        "name": "flying",
+        "extra": null
+      },
+      {
+        "name": "healing",
+        "extra": null
+      }
+    ]
+  },
+  {
+    "id": "fallenArchangel",
+    "name": "Serafín Caído",
+    "magic": "nether",
+    "description": "Serafín Caídos are corrupted archangels that was cast out from the el Firmamento. Their outer appearances are very similar to normal archangels except they have pitch black wings rather than the white feathers.",
+    "powerRank": 750,
+    "hitPoints": 7500,
+    "race": [
+      "angel"
+    ],
+    "attributes": [
+      "summon",
+      "undisbandable",
+      "noMarket"
+    ],
+    "primaryAttackPower": 12000,
+    "primaryAttackType": [
+      "magic"
+    ],
+    "primaryAttackInit": 2,
+    "counterAttackPower": 800,
+    "secondaryAttackPower": 0,
+    "secondaryAttackType": [],
+    "secondaryAttackInit": 0,
+    "recruitCost": {
+      "geld": 0,
+      "mana": 0,
+      "population": 0
+    },
+    "upkeepCost": {
+      "geld": 0,
+      "mana": 10,
+      "population": 0
+    },
+    "spellResistances": {
+      "ascendant": 70,
+      "verdant": 35,
+      "eradication": 35,
+      "nether": 70,
+      "phantasm": 35
+    },
+    "attackResistances": {
+      "missile": 75,
+      "fire": 75,
+      "poison": 25,
+      "breath": 25,
+      "magic": 75,
+      "melee": 75,
+      "ranged": 75,
+      "lightning": 80,
+      "cold": 75,
+      "paralyse": 25,
+      "psychic": 75,
+      "holy": 50
+    },
+    "abilities": [
+      {
+        "name": "beauty",
+        "extra": null
+      },
+      {
+        "name": "flying",
+        "extra": null
+      },
+      {
+        "name": "healing",
+        "extra": null
+      }
+    ]
+  },
+  {
+    "id": "fallenDominion",
+    "name": "Heraldo Caído",
+    "magic": "nether",
+    "description": "Heraldo Caídos are corrupted dominions that were cast out from the el Firmamento. Their outer appearance is very similar to normal dominions except their wings are pitch black instead of glittering white. Although they have been cast out from the el Firmamento, they still keep most of their original power. In fact, they are even empowered after the transformation. They radiate a strong aura of awe and power.",
+    "powerRank": 59020,
+    "hitPoints": 120000,
+    "race": [
+      "angel"
+    ],
+    "attributes": [
+      "summon",
+      "undisbandable",
+      "noMarket"
+    ],
+    "primaryAttackPower": 600000,
+    "primaryAttackType": [
+      "magic"
+    ],
+    "primaryAttackInit": 2,
+    "counterAttackPower": 60000,
+    "secondaryAttackPower": 800000,
+    "secondaryAttackType": [
+      "magic"
+    ],
+    "secondaryAttackInit": 3,
+    "recruitCost": {
+      "geld": 0,
+      "mana": 0,
+      "population": 0
+    },
+    "upkeepCost": {
+      "geld": 0,
+      "mana": 580,
+      "population": 0
+    },
+    "spellResistances": {
+      "ascendant": 80,
+      "verdant": 50,
+      "eradication": 50,
+      "nether": 80,
+      "phantasm": 50
+    },
+    "attackResistances": {
+      "missile": 85,
+      "fire": 85,
+      "poison": 85,
+      "breath": 85,
+      "magic": 85,
+      "melee": 85,
+      "ranged": 85,
+      "lightning": 90,
+      "cold": 85,
+      "paralyse": 85,
+      "psychic": 85,
+      "holy": 80
+    },
+    "abilities": [
+      {
+        "name": "beauty",
+        "extra": null
+      },
+      {
+        "name": "fear",
+        "extra": null
+      },
+      {
+        "name": "flying",
+        "extra": null
+      },
+      {
+        "name": "healing",
+        "extra": null
+      }
+    ]
+  },
+  {
+    "id": "devil",
+    "name": "Príncipe Abisal",
+    "magic": "nether",
+    "description": "Príncipe Abisals are creatures from el Abismo. They stand ten-feet tall and resemble winged reptiles with sharp fangs, long horns, and leathery, bat-like wings. They have a red-colored body, covered by scales. Their eyes glow with a yellow light. Each devil will have different and unique features; however, all of them radiate an aura of fear, and mortal creatures who are able to sense their presence will flee in terror. They can attack with their burning claws or use magic of awesome power.",
+    "powerRank": 18586,
+    "hitPoints": 40000,
+    "race": [
+      "demon"
+    ],
+    "attributes": [
+      "summon",
+      "undisbandable",
+      "noMarket"
+    ],
+    "primaryAttackPower": 100000,
+    "primaryAttackType": [
+      "fire"
+    ],
+    "primaryAttackInit": 1,
+    "counterAttackPower": 15000,
+    "secondaryAttackPower": 200000,
+    "secondaryAttackType": [
+      "magic",
+      "ranged"
+    ],
+    "secondaryAttackInit": 3,
+    "recruitCost": {
+      "geld": 0,
+      "mana": 0,
+      "population": 0
+    },
+    "upkeepCost": {
+      "geld": 0,
+      "mana": 0,
+      "population": 100
+    },
+    "spellResistances": {
+      "ascendant": 50,
+      "verdant": 50,
+      "eradication": 400,
+      "nether": 400,
+      "phantasm": 400
+    },
+    "attackResistances": {
+      "missile": 100,
+      "fire": 100,
+      "poison": 50,
+      "breath": 0,
+      "magic": 50,
+      "melee": 100,
+      "ranged": 100,
+      "lightning": 0,
+      "cold": 0,
+      "paralyse": 0,
+      "psychic": 50,
+      "holy": 0
+    },
+    "abilities": [
+      {
+        "name": "flying",
+        "extra": null
+      },
+      {
+        "name": "endurance",
+        "extra": null
+      }
+    ]
+  },
+  {
+    "id": "unholyReaver",
+    "name": "Segador Profano",
+    "magic": "nether",
+    "description": "A traitorous fallen dominion revealed the secrets of how to unlock the depths of el Abismo, thereby unleashing one of its worst manifestations: Segador Profanos, whose diabolic goal is nothing less than the conversion of las Tierras Arcanas to an outpost of el Abismo. These daemonic creatures are the uncontested champions of the los Nueve Abismos and foremost amongst the devils, easily rivalling Ascendent Coloso Celestes in size and power. They pretend to serve their summoner as it often suits their will. Segador Profanos first attack at range, projecting nightmarish, soul-rending terrors and unspeakable satanic visions onto the minds of their foes before eagerly closing to engage any survivors with black, el Abismo-forged blades that paralyze the spirit as they cleave the flesh.",
+    "powerRank": 50000,
+    "hitPoints": 85000,
+    "race": [
+      "demon"
+    ],
+    "attributes": [
+      "summon",
+      "undisbandable",
+      "noMarket"
+    ],
+    "primaryAttackPower": 210000,
+    "primaryAttackType": [
+      "melee",
+      "paralyse"
+    ],
+    "primaryAttackInit": 2,
+    "counterAttackPower": 50000,
+    "secondaryAttackPower": 470000,
+    "secondaryAttackType": [
+      "psychic",
+      "ranged"
+    ],
+    "secondaryAttackInit": 3,
+    "recruitCost": {
+      "geld": 0,
+      "mana": 0,
+      "population": 0
+    },
+    "upkeepCost": {
+      "geld": 0,
+      "mana": 125,
+      "population": 70
+    },
+    "spellResistances": {
+      "ascendant": 80,
+      "verdant": 0,
+      "eradication": 80,
+      "nether": 80,
+      "phantasm": 40
+    },
+    "attackResistances": {
+      "missile": 95,
+      "fire": 50,
+      "poison": 70,
+      "breath": 70,
+      "magic": 70,
+      "melee": 95,
+      "ranged": 75,
+      "lightning": 70,
+      "cold": 70,
+      "paralyse": 85,
+      "psychic": 85,
+      "holy": 30
+    },
+    "abilities": [
+      {
+        "name": "additionalStrike",
+        "extra": null
+      },
+      {
+        "name": "endurance",
+        "extra": null
+      },
+      {
+        "name": "fear",
+        "extra": null
+      },
+      {
+        "name": "marksmanship",
+        "extra": null
+      }
+    ]
+  },
+  {
+    "id": "succubus",
+    "name": "Tentadora del Velo",
+    "magic": "nether",
+    "description": "Dark-eyed, gorgeous humanoid females with raven hair cascading down their shapely curves. The only thing giving away their demonic natures are the leathery wings they sprout when they feast. A glance is all it takes to enchant man or creature alike in its binding spell, from which there is no escape.",
+    "powerRank": 29,
+    "hitPoints": 50,
+    "race": [
+      "demon"
+    ],
+    "attributes": [
+      "summon",
+      "temporary",
+      "noMarket"
+    ],
+    "primaryAttackPower": 200,
+    "primaryAttackType": [
+      "psychic"
+    ],
+    "primaryAttackInit": 3,
+    "counterAttackPower": 0,
+    "secondaryAttackPower": 0,
+    "secondaryAttackType": [],
+    "secondaryAttackInit": 0,
+    "recruitCost": {
+      "geld": 0,
+      "mana": 0,
+      "population": 0
+    },
+    "upkeepCost": {
+      "geld": 0,
+      "mana": 0.5,
+      "population": 1
+    },
+    "spellResistances": {
+      "ascendant": 0,
+      "verdant": 0,
+      "eradication": 50,
+      "nether": 50,
+      "phantasm": 25
+    },
+    "attackResistances": {
+      "missile": 50,
+      "fire": 80,
+      "poison": 0,
+      "breath": 0,
+      "magic": 0,
+      "melee": 50,
+      "ranged": 50,
+      "lightning": 0,
+      "cold": 0,
+      "paralyse": 0,
+      "psychic": 100,
+      "holy": 0
+    },
+    "abilities": [
+      {
+        "name": "beauty",
+        "extra": null
+      },
+      {
+        "name": "charm",
+        "extra": null
+      },
+      {
+        "name": "endurance",
+        "extra": null
+      },
+      {
+        "name": "flying",
+        "extra": null
+      },
+      {
+        "name": "swift",
+        "extra": null
+      }
+    ]
+  },
+  {
+    "id": "caveTroll",
+    "name": "Bruto de Caverna",
+    "magic": "nether",
+    "description": "The body frames of trolls are frail and thin, but they possess superhuman strength and are very agile. They fight without fear when they are hungry and they have the special ability to regenerate. It is known that only fire and acid can destroy a troll permanently. Otherwise, they will merely regenerate, then stand up and fight again. They stand upright, reaching a height of twelve feet, on two legs with three toes on each foot. Their arms are thick and they have sharp claws, which may be poisonous. They have poor hearing but their sense of smell is keen. Those who inhabit caves are called cave trolls. But actually they can be found in all climates.",
+    "powerRank": 49,
+    "hitPoints": 400,
+    "race": [
+      "troll"
+    ],
+    "attributes": [
+      "special"
+    ],
+    "primaryAttackPower": 400,
+    "primaryAttackType": [
+      "poison"
+    ],
+    "primaryAttackInit": 1,
+    "counterAttackPower": 100,
+    "secondaryAttackPower": 0,
+    "secondaryAttackType": [],
+    "secondaryAttackInit": 0,
+    "recruitCost": {
+      "geld": 160,
+      "mana": 0.35,
+      "population": 3
+    },
+    "upkeepCost": {
+      "geld": 4.8,
+      "mana": 0.1,
+      "population": 0
+    },
+    "spellResistances": {
+      "ascendant": 0,
+      "verdant": 0,
+      "eradication": 0,
+      "nether": 0,
+      "phantasm": 0
+    },
+    "attackResistances": {
+      "missile": 0,
+      "fire": 0,
+      "poison": 0,
+      "breath": 0,
+      "magic": 0,
+      "melee": 0,
+      "ranged": 0,
+      "lightning": 0,
+      "cold": 0,
+      "paralyse": 0,
+      "psychic": 0,
+      "holy": 0
+    },
+    "abilities": [
+      {
+        "name": "regeneration",
+        "extra": null
+      },
+      {
+        "name": "weakness",
+        "extra": "fire"
+      }
+    ]
+  },
+  {
+    "id": "darkApprentice",
+    "name": "Acólito Umbrío",
+    "magic": "nether",
+    "description": "Tall, lanky humans that could otherwise be mistaken for elves if not for their rounded ears. They wear heavy, dark colored robes and have blood red tatoos emblazened on their skin. They have sold their souls to learn their foul, dark magic.",
+    "powerRank": 51,
+    "hitPoints": 100,
+    "race": [
+      "human"
+    ],
+    "attributes": [
+      "special"
+    ],
+    "primaryAttackPower": 700,
+    "primaryAttackType": [
+      "magic",
+      "ranged"
+    ],
+    "primaryAttackInit": 3,
+    "counterAttackPower": 0,
+    "secondaryAttackPower": 0,
+    "secondaryAttackType": [],
+    "secondaryAttackInit": 0,
+    "recruitCost": {
+      "geld": 360,
+      "mana": 0.75,
+      "population": 2
+    },
+    "upkeepCost": {
+      "geld": 8,
+      "mana": 0.1,
+      "population": 0
+    },
+    "spellResistances": {
+      "ascendant": 0,
+      "verdant": 0,
+      "eradication": 25,
+      "nether": 25,
+      "phantasm": 15
+    },
+    "attackResistances": {
+      "missile": 80,
+      "fire": 50,
+      "poison": 0,
+      "breath": 0,
+      "magic": 80,
+      "melee": 80,
+      "ranged": 80,
+      "lightning": 50,
+      "cold": 0,
+      "paralyse": 80,
+      "psychic": 80,
+      "holy": 0
+    },
+    "abilities": [
+      {
+        "name": "marksmanship",
+        "extra": null
+      },
+      {
+        "name": "recruitSpeed",
+        "extra": -10
+      },
+      {
+        "name": "swift",
+        "extra": null
+      }
+    ]
+  },
+  {
+    "id": "gargoyle",
+    "name": "Centinela Pétreo",
+    "magic": "nether",
+    "description": "Centinela Pétreos are stone statues which represent horrid sculptures of evil. It is rumored that some unknown Arcontes have given them life with some powerful enchantments. The appearance of gargoyles vary depending on the original art of the statue. When they sit motionless, they look exactly like stone statues. But they will suddenly strike if anyone comes close enough for them to detect.",
+    "powerRank": 64,
+    "hitPoints": 300,
+    "race": [
+      "golem"
+    ],
+    "attributes": [
+      "special"
+    ],
+    "primaryAttackPower": 400,
+    "primaryAttackType": [
+      "melee"
+    ],
+    "primaryAttackInit": 2,
+    "counterAttackPower": 0,
+    "secondaryAttackPower": 0,
+    "secondaryAttackType": [],
+    "secondaryAttackInit": 0,
+    "recruitCost": {
+      "geld": 300,
+      "mana": 0.6,
+      "population": 2
+    },
+    "upkeepCost": {
+      "geld": 3.2,
+      "mana": 0.15,
+      "population": 0
+    },
+    "spellResistances": {
+      "ascendant": 0,
+      "verdant": 0,
+      "eradication": 25,
+      "nether": 25,
+      "phantasm": 15
+    },
+    "attackResistances": {
+      "missile": 25,
+      "fire": 0,
+      "poison": 0,
+      "breath": 0,
+      "magic": 25,
+      "melee": 25,
+      "ranged": 25,
+      "lightning": 50,
+      "cold": 0,
+      "paralyse": 100,
+      "psychic": 100,
+      "holy": 0
+    },
+    "abilities": [
+      {
+        "name": "flying",
+        "extra": null
+      }
+    ]
+  },
+  {
+    "id": "imp",
+    "name": "Engendro Menor",
+    "magic": "nether",
+    "description": "Engendro Menors are two feet tall demons with leathery bat-like wings, a barbed tail, and sharp horns. These evil-nature creatures serve satanic priests and the magicians who summon them. They have dark red skin, jagged white teeth, and are covered in a putrid-smelling poison. Although small in stature, their ability to fly protect them from foes who cannot.",
+    "powerRank": 19,
+    "hitPoints": 80,
+    "race": [
+      "demon"
+    ],
+    "attributes": [
+      "special"
+    ],
+    "primaryAttackPower": 150,
+    "primaryAttackType": [
+      "poison"
+    ],
+    "primaryAttackInit": 2,
+    "counterAttackPower": 0,
+    "secondaryAttackPower": 0,
+    "secondaryAttackType": [],
+    "secondaryAttackInit": 0,
+    "recruitCost": {
+      "geld": 60,
+      "mana": 0.2,
+      "population": 1
+    },
+    "upkeepCost": {
+      "geld": 2.4,
+      "mana": 0.04,
+      "population": 0
+    },
+    "spellResistances": {
+      "ascendant": 0,
+      "verdant": 0,
+      "eradication": 25,
+      "nether": 25,
+      "phantasm": 15
+    },
+    "attackResistances": {
+      "missile": 30,
+      "fire": 0,
+      "poison": 30,
+      "breath": 0,
+      "magic": 30,
+      "melee": 30,
+      "ranged": 30,
+      "lightning": 0,
+      "cold": 0,
+      "paralyse": 0,
+      "psychic": 30,
+      "holy": 0
+    },
+    "abilities": [
+      {
+        "name": "flying",
+        "extra": null
+      }
+    ]
+  },
+  {
+    "id": "orcRaider",
+    "name": "Saqueador Gris",
+    "magic": "nether",
+    "description": "Orcs are a species of aggressive mammalian carnivores that band together in tribes and survive by hunting and raiding. They have canine teeth, pointed ears and pig like facial features. They are the size of a normal human being. They are so bloodthirsty and cruel that they don't usually cooperate well with each other. They hate bright sunlight and they look very clumsy when they have to function in broad daylight.",
+    "powerRank": 12,
+    "hitPoints": 110,
+    "race": [
+      "orc"
+    ],
+    "attributes": [
+      "special"
+    ],
+    "primaryAttackPower": 100,
+    "primaryAttackType": [
+      "melee"
+    ],
+    "primaryAttackInit": 1,
+    "counterAttackPower": 20,
+    "secondaryAttackPower": 0,
+    "secondaryAttackType": [],
+    "secondaryAttackInit": 0,
+    "recruitCost": {
+      "geld": 30,
+      "mana": 0.05,
+      "population": 1
+    },
+    "upkeepCost": {
+      "geld": 0.16,
+      "mana": 0.01,
+      "population": 0
+    },
+    "spellResistances": {
+      "ascendant": 0,
+      "verdant": 0,
+      "eradication": 0,
+      "nether": 0,
+      "phantasm": 0
+    },
+    "attackResistances": {
+      "missile": 0,
+      "fire": 0,
+      "poison": 0,
+      "breath": 0,
+      "magic": 0,
+      "melee": 0,
+      "ranged": 0,
+      "lightning": 0,
+      "cold": 0,
+      "paralyse": 0,
+      "psychic": 0,
+      "holy": 0
+    },
+    "abilities": [
+      {
+        "name": "clumsiness",
+        "extra": null
+      },
+      {
+        "name": "recruitSpeed",
+        "extra": 50
+      }
+    ]
+  },
+  {
+    "id": "orcishArcher",
+    "name": "Arquero Gris",
+    "magic": "nether",
+    "description": "Orcish archers are normal orcs who equip themselves with any type of bows and arrows. They do not receive any formal training in shooting so they don't hit well compared to human archers. However, they are very cheap to maintain and provide a source of ranged attack for the orc tribe.",
+    "powerRank": 12,
+    "hitPoints": 100,
+    "race": [
+      "orc"
+    ],
+    "attributes": [
+      "special"
+    ],
+    "primaryAttackPower": 80,
+    "primaryAttackType": [
+      "missile",
+      "ranged"
+    ],
+    "primaryAttackInit": 3,
+    "counterAttackPower": 0,
+    "secondaryAttackPower": 0,
+    "secondaryAttackType": [],
+    "secondaryAttackInit": 0,
+    "recruitCost": {
+      "geld": 30,
+      "mana": 0.05,
+      "population": 1
+    },
+    "upkeepCost": {
+      "geld": 0.16,
+      "mana": 0.01,
+      "population": 0
+    },
+    "spellResistances": {
+      "ascendant": 0,
+      "verdant": 0,
+      "eradication": 0,
+      "nether": 0,
+      "phantasm": 0
+    },
+    "attackResistances": {
+      "missile": 0,
+      "fire": 0,
+      "poison": 0,
+      "breath": 0,
+      "magic": 0,
+      "melee": 0,
+      "ranged": 0,
+      "lightning": 0,
+      "cold": 0,
+      "paralyse": 0,
+      "psychic": 0,
+      "holy": 0
+    },
+    "abilities": [
+      {
+        "name": "clumsiness",
+        "extra": null
+      },
+      {
+        "name": "recruitSpeed",
+        "extra": 50
+      }
+    ]
+  },
+  {
+    "id": "wolfRaider",
+    "name": "Jinete de Colmillo",
+    "magic": "nether",
+    "description": "Wolf riders are orc cavalry. They tame wolves as steed and only strong orcs can become wolf riders. They are just normal orcs in other aspects. But wolf riders fight a lot better compared to normal orcs, and their wolves are also very fierce in combat.",
+    "powerRank": 25,
+    "hitPoints": 550,
+    "race": [
+      "orc"
+    ],
+    "attributes": [
+      "special"
+    ],
+    "primaryAttackPower": 200,
+    "primaryAttackType": [
+      "melee"
+    ],
+    "primaryAttackInit": 2,
+    "counterAttackPower": 150,
+    "secondaryAttackPower": 0,
+    "secondaryAttackType": [],
+    "secondaryAttackInit": 0,
+    "recruitCost": {
+      "geld": 160,
+      "mana": 0.8,
+      "population": 2
+    },
+    "upkeepCost": {
+      "geld": 5,
+      "mana": 0.06,
+      "population": 0
+    },
+    "spellResistances": {
+      "ascendant": 0,
+      "verdant": 0,
+      "eradication": 0,
+      "nether": 0,
+      "phantasm": 0
+    },
+    "attackResistances": {
+      "missile": 0,
+      "fire": 0,
+      "poison": 0,
+      "breath": 0,
+      "magic": 0,
+      "melee": 0,
+      "ranged": 0,
+      "lightning": 0,
+      "cold": 0,
+      "paralyse": 0,
+      "psychic": 0,
+      "holy": 0
+    },
+    "abilities": [
+      {
+        "name": "clumsiness",
+        "extra": null
+      },
+      {
+        "name": "recruitSpeed",
+        "extra": 33
+      }
+    ]
+  }
+]

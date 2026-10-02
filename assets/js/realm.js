@@ -41,7 +41,8 @@ function realmProgressLabel(land){
   if(x<1000)return {name:"Dominio en expansión",next:1000,level:1};
   if(x<2000)return {name:"Potencia regional",next:2000,level:2};
   if(x<3500)return {name:"Gran dominio",next:3500,level:3};
-  return {name:"Imperio arcano",next:3500,level:4};
+  if(x<6000)return {name:"Imperio arcano",next:6000,level:4};
+  return {name:"Dominio plenamente cartografiado",next:6000,level:5};
 }
 
 let realmDomainRecord=null;
@@ -61,7 +62,7 @@ function paintRealmDomainIdentity(){
   const title=$("#realm-domain-name");
   const character=$("#realm-character-name");
   if(title)title.textContent=realmDomainRecord?.domain_name||realmState?.realm?.mage_name||"Dominio";
-  if(character)character.textContent="ARCHIMAGO · "+(realmState?.realm?.mage_name||"");
+  if(character)character.textContent="ARCONTE · "+(realmState?.realm?.mage_name||"");
 }
 async function editRealmDomainName(){
   const current=realmDomainRecord?.domain_name||realmState?.realm?.mage_name||"";
@@ -86,7 +87,7 @@ function renderRealm(){
   const landPct=realmPercent(built,r.land);
   const turnPct=realmPercent(r.turns,r.max_turns);
   const progression=realmProgressLabel(r.land);
-  const progressionPct=progression.level>=4?100:realmPercent(r.land,progression.next);
+  const progressionPct=progression.level>=5?100:realmPercent(r.land,progression.next);
   const alerts=realmAlerts();
   const domainName=realmDomainRecord?.domain_name||r.mage_name;
 
@@ -100,14 +101,14 @@ function renderRealm(){
           <h2 id="realm-domain-name" style="margin:0">${esc(domainName)}</h2>
           <button id="realm-domain-edit" class="small-action" type="button" title="Editar nombre del Dominio" aria-label="Editar nombre del Dominio">✎ EDITAR</button>
         </div>
-        <div id="realm-character-name" style="margin-top:7px;font-size:11px;letter-spacing:.14em;color:rgba(236,216,174,.72)">ARCHIMAGO · ${esc(r.mage_name)}</div>
+        <div id="realm-character-name" style="margin-top:7px;font-size:11px;letter-spacing:.14em;color:rgba(236,216,174,.72)">ARCONTE · ${esc(r.mage_name)}</div>
         <p>${esc(progression.name)} · ${n(r.land)} acres · Nivel Mágico ${n(r.spell_level)}</p>
         <div class="realm-status-line"><span>${n(realmState.known_spells.length)} hechizos conocidos</span></div>
         <div class="quick-actions">
           <button class="small-action" data-quick="economy">ECONOMÍA</button>
           <button class="small-action" data-quick="build">CONSTRUIR</button>
           <button class="small-action" data-quick="research">MAGIA</button>
-          <button class="small-action" data-quick="war">GUERRA</button>
+          <button class="small-action" data-quick="army">EJÉRCITO</button>
         </div>
       </div>
       <small class="realm-art-label">DOMINIO · REINO NIVEL 1</small>
@@ -153,7 +154,7 @@ function renderRealm(){
       <strong class="growth-stage">${esc(progression.name)}</strong>
     </div>
     <div class="growth-track"><span style="width:${progressionPct}%"></span></div>
-    <div class="growth-meta"><span>${n(r.land)} acres actuales</span><span>${progression.level>=4?"Máximo de exploración alcanzado":`Siguiente hito: ${n(progression.next)} acres`}</span></div>
+    <div class="growth-meta"><span>${n(r.land)} acres actuales</span><span>${progression.level>=5?"Máximo de exploración alcanzado":`Siguiente hito: ${n(progression.next)} acres`}</span></div>
     <div class="action-panel realm-explore-panel">
       <label>Turnos para explorar<input id="realm-explore-turns" type="number" min="1" max="50" value="1"></label>
       <button id="realm-explore-button" class="primary-action">✦ EXPLORAR NUEVAS TIERRAS</button>
@@ -168,7 +169,7 @@ function renderRealm(){
   }).catch(()=>{});
 
   $("#realm-tip-action").addEventListener("click",()=>{
-    const target=Number(r.wilderness||0)>=80?"build":Number(b.guilds||0)<5?"build":Number(b.barracks||0)<1?"build":Number(r.turns||0)>=20&&Number(r.land||0)<3500?"economy":"economy";
+    const target=Number(r.wilderness||0)>=80?"build":Number(b.guilds||0)<5?"build":Number(b.barracks||0)<1?"build":Number(r.turns||0)>=20&&Number(r.land||0)<6000?"economy":"economy";
     navigate(target);
   });
 }

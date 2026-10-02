@@ -1,0 +1,2128 @@
+[
+  {
+    "id": "ashOfInvisibility",
+    "name": "Polvo del Velo",
+    "description": "Ceniza finísima que curva la luz alrededor de las tropas cubiertas por ella, ocultándolas durante el combate.",
+    "attributes": [
+      "battle",
+      "oneUse",
+      "lesser"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "self",
+        "targetType": "all",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "primaryAttackInit,secondaryAttackInit": {
+                "rule": "add",
+                "magic": {
+                  "ascendant": {
+                    "value": 6
+                  },
+                  "verdant": {
+                    "value": 6
+                  },
+                  "eradication": {
+                    "value": 6
+                  },
+                  "nether": {
+                    "value": 6
+                  },
+                  "phantasm": {
+                    "value": 6
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "bookOfGolemSummoning",
+    "name": "Tratado del Coloso Pétreo",
+    "description": "Un volumen de runas minerales que consume su propia magia al completar la creación de un guardián de piedra.",
+    "attributes": [
+      "oneUse",
+      "summon",
+      "lesser"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "UnitSummonEffect",
+        "unitIds": [
+          "stoneGolem"
+        ],
+        "summonType": "all",
+        "summonNetPower": 40,
+        "rule": "set",
+        "magic": {
+          "ascendant": {
+            "value": 1
+          },
+          "verdant": {
+            "value": 1
+          },
+          "eradication": {
+            "value": 1
+          },
+          "nether": {
+            "value": 1
+          },
+          "phantasm": {
+            "value": 1
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "potionOfValor",
+    "name": "Elixir de la Brasa Heroica",
+    "description": "Un tónico escarlata que aviva el coraje de las tropas y mejora temporalmente su rendimiento en batalla.",
+    "attributes": [
+      "battle",
+      "oneUse",
+      "lesser"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "self",
+        "targetType": "all",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "primaryAttackPower,secondaryAttackPower,counterAttackPower": {
+                "rule": "percentage",
+                "magic": {
+                  "ascendant": {
+                    "value": 0.2
+                  },
+                  "verdant": {
+                    "value": 0.2
+                  },
+                  "eradication": {
+                    "value": 0.2
+                  },
+                  "nether": {
+                    "value": 0.2
+                  },
+                  "phantasm": {
+                    "value": 0.2
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "bubbleWine",
+    "name": "Mosto de Éter",
+    "description": "Una bebida alquímica recorrida por burbujas luminosas. Quien la consume gana resistencia y golpea con mayor fuerza durante un breve periodo.",
+    "attributes": [
+      "battle",
+      "oneUse",
+      "lesser"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "self",
+        "targetType": "all",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "primaryAttackPower,secondaryAttackPower,counterAttackPower": {
+                "rule": "percentage",
+                "magic": {
+                  "ascendant": {
+                    "value": 0.1
+                  },
+                  "verdant": {
+                    "value": 0.1
+                  },
+                  "eradication": {
+                    "value": 0.1
+                  },
+                  "nether": {
+                    "value": 0.1
+                  },
+                  "phantasm": {
+                    "value": 0.1
+                  }
+                }
+              }
+            }
+          },
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "hitPoints": {
+                "rule": "percentage",
+                "magic": {
+                  "ascendant": {
+                    "value": 0.3
+                  },
+                  "verdant": {
+                    "value": 0.3
+                  },
+                  "eradication": {
+                    "value": 0.3
+                  },
+                  "nether": {
+                    "value": 0.3
+                  },
+                  "phantasm": {
+                    "value": 0.3
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "candleOfSleeping",
+    "name": "Cirio de Somnolencia",
+    "description": "Al arder libera un humo dulzón que entumece a las fuerzas enemigas hasta volver torpes sus reacciones.",
+    "attributes": [
+      "battle",
+      "oneUse",
+      "lesser"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "opponent",
+        "targetType": "all",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "attackResistances": {
+                "rule": "add",
+                "magic": {
+                  "ascendant": {
+                    "value": -10
+                  },
+                  "verdant": {
+                    "value": -10
+                  },
+                  "eradication": {
+                    "value": -10
+                  },
+                  "nether": {
+                    "value": -10
+                  },
+                  "phantasm": {
+                    "value": -10
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pixiDust",
+    "name": "Escarcha Feérica",
+    "description": "Un polvo iridiscente que se adhiere a las defensas enemigas y las vuelve más vulnerables.",
+    "attributes": [
+      "battle",
+      "oneUse",
+      "lesser"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "opponent",
+        "targetType": "weightedRandom",
+        "filters": null,
+        "trigger": {
+          "min": 5,
+          "max": 5
+        },
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "attackResistances": {
+                "rule": "add",
+                "magic": {
+                  "ascendant": {
+                    "value": -3
+                  },
+                  "verdant": {
+                    "value": -3
+                  },
+                  "eradication": {
+                    "value": -3
+                  },
+                  "nether": {
+                    "value": -3
+                  },
+                  "phantasm": {
+                    "value": -3
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "oilFlasks",
+    "name": "Ampollas de Aceite Ígneo",
+    "description": "Frascos de aceites volátiles que impregnan al enemigo y facilitan que el fuego prenda sobre sus filas.",
+    "attributes": [
+      "battle",
+      "oneUse",
+      "lesser"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "opponent",
+        "targetType": "all",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "attackResistances.fire": {
+                "rule": "add",
+                "magic": {
+                  "ascendant": {
+                    "value": -40
+                  },
+                  "verdant": {
+                    "value": -40
+                  },
+                  "eradication": {
+                    "value": -40
+                  },
+                  "nether": {
+                    "value": -40
+                  },
+                  "phantasm": {
+                    "value": -40
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "broochOfProtection",
+    "name": "Broche del Bastión",
+    "description": "Un broche grabado con sellos defensivos capaz de desplegar una barrera hasta que su carga arcana se agota.",
+    "attributes": [
+      "battle",
+      "oneUse",
+      "lesser"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "self",
+        "targetType": "all",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "attackResistances.melee": {
+                "rule": "add",
+                "magic": {
+                  "ascendant": {
+                    "value": 40
+                  },
+                  "verdant": {
+                    "value": 40
+                  },
+                  "eradication": {
+                    "value": 40
+                  },
+                  "nether": {
+                    "value": 40
+                  },
+                  "phantasm": {
+                    "value": 40
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "missileShield",
+    "name": "Égida de Hierro Errante",
+    "description": "Un escudo encantado que atrae proyectiles metálicos y los desvía de las tropas cercanas.",
+    "attributes": [
+      "battle",
+      "oneUse",
+      "lesser"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "self",
+        "targetType": "all",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "attackResistances.ranged": {
+                "rule": "add",
+                "magic": {
+                  "ascendant": {
+                    "value": 50
+                  },
+                  "verdant": {
+                    "value": 50
+                  },
+                  "eradication": {
+                    "value": 50
+                  },
+                  "nether": {
+                    "value": 50
+                  },
+                  "phantasm": {
+                    "value": 50
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "scrollOfProtectionFromFire",
+    "name": "Pergamino de Piel de Brasa",
+    "description": "Sus runas envuelven temporalmente a una formación aliada con una protección parcial frente al fuego.",
+    "attributes": [
+      "battle",
+      "oneUse",
+      "lesser"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "self",
+        "targetType": "all",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "attackResistances.fire": {
+                "rule": "add",
+                "magic": {
+                  "ascendant": {
+                    "value": 40
+                  },
+                  "verdant": {
+                    "value": 40
+                  },
+                  "eradication": {
+                    "value": 40
+                  },
+                  "nether": {
+                    "value": 40
+                  },
+                  "phantasm": {
+                    "value": 40
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "hornOfValhalla",
+    "name": "Cuerno de la Hueste Dorada",
+    "description": "Su llamada convoca guerreros errantes dispuestos a unirse durante un tiempo a las fuerzas del Dominio.",
+    "attributes": [
+      "oneUse",
+      "summon",
+      "lesser"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "UnitSummonEffect",
+        "unitIds": [
+          "knight"
+        ],
+        "summonType": "all",
+        "summonNetPower": 100000,
+        "rule": "none",
+        "magic": {
+          "ascendant": {
+            "value": 1
+          },
+          "verdant": {
+            "value": 1
+          },
+          "eradication": {
+            "value": 1
+          },
+          "nether": {
+            "value": 1
+          },
+          "phantasm": {
+            "value": 1
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "coffin",
+    "name": "Arca Mortuoria",
+    "description": "Un sarcófago sellado que, al abrirse, libera servidores no muertos ligados por una orden arcana.",
+    "attributes": [
+      "oneUse",
+      "summon",
+      "lesser"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "UnitSummonEffect",
+        "unitIds": [
+          "lich",
+          "vampire",
+          "wraith",
+          "ghoul",
+          "zombie"
+        ],
+        "summonType": "random",
+        "summonNetPower": 100000,
+        "rule": "none",
+        "magic": {
+          "ascendant": {
+            "value": 1
+          },
+          "verdant": {
+            "value": 1
+          },
+          "eradication": {
+            "value": 1
+          },
+          "nether": {
+            "value": 1
+          },
+          "phantasm": {
+            "value": 1
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "peaches",
+    "name": "Frutos de la Llamada Salvaje",
+    "description": "Frutos encantados cuyo aroma atrae criaturas del bosque y las conduce hasta las filas del Dominio.",
+    "attributes": [
+      "oneUse",
+      "summon",
+      "lesser"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "UnitSummonEffect",
+        "unitIds": [
+          "gorilla"
+        ],
+        "summonType": "all",
+        "summonNetPower": 100000,
+        "rule": "none",
+        "magic": {
+          "ascendant": {
+            "value": 1
+          },
+          "verdant": {
+            "value": 1
+          },
+          "eradication": {
+            "value": 1
+          },
+          "nether": {
+            "value": 1
+          },
+          "phantasm": {
+            "value": 1
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "totalNewbieHandbook",
+    "name": "Manual del Primer Sello",
+    "description": "Un pequeño manual de iniciación con conjuros elementales escondidos entre sus páginas y una última carga de magia útil.",
+    "attributes": [
+      "oneUse",
+      "summon",
+      "lesser"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "UnitSummonEffect",
+        "unitIds": [
+          "frog",
+          "squirrel",
+          "sheep"
+        ],
+        "summonType": "random",
+        "summonNetPower": 10000,
+        "rule": "set",
+        "magic": {
+          "ascendant": {
+            "value": 1
+          },
+          "verdant": {
+            "value": 1
+          },
+          "eradication": {
+            "value": 1
+          },
+          "nether": {
+            "value": 1
+          },
+          "phantasm": {
+            "value": 1
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "carpetOfFlying",
+    "name": "Tapiz de los Vientos",
+    "description": "Un tejido ritual capaz de elevar tropas o cargas sobre el campo mediante corrientes de aire encantadas.",
+    "attributes": [
+      "battle",
+      "oneUse",
+      "lesser"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "self",
+        "targetType": "all",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "abilities": {
+                "rule": "add",
+                "magic": {
+                  "ascendant": {
+                    "value": {
+                      "name": "flying",
+                      "extra": null
+                    }
+                  },
+                  "verdant": {
+                    "value": {
+                      "name": "flying",
+                      "extra": null
+                    }
+                  },
+                  "eradication": {
+                    "value": {
+                      "name": "flying",
+                      "extra": null
+                    }
+                  },
+                  "nether": {
+                    "value": {
+                      "name": "flying",
+                      "extra": null
+                    }
+                  },
+                  "phantasm": {
+                    "value": {
+                      "name": "flying",
+                      "extra": null
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "satchelOfMist",
+    "name": "Zurrón de Bruma",
+    "description": "Al abrirse cubre el campo de batalla con niebla espesa, reduciendo la precisión de ambos bandos.",
+    "attributes": [
+      "battle",
+      "oneUse",
+      "lesser"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "opponent",
+        "targetType": "all",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "accuracy": {
+                "rule": "add",
+                "magic": {
+                  "ascendant": {
+                    "value": -10
+                  },
+                  "verdant": {
+                    "value": -10
+                  },
+                  "eradication": {
+                    "value": -10
+                  },
+                  "nether": {
+                    "value": -10
+                  },
+                  "phantasm": {
+                    "value": -10
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "theSpidersWeb",
+    "name": "Lanzared de Seda Negra",
+    "description": "Un artefacto tubular que proyecta una red viscosa sobre las filas enemigas y ralentiza sus ataques.",
+    "attributes": [
+      "battle",
+      "oneUse",
+      "lesser"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "opponent",
+        "targetType": "all",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "primaryAttackInit,secondaryAttackInit": {
+                "rule": "add",
+                "magic": {
+                  "ascendant": {
+                    "value": -1
+                  },
+                  "verdant": {
+                    "value": -1
+                  },
+                  "eradication": {
+                    "value": -1
+                  },
+                  "nether": {
+                    "value": -1
+                  },
+                  "phantasm": {
+                    "value": -1
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "capsuleMonster",
+    "name": "Semilla de Quimera",
+    "description": "Una cápsula de resina antigua que se rompe para liberar criaturas temporales obedientes a quien la activa.",
+    "attributes": [
+      "battle",
+      "oneUse",
+      "lesser"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "PrebattleEffect",
+        "target": "self",
+        "targetType": "all",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "TemporaryUnitEffect",
+            "checkResistance": false,
+            "unitId": "capsuleMonster",
+            "rule": "set",
+            "target": null,
+            "magic": {
+              "ascendant": {
+                "value": {
+                  "min": 3000,
+                  "max": 3000
+                }
+              },
+              "verdant": {
+                "value": {
+                  "min": 3000,
+                  "max": 3000
+                }
+              },
+              "eradication": {
+                "value": {
+                  "min": 3000,
+                  "max": 3000
+                }
+              },
+              "nether": {
+                "value": {
+                  "min": 3000,
+                  "max": 3000
+                }
+              },
+              "phantasm": {
+                "value": {
+                  "min": 3000,
+                  "max": 3000
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "javelinOfLightningBolt",
+    "name": "Azagaya del Relámpago",
+    "description": "Al ser arrojada abandona su forma física y atraviesa el campo convertida en una descarga eléctrica.",
+    "attributes": [
+      "battle",
+      "oneUse",
+      "lesser"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "opponent",
+        "targetType": "random",
+        "filters": null,
+        "trigger": {
+          "min": 2,
+          "max": 6
+        },
+        "effects": [
+          {
+            "effectType": "UnitDamageEffect",
+            "checkResistance": true,
+            "damageType": [
+              "lightning"
+            ],
+            "target": "damage",
+            "rule": "set",
+            "magic": {
+              "ascendant": {
+                "value": {
+                  "min": 500,
+                  "max": 250000
+                }
+              },
+              "verdant": {
+                "value": {
+                  "min": 500,
+                  "max": 250000
+                }
+              },
+              "eradication": {
+                "value": {
+                  "min": 500,
+                  "max": 250000
+                }
+              },
+              "nether": {
+                "value": {
+                  "min": 500,
+                  "max": 250000
+                }
+              },
+              "phantasm": {
+                "value": {
+                  "min": 500,
+                  "max": 250000
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "powderKeg",
+    "name": "Barril de Ceniza Roja",
+    "description": "Un pequeño barril cargado con mezcla incendiaria que libera una llamarada violenta al activarse.",
+    "attributes": [
+      "battle",
+      "oneUse",
+      "lesser"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "opponent",
+        "targetType": "all",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitDamageEffect",
+            "checkResistance": true,
+            "damageType": [
+              "fire"
+            ],
+            "target": "damage",
+            "rule": "set",
+            "magic": {
+              "ascendant": {
+                "value": {
+                  "min": 80000,
+                  "max": 100000
+                }
+              },
+              "verdant": {
+                "value": {
+                  "min": 80000,
+                  "max": 100000
+                }
+              },
+              "eradication": {
+                "value": {
+                  "min": 80000,
+                  "max": 100000
+                }
+              },
+              "nether": {
+                "value": {
+                  "min": 80000,
+                  "max": 100000
+                }
+              },
+              "phantasm": {
+                "value": {
+                  "min": 80000,
+                  "max": 100000
+                }
+              }
+            }
+          },
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "primaryAttackPower,secondaryAttackPower,counterAttackPower": {
+                "rule": "percentage",
+                "magic": {
+                  "ascendant": {
+                    "value": -8
+                  },
+                  "verdant": {
+                    "value": -8
+                  },
+                  "eradication": {
+                    "value": -8
+                  },
+                  "nether": {
+                    "value": -8
+                  },
+                  "phantasm": {
+                    "value": -8
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "flaskOfHolyWater",
+    "name": "Ampolla de Luz Consagrada",
+    "description": "Agua ritual saturada de energía luminosa, especialmente dañina para criaturas de naturaleza impía.",
+    "attributes": [
+      "battle",
+      "oneUse",
+      "lesser"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "opponent",
+        "targetType": "all",
+        "filters": [
+          {
+            "race": [
+              "undead"
+            ]
+          }
+        ],
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitDamageEffect",
+            "checkResistance": true,
+            "damageType": [
+              "holy"
+            ],
+            "target": "damage",
+            "rule": "set",
+            "magic": {
+              "ascendant": {
+                "value": {
+                  "min": 150000,
+                  "max": 150000
+                }
+              },
+              "verdant": {
+                "value": {
+                  "min": 1500000,
+                  "max": 150000
+                }
+              },
+              "eradication": {
+                "value": {
+                  "min": 150000,
+                  "max": 150000
+                }
+              },
+              "nether": {
+                "value": {
+                  "min": 150000,
+                  "max": 150000
+                }
+              },
+              "phantasm": {
+                "value": {
+                  "min": 150000,
+                  "max": 150000
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "staffOfIllusion",
+    "name": "Cetro de los Espejos",
+    "description": "Un cetro rematado por cristal que proyecta ilusiones capaces de causar daño psíquico antes de quebrarse.",
+    "attributes": [
+      "battle",
+      "oneUse",
+      "lesser"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "opponent",
+        "targetType": "random",
+        "filters": null,
+        "trigger": {
+          "min": 3,
+          "max": 3
+        },
+        "effects": [
+          {
+            "effectType": "UnitDamageEffect",
+            "checkResistance": true,
+            "damageType": [
+              "magic"
+            ],
+            "target": "damage",
+            "rule": "set",
+            "magic": {
+              "ascendant": {
+                "value": {
+                  "min": 120000,
+                  "max": 120000
+                }
+              },
+              "verdant": {
+                "value": {
+                  "min": 1200000,
+                  "max": 120000
+                }
+              },
+              "eradication": {
+                "value": {
+                  "min": 120000,
+                  "max": 120000
+                }
+              },
+              "nether": {
+                "value": {
+                  "min": 120000,
+                  "max": 120000
+                }
+              },
+              "phantasm": {
+                "value": {
+                  "min": 120000,
+                  "max": 120000
+                }
+              }
+            }
+          },
+          {
+            "effectType": "UnitDamageEffect",
+            "checkResistance": true,
+            "damageType": [
+              "psychic"
+            ],
+            "target": "damage",
+            "rule": "set",
+            "magic": {
+              "ascendant": {
+                "value": {
+                  "min": 120000,
+                  "max": 120000
+                }
+              },
+              "verdant": {
+                "value": {
+                  "min": 1200000,
+                  "max": 120000
+                }
+              },
+              "eradication": {
+                "value": {
+                  "min": 120000,
+                  "max": 120000
+                }
+              },
+              "nether": {
+                "value": {
+                  "min": 120000,
+                  "max": 120000
+                }
+              },
+              "phantasm": {
+                "value": {
+                  "min": 120000,
+                  "max": 120000
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "sageStone",
+    "name": "Piedra Áurea",
+    "description": "Una piedra alquímica cuya capa exterior se consume al transmutarse en riqueza para las arcas del Dominio.",
+    "attributes": [
+      "oneUse",
+      "instant",
+      "selfOnly",
+      "lesser"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "KingdomResourcesEffect",
+        "rule": "add",
+        "target": "geld",
+        "magic": {
+          "ascendant": {
+            "value": {
+              "min": 3000000,
+              "max": 12000000
+            }
+          },
+          "verdant": {
+            "value": {
+              "min": 3000000,
+              "max": 12000000
+            }
+          },
+          "eradication": {
+            "value": {
+              "min": 3000000,
+              "max": 12000000
+            }
+          },
+          "nether": {
+            "value": {
+              "min": 3000000,
+              "max": 12000000
+            }
+          },
+          "phantasm": {
+            "value": {
+              "min": 3000000,
+              "max": 12000000
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "manaCrystal",
+    "name": "Fragmento de Éter",
+    "description": "Un cristal transparente que almacena energía arcana y la libera al ser quebrado.",
+    "attributes": [
+      "oneUse",
+      "instant",
+      "selfOnly",
+      "lesser"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "KingdomResourcesEffect",
+        "rule": "add",
+        "target": "mana",
+        "magic": {
+          "ascendant": {
+            "value": {
+              "min": 30000,
+              "max": 80000
+            }
+          },
+          "verdant": {
+            "value": {
+              "min": 30000,
+              "max": 80000
+            }
+          },
+          "eradication": {
+            "value": {
+              "min": 30000,
+              "max": 80000
+            }
+          },
+          "nether": {
+            "value": {
+              "min": 30000,
+              "max": 80000
+            }
+          },
+          "phantasm": {
+            "value": {
+              "min": 30000,
+              "max": 80000
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "manaVortex",
+    "name": "Nódulo Voraz",
+    "description": "Una piedra aparentemente inerte que absorbe maná del entorno hasta saturarse y liberar su carga.",
+    "attributes": [
+      "oneUse",
+      "instant",
+      "lesser"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "KingdomResourcesEffect",
+        "rule": "add",
+        "target": "mana",
+        "magic": {
+          "ascendant": {
+            "value": {
+              "min": -8000,
+              "max": -30000
+            }
+          },
+          "verdant": {
+            "value": {
+              "min": -8000,
+              "max": -30000
+            }
+          },
+          "eradication": {
+            "value": {
+              "min": -8000,
+              "max": -30000
+            }
+          },
+          "nether": {
+            "value": {
+              "min": -8000,
+              "max": -30000
+            }
+          },
+          "phantasm": {
+            "value": {
+              "min": -8000,
+              "max": -30000
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "bookOfProphecy",
+    "name": "Evangelio del Segundo Sol",
+    "description": "Un texto profético utilizado para atraer nuevos fieles y fortalecer la población del Dominio.",
+    "attributes": [
+      "oneUse",
+      "instant",
+      "selfOnly",
+      "lesser"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "KingdomResourcesEffect",
+        "rule": "add",
+        "target": "population",
+        "magic": {
+          "ascendant": {
+            "value": {
+              "min": 5000,
+              "max": 20000
+            }
+          },
+          "verdant": {
+            "value": {
+              "min": 5000,
+              "max": 20000
+            }
+          },
+          "eradication": {
+            "value": {
+              "min": 5000,
+              "max": 20000
+            }
+          },
+          "nether": {
+            "value": {
+              "min": 5000,
+              "max": 20000
+            }
+          },
+          "phantasm": {
+            "value": {
+              "min": 5000,
+              "max": 20000
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "pipeOfTheSewer",
+    "name": "Flauta de las Cloacas",
+    "description": "Una flauta capaz de atraer enjambres de alimañas que arruinan recursos y alteran el orden de un territorio hostil.",
+    "attributes": [
+      "oneUse",
+      "instant",
+      "lesser"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "KingdomResourcesEffect",
+        "rule": "add",
+        "target": "population",
+        "magic": {
+          "ascendant": {
+            "value": {
+              "min": -10000,
+              "max": -10000
+            }
+          },
+          "verdant": {
+            "value": {
+              "min": -10000,
+              "max": -10000
+            }
+          },
+          "eradication": {
+            "value": {
+              "min": -10000,
+              "max": -10000
+            }
+          },
+          "nether": {
+            "value": {
+              "min": -10000,
+              "max": -10000
+            }
+          },
+          "phantasm": {
+            "value": {
+              "min": -10000,
+              "max": -10000
+            }
+          }
+        }
+      },
+      {
+        "effectType": "KingdomResourcesEffect",
+        "rule": "add",
+        "target": "geld",
+        "magic": {
+          "ascendant": {
+            "value": {
+              "min": -25000000,
+              "max": -25000000
+            }
+          },
+          "verdant": {
+            "value": {
+              "min": -25000000,
+              "max": -25000000
+            }
+          },
+          "eradication": {
+            "value": {
+              "min": -25000000,
+              "max": -25000000
+            }
+          },
+          "nether": {
+            "value": {
+              "min": -25000000,
+              "max": -25000000
+            }
+          },
+          "phantasm": {
+            "value": {
+              "min": -25000000,
+              "max": -25000000
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "rottenFood",
+    "name": "Sacos de Podredumbre",
+    "description": "Provisiones corrompidas preparadas para propagar plagas y debilitar la población de un territorio enemigo.",
+    "attributes": [
+      "oneUse",
+      "instant",
+      "lesser"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "KingdomResourcesEffect",
+        "rule": "add",
+        "target": "population",
+        "magic": {
+          "ascendant": {
+            "value": {
+              "min": -10000,
+              "max": -30000
+            }
+          },
+          "verdant": {
+            "value": {
+              "min": -10000,
+              "max": -30000
+            }
+          },
+          "eradication": {
+            "value": {
+              "min": -10000,
+              "max": -30000
+            }
+          },
+          "nether": {
+            "value": {
+              "min": -10000,
+              "max": -30000
+            }
+          },
+          "phantasm": {
+            "value": {
+              "min": -10000,
+              "max": -30000
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "strangeMetalicCan",
+    "name": "Lata del Alquimista Gris",
+    "description": "Un recipiente metálico de origen incierto cuyo vapor resulta tóxico al principio, pero acelera después la recuperación de heridas.",
+    "attributes": [
+      "oneUse",
+      "battle",
+      "lesser"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "self",
+        "targetType": "all",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitHealEffect",
+            "checkResistance": false,
+            "healType": "percentage",
+            "rule": "set",
+            "magic": {
+              "ascendant": {
+                "value": 25
+              },
+              "verdant": {
+                "value": 25
+              },
+              "eradication": {
+                "value": 25
+              },
+              "nether": {
+                "value": 25
+              },
+              "phantasm": {
+                "value": 25
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "ointmentOfHealing",
+    "name": "Ungüento de Salvia Lunar",
+    "description": "Una pomada medicinal que extrae venenos y acelera la cicatrización de las tropas.",
+    "attributes": [
+      "oneUse",
+      "battle",
+      "lesser"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "self",
+        "targetType": "all",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitHealEffect",
+            "checkResistance": false,
+            "healType": "points",
+            "rule": "set",
+            "magic": {
+              "ascendant": {
+                "value": 5
+              },
+              "verdant": {
+                "value": 5
+              },
+              "eradication": {
+                "value": 5
+              },
+              "nether": {
+                "value": 5
+              },
+              "phantasm": {
+                "value": 5
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pouchOfHerbs",
+    "name": "Saquito de Hierbas Viridianas",
+    "description": "Hierbas de fuerte carga vital usadas en infusiones que reaniman y mejoran la capacidad de recuperación.",
+    "attributes": [
+      "oneUse",
+      "battle",
+      "lesser"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "self",
+        "targetType": "all",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitHealEffect",
+            "checkResistance": false,
+            "healType": "percentage",
+            "rule": "set",
+            "magic": {
+              "ascendant": {
+                "value": 11
+              },
+              "verdant": {
+                "value": 11
+              },
+              "eradication": {
+                "value": 11
+              },
+              "nether": {
+                "value": 11
+              },
+              "phantasm": {
+                "value": 11
+              }
+            }
+          },
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "attackResistances.poison": {
+                "rule": "add",
+                "magic": {
+                  "ascendant": {
+                    "value": 10
+                  },
+                  "verdant": {
+                    "value": 10
+                  },
+                  "eradication": {
+                    "value": 10
+                  },
+                  "nether": {
+                    "value": 10
+                  },
+                  "phantasm": {
+                    "value": 10
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "monkeyBrains",
+    "name": "Médula Psíquica Conservada",
+    "description": "Un preparado alquímico desagradable pero eficaz que intensifica temporalmente los ataques de naturaleza psíquica.",
+    "attributes": [
+      "oneUse",
+      "battle",
+      "lesser"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "self",
+        "targetType": "all",
+        "filters": [
+          {
+            "allAttackType": [
+              "psychic"
+            ]
+          }
+        ],
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "primaryAttackPower,secondaryAttackPower,counterAttackPower": {
+                "rule": "percentage",
+                "magic": {
+                  "ascendant": {
+                    "value": 2
+                  },
+                  "verdant": {
+                    "value": 2
+                  },
+                  "eradication": {
+                    "value": 2
+                  },
+                  "nether": {
+                    "value": 2
+                  },
+                  "phantasm": {
+                    "value": 2
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "ringOfAnimalCommand",
+    "name": "Anillo del Pastor Salvaje",
+    "description": "Un aro tallado en hueso antiguo que somete por instantes a bestias hostiles y limita su capacidad de atacar.",
+    "attributes": [
+      "oneUse",
+      "battle",
+      "lesser"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "self",
+        "targetType": "all",
+        "filters": [
+          {
+            "race": [
+              "animal"
+            ]
+          }
+        ],
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "primaryAttackPower,secondaryAttackPower,counterAttackPower": {
+                "rule": "percentage",
+                "magic": {
+                  "ascendant": {
+                    "value": 1
+                  },
+                  "verdant": {
+                    "value": 1
+                  },
+                  "eradication": {
+                    "value": 1
+                  },
+                  "nether": {
+                    "value": 1
+                  },
+                  "phantasm": {
+                    "value": 1
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "effectType": "BattleEffect",
+        "target": "opponent",
+        "targetType": "all",
+        "filters": [
+          {
+            "race": [
+              "animal"
+            ]
+          }
+        ],
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "primaryAttackPower,secondaryAttackPower,counterAttackPower": {
+                "rule": "percentage",
+                "magic": {
+                  "ascendant": {
+                    "value": -1
+                  },
+                  "verdant": {
+                    "value": -1
+                  },
+                  "eradication": {
+                    "value": -1
+                  },
+                  "nether": {
+                    "value": -1
+                  },
+                  "phantasm": {
+                    "value": -1
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "voodooDoll",
+    "name": "Efigie del Dolor",
+    "description": "Una figura ritual vinculada a un objetivo mediante su nombre verdadero; al perforarla provoca una perturbación incapacitante.",
+    "attributes": [
+      "oneUse",
+      "instant",
+      "lesser"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "KingdomResourcesEffect",
+        "rule": "add",
+        "target": "turn",
+        "magic": {
+          "ascendant": {
+            "value": {
+              "min": -3,
+              "max": -8
+            }
+          },
+          "verdant": {
+            "value": {
+              "min": -3,
+              "max": -8
+            }
+          },
+          "eradication": {
+            "value": {
+              "min": -3,
+              "max": -8
+            }
+          },
+          "nether": {
+            "value": {
+              "min": -3,
+              "max": -8
+            }
+          },
+          "phantasm": {
+            "value": {
+              "min": -3,
+              "max": -8
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "theHeadOfMedusa",
+    "name": "Máscara Basiliscal",
+    "description": "Una máscara petrificada cuyos ojos conservan una mirada capaz de convertir en piedra a quienes la enfrentan.",
+    "attributes": [
+      "oneUse",
+      "battle",
+      "lesser"
+    ],
+    "weight": 100,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "opponent",
+        "targetType": "random",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitDamageEffect",
+            "checkResistance": true,
+            "damageType": [
+              "melee"
+            ],
+            "target": "unit",
+            "rule": "set",
+            "magic": {
+              "ascendant": {
+                "value": {
+                  "min": 2,
+                  "max": 12
+                }
+              },
+              "verdant": {
+                "value": {
+                  "min": 2,
+                  "max": 12
+                }
+              },
+              "eradication": {
+                "value": {
+                  "min": 2,
+                  "max": 12
+                }
+              },
+              "nether": {
+                "value": {
+                  "min": 2,
+                  "max": 12
+                }
+              },
+              "phantasm": {
+                "value": {
+                  "min": 2,
+                  "max": 12
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "treasureChest",
+    "name": "Arcón de la Fortuna",
+    "description": "Un cofre sellado que puede ocultar una recompensa valiosa o no contener nada en absoluto.",
+    "attributes": [
+      "oneUse",
+      "instant",
+      "selfOnly",
+      "lesser"
+    ],
+    "weight": 10,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "WishEffect",
+        "trigger": {
+          "min": 1,
+          "max": 1
+        },
+        "rolls": [
+          {
+            "target": null,
+            "min": 0,
+            "max": 0,
+            "weight": 100
+          },
+          {
+            "target": "geld",
+            "min": 1000000,
+            "max": 1000000,
+            "weight": 100
+          },
+          {
+            "target": "item",
+            "min": 2,
+            "max": 3,
+            "weight": 100
+          },
+          {
+            "target": "uniqueItem",
+            "min": 1,
+            "max": 1,
+            "weight": 10
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "magicCompass",
+    "name": "Brújula de Tierras Veladas",
+    "description": "Una brújula que ignora el norte y apunta hacia extensiones de tierra todavía libres de dominio.",
+    "attributes": [
+      "oneUse",
+      "instant",
+      "selfOnly",
+      "lesser"
+    ],
+    "weight": 10,
+    "chargeTurns": 0,
+    "upkeep": null,
+    "effects": [
+      {
+        "effectType": "WishEffect",
+        "trigger": {
+          "min": 1,
+          "max": 1
+        },
+        "rolls": [
+          {
+            "target": "land",
+            "min": 10,
+            "max": 100,
+            "weight": 100
+          }
+        ]
+      }
+    ]
+  }
+]

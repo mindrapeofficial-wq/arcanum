@@ -1,0 +1,248 @@
+[
+  {
+    "id": "miasma",
+    "name": "Aliento del Nadir",
+    "magic": "nether",
+    "description": "Extiende una corrupción venenosa que castiga a las fuerzas enemigas.",
+    "maxLevel": 10,
+    "prereqs": {},
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "opponent",
+        "targetType": "all",
+        "filters": null,
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitDamageEffect",
+            "checkResistance": true,
+            "damageType": [
+              "poison",
+              "paralyse"
+            ],
+            "rule": "direct",
+            "magic": {
+              "ascendant": {
+                "value": {
+                  "min": 30000,
+                  "max": 40000
+                }
+              },
+              "verdant": {
+                "value": {
+                  "min": 30000,
+                  "max": 40000
+                }
+              },
+              "eradication": {
+                "value": {
+                  "min": 30000,
+                  "max": 40000
+                }
+              },
+              "nether": {
+                "value": {
+                  "min": 30000,
+                  "max": 40000
+                }
+              },
+              "phantasm": {
+                "value": {
+                  "min": 30000,
+                  "max": 40000
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "blight",
+    "name": "Marchitez Umbría",
+    "magic": "nether",
+    "description": "Propaga una ruina que puede destruir cultivos y estructuras agrícolas tras el combate.",
+    "maxLevel": 10,
+    "prereqs": {
+      "miasma": 3
+    },
+    "effects": [
+      {
+        "effectType": "PostbattleEffect",
+        "target": "self",
+        "condition": "all",
+        "effects": [
+          {
+            "effectType": "KingdomBuildingsEffect",
+            "rule": "direct",
+            "target": "farms",
+            "magic": {
+              "ascendant": {
+                "value": {
+                  "min": -10,
+                  "max": -20
+                }
+              },
+              "verdant": {
+                "value": {
+                  "min": -10,
+                  "max": -20
+                }
+              },
+              "eradication": {
+                "value": {
+                  "min": -10,
+                  "max": -20
+                }
+              },
+              "nether": {
+                "value": {
+                  "min": -10,
+                  "max": -20
+                }
+              },
+              "phantasm": {
+                "value": {
+                  "min": -10,
+                  "max": -20
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "undeadMastery",
+    "name": "Dominio Exánime",
+    "magic": "nether",
+    "description": "Mejora el poder ofensivo, defensivo y la resistencia de las huestes no muertas.",
+    "maxLevel": 10,
+    "prereqs": {},
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "self",
+        "targetType": "all",
+        "filters": [
+          {
+            "race": [
+              "undead"
+            ]
+          }
+        ],
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "primaryAttackPower,secondaryAttackPower,counterAttackPower,hitPoints": {
+                "rule": "percentage",
+                "magic": {
+                  "ascendant": {
+                    "value": 0.02
+                  },
+                  "verdant": {
+                    "value": 0.02
+                  },
+                  "eradication": {
+                    "value": 0.02
+                  },
+                  "nether": {
+                    "value": 0.02
+                  },
+                  "phantasm": {
+                    "value": 0.02
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "demonMastery",
+    "name": "Disciplina Abisal",
+    "magic": "nether",
+    "description": "Incrementa la precisión y el poder de las criaturas vinculadas al Abismo.",
+    "maxLevel": 10,
+    "prereqs": {
+      "undeadMastery": 4
+    },
+    "effects": [
+      {
+        "effectType": "BattleEffect",
+        "target": "self",
+        "targetType": "all",
+        "filters": [
+          {
+            "race": [
+              "demon"
+            ]
+          }
+        ],
+        "trigger": null,
+        "effects": [
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "primaryAttackPower,secondaryAttackPower,counterAttackPower": {
+                "rule": "percentage",
+                "magic": {
+                  "ascendant": {
+                    "value": 0.02
+                  },
+                  "verdant": {
+                    "value": 0.02
+                  },
+                  "eradication": {
+                    "value": 0.02
+                  },
+                  "nether": {
+                    "value": 0.02
+                  },
+                  "phantasm": {
+                    "value": 0.02
+                  }
+                }
+              }
+            }
+          },
+          {
+            "effectType": "UnitAttrEffect",
+            "checkResistance": false,
+            "attributes": {
+              "accuracy": {
+                "rule": "add",
+                "magic": {
+                  "ascendant": {
+                    "value": 0.5
+                  },
+                  "verdant": {
+                    "value": 0.5
+                  },
+                  "eradication": {
+                    "value": 0.5
+                  },
+                  "nether": {
+                    "value": 0.5
+                  },
+                  "phantasm": {
+                    "value": 0.5
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+]
