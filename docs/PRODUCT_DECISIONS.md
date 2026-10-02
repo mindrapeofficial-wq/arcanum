@@ -1,6 +1,6 @@
 # ARCANUM — Current Product Decisions
 
-Last consolidated: 2026-10-01.
+Last consolidated: 2026-10-02.
 
 This file records explicit product decisions and continuation context that cloud coding agents should preserve.
 
@@ -10,15 +10,16 @@ The immediate priority is a **playable, stable public beta**. Do not divert the 
 
 The essential loop is:
 
-`enter -> authenticate -> create/load Arconte + Domain -> understand state -> spend/regenerate turns -> economy/construction/research -> recruit/army -> personal or realm combat -> leave -> return with persistent state intact`
+`enter -> authenticate -> create/load Domain -> understand state -> spend/regenerate turns -> economy/construction/research -> recruit/army -> realm combat/world systems -> community -> leave -> return with persistent state intact`
 
 ## Identity
 
 - Product name: **ARCANUM: Las Cinco Escuelas**.
-- The player **is the Arconte**.
-- The Domain/Reino belongs to the Arconte. Character identity and realm identity are not interchangeable.
-- Five schools remain core to the product.
-- Personaje is the default/main in-game page unless a later explicit decision changes it.
+- The strategic player identity is the **Dominio**. The old standalone Personaje/Arconte progression layer is retired from the product direction.
+- Five schools remain core to the product and color the domain's magic, research, units and world identity.
+- **Dominio is the default/main in-game page.**
+- Standalone individual PvP (Arena/duels/ELO character combat) is removed from the future product. Realm-vs-realm strategic conflict may remain under Guerra.
+- Community and chat remain first-class systems.
 
 ## Authentication and entry screen
 
@@ -63,7 +64,8 @@ Important current constraints:
 - Crónica is not a standalone navigation section.
 - Taberna remains hidden until its gameplay is genuinely ready.
 - Ranking should represent human players, not NPC/system accounts.
-- Social profile and character sheet remain distinct concepts even when they share canonical Arconte identity data.
+- Social profiles may remain for community identity, but there is no standalone character-sheet gameplay page.
+- Legacy Personaje/Arena code may exist temporarily during the rebuild but must not be reintroduced into navigation or new gameplay.
 
 ## World/map direction
 
