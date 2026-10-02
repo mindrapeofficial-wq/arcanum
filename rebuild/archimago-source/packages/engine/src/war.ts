@@ -1,0 +1,1395 @@
+import _ from 'lodash';
+import { Mage, Combatant } from "shared/src/mage";
+import { AllowedAttackType, allowedEffect as E } from "shared/src/common";
+import {
+  UnitAttrEffect,
+  UnitDamageEffect,
+  UnitHealEffect,
+  BattleEffect,
+  EffectOrigin,
+  TemporaryUnitEffect,
+  PostbattleEffect,
+  StealEffect,
+  UnitAttrEffectRules,
+  UnitHealEffectRules,
+  UnitDamageEffectRules,
+  TemporaryUnitEffectRules,
+} from 'shared/src/effects';
+import { between, betweenInt, randomBM, randomInt, randomWeighted } from './random';
+import { hasAbility, isRanged } from "./base/unit";
+import { getSpellById, getItemById, getUnitById, getMaxSpellLevels, getAllUniqueItems, getSkillById } from './base/references';
+import {
+  currentSpellLevel,
+  totalLand,
+  totalNetPower,
+} from './base/mage';
+import { BattleReport, BattleStack, BattleEffectLog, EngagementLog, BattleSpellResult, BattleItemResult } from 'shared/src/battle';
+
+// Various battle helpers
+import { calcBattleOrders } from './battle/calc-battle-orders';
+import { applyAccuracyBuff, calcAttackAccuracy } from './battle/calc-accuracy-modifier';
+import { calcResistance } from './battle/calc-resistance';
+import { calcDamageMultiplier } from './battle/calc-damage-multiplier';
+import { calcPairings } from './battle/calc-pairings';
+import { resolveUnitAbilities } from './battle/resolve-unit-abilities';
+import { calcHealing } from './battle/calc-stack-healing';
+import { calcFortBonus } from './battle/calc-fort-bonus';
+import { calcBattleSummary } from './battle/calc-battle-summary';
+import { newBattleReport } from './battle/new-battle-report';
+import { getPowerModifier, prepareBattleStack } from './battle/prepare-battle-stack';
+import { calcLandLoss } from './battle/calc-landloss';
+import { calcFilteredArmy } from './battle/calc-filtered-army';
+import { applyKingdomResourcesEffect } from './effects/apply-kingdom-resources';
+import { applyStealEffect } from './effects/apply-steal-effect';
+import { applyKingdomBuildingsEffect } from './effects/apply-kingdom-buildings';
+import { attackerItemResult, attackerSpellResult, defenderItemResult, defenderSpellResult } from './battle/battle-spell-item';
+import { ActiveEffect, getActiveEffects, getActiveEffectsForBattle } from './effects';
+
+////////////////////////////////////////////////////////////////////////////////
+
+const calcDamageVariance = (attackType: String[]) => {
+  let randomModifier = randomBM();
+  if (attackType.includes('magic') || attackType.includes('psychic')) {
+    randomModifier = 0.5;
+  }
+  return randomModifier;
+}
+
+/**
+ * Apply effect that can alter unit attributes as outlined in Unit typing definition.
+ *
+ * The general grammar is: "Apply X to unit that match condition Y with rule Z"
+ * Where
+ *  - X is an attribute like primaryAttackPower, or attackReistances.cold
+ *  - Y is filtering rule, like matching all units with melee attacks
+ *  - Z determines how the final value is calculate; scale with spell-level, percentage .. etc
+ *
+ *  Finally there a magic multiplier. Generally speaking if you cast other schools's spell it will
+ *  become a weaker version of the same spell casted by a mage whose magic is innate to that school.
+ *
+ *  e.g. Ascendant mages get better bonuses casting Blinding-Flash than a Nether mage casting the
+ *  same spell.
+ */
+const applyUnitEffect = (
+  // caster: Combatant,
+  origin: EffectOrigin,
+  unitEffect: UnitAttrEffect,
+  affectedArmy: BattleStack[]
+) => {
+  const casterMagic = origin.magic;
+  const casterSpellLevel = origin.spellLevel;
+  const casterMaxSpellLevel = getMaxSpellLevels()[casterMagic];
+
+  console.log('applyUnitEffect', Object.keys(unitEffect.attributes));
+
+  Object.keys(unitEffect.attributes).forEach(attrKey => {
+    const attr = unitEffect.attributes[attrKey];
+    const fields = attrKey.split(',').map(d => d.trim());
+
+    // Caster colour does not get this effect
+    if (!attr.magic[casterMagic]) return;
+
+    // Finally apply effects
+    affectedArmy.forEach(stack => {
+      const unit = stack.unit;
+      const rule = attr.rule;
+      let baseValue = attr.magic[casterMagic].value;
+      let finalValue: any = null;
+
+      let originalUnit = getUnitById(unit.id);
+
+      fields.forEach(rawField => {
+        // Resolve nesting
+        let root = unit;
+        let originalRoot = originalUnit;
+        let field = rawField;
+
+        if (rawField.includes('.')) {
+          const [t1, t2] = rawField.split('.');
+          root = unit[t1];
+          originalRoot = originalUnit[t1];
+          field = t2;
+        }
+
+        // Figure out the value to add
+        if (rule === UnitAttrEffectRules.add) {
+          finalValue = baseValue;
+        } else if (rule === UnitAttrEffectRules.percentage) {
+          finalValue = baseValue * originalRoot[field];
+        } else if (rule === UnitAttrEffectRules.spellLevel) {
+          finalValue = baseValue * casterSpellLevel;
+        } else if (rule === UnitAttrEffectRules.spellLevelScaled) {
+          finalValue = casterSpellLevel / casterMaxSpellLevel * baseValue;
+        } else if (rule === UnitAttrEffectRules.spellLevelScaledPercentage) {
+          finalValue = casterSpellLevel / casterMaxSpellLevel * baseValue * originalRoot[field];
+        } else if (rule === UnitAttrEffectRules.remove) {
+          finalValue = baseValue;
+        } else if (rule === UnitAttrEffectRules.set) {
+          finalValue = baseValue;
+        } else {
+          throw new Error(`Unable to proces rule ${rule}`);
+        }
+
+        // Set overrides default
+        if (rule === UnitAttrEffectRules.set) {
+          root[field] = finalValue;
+          return;
+        }
+
+        // Finally apply
+        // There are two abilities fields, this to allow an effect to 
+        // both remove and add abilities
+        if (field === 'abilities' || field === 'abilities2') {
+          if (rule === 'add') {
+            stack.addedAbilities.push(finalValue);
+          } else if (rule === 'remove') {
+            stack.removedAbilities.push(finalValue);
+          } else {
+            throw new Error(`Unable to resolve ${rule}`);
+          }
+        } else if (field === 'primaryAttackType') {
+          unit.primaryAttackType.push(finalValue);
+        } else if (field === 'secondaryAttackType') {
+          unit.secondaryAttackType.push(finalValue);
+        } else if (field === 'accuracy') {
+          // stack.accuracy += finalValue;
+          stack.accuracy = applyAccuracyBuff(stack.accuracy, finalValue);
+        } else if (field === 'efficiency') {
+          stack.efficiency += finalValue;
+        } else if (field === 'attackResistances') {
+          // applies across to all attack types
+          const ar = unit.attackResistances;
+          ar.breath += finalValue;
+          ar.missile += finalValue;
+          ar.melee += finalValue;
+          ar.paralyse += finalValue;
+          ar.poison += finalValue;
+          ar.psychic += finalValue;
+          ar.magic += finalValue;
+          ar.holy += finalValue;
+          ar.lightning += finalValue;
+          ar.cold += finalValue;
+          ar.fire += finalValue;
+          ar.ranged += finalValue;
+        } else {
+          if (field === 'secondaryAttackInit' || field === 'secondaryAttackPower') {
+            if (unit.secondaryAttackType.length === 0) return;
+          }
+          root[field] += Math.floor(finalValue);
+        }
+      });
+    });
+  });
+};
+
+/**
+ * Apply direct damage to target stacks
+ */
+const applyDamageEffect = (
+  origin: EffectOrigin,
+  damageEffect: UnitDamageEffect,
+  affectedArmy: BattleStack[],
+  objId: string
+) => {
+  const logs: BattleEffectLog[] = [];
+  const casterMagic = origin.magic;
+  const casterSpellLevel = origin.spellLevel;
+
+  const damageType = damageEffect.damageType;
+  let rawDamage = 0;
+  let base = 0;
+
+  if (!damageEffect.magic[casterMagic]) return;
+
+  if (typeof damageEffect.magic[casterMagic].value === 'object') {
+    const min = damageEffect.magic[casterMagic].value.min;
+    const max = damageEffect.magic[casterMagic].value.max;
+    base = between(min, max);
+  } else {
+    base = damageEffect.magic[casterMagic].value;
+  }
+
+  affectedArmy.forEach(stack => {
+    const rule = damageEffect.rule;
+
+    /*
+    if (rule === 'spellLevel') {
+      rawDamage = base * casterSpellLevel;
+    } else if (rule === 'spellLevelUnitLoss') {
+      rawDamage = base * casterSpellLevel;
+    } else if (rule === 'spellLevelUnitDamage') {
+      rawDamage = base * casterSpellLevel * stack.size;
+    } else if (rule === 'direct') {
+      rawDamage = base;
+    } else if (rule === 'unitLoss') {
+      rawDamage = base;
+    }
+    */
+
+    if (rule === UnitDamageEffectRules.spellLevel) {
+      rawDamage = base * casterSpellLevel;
+    } else {
+      rawDamage = base;
+    }
+    if (damageEffect.target === 'perUnitDamage') {
+      rawDamage *= stack.size;
+    }
+
+    // if (rule === 'spellLevelUnitLoss' || rule === 'unitLoss') {
+    if (damageEffect.target === 'unit') {
+      let unitsLoss = Math.floor(rawDamage);
+      // Give it a bit of randomness
+      unitsLoss = Math.ceil(0.7 * unitsLoss) + Math.ceil(0.3 * randomBM() * unitsLoss);
+
+      if (unitsLoss >= stack.size) {
+        unitsLoss = stack.size;
+      }
+      stack.sustainedDamage = 0;
+      stack.size -= unitsLoss;
+      stack.loss += unitsLoss;
+
+      logs.push({
+        id: origin.targetId,
+        unitId: stack.unit.id,
+        effectType: 'slain',
+        value: unitsLoss,
+        objId: objId
+      });
+      console.log(`dealing unitDamage units=${unitsLoss}`);
+      return;
+    }
+
+    const resistance = calcResistance(stack.unit, damageType);
+    const damage = rawDamage * ((100 - resistance) / 100);
+    let totalDamage = damage + stack.sustainedDamage;
+    let unitsLoss = Math.floor(totalDamage / stack.unit.hitPoints);
+
+    if (unitsLoss >= stack.size) {
+      totalDamage = stack.size * stack.unit.hitPoints;
+      unitsLoss = stack.size;
+    }
+    if (unitsLoss > 0) {
+      stack.sustainedDamage = 0;
+    }
+    stack.sustainedDamage += (totalDamage % stack.unit.hitPoints);
+    stack.size -= unitsLoss;
+    stack.loss += unitsLoss;
+
+    logs.push({
+      id: origin.targetId,
+      unitId: stack.unit.id,
+      effectType: 'slain',
+      value: unitsLoss,
+      objId: objId
+    })
+    console.log(`dealing rawDamage=${damage.toFixed(0)} actualDamage=${totalDamage.toFixed(0)} units=${unitsLoss}`);
+  });
+
+  return logs
+};
+
+const applyHealEffect = (
+  origin: EffectOrigin,
+  healEffect: UnitHealEffect,
+  affectedArmy: BattleStack[]
+) => {
+  const casterMagic = origin.magic;
+  const casterSpellLevel = origin.spellLevel;
+  const healType = healEffect.healType;
+  const rule = healEffect.rule;
+
+  let healBase = 0;
+  if (rule === UnitHealEffectRules.spellLevel) {
+    healBase = healEffect.magic[casterMagic].value * casterSpellLevel;
+  } else if (rule === UnitHealEffectRules.set) {
+    healBase = healEffect.magic[casterMagic].value;
+  }
+
+  affectedArmy.forEach(stack => {
+    if (healType === 'points') {
+      stack.healingPoints += stack.size * healBase;
+    } else if (healType === 'percentage') {
+      stack.healingBuffer.push(healBase);
+    } else if (healType === 'units') {
+      stack.healingUnits += healBase;
+    }
+  });
+};
+
+const applyTemporaryUnitEffect = (
+  origin: EffectOrigin,
+  tempEffect: TemporaryUnitEffect,
+  mage: Mage
+) => {
+  const spellLevel = origin.spellLevel;
+  const magic = origin.magic;
+  const maxSpellLevel = getMaxSpellLevels()[magic];
+  const spellPowerScale = spellLevel / maxSpellLevel;
+
+  let value = 0;
+  const { min, max } = tempEffect.magic[magic].value;
+  const base = between(min, max);
+
+  if (tempEffect.rule === TemporaryUnitEffectRules.spellLevelScaledPercentage) {
+    if (tempEffect.target === 'population') {
+      value = Math.floor(mage.currentPopulation * base * spellPowerScale);
+    }
+  } else if (tempEffect.rule === TemporaryUnitEffectRules.set) {
+    value = Math.floor(base);
+  }
+
+  if (tempEffect.target === 'population') {
+    mage.currentPopulation -= value;
+  }
+
+  const newStacks = prepareBattleStack([{ id: tempEffect.unitId, size: value }], '');
+  newStacks[0].isTemporary = true;
+  return newStacks[0];
+}
+
+const randomStackIndex = (stacks: BattleStack[], targetType: BattleEffect['targetType']) => {
+  let randomIdx = -1;
+  if (targetType === 'random') {
+    randomIdx = randomInt(stacks.length);
+  } else if (targetType === 'weightedRandom') {
+    randomIdx = Math.min(randomWeighted(), stacks.length - 1);
+  }
+  return randomIdx;
+}
+
+const battleEffect = (
+  stance: 'attack' | 'defend',
+  activeEffects: ActiveEffect[],
+  caster: Combatant,
+  casterBattleStack: BattleStack[],
+  defender: Combatant,
+  defenderBattleStack: BattleStack[],
+) => {
+  const logs: BattleEffectLog[] = [];
+
+  for (const activeEffect of activeEffects) {
+    let cnt = 0;
+    for (const battleEffect of activeEffect.effects as BattleEffect[]) {
+      const originKey = `${stance}:${activeEffect.objId}:${cnt}`;
+      const targetType = battleEffect.targetType;
+      const effects = battleEffect.effects;
+      const army = battleEffect.target === 'self' ? casterBattleStack : defenderBattleStack;
+      const numTimes = battleEffect.trigger ? betweenInt(battleEffect.trigger.min, battleEffect.trigger.max) : 1;
+
+      // Matching spell filters
+      const filteredArmy = calcFilteredArmy(army, battleEffect.filters);
+
+      // Nothing to do
+      if (filteredArmy.length === 0) continue;
+
+      for (let num = 0; num < numTimes; num++) {
+        const randomIdx = randomStackIndex(filteredArmy, targetType);
+
+        for (const effect of effects) {
+          let affectedArmy: BattleStack[] = [];
+          if (targetType === 'random' || targetType === 'weightedRandom') {
+            affectedArmy = [filteredArmy[randomIdx]];
+          } else {
+            affectedArmy = filteredArmy;
+          }
+
+          // spell and enchantments may be resisted
+          if (activeEffect.objType === 'spell' && effect.checkResistance === true) {
+            const spell = getSpellById(activeEffect.objId);
+            affectedArmy = affectedArmy.filter(stack => {
+              const roll = Math.random() * 100;
+              if (roll > stack.unit.spellResistances[spell.magic]) {
+                return true;
+              }
+              console.log(`${stack.unit.name} resisted ${stack.unit.spellResistances[spell.magic]}`);
+              return false;
+            });
+          }
+
+          // Early exit
+          // Check if there are specific attack or defend triggers
+          if (effect.effectType === E.UnitAttrEffect) {
+            const unitAttrEffect = effect as UnitAttrEffect;
+            if (unitAttrEffect.activation && unitAttrEffect.activation !== stance) {
+              continue;
+            }
+          }
+
+          console.log(`Spell: Applying ${effect.effectType} effect to ${affectedArmy.map(d => d.unit.name)}`);
+          affectedArmy.forEach(bstack => {
+            if (bstack.appliedEffects.some(d => d.origin === originKey)) {
+              return;
+            }
+            bstack.appliedEffects.push({
+              origin: originKey,
+              id: activeEffect.objId,
+              type: activeEffect.objType as any
+            });
+          });
+
+          const origin = activeEffect.origin;
+          if (effect.effectType === E.UnitAttrEffect) {
+            const unitAttrEffect = effect as UnitAttrEffect;
+            applyUnitEffect(origin, unitAttrEffect, affectedArmy);
+          } else if (effect.effectType === E.UnitDamageEffect) {
+            const damageEffect = effect as UnitDamageEffect;
+            const damageLogs = applyDamageEffect(origin, damageEffect, affectedArmy, activeEffect.objId);
+            logs.push(...damageLogs);
+          } else if (effect.effectType === E.UnitHealEffect) {
+            const healEffect = effect as UnitHealEffect;
+            applyHealEffect(origin, healEffect, affectedArmy);
+          } else if (effect.effectType === E.TemporaryUnitEffect) {
+            const tempUnitEffect = effect as TemporaryUnitEffect;
+            const newStack = applyTemporaryUnitEffect(origin, tempUnitEffect, caster.mage);
+            newStack.role = casterBattleStack[0].role;
+            casterBattleStack.push(newStack);
+            casterBattleStack.sort((a, b) => {
+              return b.netPower * getPowerModifier(b.unit) - a.netPower * getPowerModifier(a.unit);
+            })
+          }
+        } // end effects
+      } // end numTimes
+    }
+  }
+
+  return logs;
+};
+
+
+// For debugging different scenarios
+export interface BattleOptions {
+  useFortBonus: boolean,
+}
+
+const battleOptions: BattleOptions = {
+  useFortBonus: true,
+};
+
+export const successPillage = (attacker: Combatant, defender: Combatant) => {
+  const battleReport = newBattleReport(attacker, defender, 'pillage');
+  battleReport.result.attacker.startNetPower = totalNetPower(attacker.mage);
+  battleReport.result.defender.startNetPower = totalNetPower(defender.mage);
+
+  const attackingArmy = prepareBattleStack(attacker.army, 'attacker');
+  const defendingArmy = prepareBattleStack(defender.army, 'defender');
+  battleReport.attacker.army = _.cloneDeep(attackingArmy);
+  battleReport.defender.army = _.cloneDeep(defendingArmy);
+
+
+  const pillageStack = attacker.army[0];
+  const unit = getUnitById(pillageStack.id);
+
+  let pillagePower = (pillageStack.size * unit.powerRank) / (4000 * totalLand(defender.mage));
+  pillagePower = Math.min(1.0, pillagePower);
+
+  const mage = attacker.mage;
+  const origin: EffectOrigin = {
+    id: mage.id,
+    magic: mage.magic,
+    spellLevel: currentSpellLevel(mage),
+    targetId: defender.mage.id
+  };
+
+  const stealEffect: StealEffect = {
+    effectType: E.StealEffect,
+    rule: 'percentage',
+    target: 'geld',
+    magic: {
+      [mage.magic]: {
+        value: {
+          min: 0.03 * pillagePower,
+          max: 0.08 * pillagePower,
+          stealPercent: 1.0
+        }
+      }
+    }
+  };
+
+  const r = applyStealEffect(mage, stealEffect, origin, defender.mage);
+  battleReport.postBattle.logs.push(r);
+
+  battleReport.isSuccessful = true;
+  battleReport.result.isSuccessful = true;
+  return battleReport;
+}
+
+
+/**
+ * Handles siege and regular battles. The battle phase goes as follows
+ * - Prepare battle stacks from chosen armies from both sides, this is used to track progress
+ * - Apply spells
+ * - Apply items
+ * - Resolve conflicting effects
+ * - Calculate unit pairings
+ * - Calculte battle order
+ * - Calculate healing factors
+**/
+export const battle = (battleType: string, attacker: Combatant, defender: Combatant) => {
+  // Initialize battle report
+  const battleReport = newBattleReport(attacker, defender, battleType);
+  battleReport.result.attacker.startNetPower = totalNetPower(attacker.mage);
+  battleReport.result.defender.startNetPower = totalNetPower(defender.mage);
+
+  const preBattle = battleReport.preBattle;
+
+  let hasAttackerSpell = false;
+  let hasAttackerItem = false;
+  let hasDefenderSpell = false;
+  let hasDefenderItem = false;
+
+  const defenderHasArmy = defender.army.length > 0;
+
+  // Calculate for batte report
+  const attackerStartingUnits = attacker.army.reduce((v, stack) => {
+    return v + stack.size;
+  }, 0);
+
+  const defenderStartingUnits = defender.army.reduce((v, stack) => {
+    return v + stack.size;
+  }, 0);
+
+
+  if (attacker.spellId) {
+    const result = attackerSpellResult(attacker, defender);
+    if (result === 'success') {
+      hasAttackerSpell = true;
+    }
+    preBattle.attacker.spellResult = result;
+  }
+
+  if (attacker.itemId) {
+    const result = attackerItemResult(attacker, defender);
+    if (result === 'success') {
+      hasAttackerItem = true;
+    }
+    preBattle.attacker.itemResult = result;
+  }
+
+  if (defender.mage.type === 'bot') {
+    if (defender.army.length > 0) {
+      preBattle.defender.spellResult = 'success';
+      hasDefenderSpell = true;
+      preBattle.defender.itemResult = 'success';
+      hasDefenderItem = true;
+    } else {
+      preBattle.defender.spellResult = 'notUsed';
+      hasDefenderSpell = false;
+      preBattle.defender.itemResult = 'notUsed';
+      hasDefenderItem = false;
+    }
+  } else {
+    if (defender.spellId) {
+      const result = defenderSpellResult(attacker, defender);
+      if (result === 'success') {
+        hasDefenderSpell = true;
+      }
+      preBattle.defender.spellResult = result;
+    }
+
+    if (defender.itemId) {
+      const result = defenderItemResult(attacker, defender);
+      if (result === 'success') {
+        hasDefenderItem = true;
+      }
+      preBattle.defender.itemResult = result;
+    }
+  }
+
+
+  // Create mutable data for the battle
+  const attackingArmy = prepareBattleStack(attacker.army, 'attacker');
+  const defendingArmy = prepareBattleStack(defender.army, 'defender');
+
+  // Apply fort bonus to defender
+  if (battleOptions.useFortBonus === true) {
+    const base = calcFortBonus(defender.mage, battleType);
+    defendingArmy.forEach(stack => {
+      stack.unit.hitPoints += Math.floor((base / 100) * stack.unit.hitPoints);
+    });
+  }
+
+  // === Prebattle effects === 
+  const attackerPrebattleEffects = getActiveEffectsForBattle(
+    attacker.mage,
+    E.PrebattleEffect,
+    hasAttackerSpell ? attacker.spellId : null,
+    hasAttackerItem ? attacker.itemId : null,
+    defender.mage.id
+  );
+  const attackerPrebattleLogs = battleEffect(
+    'attack',
+    attackerPrebattleEffects,
+    attacker,
+    attackingArmy,
+    defender,
+    defendingArmy
+  );
+  preBattle.logs.push(...attackerPrebattleLogs);
+
+  const defenderPrebattleEffects = getActiveEffectsForBattle(
+    defender.mage,
+    E.PrebattleEffect,
+    hasDefenderSpell ? defender.spellId : null,
+    hasDefenderItem ? defender.itemId : null,
+    attacker.mage.id
+  );
+  const defenderPrebattleLogs = battleEffect(
+    'defend',
+    defenderPrebattleEffects,
+    defender,
+    defendingArmy,
+    attacker,
+    attackingArmy
+  );
+  preBattle.logs.push(...defenderPrebattleLogs);
+
+
+  ////////////////////////////////////////////////////////////////////////////////
+  // TODO:: 
+  //  - Hero effects
+  ////////////////////////////////////////////////////////////////////////////////
+
+
+  // === Prebattle effects === 
+  const attackerBattleEffects = getActiveEffectsForBattle(
+    attacker.mage,
+    E.BattleEffect,
+    hasAttackerSpell ? attacker.spellId : null,
+    hasAttackerItem ? attacker.itemId : null,
+    defender.mage.id
+  );
+  const attackerBattleLogs = battleEffect(
+    'attack',
+    attackerBattleEffects,
+    attacker,
+    attackingArmy,
+    defender,
+    defendingArmy
+  );
+  preBattle.logs.push(...attackerBattleLogs);
+
+  const defenderBattleEffects = getActiveEffectsForBattle(
+    defender.mage,
+    E.BattleEffect,
+    hasDefenderSpell ? defender.spellId : null,
+    hasDefenderItem ? defender.itemId : null,
+    attacker.mage.id
+  );
+  const defenderBattleLogs = battleEffect(
+    'defend',
+    defenderBattleEffects,
+    defender,
+    defendingArmy,
+    attacker,
+    attackingArmy
+  );
+  preBattle.logs.push(...defenderBattleLogs);
+
+
+
+  // Resolving contradicting ability states
+  resolveUnitAbilities(attackingArmy);
+  resolveUnitAbilities(defendingArmy);
+
+  // Resolve temporary abilities
+  attackingArmy.forEach(stack => {
+    if (hasAbility(stack.unit, 'flying') && hasAbility(stack.unit, 'dropping')) {
+      const droppingEffect = stack.unit.abilities.find(d => d.name === 'dropping');
+      stack.unit.abilities = stack.unit.abilities.filter(d => d.name !== 'flying');
+
+      const damagePerUnit = droppingEffect.extra || 5;
+      const resist = calcResistance(stack.unit, ['melee']);
+      const damage = damagePerUnit * stack.size * ((100 - resist) / 100);
+
+      let sustainedDamage = stack.sustainedDamage;
+      let totalDamage = damage + sustainedDamage;
+
+      let unitLoss = Math.floor(totalDamage / stack.unit.hitPoints);
+      if (unitLoss >= stack.size) {
+        unitLoss = stack.size;
+      }
+
+      if (unitLoss > 0) {
+        stack.sustainedDamage = 0;
+      }
+      stack.sustainedDamage += (totalDamage % stack.unit.hitPoints);
+      stack.size -= unitLoss;
+      stack.loss += unitLoss;
+    }
+  });
+  defendingArmy.forEach(stack => {
+    if (hasAbility(stack.unit, 'flying') && hasAbility(stack.unit, 'dropping')) {
+      const droppingEffect = stack.unit.abilities.find(d => d.name === 'dropping');
+      stack.unit.abilities = stack.unit.abilities.filter(d => d.name !== 'flying');
+
+      const damagePerUnit = droppingEffect.extra || 5;
+      const resist = calcResistance(stack.unit, ['melee']);
+      const damage = damagePerUnit * stack.size * ((100 - resist) / 100);
+
+      let sustainedDamage = stack.sustainedDamage;
+      let totalDamage = damage + sustainedDamage;
+
+      let unitLoss = Math.floor(totalDamage / stack.unit.hitPoints);
+      if (unitLoss >= stack.size) {
+        unitLoss = stack.size;
+      }
+
+      if (unitLoss > 0) {
+        stack.sustainedDamage = 0;
+      }
+      stack.sustainedDamage += (totalDamage % stack.unit.hitPoints);
+      stack.size -= unitLoss;
+      stack.loss += unitLoss;
+    }
+  });
+
+  // Find pairing
+  calcPairings(attackingArmy, defendingArmy);
+  calcPairings(defendingArmy, attackingArmy);
+
+  // Sort out attacking order
+  const battleOrders = calcBattleOrders(attackingArmy, defendingArmy);
+
+  // FIXME: early damage already calculated so size not accurate
+  battleReport.attacker.army = _.cloneDeep(attackingArmy);
+  battleReport.defender.army = _.cloneDeep(defendingArmy);
+
+  console.log('=== Engagement ===');
+  for (let i = 0; i < battleOrders.length; i++) {
+    const battleOrder = battleOrders[i];
+    const attackType = battleOrder.attackType;
+    const position = battleOrder.position;
+    const side = battleOrder.side;
+    const attackingStack = side === 'attacker' ? attackingArmy[position] : defendingArmy[position];
+    const targetIdx = attackingStack.targetIdx;
+    const defendingStack = side === 'attacker' ? defendingArmy[targetIdx] : attackingArmy[targetIdx];
+
+
+    // In a pillage attacker cannot engage
+    if (side === 'attacker' && battleType === 'pillage') {
+      console.log('\t', i, `${side}: ${attackingStack.unit.name}(${attackingStack.accuracy}) attacks:${attackType} ${defendingStack.unit.name} ... skipping`);
+      continue;
+    }
+
+    console.log('\t', i, `${side}: ${attackingStack.unit.name}(${attackingStack.accuracy}) attacks:${attackType} ${defendingStack.unit.name}`);
+
+    const aUnit = attackingStack.unit;
+    const dUnit = defendingStack.unit;
+
+    const attackingMage = side === 'attacker' ? attacker.mage : defender.mage;
+    const defendingMage = side === 'attacker' ? defender.mage : attacker.mage;
+
+    /////////// Primary //////////
+    if (attackType === 'primary') {
+      if (attackingStack.unit.primaryAttackInit < 1 || attackingStack.size <= 0) continue;
+      if (defendingStack.size <= 0) continue;
+
+      // Evade primary attack
+      if (hasAbility(dUnit, 'evade')) {
+        const evadeAttr = dUnit.abilities.find(ability => ability.name === 'evade');
+        if (Math.random() < (evadeAttr.extra as number)) {
+          battleReport.engagement.logs.push({
+            type: `evade`,
+            attacker: {
+              id: attackingMage.id,
+              unitId: attackingStack.unit.id,
+              unitsLoss: 0
+            },
+            defender: {
+              id: defendingMage.id,
+              unitId: defendingStack.unit.id,
+              unitsLoss: 0
+            }
+          });
+          continue;
+        }
+      }
+
+      // Resolve burst
+      const isPillage = side === 'defender' && battleType === 'pillage';
+
+      const canTriggerBurst = isRanged(aUnit) == false &&
+        aUnit.primaryAttackType.includes('magic') == false &&
+        aUnit.primaryAttackType.includes('psychic') == false;
+
+      if (hasAbility(dUnit, 'bursting') && isPillage === false && canTriggerBurst) {
+        const burstingAbilities = dUnit.abilities.filter(d => d.name === 'bursting');
+
+        for (const burstingAbility of burstingAbilities) {
+
+          // default
+          let burstingType = dUnit.primaryAttackType;
+          let burstingPower = dUnit.powerRank * 1.25;
+
+          if (burstingAbility.extra) {
+            const extra = burstingAbility.extra as { type: AllowedAttackType[], value: any };
+            if (extra.type) burstingType = extra.type;
+            if (extra.value) burstingPower = extra.value;
+          }
+
+          // Calculate attacker burst loss
+          let attackerResistance = calcResistance(aUnit, burstingType);
+          let attackerDamageMultiplier = calcDamageMultiplier(dUnit, aUnit, burstingType);
+          let attackerDamageVariance = calcDamageVariance(burstingType);
+          let attackerDamage = burstingPower *
+            defendingStack.size *
+            (defendingStack.efficiency / 100) *
+            ((100 - attackerResistance) / 100) *
+            attackerDamageVariance;
+          attackerDamage = Math.floor(attackerDamage * attackerDamageMultiplier);
+          let attackerSustainedDamage = attackingStack.sustainedDamage;
+          let attackerTotalDamage = attackerDamage + attackerSustainedDamage;
+
+          let attackerUnitLoss = Math.floor(attackerTotalDamage / aUnit.hitPoints);
+          if (attackerUnitLoss >= attackingStack.size) {
+            attackerUnitLoss = attackingStack.size;
+            attackerTotalDamage = attackingStack.size * aUnit.hitPoints;
+          }
+
+          if (attackerUnitLoss > 0) {
+            attackingStack.sustainedDamage = 0;
+          }
+          attackingStack.sustainedDamage += (attackerTotalDamage % aUnit.hitPoints);
+          attackingStack.size -= attackerUnitLoss;
+          attackingStack.loss += attackerUnitLoss;
+
+
+          // Calculate defender burst loss
+          let defenderResistance = calcResistance(dUnit, burstingType);
+          let defenderDamageMultiplier = calcDamageMultiplier(dUnit, dUnit, burstingType);
+          let defenderDamageVariance = calcDamageVariance(burstingType);
+          let defenderDamage = burstingPower *
+            defendingStack.size *
+            (defendingStack.efficiency / 100) *
+            ((100 - defenderResistance) / 100) *
+            defenderDamageVariance;
+          defenderDamage = Math.floor(defenderDamage * defenderDamageMultiplier);
+          let defenderSustainedDamage = defendingStack.sustainedDamage;
+          let defenderTotalDamage = defenderDamage + defenderSustainedDamage;
+
+          let defenderUnitLoss = Math.floor(defenderTotalDamage / dUnit.hitPoints);
+          if (defenderUnitLoss >= defendingStack.size) {
+            defenderUnitLoss = defendingStack.size;
+          }
+
+          if (defenderUnitLoss > 0) {
+            defendingStack.sustainedDamage = 0;
+          }
+          defendingStack.sustainedDamage += (defenderTotalDamage % dUnit.hitPoints);
+          defendingStack.size -= defenderUnitLoss;
+          defendingStack.loss += defenderUnitLoss;
+
+          battleReport.engagement.logs.push({
+            type: `burst`,
+            attacker: {
+              id: attackingMage.id,
+              unitId: attackingStack.unit.id,
+              unitsLoss: attackerUnitLoss
+            },
+            defender: {
+              id: defendingMage.id,
+              unitId: defendingStack.unit.id,
+              unitsLoss: defenderUnitLoss
+            }
+          });
+        }
+      } // end burst
+
+
+      let accuracy = calcAttackAccuracy(attackType, attackingStack.accuracy, aUnit, dUnit);
+      // let accuracy = attackingStack.accuracy + calcAccuracyModifier(aUnit, dUnit);
+      let resistance = calcResistance(dUnit, aUnit.primaryAttackType);
+      let efficiency = attackingStack.efficiency;
+      let damageMultiplier = calcDamageMultiplier(aUnit, dUnit, aUnit.primaryAttackType);
+      let damageVariance = calcDamageVariance(aUnit.primaryAttackType);
+      if (hasAbility(dUnit, 'charm')) {
+        efficiency -= 50;
+        efficiency = Math.max(0, efficiency);
+      }
+
+      let damage = aUnit.primaryAttackPower *
+        attackingStack.size *
+        (accuracy / 100) *
+        (efficiency / 100) *
+        ((100 - resistance) / 100) *
+        damageVariance;
+      damage = Math.floor(damage * damageMultiplier);
+      let sustainedDamage = defendingStack.sustainedDamage;
+      let totalDamage = damage + sustainedDamage;
+
+      let defenderUnitLoss = Math.floor(totalDamage / dUnit.hitPoints);
+      if (defenderUnitLoss >= defendingStack.size) {
+        totalDamage = defendingStack.size * dUnit.hitPoints;
+        defenderUnitLoss = defendingStack.size;
+      }
+
+      console.log(`\t\t damage=${damage}+${sustainedDamage}, loss=${defenderUnitLoss}`);
+      const battleLog: EngagementLog = {
+        type: 'primary',
+        attacker: {
+          id: attackingMage.id,
+          unitId: attackingStack.unit.id,
+          unitsLoss: 0
+        },
+        defender: {
+          id: defendingMage.id,
+          unitId: defendingStack.unit.id,
+          unitsLoss: defenderUnitLoss
+        }
+      };
+
+      // Accumulate or clear partial damage
+      if (defenderUnitLoss > 0) {
+        defendingStack.sustainedDamage = 0;
+      }
+      defendingStack.sustainedDamage += (totalDamage % dUnit.hitPoints);
+      defendingStack.size -= defenderUnitLoss;
+      defendingStack.loss += defenderUnitLoss;
+
+      // Steallife
+      if (hasAbility(aUnit, 'stealLife')) {
+        const stealPower = aUnit.abilities.find(d => d.name === 'stealLife').extra || 5;
+        const stealLifePoints = (stealPower as number) / 100 * (totalDamage - sustainedDamage);
+        const newUnits = Math.floor(stealLifePoints / getUnitById(aUnit.id).hitPoints);
+        console.log(`${newUnits} ${aUnit.id} are created`);
+        attackingStack.size += newUnits;
+        attackingStack.loss -= newUnits;
+        battleLog.attacker.unitsLoss -= newUnits;
+      }
+      battleReport.engagement.logs.push(battleLog);
+
+      // Additonal Strike ability
+      if (hasAbility(aUnit, 'additionalStrike')) {
+        let damageVariance = calcDamageVariance(aUnit.primaryAttackType);
+        let damage = aUnit.primaryAttackPower *
+          attackingStack.size *
+          (accuracy / 100) *
+          (efficiency / 100) *
+          ((100 - resistance) / 100) *
+          damageVariance;
+        damage = Math.floor(damage * damageMultiplier);
+        let sustainedDamage = defendingStack.sustainedDamage;
+        let totalDamage = damage + sustainedDamage;
+
+        let defenderUnitLoss = Math.floor(totalDamage / dUnit.hitPoints);
+        if (defenderUnitLoss >= defendingStack.size) {
+          totalDamage = defendingStack.size * dUnit.hitPoints;
+          defenderUnitLoss = defendingStack.size;
+        }
+
+        console.log(`\t\t damage=${damage}+${sustainedDamage}, loss=${defenderUnitLoss}`);
+        const battleLog: EngagementLog = {
+          type: 'additionalStrike',
+          attacker: {
+            id: attackingMage.id,
+            unitId: attackingStack.unit.id,
+            unitsLoss: 0
+          },
+          defender: {
+            id: defendingMage.id,
+            unitId: defendingStack.unit.id,
+            unitsLoss: defenderUnitLoss
+          }
+        };
+
+        // Accumulate or clear partial damage
+        if (defenderUnitLoss > 0) {
+          defendingStack.sustainedDamage = 0;
+        }
+        defendingStack.sustainedDamage += (totalDamage % dUnit.hitPoints);
+        defendingStack.size -= defenderUnitLoss;
+        defendingStack.loss += defenderUnitLoss;
+
+        // Steallife
+        if (hasAbility(aUnit, 'stealLife')) {
+          const stealPower = aUnit.abilities.find(d => d.name === 'stealLife').extra || 5;
+          const stealLifePoints = (stealPower as number) / 100 * (totalDamage - sustainedDamage);
+          const newUnits = Math.floor(stealLifePoints / getUnitById(aUnit.id).hitPoints);
+          console.log(`${newUnits} ${aUnit.id} are created`);
+          attackingStack.size += newUnits;
+          attackingStack.loss -= newUnits;
+          battleLog.attacker.unitsLoss -= newUnits;
+        }
+        battleReport.engagement.logs.push(battleLog);
+      } // end Additional Strike
+
+
+      // Counter attack
+      if (aUnit.primaryAttackType.includes('paralyse')) {
+        // Unit paralysed
+      } else if (aUnit.primaryAttackType.includes('ranged')) {
+        // Cannot counter ranged
+      } else if (defendingStack.size > 0 && attackingStack.size > 0) {
+
+        if (battleType === 'pillage' && side === 'defender') continue;
+
+        // Execute counter
+        // let accuracy = defendingStack.accuracy + calcAccuracyModifier(dUnit, aUnit);
+        let accuracy = calcAttackAccuracy(attackType, defendingStack.accuracy, dUnit, aUnit);
+        let resistance = calcResistance(aUnit, dUnit.primaryAttackType);
+        let efficiency = defendingStack.efficiency;
+        let damageMultiplier = calcDamageMultiplier(dUnit, aUnit, dUnit.primaryAttackType);
+        let damageVariance = calcDamageVariance(dUnit.primaryAttackType);
+        if (hasAbility(aUnit, 'charm')) {
+          efficiency -= 50;
+          efficiency = Math.max(0, efficiency);
+        }
+
+        let damage = dUnit.counterAttackPower *
+          defendingStack.size *
+          (accuracy / 100) *
+          (efficiency / 100) *
+          ((100 - resistance) / 100) *
+          damageVariance;
+        damage = Math.floor(damage * damageMultiplier);
+        let sustainedDamage = attackingStack.sustainedDamage;
+        let totalDamage = damage + sustainedDamage;
+
+        let attackerUnitLoss = Math.floor(totalDamage / aUnit.hitPoints);
+        if (attackerUnitLoss >= attackingStack.size) {
+          totalDamage = attackingStack.size * aUnit.hitPoints;
+          attackerUnitLoss = attackingStack.size;
+        }
+        console.log(`\t\t counter damage=${damage}+${sustainedDamage}, loss=${attackerUnitLoss}`);
+
+        const battleLog: EngagementLog = {
+          type: 'counter',
+          attacker: {
+            id: attackingMage.id,
+            unitId: attackingStack.unit.id,
+            unitsLoss: attackerUnitLoss
+          },
+          defender: {
+            id: defendingMage.id,
+            unitId: defendingStack.unit.id,
+            unitsLoss: 0
+          }
+        };
+
+        // Accumulate or clear partial damage
+        if (attackerUnitLoss > 0) {
+          attackingStack.sustainedDamage = 0;
+        }
+        attackingStack.sustainedDamage += (totalDamage % aUnit.hitPoints);
+        attackingStack.size -= attackerUnitLoss;
+        attackingStack.loss += attackerUnitLoss;
+
+        // Steallife
+        if (hasAbility(dUnit, 'stealLife')) {
+          const stealPower = dUnit.abilities.find(d => d.name === 'stealLife').extra || 5;
+          const stealLifePoints = (stealPower as number) / 100 * (totalDamage - sustainedDamage);
+          const newUnits = Math.floor(stealLifePoints / getUnitById(dUnit.id).hitPoints);
+          console.log(`${newUnits} ${dUnit.id} are created`);
+          defendingStack.size += newUnits;
+          defendingStack.loss -= newUnits;
+          battleLog.defender.unitsLoss -= newUnits;
+        }
+
+        battleReport.engagement.logs.push(battleLog);
+      }
+
+      // Fatigue
+      attackingStack.efficiency -= hasAbility(aUnit, 'endurance') ? 10 : 15;
+      if (attackingStack.efficiency < 0) attackingStack.efficiency = 0;
+
+      defendingStack.efficiency -= hasAbility(dUnit, 'endurance') ? 10 : 15;
+      if (defendingStack.efficiency < 0) defendingStack.efficiency = 0;
+    }
+
+    /////////// Secondary //////////
+    if (attackType === 'secondary') {
+      if (attackingStack.unit.secondaryAttackInit < 1 || attackingStack.size <= 0) continue;
+      if (defendingStack.size <= 0) continue;
+
+      let accuracy = calcAttackAccuracy(attackType, attackingStack.accuracy, aUnit, dUnit);
+      // let accuracy = attackingStack.accuracy + calcAccuracyModifier(aUnit, dUnit);
+      let resistance = calcResistance(dUnit, aUnit.secondaryAttackType);
+      let damageVariance = calcDamageVariance(aUnit.secondaryAttackType);
+      let damageMultiplier = calcDamageMultiplier(aUnit, dUnit, aUnit.secondaryAttackType);
+
+      let damage = aUnit.secondaryAttackPower *
+        attackingStack.size *
+        (accuracy / 100) *
+        ((100 - resistance) / 100) *
+        damageVariance;
+      damage = Math.floor(damage * damageMultiplier);
+      let sustainedDamage = defendingStack.sustainedDamage;
+      let totalDamage = damage + sustainedDamage;
+
+      let defenderUnitLoss = Math.floor(totalDamage / dUnit.hitPoints);
+      if (defenderUnitLoss >= defendingStack.size) {
+        totalDamage = defendingStack.size * dUnit.hitPoints;
+        defenderUnitLoss = defendingStack.size;
+      }
+      console.log(`\t\t damage=${damage}+${sustainedDamage}, loss=${defenderUnitLoss}`);
+
+      battleReport.engagement.logs.push({
+        type: 'secondary',
+        attacker: {
+          id: attackingMage.id,
+          unitId: attackingStack.unit.id,
+          unitsLoss: 0
+        },
+        defender: {
+          id: defendingMage.id,
+          unitId: defendingStack.unit.id,
+          unitsLoss: defenderUnitLoss
+        }
+      });
+
+      // Accumulate or clear partial damage
+      if (defenderUnitLoss > 0) {
+        defendingStack.sustainedDamage = 0;
+      }
+      defendingStack.sustainedDamage += (totalDamage % dUnit.hitPoints);
+      defendingStack.size -= defenderUnitLoss;
+      defendingStack.loss += defenderUnitLoss;
+    }
+  } // end battleOrders
+
+
+  // Post battle, healing calculation
+  // Attacker healing
+  attackingArmy.forEach(stack => {
+    if (stack.loss < 0) {
+      battleReport.postBattle.unitSummary.push({
+        id: attacker.mage.id,
+        unitId: stack.unit.id,
+        unitsLoss: 0,
+        unitsHealed: 0
+      });
+      return;
+    }
+    let startingStackLoss = stack.loss;
+    let totalUnitsHealed = calcHealing(stack);
+
+    if (totalUnitsHealed >= stack.loss) {
+      totalUnitsHealed = stack.loss;
+    }
+    stack.loss -= totalUnitsHealed;
+    stack.size += totalUnitsHealed;
+
+    battleReport.postBattle.unitSummary.push({
+      id: attacker.mage.id,
+      unitId: stack.unit.id,
+      unitsLoss: startingStackLoss,
+      unitsHealed: totalUnitsHealed
+    });
+  });
+
+  // Defender healing
+  defendingArmy.forEach(stack => {
+    if (stack.loss < 0) {
+      battleReport.postBattle.unitSummary.push({
+        id: defender.mage.id,
+        unitId: stack.unit.id,
+        unitsLoss: 0,
+        unitsHealed: 0
+      });
+      return;
+    }
+    let startingStackLoss = stack.loss;
+    let totalUnitsHealed = calcHealing(stack);
+
+    if (totalUnitsHealed >= stack.loss) {
+      totalUnitsHealed = stack.loss;
+    }
+    stack.loss -= totalUnitsHealed;
+    stack.size += totalUnitsHealed;
+
+    battleReport.postBattle.unitSummary.push({
+      id: defender.mage.id,
+      unitId: stack.unit.id,
+      unitsLoss: startingStackLoss,
+      unitsHealed: totalUnitsHealed
+    });
+  });
+
+  // Calculate combat result
+  const battleSummary = calcBattleSummary(attackingArmy, defendingArmy);
+  const brA = battleReport.result.attacker;
+  const brD = battleReport.result.defender;
+
+  // Starting army size
+  brA.startingUnits = attackerStartingUnits;
+  brA.armyNetPower = battleSummary.attacker.netPower;
+  brA.armyNetPowerLoss = battleSummary.attacker.netPowerLoss;
+  brA.unitsLoss = battleSummary.attacker.unitsLoss;
+  brA.armyLoss = attackingArmy.map(d => ({ id: d.unit.id, size: d.loss }));
+
+  brD.startingUnits = defenderStartingUnits;
+  brD.armyNetPower = battleSummary.defender.netPower;
+  brD.armyNetPowerLoss = battleSummary.defender.netPowerLoss;
+  brD.unitsLoss = battleSummary.defender.unitsLoss;
+  brD.armyLoss = defendingArmy.map(d => ({ id: d.unit.id, size: d.loss }));
+
+  // Pillage has no further effects to run, stop and return here
+  if (battleReport.attackType === 'pillage') {
+    battleReport.isSuccessful = false;
+    battleReport.result.isSuccessful = false;
+    return battleReport;
+  }
+
+  // Calculate if battle was successful
+  const takenLessDamage = brA.armyNetPowerLoss < brD.armyNetPowerLoss;
+  const dealtEnoughDamage = brD.armyNetPowerLoss >= 0.1 * brD.armyNetPower;
+
+  if ((takenLessDamage && dealtEnoughDamage) || defenderHasArmy === false) {
+    battleReport.isSuccessful = true;
+    battleReport.result.isSuccessful = true;
+  } else {
+    battleReport.isSuccessful = false;
+    battleReport.result.isSuccessful = false;
+  }
+
+  console.log('');
+  console.log('>> Applying postbattle report ');
+
+
+  // Calculate any post battle effects from enchantments or spells/items
+  let activeEffects = getActiveEffects(attacker.mage, E.PostbattleEffect);
+  for (const activeEffect of activeEffects) {
+    const origin = activeEffect.origin;
+    for (const postbattleEffect of activeEffect.effects as PostbattleEffect[]) {
+      // Win condition trigger check for a successful attack
+      if (postbattleEffect.condition === 'win' && battleReport.isSuccessful === false) continue;
+      if (postbattleEffect.condition === 'lose' && battleReport.isSuccessful === true) continue;
+
+      // defence effect does not trigger on attack
+      if (postbattleEffect.activation && postbattleEffect.activation === 'defence') continue;
+
+      for (const effect of postbattleEffect.effects) {
+        if (effect.effectType === E.KingdomResourcesEffect) {
+          postbattleEffect.target === 'self' ?
+            applyKingdomResourcesEffect(attacker.mage, effect as any, origin) :
+            applyKingdomResourcesEffect(defender.mage, effect as any, origin);
+        } else if (effect.effectType === E.StealEffect) {
+          const r = applyStealEffect(attacker.mage, effect as any, origin, defender.mage);
+          battleReport.postBattle.logs.push(r);
+        } else if (effect.effectType === E.KingdomBuildingsEffect) {
+          postbattleEffect.target === 'self' ?
+            applyKingdomBuildingsEffect(attacker.mage, effect as any, origin) :
+            applyKingdomBuildingsEffect(defender.mage, effect as any, origin);
+        }
+      }
+    }
+  }
+
+  activeEffects = getActiveEffects(attacker.mage, E.PostbattleEffect);
+  for (const activeEffect of activeEffects) {
+    const origin = activeEffect.origin;
+    for (const postbattleEffect of activeEffect.effects as PostbattleEffect[]) {
+      // Win condition trigger check for a successful defend
+      if (postbattleEffect.condition === 'win' && battleReport.isSuccessful === true) continue;
+      if (postbattleEffect.condition === 'lose' && battleReport.isSuccessful === false) continue;
+
+      // attack effect does not trigger on defence
+      if (postbattleEffect.activation && postbattleEffect.activation === 'attack') continue;
+
+      for (const effect of postbattleEffect.effects) {
+        if (effect.effectType === E.KingdomResourcesEffect) {
+          postbattleEffect.target === 'self' ?
+            applyKingdomResourcesEffect(defender.mage, effect as any, origin) :
+            applyKingdomResourcesEffect(attacker.mage, effect as any, origin);
+        } else if (effect.effectType === E.StealEffect) {
+          const r = applyStealEffect(defender.mage, effect as any, origin, attacker.mage);
+          battleReport.postBattle.logs.push(r);
+        } else if (effect.effectType === E.KingdomBuildingsEffect) {
+          postbattleEffect.target === 'self' ?
+            applyKingdomBuildingsEffect(defender.mage, effect as any, origin) :
+            applyKingdomBuildingsEffect(attacker.mage, effect as any, origin);
+        }
+      }
+    }
+  }
+
+  return battleReport;
+}
+
+export const resolveBattle = (attacker: Mage, defender: Mage, battleReport: BattleReport) => {
+  ////////////////////////////////////////////////////////////////////////////////
+  // Resolve army losses
+  ////////////////////////////////////////////////////////////////////////////////
+  const result = battleReport.result;
+  const attackerLosses = result.attacker.armyLoss;
+  attackerLosses.forEach(stack => {
+    const f = attacker.army.find(d => { return d.id === stack.id });
+
+    // FIXME: check if allow new units with negative mana income
+    if (stack.size < 0) {
+    }
+    if (f) f.size -= stack.size;
+  });
+  attacker.army = attacker.army.filter(d => d.size > 0);
+
+  const defenderLosses = result.defender.armyLoss;
+  defenderLosses.forEach(stack => {
+    const f = defender.army.find(d => { return d.id === stack.id });
+
+    // FIXME: check if allow new units with negative mana income
+    if (stack.size < 0) {
+    }
+    if (f) f.size -= stack.size;
+  });
+  defender.army = defender.army.filter(d => d.size > 0);
+
+  if (battleReport.isSuccessful === false || battleReport.attackType === 'pillage') {
+    battleReport.result.attacker.endNetPower = totalNetPower(attacker);
+    battleReport.result.defender.endNetPower = totalNetPower(defender);
+    return;
+  }
+
+
+  ////////////////////////////////////////////////////////////////////////////////
+  // Resolve land losses
+  ////////////////////////////////////////////////////////////////////////////////
+  let unitsRemaining = 0;
+  unitsRemaining = battleReport.result.attacker.startingUnits - battleReport.result.attacker.unitsLoss;
+
+  // battleReport.attacker.army.forEach(stack => {
+  //   if (stack.size > 0) unitsRemaining += stack.size;
+  // });
+  const landResult = calcLandLoss(defender, battleReport.attackType, unitsRemaining);
+
+  Object.keys(landResult.landLoss).forEach(key => {
+    defender[key] -= landResult.landLoss[key];
+  });
+  Object.keys(landResult.landGain).forEach(key => {
+    attacker[key] += landResult.landGain[key];
+  });
+  battleReport.landResult = _.cloneDeep(landResult);
+
+  if (defender.forts <= 0) {
+    defender.status = 'defeated';
+  }
+
+  battleReport.result.attacker.endNetPower = totalNetPower(attacker);
+  battleReport.result.defender.endNetPower = totalNetPower(defender);
+
+  ////////////////////////////////////////////////////////////////////////////////
+  // Resolve mage status
+  ////////////////////////////////////////////////////////////////////////////////
+  if (defender.forts <= 0) {
+    defender.status = 'defeated';
+    battleReport.result.isDefenderDefeated = true;
+  }
+
+
+  // land summary for battle report
+  const buildingTypes = [
+    'wilderness', 'farms', 'towns',
+    'workshops', 'nodes', 'barracks',
+    'guilds', 'barriers', 'forts'
+  ];
+  let totalLandGain = 0;
+  buildingTypes.forEach(building => {
+    totalLandGain += battleReport.landResult.landGain[building];
+  });
+  let totalLandLoss = 0;
+  buildingTypes.forEach(building => {
+    totalLandLoss += battleReport.landResult.landLoss[building];
+  });
+  battleReport.result.landGain = totalLandGain;
+  battleReport.result.landLoss = totalLandLoss;
+
+}
