@@ -10,10 +10,18 @@ import {
   populationIncome,
 } from 'engine/src/interior';
 import {
+  castingCost,
+  dispelEnchantment,
   manaIncome,
   maxMana,
   researchPoints,
+  successCastingRate,
 } from 'engine/src/magic';
+import {
+  getItemById,
+  getSpellById,
+  getUnitById,
+} from 'engine/src/base/references';
 
 export const ARCANUM_SCHOOLS = Object.freeze({
   ascendant: { code: 'aurea', name: 'Aurea' },
@@ -69,6 +77,113 @@ export function toArcanumRank(row: {
     power: row.netPower,
     fortresses: row.forts,
   };
+}
+
+export function toArcanumMagicState(mage: Mage) {
+  const spells = Object.values(mage.spellbook)
+    .flat()
+    .map(id => {
+      const spell = getSpellById(id);
+      return {
+        id: spell.id,
+        name: spell.name,
+        description: spell.description,
+        school: arcanumSchool(spell.magic),
+        rank: spell.rank,
+        attributes: spell.attributes,
+        castingTurns: spell.castingTurn,
+        manaCost: castingCost(mage, spell.id),
+        baseManaCost: spell.castingCost,
+        successRate: successCastingRate(mage, spell.id),
+        life: spell.life ?? null,
+        upkeep: spell.upkeep,
+      };
+    });
+
+  const items = Object.entries(mage.items)
+    .filter(([, amount]) => amount > 0)
+    .map(([id, amount]) => {
+      const item = getItemById(id);
+      return {
+        id: item.id,
+        name: item.name,
+        description: item.description,
+        attributes: item.attributes,
+        amount,
+        upkeep: item.upkeep,
+      };
+    });
+
+  const enchantments = mage.enchantments
+    .filter(enchantment => enchantment.isActive)
+    .map(enchantment => ({
+      id: enchantment.id,
+      spellId: enchantment.spellId,
+      spellName: getSpellById(enchantment.spellId).name,
+      school: arcanumSchool(enchantment.casterMagic),
+      casterId: enchantment.casterId,
+      targetId: enchantment.targetId,
+      spellLevel: enchantment.spellLevel,
+      permanent: enchantment.isPermanent,
+      life: enchantment.life,
+      selfCast: enchantment.casterId === mage.id,
+    }));
+
+  return {
+    spells,
+    items,
+    enchantments,
+    mana: {
+      current: mage.currentMana,
+      capacity: maxMana(mage),
+      incomePerTurn: manaIncome(mage),
+    },
+    spellLevel: currentSpellLevel(mage),
+  };
+}
+
+export function toArcanumDispelPreview(mage: Mage, enchantId: string, mana: number) {
+  const enchantment = mage.enchantments.find(row => row.id === enchantId);
+  if (!enchantment) return null;
+  return {
+    enchantmentId: enchantId,
+    mana,
+    probability: dispelEnchantment(mage, enchantment, mana),
+  };
+}
+
+export function describeMarketAsset(priceId: string, type: string) {
+  try {
+    if (type === 'item') {
+      const item = getItemById(priceId);
+      return { id: item.id, name: item.name, description: item.description, type };
+    }
+    if (type === 'spell') {
+      const spell = getSpellById(priceId);
+      return {
+        id: spell.id,
+        name: spell.name,
+        description: spell.description,
+        type,
+        school: arcanumSchool(spell.magic),
+        rank: spell.rank,
+      };
+    }
+    if (type === 'unit') {
+      const unit = getUnitById(priceId);
+      return {
+        id: unit.id,
+        name: unit.name,
+        description: unit.description,
+        type,
+        school: unit.magic === 'plain' ? null : arcanumSchool(unit.magic),
+        power: unit.powerRank,
+      };
+    }
+  } catch {
+    // Keep stable engine identifiers even if a market row outlives catalog data.
+  }
+  return { id: priceId, name: priceId, description: '', type };
 }
 
 export function toEngineBuildingPlan(
