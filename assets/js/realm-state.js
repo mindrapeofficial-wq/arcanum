@@ -10,8 +10,10 @@ const PASSIVE_RESOURCE_FIELDS={
 let passiveResourceFlow=null;
 
 function researchPointsPerTurn(state=realmState){
+  const serverRate=Number(state?.rates?.researchPerTurn??state?.engine_rates?.researchPerTurn);
+  if(Number.isFinite(serverRate))return Math.floor(serverRate);
   const guilds=Math.max(0,Number(state?.buildings?.guilds||0));
-  return Math.floor(Math.sqrt(guilds)*3.5);
+  return Math.floor(Math.sqrt(guilds)*20);
 }
 function foodResourceInfo(state=realmState){
   const r=state?.realm||{}, c=state?.capacities||{};
@@ -178,32 +180,14 @@ function passiveSnapshot(state=realmState){
 }
 function syncPassiveResourceFlow(state=realmState){
   if(!state?.realm)return;
-  const now=Date.now(), current=passiveSnapshot(state), previous=passiveResourceFlow?.snapshot||null;
-  const sameSignature=!!previous&&previous.buildingSignature===current.buildingSignature;
-  const fallbackYield=passiveFallbackYield();
-  let yieldPerTurn=passiveServerYield(state)||passiveReadCache(state)||(sameSignature?passiveResourceFlow?.yieldPerTurn:null)||fallbackYield;
-  yieldPerTurn={...fallbackYield,...yieldPerTurn};
-
-  if(previous && sameSignature){
-    const turnsGained=current.turns-previous.turns;
-    const scheduleAdvanced=current.nextTurnAt>previous.nextTurnAt+PASSIVE_TURN_MS*0.45;
-    if(turnsGained>0 && scheduleAdvanced){
-      const learned={};
-      for(const field of Object.keys(PASSIVE_RESOURCE_FIELDS)){
-        const delta=(current.values[field]-previous.values[field])/turnsGained;
-        if(Number.isFinite(delta) && delta!==0)learned[field]=delta;
-      }
-      if(Object.keys(learned).length){
-        yieldPerTurn={...yieldPerTurn,...learned};
-        passiveWriteCache(state,yieldPerTurn);
-      }
-    }
-  }
-
-  const phaseAtSync=current.nextTurnAt
-    ?Math.max(0,Math.min(1,1-((current.nextTurnAt-now)/PASSIVE_TURN_MS)))
-    :0;
-  passiveResourceFlow={snapshot:current,yieldPerTurn,syncedAt:now,phaseAtSync};
+  // Original Archimago regenerates turns passively, not economic resources.
+  // Keep displayed resources equal to the authoritative server snapshot.
+  passiveResourceFlow={
+    snapshot:passiveSnapshot(state),
+    yieldPerTurn:passiveFallbackYield(),
+    syncedAt:Date.now(),
+    phaseAtSync:0
+  };
 }
 function passiveDisplayedValue(field){
   const r=realmState?.realm;
