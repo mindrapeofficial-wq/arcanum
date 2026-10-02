@@ -41,7 +41,7 @@ function startCommunityPolling(){
   communityPollTimer=setInterval(()=>{ if(currentView==="community" && ["chat","school"].includes(communityMode)){ loadChatMessages(true); loadPresence(); } },COMMUNITY_POLL_MS);
 }
 const NAV_GROUP_BY_VIEW=Object.freeze({
-  realm:"reino",build:"reino",research:"reino",economy:"reino",market:"reino",army:"reino",war:"reino",battles:"reino",
+  realm:"reino",build:"reino",research:"reino",economy:"reino",market:"reino",army:"reino",battles:"reino",
   community:"comunidad",ranking:"comunidad",admin:"comunidad"
 });
 const NAV_GROUP_LABELS=Object.freeze({reino:"Reino",comunidad:"Comunidad"});
@@ -67,7 +67,7 @@ function syncNavigationGroup(view){
 }
 syncNavigationGroup(currentView);
 
-const RETIRED_VIEWS=new Set(["character","artifacts","arena","pvp-ranking","pve","event","tavern"]);
+const RETIRED_VIEWS=new Set(["character","artifacts","arena","pvp-ranking","pve","event","tavern","war"]);
 async function navigate(view){
   if(RETIRED_VIEWS.has(view))view="realm";
   currentView=view;
