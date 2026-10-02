@@ -5,12 +5,26 @@
     "module": "commonjs",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "resolveJsonModule":true,
+    "resolveJsonModule": true,
     "target": "esnext",
-    "paths":{
-      "shared/*": ["../../shared/*"],
-      "data/*": ["../../data/*"],
-      "data-adapter/*": ["../../data-adapter/*"]
+    "paths": {
+      "shared/*": [
+        "../../shared/*"
+      ],
+      "data/*": [
+        "../../data/*"
+      ],
+      "data-adapter/*": [
+        "../../data-adapter/*"
+      ]
     }
-  }
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "tests",
+    "dist",
+    "node_modules"
+  ]
 }
