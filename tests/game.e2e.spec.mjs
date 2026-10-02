@@ -515,7 +515,7 @@ test("el Perfil social se abre desde la tarjeta del mago y permite editar la bio
   await expect(page.locator(".profile-section-title span",{hasText:"ALIANZA"})).toBeVisible();
   await page.locator("#profile-bio-input").fill("Nueva bio de pruebas.");
   await page.locator("#profile-save-bio").click();
-  await expect(page.locator(".toast").last()).toContainText("Ficha de personaje actualizada");
+  await expect(page.locator(".toast").last()).toContainText("Perfil social actualizado");
   expect(mock.calls.some(x=>x.path==="/rest/v1/rpc/update_my_profile")).toBeTruthy();
 });
 
