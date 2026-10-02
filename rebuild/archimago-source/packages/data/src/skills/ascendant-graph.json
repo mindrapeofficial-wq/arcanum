@@ -1,9 +1,9 @@
 [
   {
     "id": "firstAid",
-    "name": "First Aid",
+    "name": "Socorro Luminar",
     "magic": "ascendant",
-    "description": "Provides healing support for your armies in battle",
+    "description": "Mejora el apoyo curativo que reciben las huestes durante el combate.",
     "maxLevel": 10,
     "prereqs": {},
     "effects": [
@@ -20,11 +20,21 @@
             "healType": "points",
             "rule": "none",
             "magic": {
-              "ascendant": { "value": 0.5 },
-              "verdant": { "value": 0.5 },
-              "eradication": { "value": 0.5 },
-              "nether": { "value": 0.5 },
-              "phantasm": { "value": 0.5 }
+              "ascendant": {
+                "value": 0.5
+              },
+              "verdant": {
+                "value": 0.5
+              },
+              "eradication": {
+                "value": 0.5
+              },
+              "nether": {
+                "value": 0.5
+              },
+              "phantasm": {
+                "value": 0.5
+              }
             }
           }
         ]
@@ -33,9 +43,9 @@
   },
   {
     "id": "consecratedGround",
-    "name": "Consecrated Ground",
+    "name": "Terreno del Alba",
     "magic": "ascendant",
-    "description": "Your units fight better on lands that have been blessed",
+    "description": "Fortalece a las fuerzas de Aurea cuando defienden tierras preparadas por el Dominio.",
     "maxLevel": 10,
     "prereqs": {
       "firstAid": 5
@@ -46,8 +56,10 @@
         "target": "self",
         "targetType": "all",
         "filters": [
-          { 
-            "magic": ["ascendant"]
+          {
+            "magic": [
+              "ascendant"
+            ]
           }
         ],
         "trigger": null,
@@ -60,11 +72,21 @@
               "hitPoints": {
                 "rule": "percentage",
                 "magic": {
-                  "ascendant": { "value": 0.01 },
-                  "verdant": { "value": 0.01 },
-                  "eradication": { "value": 0.01 },
-                  "nether": { "value": 0.01 },
-                  "phantasm": { "value": 0.01 }
+                  "ascendant": {
+                    "value": 0.01
+                  },
+                  "verdant": {
+                    "value": 0.01
+                  },
+                  "eradication": {
+                    "value": 0.01
+                  },
+                  "nether": {
+                    "value": 0.01
+                  },
+                  "phantasm": {
+                    "value": 0.01
+                  }
                 }
               }
             }
@@ -75,9 +97,9 @@
   },
   {
     "id": "prayer",
-    "name": "Prayer",
+    "name": "Letanía Áurea",
     "magic": "ascendant",
-    "description": "",
+    "description": "Refuerza la resistencia de las tropas frente a venenos y efectos de inmovilización.",
     "maxLevel": 10,
     "prereqs": {
       "firstAid": 5
@@ -97,11 +119,21 @@
               "attackResistances.paralyse,attackResistances.poison": {
                 "rule": "add",
                 "magic": {
-                  "ascendant": { "value": 1 },
-                  "verdant": { "value": 1 },
-                  "eradication": { "value": 1 },
-                  "nether": { "value": 1 },
-                  "phantasm": { "value": 1 }
+                  "ascendant": {
+                    "value": 1
+                  },
+                  "verdant": {
+                    "value": 1
+                  },
+                  "eradication": {
+                    "value": 1
+                  },
+                  "nether": {
+                    "value": 1
+                  },
+                  "phantasm": {
+                    "value": 1
+                  }
                 }
               }
             }
@@ -112,9 +144,9 @@
   },
   {
     "id": "angelicChorus",
-    "name": "Angelic Chorus",
+    "name": "Coro del Firmamento",
     "magic": "ascendant",
-    "description": "",
+    "description": "Potencia la fuerza y resistencia de las entidades luminosas al servicio de Aurea.",
     "maxLevel": 10,
     "prereqs": {
       "prayer": 2
@@ -125,7 +157,11 @@
         "target": "self",
         "targetType": "all",
         "filters": [
-          { "race": [ "angel"] }
+          {
+            "race": [
+              "angel"
+            ]
+          }
         ],
         "trigger": null,
         "effects": [
@@ -136,11 +172,21 @@
               "primaryAttackPower,secondaryAttackPower": {
                 "rule": "percentage",
                 "magic": {
-                  "ascendant": { "value": 0.02 },
-                  "verdant": { "value": 0.02 },
-                  "eradication": { "value": 0.02 },
-                  "nether": { "value": 0.02 },
-                  "phantasm": { "value": 0.02 }
+                  "ascendant": {
+                    "value": 0.02
+                  },
+                  "verdant": {
+                    "value": 0.02
+                  },
+                  "eradication": {
+                    "value": 0.02
+                  },
+                  "nether": {
+                    "value": 0.02
+                  },
+                  "phantasm": {
+                    "value": 0.02
+                  }
                 }
               }
             }
@@ -152,11 +198,21 @@
               "hitPoints": {
                 "rule": "percentage",
                 "magic": {
-                  "ascendant": { "value": 0.01 },
-                  "verdant": { "value": 0.01 },
-                  "eradication": { "value": 0.01 },
-                  "nether": { "value": 0.01 },
-                  "phantasm": { "value": 0.01 }
+                  "ascendant": {
+                    "value": 0.01
+                  },
+                  "verdant": {
+                    "value": 0.01
+                  },
+                  "eradication": {
+                    "value": 0.01
+                  },
+                  "nether": {
+                    "value": 0.01
+                  },
+                  "phantasm": {
+                    "value": 0.01
+                  }
                 }
               }
             }
@@ -167,9 +223,9 @@
   },
   {
     "id": "crusade",
-    "name": "Crusade",
+    "name": "Marcha del Juramento",
     "magic": "ascendant",
-    "description": "",
+    "description": "Eleva el poder ofensivo general de las huestes mediante una doctrina de combate disciplinado.",
     "maxLevel": 5,
     "prereqs": {
       "angelicChorus": 2,
@@ -190,11 +246,21 @@
               "primaryAttackPower,secondaryAttackPower,counterAttackPower": {
                 "rule": "percentage",
                 "magic": {
-                  "ascendant": { "value": 0.02 },
-                  "verdant": { "value": 0.02 },
-                  "eradication": { "value": 0.02 },
-                  "nether": { "value": 0.02 },
-                  "phantasm": { "value": 0.02 }
+                  "ascendant": {
+                    "value": 0.02
+                  },
+                  "verdant": {
+                    "value": 0.02
+                  },
+                  "eradication": {
+                    "value": 0.02
+                  },
+                  "nether": {
+                    "value": 0.02
+                  },
+                  "phantasm": {
+                    "value": 0.02
+                  }
                 }
               }
             }
