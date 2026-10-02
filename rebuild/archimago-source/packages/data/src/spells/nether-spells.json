@@ -1,11 +1,14 @@
 [
   {
     "id": "animateSkeleton",
-    "name": "Animate Skeleton",
+    "name": "Alzar Osamentas",
     "magic": "nether",
     "rank": "simple",
     "description": "This spell will animate the bones of the dead into walking skeletons that obey your commands. They are weak, but they come in great numbers, and they are immune to most mind-affecting effects. By stealing from Death in the graveyard, you create life in the battlefield.",
-    "attributes": ["summon", "selfOnly"],
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
     "researchCost": 500,
     "castingCost": 2500,
     "castingTurn": 1,
@@ -13,27 +16,43 @@
     "effects": [
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["skeleton"],
+        "unitIds": [
+          "skeleton"
+        ],
         "summonType": "all",
         "summonNetPower": 70000,
         "rule": "spellLevelScaled",
         "magic": {
-          "ascendant": { "value": 0.3 },
-          "verdant": { "value": 0.3 },
-          "eradication": { "value": 0.6 },
-          "nether": { "value": 1.0 },
-          "phantasm": { "value": 0.6 }
+          "ascendant": {
+            "value": 0.3
+          },
+          "verdant": {
+            "value": 0.3
+          },
+          "eradication": {
+            "value": 0.6
+          },
+          "nether": {
+            "value": 1
+          },
+          "phantasm": {
+            "value": 0.6
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Nadir"
   },
   {
     "id": "animateZombie",
-    "name": "Animate Zombie",
+    "name": "Alzar Restos",
     "magic": "nether",
     "rank": "simple",
     "description": "This spell will animate freshly dead corpses into zombies to fight for you. Although they are clumsy, they are tougher than skeletons.",
-    "attributes": ["summon", "selfOnly"],
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
     "researchCost": 1000,
     "castingCost": 5100,
     "castingTurn": 1,
@@ -41,27 +60,43 @@
     "effects": [
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["zombie"],
+        "unitIds": [
+          "zombie"
+        ],
         "summonType": "all",
         "summonNetPower": 70000,
         "rule": "spellLevelScaled",
         "magic": {
-          "ascendant": { "value": 0.3 },
-          "verdant": { "value": 0.3 },
-          "eradication": { "value": 0.6 },
-          "nether": { "value": 1.0 },
-          "phantasm": { "value": 0.6 }
+          "ascendant": {
+            "value": 0.3
+          },
+          "verdant": {
+            "value": 0.3
+          },
+          "eradication": {
+            "value": 0.6
+          },
+          "nether": {
+            "value": 1
+          },
+          "phantasm": {
+            "value": 0.6
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Nadir"
   },
   {
     "id": "summonShadow",
-    "name": "Summon Shadow",
+    "name": "Convocar Sombra Hueca",
     "magic": "nether",
     "rank": "simple",
     "description": "This spell summons Shadows, creatures of the night, to your army. They posses some magical abilities, and incorporeal body which makes them immune to melee and missile attacks. Those slain by shadows will become shadows as well.",
-    "attributes": ["summon", "selfOnly"],
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
     "researchCost": 500,
     "castingCost": 2500,
     "castingTurn": 1,
@@ -69,27 +104,42 @@
     "effects": [
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["shadow"],
+        "unitIds": [
+          "shadow"
+        ],
         "summonType": "all",
         "summonNetPower": 70000,
         "rule": "spellLevelScaled",
         "magic": {
-          "ascendant": { "value": 0.3 },
-          "verdant": { "value": 0.3 },
-          "eradication": { "value": 0.6 },
-          "nether": { "value": 1.0 },
-          "phantasm": { "value": 0.6 }
+          "ascendant": {
+            "value": 0.3
+          },
+          "verdant": {
+            "value": 0.3
+          },
+          "eradication": {
+            "value": 0.6
+          },
+          "nether": {
+            "value": 1
+          },
+          "phantasm": {
+            "value": 0.6
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Nadir"
   },
   {
     "id": "blackenSoul",
-    "name": "Blacken Soul",
+    "name": "Eclipse del Alma",
     "magic": "nether",
     "rank": "simple",
     "description": "This spell will use the powers of evil to paralyze your opponent, while draining a part of their life force. This simple spell is quite effective on weaker units. Area of effect: 1 random enemy group.",
-    "attributes": ["battle"],
+    "attributes": [
+      "battle"
+    ],
     "researchCost": 500,
     "castingCost": 1000,
     "castingTurn": 0,
@@ -105,28 +155,58 @@
           {
             "effectType": "UnitDamageEffect",
             "checkResistance": true,
-            "damageType": ["paralyse"],
+            "damageType": [
+              "paralyse"
+            ],
             "target": "damage",
             "rule": "spellLevel",
             "magic": {
-              "ascendant": { "value": { "min": 80, "max": 80 } },
-              "verdant": { "value": { "min": 80, "max": 80 } },
-              "eradication": { "value": { "min": 130, "max": 130 } },
-              "nether": { "value": { "min": 220, "max": 220 } },
-              "phantasm": { "value": { "min": 130, "max": 130 } }
+              "ascendant": {
+                "value": {
+                  "min": 80,
+                  "max": 80
+                }
+              },
+              "verdant": {
+                "value": {
+                  "min": 80,
+                  "max": 80
+                }
+              },
+              "eradication": {
+                "value": {
+                  "min": 130,
+                  "max": 130
+                }
+              },
+              "nether": {
+                "value": {
+                  "min": 220,
+                  "max": 220
+                }
+              },
+              "phantasm": {
+                "value": {
+                  "min": 130,
+                  "max": 130
+                }
+              }
             }
           }
         ]
       }
-    ]
+    ],
+    "displaySchool": "Nadir"
   },
   {
     "id": "curse",
-    "name": "Curse",
+    "name": "Marca de Desventura",
     "magic": "nether",
     "rank": "simple",
     "description": "The Curse will decrease the luck of your enemy. And some luck is what you will need in a battle. It will decrease the accuracy and attack strength of your enemy. Area of effect: 1 enemy group.",
-    "attributes": ["battle"],
+    "attributes": [
+      "battle"
+    ],
     "researchCost": 500,
     "castingCost": 700,
     "castingTurn": 0,
@@ -146,26 +226,39 @@
               "accuracy": {
                 "rule": "add",
                 "magic": {
-                  "ascendant": { "value": -1.5 },
-                  "verdant": { "value": -1.5 },
-                  "eradication": { "value": -2.5 },
-                  "nether": { "value": -5 },
-                  "phantasm": { "value": -2.5 }
+                  "ascendant": {
+                    "value": -1.5
+                  },
+                  "verdant": {
+                    "value": -1.5
+                  },
+                  "eradication": {
+                    "value": -2.5
+                  },
+                  "nether": {
+                    "value": -5
+                  },
+                  "phantasm": {
+                    "value": -2.5
+                  }
                 }
               }
             }
           }
         ]
       }
-    ]
+    ],
+    "displaySchool": "Nadir"
   },
   {
     "id": "fear",
-    "name": "Fear",
+    "name": "Oleada de Pavor",
     "magic": "nether",
     "rank": "simple",
     "description": "This spell will send terror throughout your enemy's troops, scattering their forces. Their attack and counter attack are decreased. Area of effect: 1 random enemy group.",
-    "attributes": ["battle"],
+    "attributes": [
+      "battle"
+    ],
     "researchCost": 500,
     "castingCost": 600,
     "castingTurn": 0,
@@ -185,26 +278,40 @@
               "primaryAttackPower,secondaryAttackPower,counterAttackPower": {
                 "rule": "percentage",
                 "magic": {
-                  "ascendant": { "value": -0.13 },
-                  "verdant": { "value": -0.13 },
-                  "eradication": { "value": -0.25 },
-                  "nether": { "value": -0.55 },
-                  "phantasm": { "value": -0.25 }
+                  "ascendant": {
+                    "value": -0.13
+                  },
+                  "verdant": {
+                    "value": -0.13
+                  },
+                  "eradication": {
+                    "value": -0.25
+                  },
+                  "nether": {
+                    "value": -0.55
+                  },
+                  "phantasm": {
+                    "value": -0.25
+                  }
                 }
               }
             }
           }
         ]
       }
-    ]
+    ],
+    "displaySchool": "Nadir"
   },
   {
     "id": "animateGhoul",
-    "name": "Animate Ghoul",
+    "name": "Alzar Devoracadáveres",
     "magic": "nether",
     "rank": "average",
     "description": "This spell will animate fresh corpses into flesh eating ghouls. The touch of these ghouls can paralyze your enemy, and they are deadly in battle.",
-    "attributes": ["summon", "selfOnly"],
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
     "researchCost": 2000,
     "castingCost": 15600,
     "castingTurn": 2,
@@ -212,27 +319,43 @@
     "effects": [
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["ghoul"],
+        "unitIds": [
+          "ghoul"
+        ],
         "summonType": "all",
         "summonNetPower": 180000,
         "rule": "spellLevelScaled",
         "magic": {
-          "ascendant": { "value": 0.3 },
-          "verdant": { "value": 0.3 },
-          "eradication": { "value": 0.6 },
-          "nether": { "value": 1.0 },
-          "phantasm": { "value": 0.6 }
+          "ascendant": {
+            "value": 0.3
+          },
+          "verdant": {
+            "value": 0.3
+          },
+          "eradication": {
+            "value": 0.6
+          },
+          "nether": {
+            "value": 1
+          },
+          "phantasm": {
+            "value": 0.6
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Nadir"
   },
   {
     "id": "shroudOfDarkness",
-    "name": "Shroud Of Darkness",
+    "name": "Manto del Nadir",
     "magic": "nether",
     "rank": "average",
-    "description": "This spell will cover your whole kingdom under a veil of darkness to protect your troops from Ascendant magic.",
-    "attributes": ["enchantment", "selfOnly"],
+    "description": "This spell will cover your whole kingdom under a veil of darkness to protect your troops from Aurea magic.",
+    "attributes": [
+      "enchantment",
+      "selfOnly"
+    ],
     "researchCost": 1500,
     "castingCost": 10000,
     "castingTurn": 4,
@@ -247,22 +370,36 @@
         "rule": "spellLevel",
         "resistance": "ascendant",
         "magic": {
-          "ascendant": { "value": 0.03 },
-          "verdant": { "value": 0.03 },
-          "eradication": { "value": 0.034 },
-          "nether": { "value": 0.12 },
-          "phantasm": { "value": 0.034 }
+          "ascendant": {
+            "value": 0.03
+          },
+          "verdant": {
+            "value": 0.03
+          },
+          "eradication": {
+            "value": 0.034
+          },
+          "nether": {
+            "value": 0.12
+          },
+          "phantasm": {
+            "value": 0.034
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Nadir"
   },
   {
     "id": "summonHornedDemon",
-    "name": "Summon Horned Demon",
+    "name": "Convocar Astado Abisal",
     "magic": "nether",
     "rank": "average",
     "description": "By casting this summon, most violent Demons will join your ranks. Those horned abominations bring panic to the battlefield, slaughtering enemies without mercy. As their more powerful cousins Devils, they will ravage the battle collecting souls.",
-    "attributes": ["summon", "selfOnly"],
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
     "researchCost": 2500,
     "castingCost": 35500,
     "castingTurn": 2,
@@ -270,27 +407,43 @@
     "effects": [
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["hornedDemon"],
+        "unitIds": [
+          "hornedDemon"
+        ],
         "summonType": "all",
         "summonNetPower": 185000,
         "rule": "spellLevelScaled",
         "magic": {
-          "ascendant": { "value": 0.3 },
-          "verdant": { "value": 0.3 },
-          "eradication": { "value": 0.6 },
-          "nether": { "value": 1.0 },
-          "phantasm": { "value": 0.6 }
+          "ascendant": {
+            "value": 0.3
+          },
+          "verdant": {
+            "value": 0.3
+          },
+          "eradication": {
+            "value": 0.6
+          },
+          "nether": {
+            "value": 1
+          },
+          "phantasm": {
+            "value": 0.6
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Nadir"
   },
   {
     "id": "summonWraith",
-    "name": "Summon Wraith",
+    "name": "Convocar Espectro del Umbral",
     "magic": "nether",
     "rank": "average",
     "description": "This spell will summon the ancient undead spirits to join your forces. Their touch means death.",
-    "attributes": ["summon", "selfOnly"],
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
     "researchCost": 2500,
     "castingCost": 35500,
     "castingTurn": 2,
@@ -298,27 +451,42 @@
     "effects": [
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["wraith"],
+        "unitIds": [
+          "wraith"
+        ],
         "summonType": "all",
         "summonNetPower": 180000,
         "rule": "spellLevelScaled",
         "magic": {
-          "ascendant": { "value": 0.3 },
-          "verdant": { "value": 0.3 },
-          "eradication": { "value": 0.6 },
-          "nether": { "value": 1.0 },
-          "phantasm": { "value": 0.6 }
+          "ascendant": {
+            "value": 0.3
+          },
+          "verdant": {
+            "value": 0.3
+          },
+          "eradication": {
+            "value": 0.6
+          },
+          "nether": {
+            "value": 1
+          },
+          "phantasm": {
+            "value": 0.6
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Nadir"
   },
   {
     "id": "battleLust",
-    "name": "Battle Lust",
+    "name": "Frenesí Carmesí",
     "magic": "nether",
     "rank": "complex",
-    "description": "This spell will drive your units berserk, causing them to inflict much more damage than they normally do. But on the other hand, since they are too absorbed with killing the enemies, they will not try to protect themselves, thus greately weakening their defenses.",
-    "attributes": ["battle"],
+    "description": "This spell will drive your units berserk, causing them to inflict much more daArconte than they normally do. But on the other hand, since they are too absorbed with killing the enemies, they will not try to protect themselves, thus greately weakening their defenses.",
+    "attributes": [
+      "battle"
+    ],
     "researchCost": 2000,
     "castingCost": 10000,
     "castingTurn": 0,
@@ -338,11 +506,21 @@
               "primaryAttackPower,secondaryAttackPower,counterAttackPower": {
                 "rule": "spellLevelScaledPercentage",
                 "magic": {
-                  "ascendant": { "value": 0.18 },
-                  "verdant": { "value": 0.18 },
-                  "eradication": { "value": 0.41 },
-                  "nether": { "value": 0.76 },
-                  "phantasm": { "value": 0.41 }
+                  "ascendant": {
+                    "value": 0.18
+                  },
+                  "verdant": {
+                    "value": 0.18
+                  },
+                  "eradication": {
+                    "value": 0.41
+                  },
+                  "nether": {
+                    "value": 0.76
+                  },
+                  "phantasm": {
+                    "value": 0.41
+                  }
                 }
               }
             }
@@ -354,26 +532,39 @@
               "hitPoints": {
                 "rule": "spellLevelScaledPercentage",
                 "magic": {
-                  "ascendant": { "value": -0.12 },
-                  "verdant": { "value": -0.12 },
-                  "eradication": { "value": -0.20 },
-                  "nether": { "value": -0.36 },
-                  "phantasm": { "value": -0.20 }
+                  "ascendant": {
+                    "value": -0.12
+                  },
+                  "verdant": {
+                    "value": -0.12
+                  },
+                  "eradication": {
+                    "value": -0.2
+                  },
+                  "nether": {
+                    "value": -0.36
+                  },
+                  "phantasm": {
+                    "value": -0.2
+                  }
                 }
               }
             }
           }
         ]
       }
-    ]
+    ],
+    "displaySchool": "Nadir"
   },
   {
     "id": "bloodCurse",
-    "name": "Blood Curse",
+    "name": "Estigma de Sangre",
     "magic": "nether",
     "rank": "complex",
     "description": "Using your own blood as a medium, you lay a powerful enchantment upon your armies. Wounds inflicted by your troops will be cursed, leaving behind injuries that will never close or heal over, thus preventing any healing or regeneration effect.",
-    "attributes": ["battle"],
+    "attributes": [
+      "battle"
+    ],
     "researchCost": 6000,
     "castingCost": 20000,
     "castingTurn": 0,
@@ -393,26 +584,55 @@
               "abilities": {
                 "rule": "add",
                 "magic": {
-                  "ascendant": { "value": { "name": "bloodCurse", "extra": null } },
-                  "verdant": { "value": { "name": "bloodCurse", "extra": null } },
-                  "eradication": { "value": { "name": "bloodCurse", "extra": null } },
-                  "nether": { "value": { "name": "bloodCurse", "extra": null } },
-                  "phantasm": { "value": { "name": "bloodCurse", "extra": null } }
+                  "ascendant": {
+                    "value": {
+                      "name": "bloodCurse",
+                      "extra": null
+                    }
+                  },
+                  "verdant": {
+                    "value": {
+                      "name": "bloodCurse",
+                      "extra": null
+                    }
+                  },
+                  "eradication": {
+                    "value": {
+                      "name": "bloodCurse",
+                      "extra": null
+                    }
+                  },
+                  "nether": {
+                    "value": {
+                      "name": "bloodCurse",
+                      "extra": null
+                    }
+                  },
+                  "phantasm": {
+                    "value": {
+                      "name": "bloodCurse",
+                      "extra": null
+                    }
+                  }
                 }
               }
             }
           }
         ]
       }
-    ]
+    ],
+    "displaySchool": "Nadir"
   },
   {
     "id": "bloodRitual",
-    "name": "Blood Ritual",
+    "name": "Liturgia Hemática",
     "magic": "nether",
     "rank": "complex",
     "description": "Kill and sacrifice your people to generate ghouls with their flesh and bones. The ritual lasts for 200 turns. Ghouls all over the world!",
-    "attributes": ["enchantment", "selfOnly"],
+    "attributes": [
+      "enchantment",
+      "selfOnly"
+    ],
     "researchCost": 3000,
     "castingCost": 50000,
     "castingTurn": 5,
@@ -425,27 +645,42 @@
     "effects": [
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["ghoul"],
+        "unitIds": [
+          "ghoul"
+        ],
         "summonType": "all",
         "summonNetPower": 0,
         "rule": "set",
         "magic": {
-          "ascendant": { "value": 666 },
-          "eradication": { "value": 666 },
-          "nether": { "value": 666 },
-          "phantasm": { "value": 666 },
-          "verdant": { "value": 666 }
+          "ascendant": {
+            "value": 666
+          },
+          "eradication": {
+            "value": 666
+          },
+          "nether": {
+            "value": 666
+          },
+          "phantasm": {
+            "value": 666
+          },
+          "verdant": {
+            "value": 666
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Nadir"
   },
   {
     "id": "deathAndDecay",
-    "name": "Death and Decay",
+    "name": "Velo de Putrefacción",
     "magic": "nether",
     "rank": "complex",
-    "description": "This powerful nether spell will cover the target mage's country with a heavy fog of death and decay. It brings death to the living and decay to the land. This enchantment takes effect when enemy is taking turns.",
-    "attributes": ["enchantment"],
+    "description": "This powerful Nadir spell will cover the target del Arconte country with a heavy fog of death and decay. It brings death to the living and decay to the land. This enchantment takes effect when enemy is taking turns.",
+    "attributes": [
+      "enchantment"
+    ],
     "researchCost": 5000,
     "castingCost": 38000,
     "castingTurn": 5,
@@ -461,11 +696,36 @@
         "rule": "spellLevelScaled",
         "target": "all",
         "magic": {
-          "ascendant": { "value": { "min": 0.1, "max": 0.2 } },
-          "verdant": { "value": { "min": 0.1, "max": 0.2 } },
-          "eradication": { "value": { "min": 0.2, "max": 0.8 } },
-          "nether": { "value": { "min": 0.3, "max": 2.0 } },
-          "phantasm": { "value": { "min": 0.2, "max": 0.8 } }
+          "ascendant": {
+            "value": {
+              "min": 0.1,
+              "max": 0.2
+            }
+          },
+          "verdant": {
+            "value": {
+              "min": 0.1,
+              "max": 0.2
+            }
+          },
+          "eradication": {
+            "value": {
+              "min": 0.2,
+              "max": 0.8
+            }
+          },
+          "nether": {
+            "value": {
+              "min": 0.3,
+              "max": 2
+            }
+          },
+          "phantasm": {
+            "value": {
+              "min": 0.2,
+              "max": 0.8
+            }
+          }
         }
       },
       {
@@ -473,22 +733,50 @@
         "rule": "spellLevelScaled",
         "target": "population",
         "magic": {
-          "ascendant": { "value": { "min": -400, "max": -5000 } },
-          "verdant": { "value": { "min": -400, "max": -5000 } },
-          "eradication": { "value": { "min": -2200, "max": -10000 } },
-          "nether": { "value": { "min": -3000, "max": -20000 } },
-          "phantasm": { "value": { "min": -2200, "max": -10000 } }
+          "ascendant": {
+            "value": {
+              "min": -400,
+              "max": -5000
+            }
+          },
+          "verdant": {
+            "value": {
+              "min": -400,
+              "max": -5000
+            }
+          },
+          "eradication": {
+            "value": {
+              "min": -2200,
+              "max": -10000
+            }
+          },
+          "nether": {
+            "value": {
+              "min": -3000,
+              "max": -20000
+            }
+          },
+          "phantasm": {
+            "value": {
+              "min": -2200,
+              "max": -10000
+            }
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Nadir"
   },
   {
     "id": "foulWater",
-    "name": "Foul Water",
+    "name": "Pozo Corrupto",
     "magic": "nether",
     "rank": "complex",
     "description": "This spell will turn a pool of clear water into poisonous water. By dipping your weapons into the pool, your units' attack become more powerful and poisonus. Area of effect: all your units with melee attack type.",
-    "attributes": ["battle"],
+    "attributes": [
+      "battle"
+    ],
     "researchCost": 4000,
     "castingCost": 20000,
     "castingTurn": 0,
@@ -500,7 +788,10 @@
         "targetType": "all",
         "filters": [
           {
-            "allAttackType": ["melee", "poison"]
+            "allAttackType": [
+              "melee",
+              "poison"
+            ]
           }
         ],
         "trigger": null,
@@ -512,11 +803,21 @@
               "primaryAttackPower,secondaryAttackPower,counterAttackPower": {
                 "rule": "spellLevelScaledPercentage",
                 "magic": {
-                  "ascendant": { "value": 0.08 },
-                  "verdant": { "value": 0.08 },
-                  "eradication": { "value": 0.18 },
-                  "nether": { "value": 0.34 },
-                  "phantasm": { "value": 0.18 }
+                  "ascendant": {
+                    "value": 0.08
+                  },
+                  "verdant": {
+                    "value": 0.08
+                  },
+                  "eradication": {
+                    "value": 0.18
+                  },
+                  "nether": {
+                    "value": 0.34
+                  },
+                  "phantasm": {
+                    "value": 0.18
+                  }
                 }
               }
             }
@@ -528,26 +829,39 @@
               "primaryAttackType": {
                 "rule": "add",
                 "magic": {
-                  "ascendant": { "value": "poison" },
-                  "verdant": { "value": "poison" },
-                  "eradication": { "value": "poison" },
-                  "nether": { "value": "poison" },
-                  "phantasm": { "value": "poison" }
+                  "ascendant": {
+                    "value": "poison"
+                  },
+                  "verdant": {
+                    "value": "poison"
+                  },
+                  "eradication": {
+                    "value": "poison"
+                  },
+                  "nether": {
+                    "value": "poison"
+                  },
+                  "phantasm": {
+                    "value": "poison"
+                  }
                 }
               }
             }
           }
         ]
       }
-    ]
+    ],
+    "displaySchool": "Nadir"
   },
   {
     "id": "kissOfVampire",
-    "name": "Kiss of Vampire",
+    "name": "Mordida Nocturna",
     "magic": "nether",
     "rank": "complex",
     "description": "This powerful necromantic spell inbues the vampiric effect on your troops and allow them to steal the life force of your enemy when they deliver a mortal blow. Area of effect: all your units.",
-    "attributes": ["battle"],
+    "attributes": [
+      "battle"
+    ],
     "researchCost": 3500,
     "castingCost": 20000,
     "castingTurn": 0,
@@ -559,7 +873,9 @@
         "targetType": "all",
         "filters": [
           {
-            "abilities": ["stealLife"]
+            "abilities": [
+              "stealLife"
+            ]
           }
         ],
         "trigger": null,
@@ -571,11 +887,21 @@
               "accuracy": {
                 "rule": "add",
                 "magic": {
-                  "ascendant": { "value": 1 },
-                  "verdant": { "value": 1 },
-                  "eradication": { "value":  2 },
-                  "nether": { "value": 4 },
-                  "phantasm": { "value": 2 }
+                  "ascendant": {
+                    "value": 1
+                  },
+                  "verdant": {
+                    "value": 1
+                  },
+                  "eradication": {
+                    "value": 2
+                  },
+                  "nether": {
+                    "value": 4
+                  },
+                  "phantasm": {
+                    "value": 2
+                  }
                 }
               }
             }
@@ -596,26 +922,54 @@
               "abilities": {
                 "rule": "add",
                 "magic": {
-                  "ascendant": { "value": { "name": "stealLife", "extra": 3 } },
-                  "verdant": { "value": { "name": "stealLife", "extra": 3 } },
-                  "eradication": { "value": { "name": "stealLife", "extra": 5 } },
-                  "nether": { "value": { "name": "stealLife", "extra": 10 } },
-                  "phantasm": { "value": { "name": "stealLife", "extra": 5 } }
+                  "ascendant": {
+                    "value": {
+                      "name": "stealLife",
+                      "extra": 3
+                    }
+                  },
+                  "verdant": {
+                    "value": {
+                      "name": "stealLife",
+                      "extra": 3
+                    }
+                  },
+                  "eradication": {
+                    "value": {
+                      "name": "stealLife",
+                      "extra": 5
+                    }
+                  },
+                  "nether": {
+                    "value": {
+                      "name": "stealLife",
+                      "extra": 10
+                    }
+                  },
+                  "phantasm": {
+                    "value": {
+                      "name": "stealLife",
+                      "extra": 5
+                    }
+                  }
                 }
               }
             }
           }
         ]
       }
-    ]
+    ],
+    "displaySchool": "Nadir"
   },
   {
     "id": "gazeOfDeath",
-    "name": "Gaze of Death",
+    "name": "Mirada del Último Umbral",
     "magic": "nether",
     "rank": "complex",
-    "description": "This spell will grant your eyes the forces of the negative planes of existance. For those whom you gaze at, death will be a certainty. This complex nether spell is extremally powerful against strong units. Area of effect: 1 random enemy group.",
-    "attributes": ["battle"],
+    "description": "This spell will grant your eyes the forces of the negative planes of existance. For those whom you gaze at, death will be a certainty. This complex Nadir spell is extremally powerful against strong units. Area of effect: 1 random enemy group.",
+    "attributes": [
+      "battle"
+    ],
     "researchCost": 6000,
     "castingCost": 30000,
     "castingTurn": 0,
@@ -631,28 +985,59 @@
           {
             "effectType": "UnitDamageEffect",
             "checkResistance": true,
-            "damageType": ["paralyse"],
+            "damageType": [
+              "paralyse"
+            ],
             "target": "unit",
             "rule": "spellLevel",
             "magic": {
-              "ascendant": { "value": { "min": 0.021, "max": 0.021 } },
-              "verdant": { "value": { "min": 0.021, "max": 0.021 } },
-              "eradication": { "value": { "min": 0.035, "max": 0.035 } },
-              "nether": { "value": { "min": 0.072, "max": 0.072 } },
-              "phantasm": { "value": { "min": 0.035, "max": 0.035 } }
+              "ascendant": {
+                "value": {
+                  "min": 0.021,
+                  "max": 0.021
+                }
+              },
+              "verdant": {
+                "value": {
+                  "min": 0.021,
+                  "max": 0.021
+                }
+              },
+              "eradication": {
+                "value": {
+                  "min": 0.035,
+                  "max": 0.035
+                }
+              },
+              "nether": {
+                "value": {
+                  "min": 0.072,
+                  "max": 0.072
+                }
+              },
+              "phantasm": {
+                "value": {
+                  "min": 0.035,
+                  "max": 0.035
+                }
+              }
             }
           }
         ]
       }
-    ]
+    ],
+    "displaySchool": "Nadir"
   },
   {
     "id": "nightOfTheLivingDead",
-    "name": "Night of the Living Dead",
+    "name": "Vigilia de los Muertos",
     "magic": "nether",
     "rank": "complex",
     "description": "By performing this dark ritual, undead units will rise from the oblivion to join your forces.",
-    "attributes": ["summon", "selfOnly"],
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
     "researchCost": 5000,
     "castingCost": 20000,
     "castingTurn": 1,
@@ -660,61 +1045,118 @@
     "effects": [
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["zombie", "wraith", "lich", "vampire", "shadow"],
+        "unitIds": [
+          "zombie",
+          "wraith",
+          "lich",
+          "vampire",
+          "shadow"
+        ],
         "summonType": "random",
         "summonNetPower": 120000,
         "rule": "spellLevelScaled",
         "magic": {
-          "ascendant": { "value": 0.2 },
-          "verdant": { "value": 0.2 },
-          "eradication": { "value": 0.6 },
-          "nether": { "value": 1.0 },
-          "phantasm": { "value": 0.6 }
+          "ascendant": {
+            "value": 0.2
+          },
+          "verdant": {
+            "value": 0.2
+          },
+          "eradication": {
+            "value": 0.6
+          },
+          "nether": {
+            "value": 1
+          },
+          "phantasm": {
+            "value": 0.6
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Nadir"
   },
   {
     "id": "touchOfNecromancy",
-    "name": "Touch of Necromancy",
+    "name": "Dominio Mortuorio",
     "magic": "nether",
     "rank": "complex",
     "description": "The spell will empower the caster to more efficiently manage their undead army",
-    "attributes": ["enchantment", "selfOnly"],
+    "attributes": [
+      "enchantment",
+      "selfOnly"
+    ],
     "researchCost": 3000,
     "castingCost": 50000,
     "castingTurn": 10,
     "upkeep": {
       "geld": 0,
       "mana": 300,
-      "population":0 
+      "population": 0
     },
     "effects": [
       {
         "effectType": "ArmyUpkeepEffect",
         "filters": [
           {
-            "race": ["undead", "demon"]
+            "race": [
+              "undead",
+              "demon"
+            ]
           }
         ],
         "rule": "percentage",
         "magic": {
-          "ascendant": { "value": { "geld": 0, "mana": -0.01, "population": -0.01 } },
-          "verdant": { "value": { "geld": 0, "mana": -0.01, "population": -0.01 } },
-          "eradication": { "value": { "geld": 0, "mana": -0.02, "population": -0.02 } },
-          "nether": { "value": { "geld": 0, "mana": -0.05, "population": -0.05 } },
-          "phantasm": { "value": { "geld": 0, "mana": -0.02, "population": -0.02 } }
+          "ascendant": {
+            "value": {
+              "geld": 0,
+              "mana": -0.01,
+              "population": -0.01
+            }
+          },
+          "verdant": {
+            "value": {
+              "geld": 0,
+              "mana": -0.01,
+              "population": -0.01
+            }
+          },
+          "eradication": {
+            "value": {
+              "geld": 0,
+              "mana": -0.02,
+              "population": -0.02
+            }
+          },
+          "nether": {
+            "value": {
+              "geld": 0,
+              "mana": -0.05,
+              "population": -0.05
+            }
+          },
+          "phantasm": {
+            "value": {
+              "geld": 0,
+              "mana": -0.02,
+              "population": -0.02
+            }
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Nadir"
   },
   {
     "id": "summonDarkElfMagician",
-    "name": "Summon Dark Elf Magician",
+    "name": "Convocar Teúrgo Umbrío",
     "magic": "nether",
     "rank": "complex",
     "description": "",
-    "attributes": ["summon", "selfOnly"],
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
     "researchCost": 9000,
     "castingCost": 75000,
     "castingTurn": 4,
@@ -722,27 +1164,43 @@
     "effects": [
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["darkElfMagician"],
+        "unitIds": [
+          "darkElfMagician"
+        ],
         "summonType": "all",
         "summonNetPower": 450000,
         "rule": "spellLevelScaled",
         "magic": {
-          "ascendant": { "value": 0.3 },
-          "verdant": { "value": 0.3 },
-          "eradication": { "value": 0.6 },
-          "nether": { "value": 1.0 },
-          "phantasm": { "value": 0.6 }
+          "ascendant": {
+            "value": 0.3
+          },
+          "verdant": {
+            "value": 0.3
+          },
+          "eradication": {
+            "value": 0.6
+          },
+          "nether": {
+            "value": 1
+          },
+          "phantasm": {
+            "value": 0.6
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Nadir"
   },
   {
     "id": "summonBulwarkHorror",
-    "name": "Summon Buklwark Horror",
+    "name": "Convocar Horror Bastión",
     "magic": "nether",
     "rank": "complex",
     "description": "This spell calls forth evil Bulwark Horrors to join your army, these heavily armoured monstrosities are particularly adept at deflecting ranged attacks with their shields.",
-    "attributes": ["summon", "selfOnly"],
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
     "researchCost": 10000,
     "castingCost": 80000,
     "castingTurn": 6,
@@ -750,27 +1208,43 @@
     "effects": [
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["bulwarkHorror"],
+        "unitIds": [
+          "bulwarkHorror"
+        ],
         "summonType": "all",
         "summonNetPower": 630000,
         "rule": "spellLevelScaled",
         "magic": {
-          "ascendant": { "value": 0.3 },
-          "verdant": { "value": 0.3 },
-          "eradication": { "value": 0.6 },
-          "nether": { "value": 1.0 },
-          "phantasm": { "value": 0.6 }
+          "ascendant": {
+            "value": 0.3
+          },
+          "verdant": {
+            "value": 0.3
+          },
+          "eradication": {
+            "value": 0.6
+          },
+          "nether": {
+            "value": 1
+          },
+          "phantasm": {
+            "value": 0.6
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Nadir"
   },
   {
     "id": "summonLich",
-    "name": "Summon Lich",
+    "name": "Convocar Sabio Exánime",
     "magic": "nether",
     "rank": "complex",
     "description": "This spell will summon the ancient and powerful liches to join your undead ranks. Their touch is cold and deadly, and their magic strikes fear into hearts of your opponents.",
-    "attributes": ["summon", "selfOnly"],
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
     "researchCost": 10000,
     "castingCost": 79900,
     "castingTurn": 6,
@@ -778,27 +1252,43 @@
     "effects": [
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["lich"],
+        "unitIds": [
+          "lich"
+        ],
         "summonType": "all",
         "summonNetPower": 620000,
         "rule": "spellLevelScaled",
         "magic": {
-          "ascendant": { "value": 0.3 },
-          "verdant": { "value": 0.3 },
-          "eradication": { "value": 0.6 },
-          "nether": { "value": 1.0 },
-          "phantasm": { "value": 0.6 }
+          "ascendant": {
+            "value": 0.3
+          },
+          "verdant": {
+            "value": 0.3
+          },
+          "eradication": {
+            "value": 0.6
+          },
+          "nether": {
+            "value": 1
+          },
+          "phantasm": {
+            "value": 0.6
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Nadir"
   },
   {
     "id": "summonVampire",
-    "name": "Summon Vampire",
+    "name": "Convocar Sangrante Nocturno",
     "magic": "nether",
     "rank": "complex",
     "description": "This spell will summon vampires to join your rank. All they want is blood. With their incredible magic power they will decimate your enemies, turning them into vampires as well. As long as you feed them virgins, they will serve under your command.",
-    "attributes": ["summon", "selfOnly"],
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
     "researchCost": 10000,
     "castingCost": 77700,
     "castingTurn": 6,
@@ -806,27 +1296,43 @@
     "effects": [
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["vampire"],
+        "unitIds": [
+          "vampire"
+        ],
         "summonType": "all",
         "summonNetPower": 640000,
         "rule": "spellLevelScaled",
         "magic": {
-          "ascendant": { "value": 0.3 },
-          "verdant": { "value": 0.3 },
-          "eradication": { "value": 0.6 },
-          "nether": { "value": 1.0 },
-          "phantasm": { "value": 0.6 }
+          "ascendant": {
+            "value": 0.3
+          },
+          "verdant": {
+            "value": 0.3
+          },
+          "eradication": {
+            "value": 0.6
+          },
+          "nether": {
+            "value": 1
+          },
+          "phantasm": {
+            "value": 0.6
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Nadir"
   },
   {
     "id": "summonDemonKnight",
-    "name": "Summon Demon Knight",
+    "name": "Convocar Caballero Abisal",
     "magic": "nether",
     "rank": "complex",
-    "description": "This spell will summon the demonic counterparts of Ascendant knights to your army. They wear black armors marked with runes that give them immunity to holy attacks, and wield poisonous swords. They can also use cold magic from the distance.",
-    "attributes": ["summon", "selfOnly"],
+    "description": "This spell will summon the demonic counterparts of Aurea knights to your army. They wear black armors marked with runes that give them immunity to holy attacks, and wield poisonous swords. They can also use cold magic from the distance.",
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
     "researchCost": 10000,
     "castingCost": 77700,
     "castingTurn": 6,
@@ -834,27 +1340,43 @@
     "effects": [
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["demonKnight"],
+        "unitIds": [
+          "demonKnight"
+        ],
         "summonType": "all",
         "summonNetPower": 640000,
         "rule": "spellLevelScaled",
         "magic": {
-          "ascendant": { "value": 0.3 },
-          "verdant": { "value": 0.3 },
-          "eradication": { "value": 0.6 },
-          "nether": { "value": 1.0 },
-          "phantasm": { "value": 0.6 }
+          "ascendant": {
+            "value": 0.3
+          },
+          "verdant": {
+            "value": 0.3
+          },
+          "eradication": {
+            "value": 0.6
+          },
+          "nether": {
+            "value": 1
+          },
+          "phantasm": {
+            "value": 0.6
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Nadir"
   },
   {
     "id": "blackSabbath",
-    "name": "Black Sabbath",
+    "name": "Concilio de la Noche Negra",
     "magic": "nether",
     "rank": "ultimate",
-    "description": "This is the most powerful Nether magic. Once this dark containment is performed, your population will almost stop growing. However, by sacrificing new infants to Satan, you gain a lot of magic power in return, and those sacrified citizens will turn into skeletons and zombies that will join your forces. Also, your troops will be partially protected from holy attacks by an aura of unholiness.",
-    "attributes": ["enchantment", "selfOnly"],
+    "description": "This is the most powerful Nadir magic. Once this dark containment is performed, your population will almost stop growing. However, by sacrificing new infants to el Soberano del Abismo, you gain a lot of magic power in return, and those sacrified citizens will turn into skeletons and zombies that will join your forces. Also, your troops will be partially protected from holy attacks by an aura of unholiness.",
+    "attributes": [
+      "enchantment",
+      "selfOnly"
+    ],
     "researchCost": 30000,
     "castingCost": 200000,
     "castingTurn": 3,
@@ -878,7 +1400,9 @@
               "attackResistances.holy": {
                 "rule": "spellLevelScaled",
                 "magic": {
-                  "nether": { "value": 32 }
+                  "nether": {
+                    "value": 32
+                  }
                 }
               }
             }
@@ -887,12 +1411,17 @@
       },
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["zombie", "skeleton"],
+        "unitIds": [
+          "zombie",
+          "skeleton"
+        ],
         "summonType": "all",
         "summonNetPower": 666,
         "rule": "set",
         "magic": {
-          "nether": { "value": 1.0 }
+          "nether": {
+            "value": 1
+          }
         }
       },
       {
@@ -900,18 +1429,26 @@
         "rule": "spellLevel",
         "production": "mana",
         "magic": {
-          "nether": { "value": 7 }
+          "nether": {
+            "value": 7
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Nadir"
   },
   {
     "id": "contractOfTheSoul",
-    "name": "Contract of the Soul",
+    "name": "Pacto del Nadir",
     "magic": "nether",
     "rank": "ultimate",
-    "description": "By signing a pact with Satan, you have gained his favour through selling your soul. He will send forth cohorts of Devils under the commandment of devil prince to aid you. Entire cohort will take part in defensive battles, and in counters, ensuring your victory. But be warned! These devils will not leave your army and they need to be fed every day with massive human and geld sacrifice. They will only go back to hell when there's no man left in your country, or when they become bored. After that, you cannot sign another pact before you fulfill current contract.",
-    "attributes": ["enchantment", "selfOnly", "noDispel", "noCancel"],
+    "description": "By signing a pact with el Soberano del Abismo, you have gained his favour through selling your soul. He will send forth cohorts of Devils under the commandment of devil prince to aid you. Entire cohort will take part in defensive battles, and in counters, ensuring your victory. But be warned! These devils will not leave your army and they need to be fed every day with massive human and geld sacrifice. They will only go back to el Abismo when there's no man left in your country, or when they become bored. After that, you cannot sign another pact before you fulfill current contract.",
+    "attributes": [
+      "enchantment",
+      "selfOnly",
+      "noDispel",
+      "noCancel"
+    ],
     "researchCost": 30000,
     "castingCost": 1000000,
     "castingTurn": 10,
@@ -933,10 +1470,15 @@
             "effectType": "TemporaryUnitEffect",
             "checkResistance": false,
             "unitId": "devil",
-            "rule": "set", 
+            "rule": "set",
             "target": null,
             "magic": {
-              "nether": { "value": { "min": 2000, "max": 10000 } }
+              "nether": {
+                "value": {
+                  "min": 2000,
+                  "max": 10000
+                }
+              }
             }
           }
         ]
@@ -946,12 +1488,17 @@
         "target": "self",
         "condition": "all",
         "effects": [
-           {
+          {
             "effectType": "KingdomResourcesEffect",
             "rule": "spellLevelScaledPercentage",
             "target": "mana",
             "magic": {
-              "nether": { "value": { "min": -0.5, "max": -0.5 } }
+              "nether": {
+                "value": {
+                  "min": -0.5,
+                  "max": -0.5
+                }
+              }
             }
           },
           {
@@ -959,7 +1506,12 @@
             "rule": "spellLevelScaledPercentage",
             "target": "population",
             "magic": {
-              "nether": { "value": { "min": -0.5, "max": -0.5 } }
+              "nether": {
+                "value": {
+                  "min": -0.5,
+                  "max": -0.5
+                }
+              }
             }
           },
           {
@@ -967,7 +1519,12 @@
             "rule": "spellLevelScaledPercentage",
             "target": "geld",
             "magic": {
-              "nether": { "value": { "min": -0.5, "max": -0.5 } }
+              "nether": {
+                "value": {
+                  "min": -0.5,
+                  "max": -0.5
+                }
+              }
             }
           },
           {
@@ -976,21 +1533,27 @@
             "target": "all",
             "magic": {
               "nether": {
-                "value": { "min": 50, "max": 50 }
+                "value": {
+                  "min": 50,
+                  "max": 50
+                }
               }
             }
           }
         ]
       }
-    ]
+    ],
+    "displaySchool": "Nadir"
   },
   {
     "id": "dreamsOfSeduction",
-    "name": "Dreams of Seduction",
+    "name": "Sueño de la Tentación",
     "magic": "nether",
     "rank": "ultimate",
-    "description": "This spell will grant you the servants of the Mistresses of Nine Hells, Succubi, to join your army for one battle.",
-    "attributes": ["battle"],
+    "description": "This spell will grant you the servants of the Mistresses of los Nueve Abismos, Succubi, to join your army for one battle.",
+    "attributes": [
+      "battle"
+    ],
     "researchCost": 20000,
     "castingCost": 40000,
     "castingTurn": 0,
@@ -1007,23 +1570,34 @@
             "effectType": "TemporaryUnitEffect",
             "checkResistance": false,
             "unitId": "succubus",
-            "rule": "spellLevelScaledPercentage", 
+            "rule": "spellLevelScaledPercentage",
             "target": "population",
             "magic": {
-              "nether": { "value": { "min": 0.05, "max": 0.05 } }
+              "nether": {
+                "value": {
+                  "min": 0.05,
+                  "max": 0.05
+                }
+              }
             }
           }
         ]
       }
-    ]
+    ],
+    "displaySchool": "Nadir"
   },
   {
     "id": "blackDeath",
-    "name": "Black Death",
+    "name": "Gran Pestilencia",
     "magic": "nether",
     "rank": "ultimate",
-    "description": "This ultimate enchantment will inflict black death on the whole Terra. Everyone will suffer from the plague. Citizens and troops will decrease at a rapid pace as the plague begins to haunt the living. Note that this spell will also affect your own country.",
-    "attributes": ["enchantment", "selfOnly", "epidemic", "nocancel"],
+    "description": "This ultimate enchantment will inflict black death on the whole las Tierras Arcanas. Everyone will suffer from the plague. Citizens and troops will decrease at a rapid pace as the plague begins to haunt the living. Note that this spell will also affect your own country.",
+    "attributes": [
+      "enchantment",
+      "selfOnly",
+      "epidemic",
+      "nocancel"
+    ],
     "researchCost": 50000,
     "castingCost": 1000000,
     "castingTurn": 25,
@@ -1039,7 +1613,12 @@
         "rule": "spellLevelScaledPercentage",
         "target": "population",
         "magic": {
-          "nether": { "value": { "min": -0.04, "max": -0.12 } }
+          "nether": {
+            "value": {
+              "min": -0.04,
+              "max": -0.12
+            }
+          }
         }
       },
       {
@@ -1048,18 +1627,27 @@
         "filters": null,
         "checkResistance": false,
         "magic": {
-          "nether": { "value": { "min": -0.02, "max": -0.05 } }
+          "nether": {
+            "value": {
+              "min": -0.02,
+              "max": -0.05
+            }
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Nadir"
   },
   {
     "id": "summonUnholyReaver",
-    "name": "Summon Unholy Reaver",
+    "name": "Convocar Segador Profano",
     "magic": "nether",
     "rank": "ultimate",
-    "description": "This summon unleashes the worst manifestation of Hell, Unholy Reavers. They posses wide knowledge of paralyzing magic and posses abnormal psychic abilities. However, their corporal incarnation is not very durable.",
-    "attributes": ["summon", "selfOnly"],
+    "description": "This summon unleashes the worst manifestation of el Abismo, Unholy Reavers. They posses wide knowledge of paralyzing magic and posses abnormal psychic abilities. However, their corporal incarnation is not very durable.",
+    "attributes": [
+      "summon",
+      "selfOnly"
+    ],
     "researchCost": 35000,
     "castingCost": 300000,
     "castingTurn": 9,
@@ -1067,18 +1655,31 @@
     "effects": [
       {
         "effectType": "UnitSummonEffect",
-        "unitIds": ["unholyReaver"],
+        "unitIds": [
+          "unholyReaver"
+        ],
         "summonType": "all",
         "summonNetPower": 2200000,
         "rule": "spellLevelScaled",
         "magic": {
-          "ascendant": { "value": 0.0 },
-          "verdant": { "value": 0.0 },
-          "eradication": { "value": 0.0 },
-          "nether": { "value": 1.0 },
-          "phantasm": { "value": 0.0 }
+          "ascendant": {
+            "value": 0
+          },
+          "verdant": {
+            "value": 0
+          },
+          "eradication": {
+            "value": 0
+          },
+          "nether": {
+            "value": 1
+          },
+          "phantasm": {
+            "value": 0
+          }
         }
       }
-    ]
+    ],
+    "displaySchool": "Nadir"
   }
 ]
