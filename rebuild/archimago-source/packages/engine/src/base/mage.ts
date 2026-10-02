@@ -6,13 +6,17 @@ import { allowedMagicList, AllowedMagic } from 'shared/src/common';
 
 
 export const createMage = (id: number, name: string, magic: string, override?: Partial<Mage>): Mage => {
+  if (!allowedMagicList.includes(magic as AllowedMagic)) {
+    throw new Error(`Unknown ARCANUM school id: ${magic}`);
+  }
+  const school = magic as AllowedMagic;
   const mage: Mage = {
     id: id,
     name: name,
     status: '',
     type: '',
 
-    magic: magic,
+    magic: school,
     adjacent: [],
     opposite: [],
 
