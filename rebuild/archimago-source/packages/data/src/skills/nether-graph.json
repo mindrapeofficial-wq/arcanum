@@ -1,9 +1,9 @@
 [
   {
     "id": "miasma",
-    "name": "Miasma",
+    "name": "Aliento del Nadir",
     "magic": "nether",
-    "description": "Stentch of decay fills the air, render the kingdom unlivable except for the foulest creatures",
+    "description": "Extiende una corrupción venenosa que castiga a las fuerzas enemigas.",
     "maxLevel": 10,
     "prereqs": {},
     "effects": [
@@ -17,23 +17,41 @@
           {
             "effectType": "UnitDamageEffect",
             "checkResistance": true,
-            "damageType": [ "poison", "paralyse" ],
+            "damageType": [
+              "poison",
+              "paralyse"
+            ],
             "rule": "direct",
             "magic": {
               "ascendant": {
-                "value": { "min": 30000, "max": 40000 }
+                "value": {
+                  "min": 30000,
+                  "max": 40000
+                }
               },
               "verdant": {
-                "value": { "min": 30000, "max": 40000 }
+                "value": {
+                  "min": 30000,
+                  "max": 40000
+                }
               },
               "eradication": {
-                "value": { "min": 30000, "max": 40000 }
+                "value": {
+                  "min": 30000,
+                  "max": 40000
+                }
               },
               "nether": {
-                "value": { "min": 30000, "max": 40000 }
+                "value": {
+                  "min": 30000,
+                  "max": 40000
+                }
               },
               "phantasm": {
-                "value": { "min": 30000, "max": 40000 }
+                "value": {
+                  "min": 30000,
+                  "max": 40000
+                }
               }
             }
           }
@@ -43,9 +61,9 @@
   },
   {
     "id": "blight",
-    "name": "Blight",
+    "name": "Marchitez Umbría",
     "magic": "nether",
-    "description": "Blight transfer from army to army, destroying crops and farming land",
+    "description": "Propaga una ruina que puede destruir cultivos y estructuras agrícolas tras el combate.",
     "maxLevel": 10,
     "prereqs": {
       "miasma": 3
@@ -56,16 +74,41 @@
         "target": "self",
         "condition": "all",
         "effects": [
-           {
+          {
             "effectType": "KingdomBuildingsEffect",
             "rule": "direct",
             "target": "farms",
             "magic": {
-              "ascendant": { "value": { "min": -10, "max": -20 } },
-              "verdant": { "value": { "min": -10, "max": -20 } },
-              "eradication": { "value": { "min": -10, "max": -20 } },
-              "nether": { "value": { "min": -10, "max": -20 } },
-              "phantasm": { "value": { "min": -10, "max": -20 } }
+              "ascendant": {
+                "value": {
+                  "min": -10,
+                  "max": -20
+                }
+              },
+              "verdant": {
+                "value": {
+                  "min": -10,
+                  "max": -20
+                }
+              },
+              "eradication": {
+                "value": {
+                  "min": -10,
+                  "max": -20
+                }
+              },
+              "nether": {
+                "value": {
+                  "min": -10,
+                  "max": -20
+                }
+              },
+              "phantasm": {
+                "value": {
+                  "min": -10,
+                  "max": -20
+                }
+              }
             }
           }
         ]
@@ -74,19 +117,22 @@
   },
   {
     "id": "undeadMastery",
-    "name": "Undead Mastery",
+    "name": "Dominio Exánime",
     "magic": "nether",
-    "description": "",
+    "description": "Mejora el poder ofensivo, defensivo y la resistencia de las huestes no muertas.",
     "maxLevel": 10,
-    "prereqs": {
-    },
+    "prereqs": {},
     "effects": [
       {
         "effectType": "BattleEffect",
         "target": "self",
         "targetType": "all",
         "filters": [
-          { "race": [ "undead"] }
+          {
+            "race": [
+              "undead"
+            ]
+          }
         ],
         "trigger": null,
         "effects": [
@@ -97,11 +143,21 @@
               "primaryAttackPower,secondaryAttackPower,counterAttackPower,hitPoints": {
                 "rule": "percentage",
                 "magic": {
-                  "ascendant": { "value": 0.02 },
-                  "verdant": { "value": 0.02 },
-                  "eradication": { "value": 0.02 },
-                  "nether": { "value": 0.02 },
-                  "phantasm": { "value": 0.02 }
+                  "ascendant": {
+                    "value": 0.02
+                  },
+                  "verdant": {
+                    "value": 0.02
+                  },
+                  "eradication": {
+                    "value": 0.02
+                  },
+                  "nether": {
+                    "value": 0.02
+                  },
+                  "phantasm": {
+                    "value": 0.02
+                  }
                 }
               }
             }
@@ -112,9 +168,9 @@
   },
   {
     "id": "demonMastery",
-    "name": "Demon Mastery",
+    "name": "Disciplina Abisal",
     "magic": "nether",
-    "description": "",
+    "description": "Incrementa la precisión y el poder de las criaturas vinculadas al Abismo.",
     "maxLevel": 10,
     "prereqs": {
       "undeadMastery": 4
@@ -125,7 +181,11 @@
         "target": "self",
         "targetType": "all",
         "filters": [
-          { "race": [ "demon"] }
+          {
+            "race": [
+              "demon"
+            ]
+          }
         ],
         "trigger": null,
         "effects": [
@@ -136,11 +196,21 @@
               "primaryAttackPower,secondaryAttackPower,counterAttackPower": {
                 "rule": "percentage",
                 "magic": {
-                  "ascendant": { "value": 0.02 },
-                  "verdant": { "value": 0.02 },
-                  "eradication": { "value": 0.02 },
-                  "nether": { "value": 0.02 },
-                  "phantasm": { "value": 0.02 }
+                  "ascendant": {
+                    "value": 0.02
+                  },
+                  "verdant": {
+                    "value": 0.02
+                  },
+                  "eradication": {
+                    "value": 0.02
+                  },
+                  "nether": {
+                    "value": 0.02
+                  },
+                  "phantasm": {
+                    "value": 0.02
+                  }
                 }
               }
             }
@@ -152,11 +222,21 @@
               "accuracy": {
                 "rule": "add",
                 "magic": {
-                  "ascendant": { "value": 0.5 },
-                  "verdant": { "value": 0.5 },
-                  "eradication": { "value": 0.5 },
-                  "nether": { "value": 0.5 },
-                  "phantasm": { "value": 0.5 }
+                  "ascendant": {
+                    "value": 0.5
+                  },
+                  "verdant": {
+                    "value": 0.5
+                  },
+                  "eradication": {
+                    "value": 0.5
+                  },
+                  "nether": {
+                    "value": 0.5
+                  },
+                  "phantasm": {
+                    "value": 0.5
+                  }
                 }
               }
             }
