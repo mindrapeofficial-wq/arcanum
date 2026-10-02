@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import type { Mage } from 'shared/src/mage';
-import { ARCANUM_SCHOOLS, toArcanumDomain } from '../src/arcanum-domain';
+import { ARCANUM_SCHOOLS, toArcanumDomain, toEngineBuildingPlan } from '../src/arcanum-domain';
 
 const emptyMagicRecord = {
   ascendant: [],
@@ -90,4 +90,33 @@ test('Domain view exposes ARCANUM vocabulary and preserves engine values', () =>
   assert.equal(serialized.includes('geld'), false);
   assert.equal(serialized.includes('nether'), false);
   assert.equal(serialized.includes('archmage'), false);
+});
+
+
+test('building plans translate ARCANUM fortress naming and fill original zero fields', () => {
+  assert.deepEqual(toEngineBuildingPlan({ farms: 2, fortresses: 1, barriers: 3 }), {
+    farms: 2,
+    towns: 0,
+    workshops: 0,
+    barracks: 0,
+    nodes: 0,
+    guilds: 0,
+    forts: 1,
+    barriers: 3,
+  });
+});
+
+test('Domain view exposes original engine rates without browser reimplementation', () => {
+  const domain = toArcanumDomain(sampleMage('ascendant'));
+
+  assert.equal(domain.rates.goldPerTurn, 13345);
+  assert.equal(domain.rates.populationPerTurn, Math.floor(12345 * 0.015 + 50));
+  assert.equal(domain.rates.researchPerTurn, Math.floor(Math.sqrt(5) * 10));
+  assert.equal(domain.resources.manaCapacity, 3000);
+
+  const fortress = domain.territory.buildingCatalog.find(row => row.id === 'fortresses');
+  const barrier = domain.territory.buildingCatalog.find(row => row.id === 'barriers');
+  assert.equal(fortress?.goldCost, 3000);
+  assert.equal(fortress?.maxPerTurn, (4 + 1) / 300);
+  assert.equal(barrier?.maxPerTurn, 1);
 });
