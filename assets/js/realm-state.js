@@ -1,6 +1,6 @@
 "use strict";
 
-const PASSIVE_TURN_MS=5*60*1000;
+const PASSIVE_TURN_MS=2*60*1000;
 const PASSIVE_RESOURCE_FIELDS={
   gold:{label:"Oro",aliases:["gold","oro"]},
   mana:{label:"Maná",aliases:["mana"]},
