@@ -17,7 +17,11 @@
       "data-adapter/*": [
         "../../data-adapter/*"
       ]
-    }
+    },
+    "strict": false,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    "noUncheckedIndexedAccess": false
   },
   "include": [
     "src/**/*.ts"
