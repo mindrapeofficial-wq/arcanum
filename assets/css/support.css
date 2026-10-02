@@ -19,3 +19,15 @@
 .luck-notes{width:100%;min-height:120px;padding:8px;background:#0f0c08;color:var(--text);border:1px solid var(--line);border-radius:0;font:13px/1.5 Arial,sans-serif;resize:vertical}
 .luck-section .tools-note{margin:0;color:#9b8e7e;font:11px/1.55 Arial,sans-serif}
 .luck-section .support-link{display:inline-flex}
+
+/* Mercado de las Sombras */
+.black-market-button{border-color:rgba(160,110,220,.45)}
+.bm-rules{font-size:12px;opacity:.8;margin:6px 0 12px}
+.bm-table{width:100%;border-collapse:collapse;font-size:13px}
+.bm-table th,.bm-table td{padding:6px 8px;text-align:left;border-bottom:1px solid rgba(217,155,57,.18)}
+.bm-table small{opacity:.65}
+.bm-table .bm-amount{width:110px}
+.bm-tag{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:8px;font-size:11px;background:rgba(255,255,255,.08)}
+.bm-tag.bm-mine{background:rgba(120,200,120,.25)}
+.bm-actions{margin:12px 0}
+.bm-mybids{padding-left:18px;font-size:13px}
