@@ -113,7 +113,7 @@ function renderEconomy(){
       <div class="economy-explore-copy">
         <span class="section-kicker">EXPANSIÓN TERRITORIAL</span>
         <h3>Explorar nuevas tierras</h3>
-        <p>Explorar convierte <b>turnos</b> en <b>tierra salvaje</b>. Esa tierra todavía no produce nada: sólo adquiere función cuando la conviertes en edificios. El rendimiento disminuye al acercarte a <b>3.500 acres</b>.</p>
+        <p>Explorar convierte <b>turnos</b> en <b>tierra salvaje</b>. Esa tierra todavía no produce nada: sólo adquiere función cuando la conviertes en edificios. El rendimiento disminuye progresivamente hasta el límite original de <b>6.000 acres</b>.</p>
         <div class="economy-explore-tip">Cadena económica: <b>Explorar → Tierra salvaje → Construir → Capacidad/producción → Gastar en magia, ejército o comercio.</b></div>
       </div>
       <div class="economy-explore-action">
