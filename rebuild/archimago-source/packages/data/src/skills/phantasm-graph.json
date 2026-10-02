@@ -1,9 +1,9 @@
 [
   {
     "id": "spellMastery",
-    "name": "Spell Mastery",
+    "name": "Maestría del Velo",
     "magic": "phantasm",
-    "description": "Reduce spell casting cost",
+    "description": "Reduce el coste de lanzamiento de conjuros mediante una comprensión más profunda de Oneiria.",
     "maxLevel": 15,
     "prereqs": {},
     "effects": [
@@ -11,20 +11,40 @@
         "effectType": "CastingCostEffect",
         "rule": "percentage",
         "magic": {
-          "ascendant": { 
-            "value": { "innate": -0.01, "adjacent": -0.02, "opposite": -0.03 }
+          "ascendant": {
+            "value": {
+              "innate": -0.01,
+              "adjacent": -0.02,
+              "opposite": -0.03
+            }
           },
-          "verdant": { 
-            "value": { "innate": -0.01, "adjacent": -0.02, "opposite": -0.03 }
+          "verdant": {
+            "value": {
+              "innate": -0.01,
+              "adjacent": -0.02,
+              "opposite": -0.03
+            }
           },
-          "eradication": { 
-            "value": { "innate": -0.01, "adjacent": -0.02, "opposite": -0.03 }
+          "eradication": {
+            "value": {
+              "innate": -0.01,
+              "adjacent": -0.02,
+              "opposite": -0.03
+            }
           },
-          "nether": { 
-            "value": { "innate": -0.01, "adjacent": -0.02, "opposite": -0.03 }
+          "nether": {
+            "value": {
+              "innate": -0.01,
+              "adjacent": -0.02,
+              "opposite": -0.03
+            }
           },
-          "phantasm": { 
-            "value": { "innate": -0.01, "adjacent": -0.02, "opposite": -0.03 }
+          "phantasm": {
+            "value": {
+              "innate": -0.01,
+              "adjacent": -0.02,
+              "opposite": -0.03
+            }
           }
         }
       }
@@ -32,9 +52,9 @@
   },
   {
     "id": "blizzard",
-    "name": "Blizzard",
+    "name": "Tormenta de Cristal",
     "magic": "phantasm",
-    "description": "Conjure ice shards to strike your opponents from above",
+    "description": "Hace caer fragmentos de hielo sobre grupos enemigos desde el Velo.",
     "maxLevel": 5,
     "prereqs": {
       "spellMastery": 3
@@ -53,23 +73,40 @@
           {
             "effectType": "UnitDamageEffect",
             "checkResistance": false,
-            "damageType": [ "cold" ],
+            "damageType": [
+              "cold"
+            ],
             "rule": "direct",
             "magic": {
               "ascendant": {
-                "value": { "min": 40000, "max": 60000 }
+                "value": {
+                  "min": 40000,
+                  "max": 60000
+                }
               },
               "verdant": {
-                "value": { "min": 40000, "max": 60000 }
+                "value": {
+                  "min": 40000,
+                  "max": 60000
+                }
               },
               "eradication": {
-                "value": { "min": 40000, "max": 60000 }
+                "value": {
+                  "min": 40000,
+                  "max": 60000
+                }
               },
               "nether": {
-                "value": { "min": 40000, "max": 60000 }
+                "value": {
+                  "min": 40000,
+                  "max": 60000
+                }
               },
               "phantasm": {
-                "value": { "min": 40000, "max": 60000 }
+                "value": {
+                  "min": 40000,
+                  "max": 60000
+                }
               }
             }
           }
