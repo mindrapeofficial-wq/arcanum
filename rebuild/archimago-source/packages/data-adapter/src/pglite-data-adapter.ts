@@ -279,7 +279,7 @@ export class PGliteDataAdapter extends DataAdapter {
 
   constructor() {
     super();
-    this.db = new PGlite('./archmage-db');
+    this.db = new PGlite('./arcanum-db');
   }
 
   // We need to refresh view occasionally
